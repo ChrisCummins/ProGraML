@@ -10,3 +10,4 @@ config.status
 config/common.mk
 config/config.h
 config/targets.mk
+test
