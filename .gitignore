@@ -12,3 +12,7 @@ config/targets.mk
 tools/Logs/*
 tools/results.csv
 autom4te.cache
+*.suo
+*.sdf
+*.opensdf
+ipch
