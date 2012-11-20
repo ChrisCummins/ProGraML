@@ -16,3 +16,6 @@ autom4te.cache
 *.sdf
 *.opensdf
 ipch
+bin
+libexec
+share
