@@ -19,4 +19,12 @@ ipch
 bin
 libexec
 share
+
+# Ignore some generated files for in-place build
 .deps
+config/config.mk
+config/dirtargets.mk
+config/stamp-h1
+tools/buildFlags.txt
+tools/compilerVersion.txt
+tools/shocdriver
