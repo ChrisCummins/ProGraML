@@ -1,0 +1,3 @@
+*.o
+/rt
+/render.pgm
