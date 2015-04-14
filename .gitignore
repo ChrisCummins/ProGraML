@@ -1,3 +1,4 @@
 *.o
 *.ppm
+/gmon.out
 /rt
