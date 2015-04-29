@@ -1,4 +1,5 @@
 *.o
 *.ppm
+*.rt.out
 /gmon.out
 /rt
