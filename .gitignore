@@ -1,3 +1,4 @@
+*.lint
 *.o
 *.ppm
 *.rt.out
