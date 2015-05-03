@@ -1,6 +1,5 @@
 *.lint
 *.o
 *.ppm
-*.rt.out
-/gmon.out
-/rt
+*.so
+gmon.out
