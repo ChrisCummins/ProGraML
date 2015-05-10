@@ -1,0 +1,18 @@
+# Compiled python modules.
+*.pyc
+
+# Build folder created by pip.
+/build/
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+/.eggs/*
+
+# Nose test coverage report.
+/.coverage
+
+# Nose test coverage report HTML.
+/cover
