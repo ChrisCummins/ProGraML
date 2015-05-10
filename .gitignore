@@ -16,3 +16,6 @@
 
 # Nose test coverage report HTML.
 /cover
+
+# Ignore generated log files.
+/*.log
