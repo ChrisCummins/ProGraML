@@ -9,6 +9,10 @@
 /docs/wip-outline/outline.pdf
 /docs/wip-taco/taco.pdf
 
+# autotex:
+/docs/**/.autotex.deps
+/docs/**/.autotex.log
+
 # pdflatex:
 /docs/**/*-blx.bib
 /docs/**/*.acn
