@@ -1,32 +1,76 @@
 #
-#                Git ignore file
+# docs/
 #
-# A highly generic list of background noise and generated files that you don't
-# want clogging up your git tree.
-#
-# Copyright (C) 2013, 2014 Chris Cummins <chrisc.101@gmail.com>
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+
+/docs/2015-msc-thesis/thesis.pdf
+/docs/2015-progression-review/document.pdf
+/docs/wip-adapt/adapt.pdf
+/docs/wip-hlpgpu/hlpgpu.pdf
+/docs/wip-outline/outline.pdf
+/docs/wip-taco/taco.pdf
+
+# autotex:
+/docs/**/.autotex.deps
+/docs/**/.autotex.log
+
+# pdflatex:
+/docs/**/*-blx.bib
+/docs/**/*.acn
+/docs/**/*.acr
+/docs/**/*.alg
+/docs/**/*.aux
+/docs/**/*.bbl
+/docs/**/*.bcf
+/docs/**/*.blg
+/docs/**/*.dvi
+/docs/**/*.fdb_latexmk
+/docs/**/*.fls
+/docs/**/*.glg
+/docs/**/*.glo
+/docs/**/*.gls
+/docs/**/*.idx
+/docs/**/*.ilg
+/docs/**/*.ind
+/docs/**/*.ist
+/docs/**/*.loa
+/docs/**/*.lof
+/docs/**/*.log
+/docs/**/*.lol
+/docs/**/*.lot
+/docs/**/*.maf
+/docs/**/*.mtc
+/docs/**/*.mtc0
+/docs/**/*.nav
+/docs/**/*.nlo
+/docs/**/*.out
+/docs/**/*.pdfsync
+/docs/**/*.ps
+/docs/**/*.run.xml
+/docs/**/*.snm
+/docs/**/*.synctex.gz
+/docs/**/*.tdo
+/docs/**/*.toc
+/docs/**/*.vrb
+/docs/**/*.xdy
+
+# linter:
+/docs/**/*.lint
+
+# citation checker:
+/docs/**/*.cite
+
+# word counts:
+/docs/**/*.wc
+
+# emacs:
+/docs/**/auto/
+
 
 #
-# Editor backups and transient files
+# Miscellaneous
 #
+
+# Editor backups and transient files:
 *~
 \#*\#
 /.emacs.desktop
@@ -40,9 +84,7 @@ tramp
 Session.vim
 .netrwhist
 
-#
-# Platform specific noise
-#
+# Platform specific noise:
 $RECYCLE.BIN/
 .AppleDouble
 .DS_Store
