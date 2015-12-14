@@ -67,6 +67,19 @@
 
 
 #
+# learn/
+#
+
+/learn/atc++/*.lint
+/learn/atc++/*.o
+/learn/atc++/myvector
+/learn/expert_c/*.lint
+/learn/expert_c/*.o
+/learn/expert_c/cdecl
+/learn/expert_c/computer_dating
+
+
+#
 # Miscellaneous
 #
 
