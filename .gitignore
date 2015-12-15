@@ -76,10 +76,25 @@
 /learn/atc++/*.lint
 /learn/atc++/*.o
 /learn/atc++/myvector
+
 /learn/expert_c/*.lint
 /learn/expert_c/*.o
 /learn/expert_c/cdecl
 /learn/expert_c/computer_dating
+
+
+#
+# src/
+#
+
+/src/labm8/**/*.pyc
+/src/labm8/*.egg-info
+/src/labm8/*.log
+/src/labm8/.coverage
+/src/labm8/.eggs/*
+/src/labm8/build/
+/src/labm8/cover
+/src/labm8/dist/
 
 
 #
