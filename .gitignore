@@ -84,6 +84,19 @@
 
 
 #
+# playground/
+#
+
+/playground/rt/**/*.lint
+/playground/rt/**/*.o
+/playground/rt/**/*.ppm
+/playground/rt/examples/example1
+/playground/rt/examples/example2
+/playground/rt/examples/example2.cpp
+/playground/rt/src/librt.so
+
+
+#
 # src/
 #
 
