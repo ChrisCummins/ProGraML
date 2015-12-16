@@ -111,6 +111,17 @@
 
 
 #
+# thesis/
+#
+/thesis/**/*.aux
+/thesis/**/*.fls
+/thesis/**/*.log
+/thesis/**/auto/
+/thesis/.autotex.deps
+/thesis/thesis.pdf
+
+
+#
 # Miscellaneous
 #
 
