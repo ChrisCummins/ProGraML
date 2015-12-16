@@ -109,6 +109,15 @@
 /src/labm8/cover
 /src/labm8/dist/
 
+/src/omnitune/**/*.pyc
+/src/omnitune/*.egg-info
+/src/omnitune/*.log
+/src/omnitune/.coverage
+/src/omnitune/.eggs/*
+/src/omnitune/build/
+/src/omnitune/cover
+/src/omnitune/dist/
+
 
 #
 # thesis/
