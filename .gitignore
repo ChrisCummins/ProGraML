@@ -75,6 +75,7 @@
 
 /learn/atc++/*.lint
 /learn/atc++/*.o
+/learn/atc++/benchmark-argument-type
 /learn/atc++/myvector
 
 /learn/expert_c/*.lint
