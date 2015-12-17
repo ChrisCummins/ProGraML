@@ -84,6 +84,10 @@
 /learn/atc++/benchmark-argument-type
 /learn/atc++/myvector
 
+/learn/ctci/*.lint
+/learn/ctci/*.o
+/learn/ctci/0101-unique-chars-in-string
+
 /learn/expert_c/*.lint
 /learn/expert_c/*.o
 /learn/expert_c/cdecl
