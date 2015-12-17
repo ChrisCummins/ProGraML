@@ -70,6 +70,12 @@
 
 
 #
+# extern/
+#
+/extern/googletest-build/
+
+
+#
 # learn/
 #
 
