@@ -88,6 +88,8 @@
 /learn/ctci/*.o
 /learn/ctci/0101-unique-chars-in-string
 /learn/ctci/0102-reverse-string
+/learn/ctci/0103-permutations
+/learn/ctci/0104-escape-string
 
 /learn/expert_c/*.lint
 /learn/expert_c/*.o
