@@ -87,6 +87,7 @@
 /learn/ctci/*.lint
 /learn/ctci/*.o
 /learn/ctci/0101-unique-chars-in-string
+/learn/ctci/0102-reverse-string
 
 /learn/expert_c/*.lint
 /learn/expert_c/*.o
