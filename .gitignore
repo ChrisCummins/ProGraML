@@ -84,6 +84,10 @@
 /learn/atc++/benchmark-argument-type
 /learn/atc++/myvector
 
+/learn/challenges/01-int-average
+/learn/challenges/*.lint
+/learn/challenges/*.o
+
 /learn/ctci/*.lint
 /learn/ctci/*.o
 /learn/ctci/0101-unique-chars-in-string
