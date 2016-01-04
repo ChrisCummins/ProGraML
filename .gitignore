@@ -118,6 +118,12 @@
 /playground/rt/examples/example2.cpp
 /playground/rt/src/librt.so
 
+/playground/sc/**/*.lint
+/playground/sc/**/*.o
+/playground/sc/**/*.s
+/playground/sc/**/*.ppm
+/playground/sc/sc
+
 
 #
 # src/
