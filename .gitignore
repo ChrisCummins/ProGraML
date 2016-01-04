@@ -171,6 +171,11 @@ tramp
 Session.vim
 .netrwhist
 
+# gtags files:
+GPATH
+GRTAGS
+GTAGS
+
 # Platform specific noise:
 $RECYCLE.BIN/
 .AppleDouble
