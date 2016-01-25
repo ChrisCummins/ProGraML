@@ -5,10 +5,10 @@
 # docs/
 #
 
-/docs/2015-msc-thesis/thesis.pdf
-/docs/2015-progression-review/document.pdf
-/docs/wip-adapt/adapt.pdf
-/docs/wip-hlpgpu/hlpgpu.pdf
+/docs/2015-01-msc-thesis/thesis.pdf
+/docs/2015-02-progression-review/document.pdf
+/docs/2016-01-adapt/adapt.pdf
+/docs/2016-02-hlpgpu/hlpgpu.pdf
 /docs/wip-outline/outline.pdf
 /docs/wip-taco/taco.pdf
 
@@ -70,12 +70,47 @@
 
 
 #
+# extern/
+#
+/extern/googletest-build/
+
+
+#
+# lab/
+#
+/lab/stl/**/*.lint
+/lab/stl/**/*.o
+/lab/stl/tests
+
+
+#
 # learn/
 #
 
 /learn/atc++/*.lint
 /learn/atc++/*.o
+/learn/atc++/benchmark-argument-type
+/learn/atc++/constructors
 /learn/atc++/myvector
+/learn/atc++/strings
+/learn/atc++/user-input
+
+/learn/challenges/01-int-average
+/learn/challenges/gray-code
+/learn/challenges/*.lint
+/learn/challenges/*.o
+
+/learn/ctci/*.lint
+/learn/ctci/*.o
+/learn/ctci/0101-unique-chars-in-string
+/learn/ctci/0102-reverse-string
+/learn/ctci/0103-permutations
+/learn/ctci/0104-escape-string
+/learn/ctci/0105-string-compression
+/learn/ctci/0106-matrix-zero
+/learn/ctci/0402-directed-graph-routefinder
+/learn/ctci/1701-num-swap
+/learn/ctci/1702-tic-tac-toe
 
 /learn/expert_c/*.lint
 /learn/expert_c/*.o
@@ -94,6 +129,12 @@
 /playground/rt/examples/example2
 /playground/rt/examples/example2.cpp
 /playground/rt/src/librt.so
+
+/playground/sc/**/*.lint
+/playground/sc/**/*.o
+/playground/sc/**/*.s
+/playground/sc/**/*.ppm
+/playground/sc/sc
 
 
 #
@@ -147,6 +188,11 @@ tramp
 *.un~
 Session.vim
 .netrwhist
+
+# gtags files:
+GPATH
+GRTAGS
+GTAGS
 
 # Platform specific noise:
 $RECYCLE.BIN/
