@@ -80,6 +80,7 @@
 #
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
+/lab/stl/benchmarks
 /lab/stl/tests
 
 
