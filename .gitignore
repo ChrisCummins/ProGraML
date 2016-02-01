@@ -80,6 +80,7 @@
 #
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
+/lab/stl/benchmarks
 /lab/stl/tests
 
 
@@ -108,7 +109,12 @@
 /learn/ctci/0104-escape-string
 /learn/ctci/0105-string-compression
 /learn/ctci/0106-matrix-zero
+/learn/ctci/0202-linked-list-k-last
 /learn/ctci/0402-directed-graph-routefinder
+/learn/ctci/1101-merge-arrays
+/learn/ctci/1102-sort-anagrams
+/learn/ctci/1301-last-k-lines
+/learn/ctci/1307-tree-copy
 /learn/ctci/1701-num-swap
 /learn/ctci/1702-tic-tac-toe
 
