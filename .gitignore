@@ -81,7 +81,10 @@
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
 /lab/stl/benchmarks
-/lab/stl/tests
+/lab/stl/test/algorithm
+/lab/stl/test/array
+/lab/stl/test/test
+/lab/stl/test/vector
 
 
 #
