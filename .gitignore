@@ -102,10 +102,11 @@
 /learn/atc++/strings
 /learn/atc++/user-input
 
-/learn/challenges/01-int-average
-/learn/challenges/gray-code
 /learn/challenges/*.lint
 /learn/challenges/*.o
+/learn/challenges/01-int-average
+/learn/challenges/gray-code
+/learn/challenges/linked-list
 
 /learn/ctci/*.lint
 /learn/ctci/*.o
