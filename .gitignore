@@ -80,11 +80,14 @@
 #
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
-/lab/stl/benchmarks
-/lab/stl/test/algorithm
-/lab/stl/test/array
-/lab/stl/test/test
-/lab/stl/test/vector
+/lab/stl/benchmarks/algorithm
+/lab/stl/benchmarks/array
+/lab/stl/benchmarks/benchmarks
+/lab/stl/benchmarks/vector
+/lab/stl/tests/algorithm
+/lab/stl/tests/array
+/lab/stl/tests/tests
+/lab/stl/tests/vector
 
 
 #
