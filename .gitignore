@@ -80,8 +80,14 @@
 #
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
-/lab/stl/benchmarks
-/lab/stl/tests
+/lab/stl/benchmarks/algorithm
+/lab/stl/benchmarks/array
+/lab/stl/benchmarks/benchmarks
+/lab/stl/benchmarks/vector
+/lab/stl/tests/algorithm
+/lab/stl/tests/array
+/lab/stl/tests/tests
+/lab/stl/tests/vector
 
 
 #
@@ -96,10 +102,11 @@
 /learn/atc++/strings
 /learn/atc++/user-input
 
-/learn/challenges/01-int-average
-/learn/challenges/gray-code
 /learn/challenges/*.lint
 /learn/challenges/*.o
+/learn/challenges/001-int-average
+/learn/challenges/006-gray-code
+/learn/challenges/008-linked-list
 
 /learn/ctci/*.lint
 /learn/ctci/*.o
@@ -108,13 +115,18 @@
 /learn/ctci/0103-permutations
 /learn/ctci/0104-escape-string
 /learn/ctci/0105-string-compression
-/learn/ctci/0106-matrix-zero
+/learn/ctci/0107-matrix-zero
+/learn/ctci/0108-string-rotation
+/learn/ctci/0201-list-remove-dups
 /learn/ctci/0202-linked-list-k-last
+/learn/ctci/0302-stack-min
 /learn/ctci/0402-directed-graph-routefinder
+/learn/ctci/0502-binary-double
 /learn/ctci/1101-merge-arrays
 /learn/ctci/1102-sort-anagrams
 /learn/ctci/1301-last-k-lines
 /learn/ctci/1307-tree-copy
+/learn/ctci/1310-2d-alloc
 /learn/ctci/1701-num-swap
 /learn/ctci/1702-tic-tac-toe
 
