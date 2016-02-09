@@ -136,6 +136,11 @@
 /learn/expert_c/cdecl
 /learn/expert_c/computer_dating
 
+/learn/triSYCL/**/*.lint
+/learn/triSYCL/**/*.o
+/learn/triSYCL/001-dot-product
+/learn/triSYCL/002-saxpy
+/learn/triSYCL/003-parallel-matrix
 
 #
 # playground/
