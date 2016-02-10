@@ -141,6 +141,9 @@
 /learn/triSYCL/001-dot-product
 /learn/triSYCL/002-saxpy
 /learn/triSYCL/003-parallel-matrix
+/learn/triSYCL/004-gaussian-blur
+/learn/triSYCL/out-sycl.pgm
+/learn/triSYCL/out.pgm
 
 #
 # playground/
