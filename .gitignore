@@ -104,6 +104,10 @@
 /learn/atc++/templates
 /learn/atc++/user-input
 
+/learn/boost/*.lint
+/learn/boost/*.o
+/learn/boost/fs
+
 /learn/challenges/*.lint
 /learn/challenges/*.o
 /learn/challenges/001-int-average
