@@ -93,11 +93,13 @@
 
 /learn/atc++/*.lint
 /learn/atc++/*.o
+/learn/atc++/arrays
 /learn/atc++/benchmark-argument-type
 /learn/atc++/constructors
 /learn/atc++/functional
 /learn/atc++/hash_map
 /learn/atc++/inheritance
+/learn/atc++/lambdas
 /learn/atc++/myvector
 /learn/atc++/size-of
 /learn/atc++/strings
