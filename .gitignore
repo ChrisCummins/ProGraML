@@ -151,6 +151,11 @@
 /learn/expert_c/cdecl
 /learn/expert_c/computer_dating
 
+/learn/pc/**/*.lint
+/learn/pc/**/*.o
+/learn/pc/001-fib
+/learn/pc/humble-001
+
 /learn/triSYCL/**/*.lint
 /learn/triSYCL/**/*.o
 /learn/triSYCL/001-dot-product
