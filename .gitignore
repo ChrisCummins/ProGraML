@@ -117,6 +117,7 @@
 /learn/challenges/001-int-average
 /learn/challenges/006-gray-code
 /learn/challenges/008-linked-list
+/learn/challenges/009-longest-substr
 
 /learn/ctci/*.lint
 /learn/ctci/*.o
