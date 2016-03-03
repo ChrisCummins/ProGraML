@@ -155,6 +155,7 @@
 /learn/pc/**/*.lint
 /learn/pc/**/*.o
 /learn/pc/001-fib
+/learn/pc/003-string-inc
 /learn/pc/humble-001
 
 /learn/triSYCL/**/*.lint
