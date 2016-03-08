@@ -152,6 +152,10 @@
 /learn/expert_c/cdecl
 /learn/expert_c/computer_dating
 
+/learn/hoocl/**/*.lint
+/learn/hoocl/**/*.o
+/learn/hoocl/001-dev-info
+
 /learn/pc/**/*.lint
 /learn/pc/**/*.o
 /learn/pc/001-fib
