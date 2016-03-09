@@ -155,6 +155,7 @@
 /learn/hoocl/**/*.lint
 /learn/hoocl/**/*.o
 /learn/hoocl/001-dev-info
+/learn/hoocl/002-vadd
 
 /learn/pc/**/*.lint
 /learn/pc/**/*.o
