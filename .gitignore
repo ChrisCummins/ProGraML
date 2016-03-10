@@ -162,6 +162,8 @@
 /learn/pc/001-fib
 /learn/pc/002-linked-lists
 /learn/pc/003-string-inc
+/learn/pc/004-*.ppm
+/learn/pc/004-fractal
 /learn/pc/humble-001
 
 /learn/triSYCL/**/*.lint
