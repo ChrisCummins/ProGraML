@@ -182,6 +182,11 @@
 # playground/
 #
 
+/playground/r/**/*.lint
+/playground/r/**/*.o
+/playground/r/**/*.ppm
+/playground/r/main
+
 /playground/rt/**/*.lint
 /playground/rt/**/*.o
 /playground/rt/**/*.ppm
