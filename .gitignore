@@ -78,6 +78,10 @@
 #
 # lab/
 #
+/lab/ml/*.txt
+/lab/ml/cl/*
+/lab/ml/markov.db
+
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
 /lab/stl/benchmarks/algorithm
