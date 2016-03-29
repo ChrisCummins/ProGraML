@@ -172,6 +172,7 @@
 /learn/pc/004-*.ppm
 /learn/pc/004-fractal
 /learn/pc/humble-001
+/learn/pc/humble-003-vector
 
 /learn/triSYCL/**/*.lint
 /learn/triSYCL/**/*.o
