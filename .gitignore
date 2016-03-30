@@ -79,7 +79,7 @@
 # lab/
 #
 /lab/ml/*.txt
-/lab/ml/cl/*
+/lab/ml/cl.db
 /lab/ml/markov.db
 
 /lab/stl/**/*.lint
