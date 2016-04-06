@@ -78,8 +78,7 @@
 #
 # lab/
 #
-/lab/ml/*.txt
-/lab/ml/cl.db
+/lab/ml/dataset.db
 /lab/ml/markov.db
 
 /lab/stl/**/*.lint
