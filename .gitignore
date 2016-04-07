@@ -83,6 +83,7 @@
 /lab/ml/**/*.db-journal
 /lab/ml/bc
 /lab/ml/cl
+/lab/ml/img
 
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
