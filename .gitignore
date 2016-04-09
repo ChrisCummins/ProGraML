@@ -79,6 +79,11 @@
 # lab/
 #
 
+/lab/lm/**/*.lint
+/lab/lm/**/*.o
+/lab/lm/benchmarks/benchmarks
+/lab/lm/tests/tests
+
 /lab/ml/**/*.db
 /lab/ml/**/*.db-journal
 /lab/ml/bc
