@@ -88,6 +88,7 @@
 /lab/ml/**/*.db-journal
 /lab/ml/bc
 /lab/ml/cl
+/lab/ml/cl-tidy
 /lab/ml/img
 
 /lab/stl/**/*.lint
