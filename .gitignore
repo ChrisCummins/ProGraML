@@ -90,6 +90,9 @@
 /lab/ml/cl
 /lab/ml/cl-tidy
 /lab/ml/img
+/lab/ml/rewriter
+/lab/ml/rewriter.cpp.lint
+/lab/ml/rewriter.o
 
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
