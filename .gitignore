@@ -91,6 +91,7 @@
 /lab/ml/cl-tidy
 /lab/ml/CLProg.c
 /lab/ml/img
+/lab/ml/platform.info
 /lab/ml/rewriter
 /lab/ml/rewriter.cpp.lint
 /lab/ml/rewriter.o
