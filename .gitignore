@@ -86,11 +86,9 @@
 
 /lab/ml/**/*.db
 /lab/ml/**/*.db-journal
-/lab/ml/bc
-/lab/ml/cl
-/lab/ml/cl-tidy
 /lab/ml/CLProg.c
 /lab/ml/img
+/lab/ml/input.txt
 /lab/ml/platform.info
 /lab/ml/rewriter
 /lab/ml/rewriter.cpp.lint
