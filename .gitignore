@@ -142,6 +142,7 @@
 /learn/challenges/011-big-mandelbrot.ppm
 /learn/challenges/012-simple-cyphers
 /learn/challenges/013-n-commits.py.cache.json
+/learn/challenges/014-palindrome
 
 /learn/ctci/*.lint
 /learn/ctci/*.o
