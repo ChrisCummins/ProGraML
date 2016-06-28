@@ -96,6 +96,10 @@
 /lab/ml/rewriter.cpp.lint
 /lab/ml/rewriter.o
 
+/lab/patterns/**/*.lint
+/lab/patterns/**/*.o
+/lab/patterns/main
+
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
 /lab/stl/benchmarks/algorithm
