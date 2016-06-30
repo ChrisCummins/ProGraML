@@ -2,6 +2,11 @@
 /.bootstrapped
 
 #
+# benchmarks/
+#
+/benchmarks/parboil/datasets/*
+
+#
 # docs/
 #
 
