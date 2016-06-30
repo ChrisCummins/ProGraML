@@ -261,6 +261,12 @@
 /src/omnitune/cover
 /src/omnitune/dist/
 
+/src/smith/**/*.pyc
+/src/smith/*.egg-info
+/src/smith/.eggs/*
+/src/smith/build/
+/src/smith/dist/
+
 
 #
 # thesis/
