@@ -4,6 +4,9 @@
 #
 # benchmarks/
 #
+/benchmarks/parboil/**/*.o
+/benchmarks/parboil/**/*.pyc
+/benchmarks/parboil/benchmarks/*/build
 /benchmarks/parboil/datasets/*
 
 #
