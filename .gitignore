@@ -264,6 +264,7 @@
 
 /src/smith/**/*.pyc
 /src/smith/*.egg-info
+/src/smith/*.log
 /src/smith/.eggs/*
 /src/smith/build/
 /src/smith/dist/
