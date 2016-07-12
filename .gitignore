@@ -2,6 +2,14 @@
 /.bootstrapped
 
 #
+# benchmarks/
+#
+/benchmarks/parboil/**/*.o
+/benchmarks/parboil/**/*.pyc
+/benchmarks/parboil/benchmarks/*/build
+/benchmarks/parboil/datasets/*
+
+#
 # docs/
 #
 
@@ -96,6 +104,10 @@
 /lab/ml/rewriter
 /lab/ml/rewriter.cpp.lint
 /lab/ml/rewriter.o
+
+/lab/patterns/**/*.lint
+/lab/patterns/**/*.o
+/lab/patterns/main
 
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
