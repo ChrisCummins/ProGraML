@@ -109,6 +109,8 @@
 /lab/patterns/**/*.o
 /lab/patterns/main
 
+/lab/smith/data/*
+
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
 /lab/stl/benchmarks/algorithm
