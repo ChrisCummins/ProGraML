@@ -111,6 +111,7 @@
 /lab/patterns/main
 
 /lab/smith/data/*
+/lab/smith/src/*
 
 /lab/stl/**/*.lint
 /lab/stl/**/*.o
