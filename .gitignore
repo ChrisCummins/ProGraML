@@ -110,6 +110,7 @@
 /lab/patterns/**/*.o
 /lab/patterns/main
 
+/lab/smith/backups/*
 /lab/smith/data/*
 /lab/smith/src/*
 
