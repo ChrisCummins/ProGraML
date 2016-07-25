@@ -21,3 +21,4 @@
 # Scripts
 !/**/compile
 !/**/run
+!/**/set-device
