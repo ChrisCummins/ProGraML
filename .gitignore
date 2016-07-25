@@ -1,0 +1,12 @@
+# Benchmarks
+/amd-app-sdk-3.0/*
+/npb-3.3/*
+/nvidia-4.2/*
+/parboil-0.2/*
+/polybench-gpu-1.0/*
+/rodinia-3.1/*
+/shoc-1.1.5/*
+
+# Scripts
+!/**/compile
+!/**/run
