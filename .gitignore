@@ -12,6 +12,8 @@
 !/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-good.sh
 
 /npb-3.3/*
+!/npb-3.3/automate
+
 /nvidia-4.2/*
 /parboil-0.2/*
 /polybench-gpu-1.0/*
