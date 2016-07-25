@@ -1,5 +1,16 @@
 # Benchmarks
 /amd-app-sdk-3.0/*
+!/amd-app-sdk-3.0/samples
+/amd-app-sdk-3.0/samples/*
+!/amd-app-sdk-3.0/samples/opencl
+/amd-app-sdk-3.0/samples/opencl/*
+!/amd-app-sdk-3.0/samples/opencl/cl
+/amd-app-sdk-3.0/samples/opencl/cl/*
+!/amd-app-sdk-3.0/samples/opencl/cl/1.x
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/*
+!/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-all.sh
+!/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-good.sh
+
 /npb-3.3/*
 /nvidia-4.2/*
 /parboil-0.2/*
