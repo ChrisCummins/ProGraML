@@ -11,8 +11,10 @@
 !/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-all.sh
 !/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-good.sh
 
-/npb-3.3/*
-!/npb-3.3/automate
+/npb-3.3/**/*.o
+/npb-3.3/bin/*
+!/npb-3.3/bin/timer.flag
+/npb-3.3/results/*
 
 /nvidia-4.2/*
 /parboil-0.2/*
