@@ -1,4 +1,5 @@
 *.o
+*.pyc
 
 # Benchmarks
 /amd-app-sdk-3.0/*
@@ -24,7 +25,16 @@
 /npb-3.3/sys/setparams
 
 /nvidia-4.2/*
-/parboil-0.2/*
+
+/parboil-0.2/benchmarks/*/build
+/parboil-0.2/benchmarks/*/run/*
+/parboil-0.2/benchmarks/*/src/base
+/parboil-0.2/benchmarks/*/src/cuda
+/parboil-0.2/benchmarks/*/src/cuda_base
+/parboil-0.2/benchmarks/*/src/omp_base
+/parboil-0.2/benchmarks/*/src/opencl_nvidia
+/parboil-0.2/datasets/*
+
 /polybench-gpu-1.0/*
 /rodinia-3.1/*
 /shoc-1.1.5/*
