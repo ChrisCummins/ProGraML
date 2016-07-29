@@ -14,6 +14,11 @@
 !/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-good.sh
 
 /npb-3.3/bin/*
+!/npb-3.3/bin/run_ocl_cpu.sh
+!/npb-3.3/bin/run_ocl_gpu.sh
+!/npb-3.3/bin/log
+/npb-3.3/bin/log/*
+!/npb-3.3/bin/log/.gitignore
 !/npb-3.3/bin/timer.flag
 /npb-3.3/results/*
 /npb-3.3/sys/setparams
