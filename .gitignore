@@ -88,6 +88,7 @@
 # extern/
 #
 /extern/googletest-build/
+/extern/intel-tbb/
 
 
 #
