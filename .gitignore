@@ -87,6 +87,7 @@
 #
 # extern/
 #
+/extern/boost/
 /extern/googletest-build/
 /extern/intel-tbb/
 
