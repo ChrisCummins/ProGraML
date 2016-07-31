@@ -267,6 +267,10 @@
 /src/omnitune/cover
 /src/omnitune/dist/
 
+/src/phd/**/*.lint
+/src/phd/**/*.o
+/src/phd/**/*.so
+
 
 #
 # thesis/
