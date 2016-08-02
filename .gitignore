@@ -273,7 +273,7 @@
 /src/smith/.eggs/*
 /src/smith/build/
 /src/smith/dist/
-/src/smith/native/**/*.lint
+/src/smith/native/**/*.cpplint
 /src/smith/native/**/*.o
 /src/smith/native/features
 /src/smith/native/rewriter
