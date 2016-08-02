@@ -72,9 +72,6 @@
 /docs/**/*.vrb
 /docs/**/*.xdy
 
-# linter:
-/docs/**/*.lint
-
 # citation checker:
 /docs/**/*.cite
 
@@ -97,12 +94,12 @@
 # lab/
 #
 
-/lab/lm/**/*.lint
+/lab/lm/**/*.cpplint
 /lab/lm/**/*.o
 /lab/lm/benchmarks/benchmarks
 /lab/lm/tests/tests
 
-/lab/patterns/**/*.lint
+/lab/patterns/**/*.cpplint
 /lab/patterns/**/*.o
 /lab/patterns/main
 
@@ -110,7 +107,7 @@
 /lab/smith/data/*
 /lab/smith/src/*
 
-/lab/stl/**/*.lint
+/lab/stl/**/*.cpplint
 /lab/stl/**/*.o
 /lab/stl/benchmarks/algorithm
 /lab/stl/benchmarks/array
@@ -123,7 +120,7 @@
 # learn/
 #
 
-/learn/atc++/*.lint
+/learn/atc++/*.cpplint
 /learn/atc++/*.o
 /learn/atc++/arrays
 /learn/atc++/benchmark-argument-type
@@ -142,11 +139,11 @@
 /learn/atc++/user-input
 /learn/atc++/value-categories
 
-/learn/boost/*.lint
+/learn/boost/*.cpplint
 /learn/boost/*.o
 /learn/boost/fs
 
-/learn/challenges/*.lint
+/learn/challenges/*.cpplint
 /learn/challenges/*.o
 /learn/challenges/001-int-average
 /learn/challenges/006-gray-code
@@ -159,7 +156,7 @@
 /learn/challenges/013-n-commits.py.cache.json
 /learn/challenges/014-palindrome
 
-/learn/ctci/*.lint
+/learn/ctci/*.cpplint
 /learn/ctci/*.o
 /learn/ctci/0101-unique-chars-in-string
 /learn/ctci/0102-reverse-string
@@ -187,18 +184,18 @@
 /learn/ctci/1701-num-swap
 /learn/ctci/1702-tic-tac-toe
 
-/learn/expert_c/*.lint
+/learn/expert_c/*.cpplint
 /learn/expert_c/*.o
 /learn/expert_c/cdecl
 /learn/expert_c/computer_dating
 
-/learn/hoocl/**/*.lint
+/learn/hoocl/**/*.cpplint
 /learn/hoocl/**/*.o
 /learn/hoocl/001-dev-info
 /learn/hoocl/002-vadd
 /learn/hoocl/003-vadd_cpp
 
-/learn/pc/**/*.lint
+/learn/pc/**/*.cpplint
 /learn/pc/**/*.o
 /learn/pc/001-fib
 /learn/pc/002-linked-lists
@@ -208,7 +205,7 @@
 /learn/pc/humble-001
 /learn/pc/humble-003-vector
 
-/learn/triSYCL/**/*.lint
+/learn/triSYCL/**/*.cpplint
 /learn/triSYCL/**/*.o
 /learn/triSYCL/001-dot-product
 /learn/triSYCL/002-saxpy
@@ -221,12 +218,12 @@
 # playground/
 #
 
-/playground/r/**/*.lint
+/playground/r/**/*.cpplint
 /playground/r/**/*.o
 /playground/r/**/*.ppm
 /playground/r/main
 
-/playground/rt/**/*.lint
+/playground/rt/**/*.cpplint
 /playground/rt/**/*.o
 /playground/rt/**/*.ppm
 /playground/rt/examples/example1
@@ -234,7 +231,7 @@
 /playground/rt/examples/example2.cpp
 /playground/rt/src/librt.so
 
-/playground/sc/**/*.lint
+/playground/sc/**/*.cpplint
 /playground/sc/**/*.o
 /playground/sc/**/*.s
 /playground/sc/**/*.ppm
@@ -246,6 +243,7 @@
 #
 
 /src/labm8/**/*.pyc
+/src/labm8/**/*.pylint
 /src/labm8/*.egg-info
 /src/labm8/*.log
 /src/labm8/.coverage
@@ -255,6 +253,7 @@
 /src/labm8/dist/
 
 /src/omnitune/**/*.pyc
+/src/omnitune/**/*.pylint
 /src/omnitune/*.egg-info
 /src/omnitune/*.log
 /src/omnitune/.coverage
@@ -263,7 +262,7 @@
 /src/omnitune/cover
 /src/omnitune/dist/
 
-/src/phd/**/*.lint
+/src/phd/**/*.cpplint
 /src/phd/**/*.o
 /src/phd/**/*.so
 
