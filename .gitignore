@@ -244,6 +244,7 @@
 
 /src/labm8/**/*.pyc
 /src/labm8/**/*.pylint
+/src/labm8/*.egg
 /src/labm8/*.egg-info
 /src/labm8/*.log
 /src/labm8/.coverage
@@ -254,6 +255,7 @@
 
 /src/omnitune/**/*.pyc
 /src/omnitune/**/*.pylint
+/src/omnitune/*.egg
 /src/omnitune/*.egg-info
 /src/omnitune/*.log
 /src/omnitune/.coverage
