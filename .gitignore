@@ -268,6 +268,7 @@
 
 /src/smith/**/*.pyc
 /src/smith/**/*.pylint
+/src/smith/*.egg
 /src/smith/*.egg-info
 /src/smith/*.log
 /src/smith/.eggs/*
