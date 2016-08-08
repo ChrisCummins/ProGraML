@@ -1,3 +1,4 @@
+*.a
 *.bkp
 *.o
 *.pyc
@@ -32,7 +33,9 @@
 /npb-3.3/sys/setparams
 
 /nvidia-4.2/OpenCL/bin
-/nvidia-4.2/OpenCL/**/*.txt
+/nvidia-4.2/**/*.txt
+/nvidia-4.2/logs
+
 
 /parboil-0.2/benchmarks/*/build
 /parboil-0.2/benchmarks/*/run/*
