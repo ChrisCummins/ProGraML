@@ -17,6 +17,7 @@
 /amd-app-sdk-3.0/samples/opencl/cl/1.x/**/CMakeFiles
 /amd-app-sdk-3.0/samples/opencl/cl/1.x/**/*.cmake
 /amd-app-sdk-3.0/samples/opencl/cl/1.x/logs
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/Makefile
 /amd-app-sdk-3.0/samples/opencl/cl/1.x/**/Makefile
 
 /npb-3.3/bin/*
