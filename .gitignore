@@ -2,6 +2,7 @@
 *.bkp
 *.o
 *.pyc
+*.so
 
 # Benchmarks
 /amd-app-sdk-3.0/*
@@ -51,7 +52,7 @@
 /rodinia-3.1/*
 !/rodinia-3.1/opencl
 !/rodinia-3.1/common
-/rodinia-3.1/opencl/b+tree/b+tree.out
+/rodinia-3.1/opencl/**/*.out
 /rodinia-3.1/opencl/b+tree/output.txt
 /rodinia-3.1/opencl/b+tree/penmp
 /rodinia-3.1/opencl/backprop/backprop
