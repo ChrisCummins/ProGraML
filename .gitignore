@@ -46,13 +46,16 @@
 /rodinia-3.1/*
 !/rodinia-3.1/opencl
 !/rodinia-3.1/common
-/rodinia-3.1/opencl/bfs/bfs
 /rodinia-3.1/opencl/b+tree/b+tree.out
+/rodinia-3.1/opencl/b+tree/output.txt
 /rodinia-3.1/opencl/b+tree/penmp
 /rodinia-3.1/opencl/backprop/backprop
+/rodinia-3.1/opencl/bfs/bfs
 /rodinia-3.1/opencl/cfd/density
 /rodinia-3.1/opencl/cfd/density_energy
 /rodinia-3.1/opencl/cfd/euler3d
+/rodinia-3.1/opencl/cfd/momentum
+/rodinia-3.1/opencl/cfd/PD_OCL.txt
 /rodinia-3.1/opencl/dwt2d/192.bmp.dwt.b
 /rodinia-3.1/opencl/dwt2d/192.bmp.dwt.g
 /rodinia-3.1/opencl/dwt2d/192.bmp.dwt.r
@@ -65,14 +68,19 @@
 /rodinia-3.1/opencl/hybridsort/hybridsort
 /rodinia-3.1/opencl/kmeans/kmeans
 /rodinia-3.1/opencl/lavaMD/lavaMD
+/rodinia-3.1/opencl/leukocyte/meschach_lib/meschach.a
 /rodinia-3.1/opencl/leukocyte/OpenCL/leukocyte
 /rodinia-3.1/opencl/lud/ocl/lud
+/rodinia-3.1/opencl/myocyte/output.txt
 /rodinia-3.1/opencl/nn/nn
 /rodinia-3.1/opencl/nw/nw
 /rodinia-3.1/opencl/particlefilter/OCL_particlefilter_double
 /rodinia-3.1/opencl/particlefilter/OCL_particlefilter_naive
 /rodinia-3.1/opencl/particlefilter/OCL_particlefilter_single
+/rodinia-3.1/opencl/particlefilter/output.txt
 /rodinia-3.1/opencl/pathfinder/pathfinder
+/rodinia-3.1/opencl/pathfinder/result.txt
+/rodinia-3.1/opencl/srad/output/image_out.pgm
 /rodinia-3.1/opencl/srad/srad
 /rodinia-3.1/opencl/streamcluster/streamcluster
 
