@@ -11,9 +11,13 @@
 !/amd-app-sdk-3.0/samples/opencl/cl
 /amd-app-sdk-3.0/samples/opencl/cl/*
 !/amd-app-sdk-3.0/samples/opencl/cl/1.x
-/amd-app-sdk-3.0/samples/opencl/cl/1.x/*
-!/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-all.sh
-!/amd-app-sdk-3.0/samples/opencl/cl/1.x/run-good.sh
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/CMake*
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/*.cmake
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/*/bin
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/**/CMakeFiles
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/**/*.cmake
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/logs
+/amd-app-sdk-3.0/samples/opencl/cl/1.x/**/Makefile
 
 /npb-3.3/bin/*
 !/npb-3.3/bin/run_ocl_cpu.sh
