@@ -55,6 +55,9 @@
 /parboil-0.2/datasets/*
 
 /polybench-gpu-1.0/*
+!/polybench-gpu-1.0/OpenCL
+/polybench-gpu-1.0/logs
+/polybench-gpu-1.0/OpenCL/**/*.exe
 
 /rodinia-3.1/*
 !/rodinia-3.1/automate
