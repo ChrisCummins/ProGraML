@@ -5,6 +5,7 @@
 *.so
 
 /logs
+*.zip
 
 # Benchmarks
 /amd-app-sdk-3.0/*
