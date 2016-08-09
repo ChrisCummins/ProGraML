@@ -44,6 +44,7 @@
 /nvidia-4.2/logs
 
 !/parboil-0.2/automate
+/parboil-0.2/logs
 /parboil-0.2/benchmarks/*/build
 /parboil-0.2/benchmarks/*/run/*
 /parboil-0.2/benchmarks/*/src/base
