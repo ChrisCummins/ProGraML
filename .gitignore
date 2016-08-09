@@ -4,6 +4,8 @@
 *.pyc
 *.so
 
+/logs
+
 # Benchmarks
 /amd-app-sdk-3.0/*
 !/amd-app-sdk-3.0/automate
