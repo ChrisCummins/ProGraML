@@ -205,6 +205,8 @@
 /learn/pc/humble-001
 /learn/pc/humble-003-vector
 
+/learn/tensorflow/MNIST_data/
+
 /learn/triSYCL/**/*.cpplint
 /learn/triSYCL/**/*.o
 /learn/triSYCL/001-dot-product
