@@ -30,3 +30,26 @@ tools/compilerVersion.txt
 tools/shocdriver
 
 *.bkp
+
+/logs
+/log.txt
+
+# Binaries
+src/opencl/level0/BusSpeedDownload
+src/opencl/level0/BusSpeedReadback
+src/opencl/level0/DeviceMemory
+src/opencl/level0/KernelCompile
+src/opencl/level0/MaxFlops
+src/opencl/level0/QueueDelay
+src/opencl/level1/bfs/BFS
+src/opencl/level1/fft/FFT
+src/opencl/level1/gemm/GEMM
+src/opencl/level1/md/MD
+src/opencl/level1/md5hash/MD5Hash
+src/opencl/level1/reduction/Reduction
+src/opencl/level1/scan/Scan
+src/opencl/level1/sort/Sort
+src/opencl/level1/spmv/Spmv
+src/opencl/level1/stencil2d/Stencil2D
+src/opencl/level1/triad/Triad
+src/opencl/level2/s3d/S3D
