@@ -106,11 +106,12 @@
 /lab/smith/backups/*
 /lab/smith/**/data
 /lab/smith/src/*
-/lab/smith/human-or-robot/*.synctex.gz
 /lab/smith/human-or-robot/*.aux
 /lab/smith/human-or-robot/*.log
 /lab/smith/human-or-robot/*.pdf
+/lab/smith/human-or-robot/*.synctex.gz
 /lab/smith/human-or-robot/sample-*.cl
+/lab/smith/human-or-robot/uid.tex
 
 /lab/stl/**/*.cpplint
 /lab/stl/**/*.o
