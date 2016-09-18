@@ -1,3 +1,6 @@
 *.pyc
 .eggs/
 CLgen.egg-info/
+
+# Python virtualenv:
+/env
