@@ -2,5 +2,9 @@
 .eggs/
 CLgen.egg-info/
 
+# Python setuptools:
+/build
+/dist
+
 # Python virtualenv:
 /env
