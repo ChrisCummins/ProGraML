@@ -8,3 +8,6 @@ CLgen.egg-info/
 
 # Python virtualenv:
 /env
+
+# Unpacked test archives:
+/tests/data/tiny/corpus
