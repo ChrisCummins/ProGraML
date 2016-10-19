@@ -1,6 +1,6 @@
-# Local cache
 /.build
 /.cache
+/.src
 
 *.pylint
 *.cpplint
