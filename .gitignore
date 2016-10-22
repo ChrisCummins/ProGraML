@@ -28,9 +28,6 @@
 /env2
 /env3
 
-# Ignore gh-pages checkout
-/.docs
-
 # Editor specific files.
 *.sublime-project
 *.sublime-workspace
