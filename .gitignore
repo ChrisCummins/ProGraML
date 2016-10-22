@@ -1,13 +1,19 @@
 *.pyc
-.eggs/
-CLgen.egg-info/
-
-# Python setuptools:
+.eggs
+*.egg-info
 /build
 /dist
 
-# Python virtualenv:
-/env
+# python virtualenvs
+/env2
+/env3
 
-# Unpacked test archives:
+# sublime files
+*.sublime-project
+*.sublime-workspace
+
+# os trash
+.DS_Store
+
+# unpacked test archives
 /tests/data/tiny/corpus
