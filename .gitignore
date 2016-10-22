@@ -17,3 +17,7 @@
 
 # unpacked test archives
 /tests/data/tiny/corpus
+
+# llvm dependency
+/native/llvm
+
