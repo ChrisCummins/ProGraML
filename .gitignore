@@ -27,3 +27,7 @@
 # Virtualenv directories.
 /env2
 /env3
+
+# Editor specific files.
+*.sublime-project
+*.sublime-workspace
