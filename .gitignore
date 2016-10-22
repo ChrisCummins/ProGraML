@@ -18,6 +18,6 @@
 # unpacked test archives
 /tests/data/tiny/corpus
 
-# llvm dependency
+# native files
 /native/llvm
-
+/native/clgen-rewriter
