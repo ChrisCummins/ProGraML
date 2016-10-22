@@ -31,3 +31,6 @@
 # Editor specific files.
 *.sublime-project
 *.sublime-workspace
+
+# OS trash
+.DS_Store
