@@ -19,5 +19,6 @@
 /tests/data/tiny/corpus
 
 # native files
+/clgen/data/bin
 /native/llvm
 /native/clgen-rewriter
