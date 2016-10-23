@@ -8,5 +8,4 @@ python-dateutil==2.5.3
 pytz==2016.7
 scipy>=0.16.1
 six==1.10.0
-wsgiref>=0.1.2
 labm8==0.0.2
