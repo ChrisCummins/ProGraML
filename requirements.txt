@@ -1,3 +1,6 @@
+argparse>=1.2.1
+Cython==0.23.4
+h5py==2.5.0
 humanize==0.5.1
 numpy>=1.10.4
 pandas>=0.19.0
@@ -5,4 +8,5 @@ python-dateutil==2.5.3
 pytz==2016.7
 scipy>=0.16.1
 six==1.10.0
+wsgiref==0.1.2
 labm8==0.0.2
