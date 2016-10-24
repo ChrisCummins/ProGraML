@@ -1,12 +1,16 @@
+# python stuff
 *.pyc
 .eggs
 *.egg-info
 /build
 /dist
+# virtualenv
+/env
 
-# python virtualenvs
-/env2
-/env3
+# native stuff
+/clgen/data/bin
+/native/llvm
+/native/clgen-rewriter
 
 # sublime files
 *.sublime-project
@@ -17,8 +21,3 @@
 
 # unpacked test archives
 /tests/data/tiny/corpus
-
-# native files
-/clgen/data/bin
-/native/llvm
-/native/clgen-rewriter
