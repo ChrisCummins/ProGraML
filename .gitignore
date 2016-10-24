@@ -9,8 +9,10 @@
 
 # native stuff
 /clgen/data/bin
-/native/llvm
 /native/clgen-rewriter
+/native/cmake
+/native/llvm
+/native/ninja
 
 # sublime files
 *.sublime-project
