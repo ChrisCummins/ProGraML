@@ -7,9 +7,11 @@
 # virtualenv
 /env
 
-# native stuff
+# package data
 /clgen/data/bin
-/native/clgen-rewriter
+/clgen/data/libclc
+
+# native stuff
 /native/cmake
 /native/llvm
 /native/ninja
