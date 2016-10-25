@@ -16,6 +16,9 @@
 /native/llvm
 /native/ninja
 
+# generated docs
+/docs/binaries.rst
+
 # sublime files
 *.sublime-project
 *.sublime-workspace
