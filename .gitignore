@@ -18,9 +18,6 @@
 /native/torch-rnn/*.bootstrapped
 /native/torch/trunk/build
 
-# generated docs
-/docs/binaries.rst
-
 # sublime files
 *.sublime-project
 *.sublime-workspace
