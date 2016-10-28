@@ -30,3 +30,4 @@
 
 # unpacked test archives
 /tests/data/tiny/corpus
+/corpus
