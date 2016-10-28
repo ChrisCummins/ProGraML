@@ -10,6 +10,7 @@
 # package data
 /clgen/data/bin
 /clgen/data/libclc
+/clgen/data/torch-rnn
 
 # native stuff
 /native/cmake
