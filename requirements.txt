@@ -10,4 +10,4 @@ requests==2.11.1
 PyGithub==1.29
 scipy>=0.16.1
 six==1.10.0
-labm8==0.0.2
+labm8==0.0.4
