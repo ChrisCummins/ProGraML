@@ -7,6 +7,10 @@
 # virtualenv
 /env
 
+# config
+/.config.make
+/clgen/config.py
+
 # package data
 /clgen/data/bin
 /clgen/data/libclc
