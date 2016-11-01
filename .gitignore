@@ -22,8 +22,9 @@
 /native/cmake
 /native/llvm
 /native/ninja
-/native/torch-rnn/*.bootstrapped
-/native/torch/trunk/build
+/native/torch
+/native/torch-hdf5
+/native/torch-rnn
 
 # sublime files
 *.sublime-project
