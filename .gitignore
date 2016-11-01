@@ -27,6 +27,9 @@
 /native/torch-hdf5
 /native/torch-rnn
 
+# build cache
+/.cache
+
 # sublime files
 *.sublime-project
 *.sublime-workspace
