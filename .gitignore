@@ -20,6 +20,7 @@
 
 # native stuff
 /native/cmake
+/native/libclc
 /native/llvm
 /native/ninja
 /native/torch
