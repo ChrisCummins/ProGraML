@@ -16,6 +16,7 @@
 # package data
 /clgen/data/bin
 /clgen/data/libclc
+/clgen/data/torch
 /clgen/data/torch-rnn
 
 # native stuff
