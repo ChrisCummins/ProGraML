@@ -20,6 +20,7 @@
 # Virtualenv directories.
 /env2
 /env3
+/labenv
 
 # Editor specific files.
 *.sublime-project
