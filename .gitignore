@@ -61,6 +61,7 @@
 /docs/2016-07-acaces/abstract.pdf
 /docs/2016-07-pact/pact.pdf
 /docs/wip-outline/outline.pdf
+/docs/wip-smith/cgo17.pdf
 /docs/wip-taco/taco.pdf
 
 
@@ -69,6 +70,16 @@
 /lab/lm/tests/tests
 
 /lab/patterns/main
+
+/lab/smith/backups/*
+/lab/smith/**/data
+/lab/smith/src/*
+/lab/smith/human-or-robot/*.aux
+/lab/smith/human-or-robot/*.log
+/lab/smith/human-or-robot/*.pdf
+/lab/smith/human-or-robot/*.synctex.gz
+/lab/smith/human-or-robot/sample-*.cl
+/lab/smith/human-or-robot/uid.tex
 
 /lab/stl/benchmarks/algorithm
 /lab/stl/benchmarks/array
@@ -186,6 +197,20 @@
 /src/omnitune/build/
 /src/omnitune/cover
 /src/omnitune/dist/
+
+/src/smith/**/*.pyc
+/src/smith/**/*.pylint
+/src/smith/*.egg
+/src/smith/*.egg-info
+/src/smith/*.log
+/src/smith/.eggs/*
+/src/smith/build/
+/src/smith/dist/
+/src/smith/env/
+/src/smith/native/**/*.cpplint
+/src/smith/native/**/*.o
+/src/smith/native/features
+/src/smith/native/rewriter
 
 
 # thesis/
