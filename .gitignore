@@ -66,6 +66,8 @@
 
 
 # lab/
+/lab/clgen/.ipynb_checkpoints/
+
 /lab/lm/benchmarks/benchmarks
 /lab/lm/tests/tests
 
