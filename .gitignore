@@ -2,13 +2,14 @@
 /.cache
 /.src
 
-*.pylint
 *.cpplint
-*.pyc
-*.o
 *.egg-info
-.eggs/*
+*.o
+*.pyc
+*.pylint
 *.so
+.eggs/*
+.ipynb_checkpoints
 
 # docs/
 /docs/**/.autotex.deps
@@ -64,7 +65,6 @@
 
 
 # lab/
-/lab/clgen/.ipynb_checkpoints/
 /lab/clgen/*.json
 /lab/clgen/**/*.log
 
