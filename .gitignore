@@ -1,0 +1,11 @@
+# python stuff
+*.pyc
+.eggs
+*.egg-info
+/build
+/dist
+# virtualenv
+/env
+
+# os trash
+.DS_Store
