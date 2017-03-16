@@ -221,10 +221,49 @@
 
 
 # thesis/
-/thesis/**/*.aux
-/thesis/**/*.fls
-/thesis/**/*.log
 /thesis/.autotex.deps
+/thesis/**/.autotex.deps
+/thesis/**/.autotex.log
+/thesis/**/*-blx.bib
+/thesis/**/*.acn
+/thesis/**/*.acr
+/thesis/**/*.alg
+/thesis/**/*.aux
+/thesis/**/*.bbl
+/thesis/**/*.bcf
+/thesis/**/*.blg
+/thesis/**/*.cite
+/thesis/**/*.dvi
+/thesis/**/*.fdb_latexmk
+/thesis/**/*.fls
+/thesis/**/*.glg
+/thesis/**/*.glo
+/thesis/**/*.gls
+/thesis/**/*.idx
+/thesis/**/*.ilg
+/thesis/**/*.ind
+/thesis/**/*.ist
+/thesis/**/*.loa
+/thesis/**/*.lof
+/thesis/**/*.log
+/thesis/**/*.lol
+/thesis/**/*.lot
+/thesis/**/*.maf
+/thesis/**/*.mtc
+/thesis/**/*.mtc0
+/thesis/**/*.nav
+/thesis/**/*.nlo
+/thesis/**/*.out
+/thesis/**/*.pdfsync
+/thesis/**/*.ps
+/thesis/**/*.run.xml
+/thesis/**/*.snm
+/thesis/**/*.synctex.gz
+/thesis/**/*.tdo
+/thesis/**/*.toc
+/thesis/**/*.vrb
+/thesis/**/*.wc
+/thesis/**/*.xdy
 /thesis/thesis.pdf
 
 
