@@ -1,7 +1,7 @@
 appdirs==1.4.0
 cffi==1.9.1
 checksumdir==1.0.5
-CLgen==0.2.5
+CLgen==0.2.6
 cycler==0.10.0
 Cython==0.23.4
 decorator==4.0.10
