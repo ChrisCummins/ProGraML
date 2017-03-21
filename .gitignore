@@ -69,6 +69,7 @@
 /lab/clgen/**/*.dot
 /lab/clgen/**/*.h5
 /lab/clgen/**/*.log
+/lab/clgen/atomizers/corpus.txt
 /lab/clgen/classification/kernels
 
 /lab/lm/benchmarks/benchmarks
