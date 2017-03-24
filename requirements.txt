@@ -13,3 +13,4 @@ scikit-learn==0.18.1
 scipy==0.18.1
 seaborn==0.7.1
 setGPU==0.0.7
+pycparserext==2016.2
