@@ -20,10 +20,11 @@
 
 # native stuff
 /native/cmake
+/native/gpuverify
 /native/libclc
 /native/llvm
-/native/gpuverify
 /native/ninja
+/native/oclgrind
 
 # build cache
 /.cache
