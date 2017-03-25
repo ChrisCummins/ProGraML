@@ -21,6 +21,7 @@
 /native/cmake
 /native/libclc
 /native/llvm
+/native/gpuverify
 /native/ninja
 
 # build cache
