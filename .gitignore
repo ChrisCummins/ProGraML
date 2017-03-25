@@ -15,6 +15,7 @@
 
 # package data
 /clgen/data/bin
+/clgen/data/gpuverify
 /clgen/data/libclc
 
 # native stuff
