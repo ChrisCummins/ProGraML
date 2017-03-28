@@ -17,6 +17,7 @@
 /clgen/data/bin
 /clgen/data/gpuverify
 /clgen/data/libclc
+/clgen/data/oclgrind
 
 # native stuff
 /native/cmake
