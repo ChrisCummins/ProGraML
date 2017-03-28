@@ -37,7 +37,8 @@
 # os trash
 .DS_Store
 
-# unpacked test archives
+# test data
 /tests/data/tiny-gh.db
+/tests/data/db/tmp.db
 /tests/data/tiny/corpus
 /corpus
