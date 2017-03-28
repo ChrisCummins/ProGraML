@@ -38,5 +38,6 @@
 .DS_Store
 
 # unpacked test archives
+/tests/data/tiny-gh.db
 /tests/data/tiny/corpus
 /corpus
