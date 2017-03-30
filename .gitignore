@@ -38,6 +38,7 @@
 .DS_Store
 
 # test data
+/tests/data/cache
 /tests/data/tiny-gh.db
 /tests/data/db/tmp.db
 /tests/data/tiny/corpus
