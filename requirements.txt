@@ -1,20 +1,19 @@
+# TODO: cldrive==0.0.5
 # TODO: CLgen==0.2.6
-# TODO: cldrive==0.0.2
-h5py==2.5.0
 ipython==5.1.0
 jupyter==1.0.0
 Keras==1.2.2
 matplotlib==1.5.3
+mysqlclient==1.3.10
 nltk==3.2.2
 numpy==1.11.2
 pandas==0.19.1
+progressbar2==3.16.0
 pycparser==2.17
+pycparserext==2016.2
 pydot-ng==1.0.0
 scikit-learn==0.18.1
 scipy==0.18.1
 seaborn==0.7.1
 setGPU==0.0.7
-pycparserext==2016.2
 SQLAlchemy==1.1.7
-progressbar2==3.16.0
-mysqlclient==1.3.10
