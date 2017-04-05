@@ -1,0 +1,10 @@
+*.pyc
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+/*.egg-info
+/.coverage
+/.eggs/*
+/build/
+/cover
+/dist/
