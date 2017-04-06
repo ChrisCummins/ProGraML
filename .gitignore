@@ -2,6 +2,7 @@
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+.ipynb_checkpoints
 /*.egg-info
 /.coverage
 /.eggs/*
