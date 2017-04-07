@@ -1,4 +1,5 @@
-# TODO: set this right version CLgen==0.2.6
+# TODO: CLgen==0.2.6
+# TODO: cldrive==0.0.2
 h5py==2.5.0
 ipython==5.1.0
 jupyter==1.0.0
