@@ -4,8 +4,6 @@
 .DS_Store
 .ipynb_checkpoints
 /*.egg-info
-/.coverage
-/.eggs/*
+/.cache/
 /build/
-/cover
 /dist/
