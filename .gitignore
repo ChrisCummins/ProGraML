@@ -193,6 +193,10 @@
 /playground/sc/sc
 
 
+# symlink to ~/Dropbox
+/posters
+
+
 # src/
 /src/labm8/*.log
 /src/labm8/.coverage
