@@ -16,11 +16,20 @@ new_http_archive(
     strip_prefix = "benchmark-1.1.0",
 )
 
-# FIXME: Mac hard-coded
+# Intel TBB (pre-build binaries for mac and linux)
+
 new_http_archive(
-    name = "tbb",
+    name = "tbb_mac",
     url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz",
     sha256 = "6ff553ec31c33b8340ce2113853be1c42e12b1a4571f711c529f8d4fa762a1bf",
-    build_file = "tbb.BUILD",
+    build_file = "tbb_mac.BUILD",
+    strip_prefix = 'tbb2017_20170226oss',
+)
+
+new_http_archive(
+    name = "tbb_lin",
+    url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz",
+    sha256 = "c4cd712f8d58d77f7b47286c867eb6fd70a8e8aef097a5c40f6c6b53d9dd83e1",
+    build_file = "tbb_lin.BUILD",
     strip_prefix = 'tbb2017_20170226oss',
 )
