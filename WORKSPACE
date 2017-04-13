@@ -15,3 +15,11 @@ new_http_archive(
     build_file = "benchmark.BUILD",
     strip_prefix = "benchmark-1.1.0",
 )
+
+new_http_archive(
+    name = "tbb",
+    url = "https://www.threadingbuildingblocks.org/sites/default/files/software_releases/source/tbb44_20160526oss_src_0.tgz",
+    sha256 = "7bafdcc3bca3aa1acc03da4735aefd6a4ddf2eceec983202319d0a911da1f0d1",
+    build_file = "tbb.BUILD",
+    strip_prefix = "tbb44_20160526oss",
+)
