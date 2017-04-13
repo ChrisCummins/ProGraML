@@ -1,8 +1,8 @@
 cc_library(
     name = 'opencl',
     hdrs = [
-        'extern/opencl/include/cl.h',
-        'extern/opencl/include/cl.hpp'
+        'third_party/opencl/include/cl.h',
+        'third_party/opencl/include/cl.hpp'
     ],
     visibility = ["//visibility:public"],
 )
