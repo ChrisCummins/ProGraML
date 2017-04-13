@@ -18,8 +18,8 @@ new_http_archive(
 
 new_http_archive(
     name = "tbb",
-    url = "https://www.threadingbuildingblocks.org/sites/default/files/software_releases/source/tbb44_20160526oss_src_0.tgz",
-    sha256 = "7bafdcc3bca3aa1acc03da4735aefd6a4ddf2eceec983202319d0a911da1f0d1",
+    url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz",
+    sha256 = "6ff553ec31c33b8340ce2113853be1c42e12b1a4571f711c529f8d4fa762a1bf",
     build_file = "tbb.BUILD",
-    strip_prefix = "tbb44_20160526oss",
+    strip_prefix = 'tbb2017_20170226oss',
 )
