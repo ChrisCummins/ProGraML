@@ -16,6 +16,7 @@ new_http_archive(
     strip_prefix = "benchmark-1.1.0",
 )
 
+# FIXME: Mac hard-coded
 new_http_archive(
     name = "tbb",
     url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz",
