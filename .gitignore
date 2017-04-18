@@ -1,3 +1,5 @@
-.DS_Store
-/bazel-*
 *.sublime-workspace
+.DS_Store
+.ipynb_checkpoints/
+/bazel-*
+__pycache__/
