@@ -10,7 +10,7 @@
 # config
 /.config.json
 /.config.make
-/clgen/config.py
+/clgen/_config.py
 /requirements.txt
 
 # package data
