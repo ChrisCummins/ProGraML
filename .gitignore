@@ -3,3 +3,4 @@ __pycache__
 build/
 freefocus/freefocus_pb2.py
 python/
+.DS_Store
