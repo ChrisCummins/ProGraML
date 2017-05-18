@@ -1,7 +1,8 @@
-.cache
+*.egg-info
 *.pyc
+.cache
+.DS_Store
 __pycache__
 build/
 freefocus/freefocus_pb2.py
 python/
-.DS_Store
