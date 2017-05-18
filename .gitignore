@@ -41,5 +41,6 @@
 /clgen/test/data/cache
 /clgen/test/data/tiny-gh.db
 /clgen/test/data/db/tmp.db
+/clgen/test/data/pico/corpus
 /clgen/test/data/tiny/corpus
 /corpus
