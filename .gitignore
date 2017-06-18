@@ -1,2 +1,5 @@
 .DS_Store
 .install-lastrun.txt
+
+# vim swap files:
+*.swp
