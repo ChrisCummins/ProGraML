@@ -1,3 +1,6 @@
 .ipynb_checkpoints
 /data
 /env
+
+# vim swap files
+*.swp
