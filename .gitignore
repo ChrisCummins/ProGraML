@@ -6,6 +6,8 @@
 # vim swap files
 *.swp
 
+lib/llvm
+
 # what even is this lol
 broken.dot
 __gvdump.txt
