@@ -6,8 +6,8 @@
 # vim swap files
 *.swp
 
-lib/llvm/*
-!lib/llvm/README.md
+lib/llvm/src/*
+lib/llvm/build/*
 
 # what even is this lol
 broken.dot
