@@ -3,6 +3,8 @@
 /data
 /env
 
+requirements.txt
+
 # vim swap files
 *.swp
 
@@ -12,3 +14,8 @@ lib/llvm/build/*
 # what even is this lol
 broken.dot
 __gvdump.txt
+
+# configure files
+/.config.json
+/.config.make
+/dsmith/_config.py
