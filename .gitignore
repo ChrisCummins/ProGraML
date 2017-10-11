@@ -8,9 +8,12 @@
 /requirements.txt
 
 # build files
+/*.egg-info/*
 /.cache/*
-/build/python3.6
 /build/ipython/kernels/dsmith/kernel.json
+/build/lib/*
+/build/python3.6
+/dist/*
 /lib/cmake/*
 /lib/llvm/build/*
 /lib/llvm/src/*
