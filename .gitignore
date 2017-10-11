@@ -12,8 +12,9 @@
 /.cache/*
 /build/ipython/kernels/dsmith/kernel.json
 /build/lib/*
-/build/python3.6
+/build/dsmith
 /dist/*
+/dsmith/dsmith_pb2.py
 /lib/cmake/*
 /lib/llvm/build/*
 /lib/llvm/src/*
