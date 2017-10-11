@@ -1,21 +1,25 @@
-.ipynb_checkpoints
-/build/ipython/kernels/dsmith/kernel.json
-/data
-/env
-
-requirements.txt
-
 # vim swap files
 *.swp
-
-lib/llvm/src/*
-lib/llvm/build/*
-
-# what even is this lol
-broken.dot
-__gvdump.txt
 
 # configure files
 /.config.json
 /.config.make
 /dsmith/_config.py
+/requirements.txt
+
+# build files
+/.cache/*
+/build/python3.6
+/build/ipython/kernels/dsmith/kernel.json
+/lib/cmake/*
+/lib/llvm/build/*
+/lib/llvm/src/*
+/lib/ninja/*
+
+# runtime files
+.ipynb_checkpoints
+/data
+
+# what even is this lol
+broken.dot
+__gvdump.txt
