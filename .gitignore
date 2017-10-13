@@ -24,6 +24,9 @@
 .ipynb_checkpoints
 /data
 
+# CLSmith runtime files
+platform.info
+
 # what even is this lol
 broken.dot
 __gvdump.txt
