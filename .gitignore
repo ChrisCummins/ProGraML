@@ -17,6 +17,7 @@
 /dsmith/data/bin/cl_launcher
 /dsmith/data/bin/CLSmith
 /dsmith/dsmith_pb2.py
+/dsmith/data/include/*
 /lib/cmake/*
 /lib/llvm/build/*
 /lib/llvm/src/*
