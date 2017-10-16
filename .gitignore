@@ -10,10 +10,12 @@
 # build files
 /*.egg-info/*
 /.cache/*
+/build/dsmith
 /build/ipython/kernels/dsmith/kernel.json
 /build/lib/*
-/build/dsmith
 /dist/*
+/dsmith/data/bin/cl_launcher
+/dsmith/data/bin/CLSmith
 /dsmith/dsmith_pb2.py
 /lib/cmake/*
 /lib/llvm/build/*
