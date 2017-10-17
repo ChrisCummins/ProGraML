@@ -21,6 +21,11 @@
 /lib/cmake/*
 /lib/llvm/3.6.2/*
 /lib/llvm/3.7.1/*
+/lib/llvm/3.8.1/*
+/lib/llvm/3.9.1/*
+/lib/llvm/4.0.1/*
+/lib/llvm/5.0.0/*
+/lib/llvm/trunk/*
 /lib/ninja/*
 
 # runtime files
