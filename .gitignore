@@ -15,8 +15,6 @@
 /build/ipython/kernels/dsmith/kernel.json
 /build/lib/*
 /dist/*
-/dsmith/data/bin/*
-/dsmith/data/include/*
 /dsmith/opencl/opencl_pb2.py
 /lib/cmake/*
 /lib/llvm/3.6.2/*
