@@ -16,8 +16,8 @@
 /build/lib/*
 /dist/*
 /dsmith/data/bin/*
-/dsmith/dsmith_pb2.py
 /dsmith/data/include/*
+/dsmith/opencl/opencl_pb2.py
 /lib/cmake/*
 /lib/llvm/3.6.2/*
 /lib/llvm/3.7.1/*
