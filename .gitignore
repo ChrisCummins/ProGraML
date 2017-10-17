@@ -10,17 +10,17 @@
 # build files
 /*.egg-info/*
 /.cache/*
+/build/bdist.*
 /build/dsmith
 /build/ipython/kernels/dsmith/kernel.json
 /build/lib/*
 /dist/*
-/dsmith/data/bin/cl_launcher
-/dsmith/data/bin/CLSmith
+/dsmith/data/bin/*
 /dsmith/dsmith_pb2.py
 /dsmith/data/include/*
 /lib/cmake/*
-/lib/llvm/build/*
-/lib/llvm/src/*
+/lib/llvm/3.6.2/*
+/lib/llvm/3.7.1/*
 /lib/ninja/*
 
 # runtime files
