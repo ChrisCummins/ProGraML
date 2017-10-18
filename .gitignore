@@ -29,6 +29,7 @@
 # runtime files
 .ipynb_checkpoints
 /notebooks/.cache/*
+/notebooks/.tex/*
 
 # CLSmith runtime files
 platform.info
