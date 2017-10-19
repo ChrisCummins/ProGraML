@@ -8,6 +8,7 @@
 /requirements.txt
 
 # build files
+__pycache__
 /*.egg-info/*
 /.cache/*
 /build/bdist.*
@@ -28,6 +29,8 @@
 
 # runtime files
 .ipynb_checkpoints
+/lab/autotest/clsmith-0.cl
+/lab/autotest/outbox.json
 /notebooks/.cache/*
 /notebooks/.tex/*
 
