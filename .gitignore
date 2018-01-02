@@ -1,4 +1,6 @@
 .DS_Store
-__pycache__
+/*.egg-info/
 /build/
+/dist/
+__pycache__
 config.json
