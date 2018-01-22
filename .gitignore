@@ -14,6 +14,7 @@ __pycache__
 /build/bdist.*
 /build/dsmith
 /build/ipython/kernels/dsmith/kernel.json
+/build/lib/*
 /build/third_party/*
 /dist/*
 /dsmith/opencl/opencl_pb2.py
