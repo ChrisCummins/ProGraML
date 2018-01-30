@@ -19,13 +19,13 @@
 /clgen/data/libclc
 /clgen/data/oclgrind
 
-# native stuff
-/native/cmake
-/native/gpuverify
-/native/libclc
-/native/llvm
-/native/ninja
-/native/oclgrind
+# third part code builds
+/third_party/cmake
+/third_party/gpuverify
+/third_party/libclc
+/third_party/llvm
+/third_party/ninja
+/third_party/oclgrind
 
 # build cache
 /.cache
