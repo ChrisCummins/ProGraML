@@ -1,0 +1,10 @@
+/*.egg-info/
+/bazel-bin
+/bazel-genfiles
+/bazel-out
+/bazel-photolib
+/bazel-testlogs
+/build/
+/dist/
+/venv/
+__pycache__

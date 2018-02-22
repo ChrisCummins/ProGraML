@@ -1,0 +1,2 @@
+absl-py>=0.1.10
+python-xmp-toolkit>=2.0.1
