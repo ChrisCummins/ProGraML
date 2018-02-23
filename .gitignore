@@ -1,4 +1,7 @@
 /*.egg-info/
+/.idea/**/*.iml
+/.idea/tasks.xml
+/.idea/workspace.xml
 /bazel-bin
 /bazel-genfiles
 /bazel-out
