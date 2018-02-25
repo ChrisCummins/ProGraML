@@ -10,11 +10,7 @@
 # build files
 /*.egg-info/*
 /.cache/*
-/build/bdist.*
-/build/dsmith
-/build/ipython/kernels/dsmith/kernel.json
-/build/lib/*
-/build/third_party/*
+/venv/*
 /dist/*
 /dsmith/dsmith_pb2.py
 /dsmith/dsmith_pb2_grpc.py
