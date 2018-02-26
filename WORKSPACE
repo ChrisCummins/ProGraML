@@ -47,3 +47,13 @@ git_repository(
 load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
 
 pip_repositories()
+
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import")
+
+pip_import(
+   name = "requirements",
+   requirements = "//:requirements.txt",
+)
+
+load("@requirements//:requirements.bzl", "pip_install")
+pip_install()
