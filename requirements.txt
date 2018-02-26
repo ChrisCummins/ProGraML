@@ -1,1 +1,7 @@
 absl-py==0.1.10
+py2app==0.14
+pync==1.6.1
+pyobjc==4.1
+pytest==3.4.1
+requests==2.18.4
+rumps==0.2.2
