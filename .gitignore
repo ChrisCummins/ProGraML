@@ -28,3 +28,6 @@
 
 # OS trash
 .DS_Store
+
+# Bazel.
+/bazel-*
