@@ -36,7 +36,7 @@ new_http_archive(
     strip_prefix = 'tbb2017_20170226oss',
 )
 
-# Experimental python rules.
+# Python rules.
 # See: https://github.com/bazelbuild/rules_python
 
 git_repository(
@@ -45,13 +45,9 @@ git_repository(
     commit = "115e3a0dab4291184fdcb0d4e564a0328364571a",
 )
 
-# Only needed for PIP support:
-load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
+load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories", "pip_import")
 
 pip_repositories()
-
-load("@io_bazel_rules_python//python:pip.bzl", "pip_import")
-
 pip_import(
    name = "requirements",
    requirements = "//:requirements.txt",
@@ -59,3 +55,12 @@ pip_import(
 
 load("@requirements//:requirements.bzl", "pip_install")
 pip_install()
+
+# Protobuf rules.
+# See: https://github.com/google/protobuf
+
+git_repository(
+    name = "protobuf",
+    remote = "https://github.com/google/protobuf.git",
+    commit = "a6037c5230c0ccb6531f80cef909dbfe37257884",
+)
