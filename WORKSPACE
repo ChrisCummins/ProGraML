@@ -44,26 +44,31 @@ new_http_archive(
 
 git_repository(
     name = "io_bazel_rules_python",
-    remote = "https://github.com/bazelbuild/rules_python.git",
     commit = "115e3a0dab4291184fdcb0d4e564a0328364571a",
+    remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
 load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories", "pip_import")
 
 pip_repositories()
+
 pip_import(
-   name = "requirements",
-   requirements = "//:requirements.txt",
+    name = "requirements",
+    requirements = "//:requirements.txt",
 )
 
 load("@requirements//:requirements.bzl", "pip_install")
+
 pip_install()
 
-# Protobuf rules.
-# See: https://github.com/google/protobuf
+# Protocol buffers.
 
 git_repository(
-    name = "protobuf",
-    remote = "https://github.com/google/protobuf.git",
-    commit = "a6037c5230c0ccb6531f80cef909dbfe37257884",
+    name = "org_pubref_rules_protobuf",
+    remote = "https://github.com/pubref/rules_protobuf",
+    tag = "v0.8.1",
 )
+
+load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
+
+py_proto_repositories()
