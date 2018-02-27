@@ -11,9 +11,10 @@ load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories", "pip_import")
 pip_repositories()
 
 pip_import(
-   name = "req",
-   requirements = "//:requirements.txt",
+    name = "requirements",
+    requirements = "//:requirements.txt",
 )
 
-# load("@req//:requirements.bzl", "pip_install")
-# pip_install()
+load("@requirements//:requirements.bzl", "pip_install")
+
+pip_install()
