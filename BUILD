@@ -24,7 +24,8 @@ py_runtime(
             # Illegal as Bazel labels but are not required by pip.
             "**/launcher manifest.xml",
             "**/setuptools/*.tmpl",
-        ]),
+        ],
+    ),
     interpreter = "venv/phd/bin/python3.6",
     visibility = ["//visibility:public"],
 )
