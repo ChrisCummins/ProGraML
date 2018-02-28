@@ -1,16 +1,18 @@
 absl-py==0.1.10
 checksumdir==1.1.4
-# grpcio-tools==1.8.4
 grpcio==1.8.4
 humanize==0.5.1
 matplotlib==2.2.0rc1
 numpy==1.14.1
 pandas==0.22.0
 py2app==0.14
+pycparser==2.17
+pycparserext==2016.2
 pync==1.6.1
 pyobjc==4.1
-pytest==3.4.1
+pyopencl==2016.2
 pytest-benchmark==3.1.1
+pytest==3.4.1
 python-dateutil==2.6.1
 requests==2.18.4
 rumps==0.2.2
