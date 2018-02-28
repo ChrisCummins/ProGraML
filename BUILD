@@ -183,3 +183,9 @@ py_library(
         ":io",
     ],
 )
+
+py_library(
+    name = "err",
+    srcs = ["err.py"],
+    visibility = ["//visibility:public"],
+)
