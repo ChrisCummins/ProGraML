@@ -1,8 +1,5 @@
-*.sublime-workspace
 .DS_Store
-.ipynb_checkpoints/
 /bazel-*
 /talks/2017-02-cgo/2017-02-cgo/
 /talks/2017-09-pact/2017-09-pact/
 /venv/
-__pycache__/
