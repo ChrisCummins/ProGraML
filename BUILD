@@ -1,5 +1,3 @@
-load("@requirements//:requirements.bzl", "requirement")
-
 py_library(
     name = "labm8",
     srcs = ["__init__.py"],
@@ -14,7 +12,6 @@ py_library(
         ":crypto",
         ":fs",
         ":io",
-        requirement("six"),
     ],
 )
 
@@ -31,7 +28,6 @@ py_library(
     deps = [
         ":fs",
         ":io",
-        requirement("six"),
     ],
 )
 
@@ -41,7 +37,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":fs",
-        requirement("checksumdir"),
     ],
 )
 
@@ -52,8 +47,6 @@ py_library(
     deps = [
         ":labm8",
         ":labtypes",
-        requirement("humanize"),
-        requirement("Send2Trash"),
     ],
 )
 
@@ -63,8 +56,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":labtypes",
-        requirement("humanize"),
-        requirement("Send2Trash"),
     ],
 )
 
@@ -110,10 +101,6 @@ py_library(
     name = "labmath",
     srcs = ["labmath.py"],
     visibility = ["//visibility:public"],
-    deps = [
-        requirement("numpy"),
-        requirement("scipy"),
-    ],
 )
 
 py_library(
@@ -172,7 +159,6 @@ py_library(
     name = "labtypes",
     srcs = ["labtypes.py"],
     visibility = ["//visibility:public"],
-    deps = [requirement("six")],
 )
 
 py_library(
