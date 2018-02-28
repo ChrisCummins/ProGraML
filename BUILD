@@ -55,6 +55,7 @@ py_library(
     srcs = ["io.py"],
     visibility = ["//visibility:public"],
     deps = [
+        ":labm8",
         ":labtypes",
     ],
 )
@@ -101,6 +102,7 @@ py_library(
     name = "labmath",
     srcs = ["labmath.py"],
     visibility = ["//visibility:public"],
+    deps = [":labm8"],
 )
 
 py_library(
