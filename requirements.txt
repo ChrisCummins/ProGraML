@@ -14,6 +14,7 @@ pyopencl==2016.2
 pytest-benchmark==3.1.1
 pytest==3.4.1
 python-dateutil==2.6.1
+python-xmp-toolkit==2.0.1
 requests==2.18.4
 rumps==0.2.2
 scipy==1.0.0
