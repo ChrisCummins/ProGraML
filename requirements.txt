@@ -2,6 +2,8 @@ absl-py==0.1.10
 checksumdir==1.1.4
 grpcio==1.8.4
 humanize==0.5.1
+jupyter-client==5.2.2
+jupyter-core==4.4.0
 matplotlib==2.2.0rc1
 numpy==1.14.1
 pandas==0.22.0
