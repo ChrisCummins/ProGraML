@@ -8,5 +8,5 @@ sh_binary(
     name = "jupyter",
     srcs = ["run_jupyter_notebook.sh"],
     visibility = ["//visibility:public"],
-    deps = ["//:python3.6"],
+    data = ["//:python_runtime"],
 )
