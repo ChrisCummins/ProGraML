@@ -14,7 +14,7 @@ filegroup(
             # Illegal as Bazel labels but are not required by pip.
             "**/launcher manifest.xml",
             "**/setuptools/*.tmpl",
-            "**/nbconvert/preprocessors/tests/files/*.ipynb"
+            "**/nbconvert/preprocessors/tests/files/*.ipynb",
         ],
     ),
     visibility = ["//visibility:public"],
