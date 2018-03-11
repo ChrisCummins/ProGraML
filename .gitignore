@@ -1,3 +1,4 @@
+*_pb2.py
 .DS_Store
 .ipynb_checkpoints
 .pytest_cache
