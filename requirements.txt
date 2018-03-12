@@ -46,6 +46,7 @@ pluggy==0.6.0
 ply==3.11
 prompt-toolkit==1.0.15
 protobuf==3.5.1
+psycopg2==2.7.4
 ptyprocess==0.5.2
 py==1.5.2
 py-cpuinfo==3.3.0
