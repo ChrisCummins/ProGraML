@@ -1,5 +1,6 @@
 absl-py==0.1.10
 appdirs==1.4.3
+appnope==0.1.0
 astroid==1.6.1
 attrs==17.4.0
 autoenv==1.0.0
@@ -9,7 +10,8 @@ checksumdir==1.1.4
 cycler==0.10.0
 decorator==4.2.1
 entrypoints==0.2.3
-grpcio==1.8.4
+grpcio==1.10.0
+grpcio-tools==1.10.0
 html5lib==1.0.1
 humanize==0.5.1
 ipykernel==4.8.2
