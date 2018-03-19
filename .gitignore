@@ -1,11 +1,14 @@
+*.pb.descriptor_set
 *_pb2.py
 *_pb2_grpc.py
-*.pb.descriptor_set
 .DS_Store
 .ipynb_checkpoints
 .pytest_cache
 /.env
 /bazel-*
+/deeplearning/deepsmith/tests/data/datastores/*
+!/deeplearning/deepsmith/tests/data/datastores/sqlite_file.pbtxt
+!/deeplearning/deepsmith/tests/data/datastores/sqlite_memory.pbtxt
 /talks/2017-02-cgo/2017-02-cgo/
 /talks/2017-09-pact/2017-09-pact/
 /venv/
