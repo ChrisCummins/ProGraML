@@ -6,6 +6,9 @@
 # vim swap files:
 *.swp
 
+# Intellij files:
+/.idea/
+
 # configure file:
 /config.json
 
