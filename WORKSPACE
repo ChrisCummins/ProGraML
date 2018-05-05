@@ -1,10 +1,5 @@
 workspace(name = "phd")
 
-local_repository(
-    name = "labm8",
-    path = "lib/labm8",
-)
-
 new_http_archive(
     name = "gtest",
     build_file = "gtest.BUILD",
