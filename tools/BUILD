@@ -10,3 +10,13 @@ sh_binary(
     data = ["//:python_runtime"],
     visibility = ["//visibility:public"],
 )
+
+sh_binary(
+    name = "buildifier",
+    srcs = ["buildifier.sh"],
+)
+
+sh_binary(
+    name = "protoc",
+    srcs = ["protoc.sh"],
+)
