@@ -1,3 +1,13 @@
+# Top level gitignore file.
+#
+# This is the master ignore file. There should be no others, except for those
+# tracked in subrepositories.
+#
+# In general, the blaze build system ensures a pretty clean tree, so there
+# aren't many things to ignore. The exceptions are the local python virtual
+# environment, and files which are generated from running programs "in-tree",
+# i.e. without using the `blaze run` sandbox.
+
 # OS garbage.
 .DS_Store
 
