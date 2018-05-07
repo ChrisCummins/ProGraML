@@ -11,6 +11,9 @@
 # OS garbage.
 .DS_Store
 
+# Build system.
+/bazel-*
+
 # In-tree generated files.
 /.env
 /venv/
@@ -20,13 +23,52 @@
 .pytest_cache
 __pycache__
 
+# LaTeX files from in-tree builds.
+/docs/**/*-blx.bib
+/docs/**/*.acn
+/docs/**/*.acr
+/docs/**/*.alg
+/docs/**/*.aux
+/docs/**/*.bbl
+/docs/**/*.bcf
+/docs/**/*.blg
+/docs/**/*.dvi
+/docs/**/*.fdb_latexmk
+/docs/**/*.fls
+/docs/**/*.glg
+/docs/**/*.glo
+/docs/**/*.gls
+/docs/**/*.idx
+/docs/**/*.ilg
+/docs/**/*.ind
+/docs/**/*.ist
+/docs/**/*.loa
+/docs/**/*.lof
+/docs/**/*.log
+/docs/**/*.lol
+/docs/**/*.lot
+/docs/**/*.maf
+/docs/**/*.mtc
+/docs/**/*.mtc0
+/docs/**/*.nav
+/docs/**/*.nlo
+/docs/**/*.out
+/docs/**/*.pdfsync
+/docs/**/*.ps
+/docs/**/*.run.xml
+/docs/**/*.snm
+/docs/**/*.synctex.gz
+/docs/**/*.tdo
+/docs/**/*.toc
+/docs/**/*.vrb
+/docs/**/*.xdy
+/docs/**/.autotex.deps
+/docs/cv/cv.pdf
+
 # Generated in-tree Protocol Buffer code.
 *.pb.descriptor_set
 *_pb2.py
 *_pb2_grpc.py
-
-# Build system.
-/bazel-*
 
 # User specific settings for IntelliJ.
 /.idea/workspace.xml
