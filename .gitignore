@@ -1,15 +1,28 @@
+# OS garbage.
+.DS_Store
+
+# In-tree generated files.
+/.env
+/venv/
+
+# Python files which are generated from in-tree execution.
+.ipynb_checkpoints
+.pytest_cache
+__pycache__
+
+# Generated in-tree Protocol Buffer code.
 *.pb.descriptor_set
 *_pb2.py
 *_pb2_grpc.py
-.DS_Store
-.ipynb_checkpoints
-.pytest_cache
-/.env
+
+# Build system.
 /bazel-*
+
+# User specific settings for IntelliJ.
+/.idea/workspace.xml
+/.idea/tasks.xml
+
+# In-tree configuration files.
 /deeplearning/deepsmith/tests/data/datastores/*
 !/deeplearning/deepsmith/tests/data/datastores/sqlite_file.pbtxt
 !/deeplearning/deepsmith/tests/data/datastores/sqlite_memory.pbtxt
-/talks/2017-02-cgo/2017-02-cgo/
-/talks/2017-09-pact/2017-09-pact/
-/venv/
-__pycache__
