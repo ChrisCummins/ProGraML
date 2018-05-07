@@ -63,7 +63,6 @@ __pycache__
 /docs/**/*.vrb
 /docs/**/*.xdy
 /docs/**/.autotex.deps
-/docs/cv/cv.pdf
 
 # Generated in-tree Protocol Buffer code.
 *.pb.descriptor_set
