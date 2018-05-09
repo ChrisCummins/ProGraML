@@ -80,3 +80,4 @@ __pycache__
 
 # In-tree execution of ISSTA'18 artifact evaluation scripts.
 /docs/2018-07-issta/artifact_evaluation/build
+/docs/2018-07-issta/artifact_evaluation/01_evaluate_generator/data/tiny*
