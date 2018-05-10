@@ -58,7 +58,19 @@ psycopg2-binary==2.7.4
 ptyprocess==0.5.2
 py==1.5.2
 py-cpuinfo==3.3.0
-pycparser==2.18
+# At the time of writing (2018-05-10), the most recent version of pycparser is
+# version 2.18, however, it breaks cldrive with error:
+#   Traceback (most recent call last):
+#     File "<snip>/phd/gpu/cldrive/__init__.py", line 7, in <module>
+#       from gpu.cldrive.args import *
+#     File "<snip>/phd/gpu/cldrive/args.py", line 242, in <module>
+#       __parser = OpenCLCParser()
+#     File "<snip>/site-packages/pycparserext/ext_c_parser.py", line 47, in __init__
+#       debug=yacc_debug, write_tables=False)
+#     File "<snip>/site-packages/pycparser/ply/yacc.py", line 3426, in yacc
+#       raise YaccError('Unable to build parser')
+pycparser.ply.yacc.YaccError: Unable to build parser
+pycparser==2.17
 pycparserext==2016.2
 PyGithub==1.29
 Pygments==2.2.0
