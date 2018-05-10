@@ -69,7 +69,7 @@ py-cpuinfo==3.3.0
 #       debug=yacc_debug, write_tables=False)
 #     File "<snip>/site-packages/pycparser/ply/yacc.py", line 3426, in yacc
 #       raise YaccError('Unable to build parser')
-pycparser.ply.yacc.YaccError: Unable to build parser
+#   pycparser.ply.yacc.YaccError: Unable to build parser
 pycparser==2.17
 pycparserext==2016.2
 PyGithub==1.29
