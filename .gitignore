@@ -19,6 +19,7 @@
 /venv/
 
 # Python files which are generated from in-tree execution.
+*.pyc
 .ipynb_checkpoints
 .pytest_cache
 __pycache__
