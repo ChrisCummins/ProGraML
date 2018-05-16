@@ -16,7 +16,6 @@
 
 # In-tree generated files.
 /.env
-/venv/
 
 # Python files which are generated from in-tree execution.
 *.pyc
