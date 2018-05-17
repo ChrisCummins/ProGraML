@@ -21,7 +21,6 @@ editdistance==0.3.1
 entrypoints==0.2.3
 enum34==1.1.6
 funcsigs==1.0.2
-functools32==3.2.3.post2
 futures==3.2.0
 grpcio==1.10.0
 grpcio-tools==1.10.0
@@ -114,7 +113,6 @@ terminado==0.8.1
 testpath==0.3.1
 tornado==5.0
 traitlets==4.3.2
-trash-cli==0.12.9.14.post0
 urllib3==1.22
 wcwidth==0.1.7
 webencodings==0.5.1
