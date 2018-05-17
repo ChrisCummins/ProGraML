@@ -25,10 +25,12 @@ sh_binary(
 sh_binary(
     name = "buildifier",
     srcs = ["buildifier.sh"],
+    visibility = ["//visibility:public"],
 )
 
 # Cannot be run using bazel.
 sh_binary(
     name = "protoc",
     srcs = ["protoc.sh"],
+    visibility = ["//visibility:public"],
 )
