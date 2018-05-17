@@ -1,4 +1,10 @@
 sh_binary(
+    name = "bootstrap",
+    srcs = ["bootstrap.sh"],
+    visibility = ["//visibility:public"],
+)
+
+sh_binary(
     name = "autotex",
     srcs = ["autotex.sh"],
     visibility = ["//visibility:public"],
