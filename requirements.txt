@@ -14,6 +14,7 @@ chardet==3.0.4
 checksumdir==1.0.5
 configparser==3.5.0
 coverage==4.5.1
+cpplint==1.3.0
 cycler==0.10.0
 decorator==4.2.1
 docutils==0.14
