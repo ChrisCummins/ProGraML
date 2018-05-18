@@ -82,7 +82,7 @@ py-cpuinfo==3.3.0
 #   pycparser.ply.yacc.YaccError: Unable to build parser
 pycparser==2.17
 pycparserext==2016.2
-PyGithub==1.29
+PyGithub==1.39
 Pygments==2.2.0
 pylint==1.8.2
 pyopencl==2016.2
