@@ -45,3 +45,31 @@ git_repository(
 load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
 
 py_proto_repositories()
+
+# LLVM, as installed by Homebrew ('system/dotfiles/run -v Llvm').
+
+new_local_repository(
+    name = "llvm_mac",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "headers",
+    hdrs = glob(["**/*.h", "**/*.inc", "**/*.def"]),
+)
+""",
+    path = "/usr/local/opt/llvm/include",
+)
+
+new_local_repository(
+    name = "llvm_linux",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "headers",
+    hdrs = glob(["**/*.h", "**/*.inc", "**/*.def"]),
+)
+""",
+    path = "/home/linuxbrew/.linuxbrew/opt/llvm",
+)
