@@ -71,5 +71,5 @@ cc_library(
     hdrs = glob(["**/*.h", "**/*.inc", "**/*.def"]),
 )
 """,
-    path = "/home/linuxbrew/.linuxbrew/opt/llvm",
+    path = "/home/linuxbrew/.linuxbrew/opt/llvm/include",
 )
