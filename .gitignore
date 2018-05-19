@@ -7,6 +7,11 @@
 # virtualenv
 /env
 
+# Generated in-tree Protocol Buffer code.
+*.pb.descriptor_set
+*_pb2.py
+*_pb2_grpc.py
+
 # config
 /.config.json
 /.config.make
