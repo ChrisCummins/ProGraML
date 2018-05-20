@@ -49,7 +49,7 @@ py_proto_repositories()
 # LLVM, as installed by Homebrew ('system/dotfiles/run -v Llvm').
 
 new_local_repository(
-    name = "llvm_mac",
+    name = "llvm_mac_headers",
     build_file_content = """
 package(default_visibility = ["//visibility:public"])
 
@@ -62,7 +62,7 @@ cc_library(
 )
 
 new_local_repository(
-    name = "llvm_linux",
+    name = "llvm_linux_headers",
     build_file_content = """
 package(default_visibility = ["//visibility:public"])
 
@@ -72,4 +72,40 @@ cc_library(
 )
 """,
     path = "/home/linuxbrew/.linuxbrew/opt/llvm/include",
+)
+
+new_local_repository(
+    name = "llvm_mac",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "clang",
+    srcs = ["bin/clang"],
+)
+
+filegroup(
+    name = "clang-format",
+    srcs = ["bin/clang-format"],
+)
+""",
+    path = "/usr/local/opt/llvm",
+)
+
+new_local_repository(
+    name = "llvm_linux",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "clang",
+    srcs = ["bin/clang"],
+)
+
+filegroup(
+    name = "clang-format",
+    srcs = ["bin/clang-format"],
+)
+""",
+    path = "/home/linuxbrew/.linuxbrew/opt/llvm",
 )
