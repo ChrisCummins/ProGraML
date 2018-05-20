@@ -16,6 +16,7 @@
 
 # In-tree generated files.
 /.env
+/config.pbtxt
 
 # Python files which are generated from in-tree execution.
 *.pyc
