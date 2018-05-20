@@ -88,6 +88,11 @@ filegroup(
     name = "clang-format",
     srcs = ["bin/clang-format"],
 )
+
+filegroup(
+    name = "opt",
+    srcs = ["bin/opt"],
+)
 """,
     path = "/usr/local/opt/llvm",
 )
@@ -105,6 +110,11 @@ filegroup(
 filegroup(
     name = "clang-format",
     srcs = ["bin/clang-format"],
+)
+
+filegroup(
+    name = "opt",
+    srcs = ["bin/opt"],
 )
 """,
     path = "/home/linuxbrew/.linuxbrew/opt/llvm",
