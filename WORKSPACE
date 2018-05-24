@@ -55,7 +55,7 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "headers",
-    hdrs = glob(["**/*.h", "**/*.inc", "**/*.def"]),
+    hdrs = glob(["c++/v1/*", "**/*.h", "**/*.inc", "**/*.def"]),
 )
 """,
     path = "/usr/local/opt/llvm/include",
@@ -68,7 +68,7 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "headers",
-    hdrs = glob(["**/*.h", "**/*.inc", "**/*.def"]),
+    hdrs = glob(["c++/v1/*", "**/*.h", "**/*.inc", "**/*.def"]),
 )
 """,
     path = "/home/linuxbrew/.linuxbrew/opt/llvm/include",
