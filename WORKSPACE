@@ -16,6 +16,14 @@ new_http_archive(
     url = "https://github.com/google/benchmark/archive/v1.1.0.tar.gz",
 )
 
+new_http_archive(
+    name = "libcxx",
+    build_file = "libcxx.BUILD",
+    sha256 = "70931a87bde9d358af6cb7869e7535ec6b015f7e6df64def6d2ecdd954040dd9",
+    strip_prefix = "libcxx-6.0.0.src",
+    url = "http://releases.llvm.org/6.0.0/libcxx-6.0.0.src.tar.xz",
+)
+
 # Intel TBB (pre-build binaries for mac and linux)
 
 new_http_archive(
