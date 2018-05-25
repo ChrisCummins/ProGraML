@@ -5,10 +5,13 @@ config_setting(
 )
 
 filegroup(
-    name = "config_files",
-    srcs = [
-        "config.pbtxt",
-        "configure",
-    ],
+    name = "config",
+    srcs = ["config.pbtxt"],
+    visibility = ["//config:__subpackages__"],
+)
+
+filegroup(
+    name = "config_script",
+    srcs = ["configure"],
     visibility = ["//config:__subpackages__"],
 )
