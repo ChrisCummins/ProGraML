@@ -3,6 +3,6 @@
 # Since the installation is described using a Dockerfile, bazel cannot build
 # it.
 filegroup(
-  name = "phd",
-  srcs = ["Dockerfile"]
+    name = "phd",
+    srcs = ["Dockerfile"],
 )
