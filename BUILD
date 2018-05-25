@@ -9,3 +9,8 @@ filegroup(
     srcs = ["config.pbtxt"],
     visibility = ["//config:__subpackages__"],
 )
+
+filegroup(
+    name = "configure",
+    srcs = ["configure"],
+)
