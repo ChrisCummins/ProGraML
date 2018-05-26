@@ -74,6 +74,8 @@ __pycache__
 # User specific settings for IntelliJ.
 /.idea/workspace.xml
 /.idea/tasks.xml
+/.project/.idea/workspace.xml
+/.project/.idea/tasks.xml
 
 # In-tree configuration files.
 /deeplearning/deepsmith/tests/data/datastores/*
