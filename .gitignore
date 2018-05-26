@@ -14,6 +14,9 @@
 # Build system.
 /bazel-*
 
+# The "husky" package for pre-commit hooks is written in node.
+/node_modules
+
 # In-tree generated files.
 /.env
 /config.pbtxt
