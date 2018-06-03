@@ -2,13 +2,6 @@
 # Some of these scripts are meant for execution in-tree, and cannot be run
 # using bazel, please see the comments.
 
-# Cannot be run using bazel.
-sh_binary(
-    name = "bootstrap",
-    srcs = ["bootstrap.sh"],
-    visibility = ["//visibility:public"],
-)
-
 sh_binary(
     name = "autotex",
     srcs = ["autotex.sh"],
