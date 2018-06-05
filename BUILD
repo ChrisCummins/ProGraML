@@ -13,5 +13,5 @@ filegroup(
 filegroup(
     name = "config_script",
     srcs = ["configure"],
-    visibility = ["//config:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
