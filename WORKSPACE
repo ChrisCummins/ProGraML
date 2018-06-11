@@ -56,10 +56,15 @@ py_proto_repositories()
 
 # Python requirements.
 
+# TODO(cec): There is a bug in the requirements implementation which means that
+# some packages do not unpack correctly. Instead of using the offical remote of
+# https://github.com/bazelbuild/rules_python.git, I am using a GitHub user's
+# fork which has a workaround for this.
+# See: https://github.com/bazelbuild/rules_python/issues/92
 git_repository(
     name = "io_bazel_rules_python",
-    commit = "8b5d0683a7d878b28fffe464779c8a53659fc645",
-    remote = "https://github.com/bazelbuild/rules_python.git",
+    commit = "220c1133af2bb5c37f20c87b4c2ccfeee596ecda",
+    remote = "https://github.com/jkinkead/rules_python.git",
 )
 
 load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories", "pip_import")
