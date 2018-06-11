@@ -20,7 +20,6 @@
 # In-tree generated files.
 /.env
 /config.pbtxt
-/requirements.txt
 /third_party/tensorflow/BUILD
 
 # Python files which are generated from in-tree execution.
