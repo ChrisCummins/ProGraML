@@ -66,14 +66,24 @@ load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories", "pip_import")
 
 pip_repositories()
 
+# Add grpcio.
+
+pip_import(
+    name = "pip_grpcio",
+    requirements = "@org_pubref_rules_protobuf//python:requirements.txt",
+)
+
 pip_import(
     name = "requirements",
     requirements = "//:requirements.txt",
 )
 
-load("@requirements//:requirements.bzl", "pip_install")
+load(
+    "@requirements//:requirements.bzl",
+    pip_grpcio_install = "pip_install",
+)
 
-pip_install()
+pip_grpcio_install()
 
 # LLVM, as installed by Homebrew ('system/dotfiles/run -v Llvm').
 
