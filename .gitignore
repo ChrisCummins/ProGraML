@@ -23,7 +23,6 @@
 /requirements.txt
 /third_party/tensorflow/BUILD
 /learn/docker/clgen/*.tar.bz2
-!/learn/docker/clgen/corpus.tar.bz2
 
 # Python files which are generated from in-tree execution.
 *.pyc
