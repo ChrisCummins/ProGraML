@@ -16,12 +16,53 @@ new_http_archive(
     url = "https://github.com/google/benchmark/archive/v1.1.0.tar.gz",
 )
 
+# LLVM.
+
 new_http_archive(
-    name = "libcxx",
+    name = "llvm_mac",
+    build_file = "llvm.BUILD",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+)
+
+new_http_archive(
+    name = "llvm_linux",
+    build_file = "llvm.BUILD",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+)
+
+# Now do the same again for headers, but also strip the include/ directory.
+
+new_http_archive(
+    name = "llvm_headers_mac",
+    build_file = "llvm_headers.BUILD",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin/include",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+)
+
+new_http_archive(
+    name = "llvm_headers_linux",
+    build_file = "llvm_headers.BUILD",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/include",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+)
+
+# Now do the same again for headers, but also strip the include/ directory.
+# TODO: Remove these.
+
+new_http_archive(
+    name = "libcxx_mac",
     build_file = "libcxx.BUILD",
-    sha256 = "70931a87bde9d358af6cb7869e7535ec6b015f7e6df64def6d2ecdd954040dd9",
-    strip_prefix = "libcxx-6.0.0.src",
-    url = "http://releases.llvm.org/6.0.0/libcxx-6.0.0.src.tar.xz",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+)
+
+new_http_archive(
+    name = "libcxx_linux",
+    build_file = "libcxx.BUILD",
+    strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
+    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
 
 # Intel TBB (pre-build binaries for mac and linux)
@@ -89,29 +130,3 @@ load(
 )
 
 pip_grpcio_install()
-
-# LLVM, as installed by Homebrew ('system/dotfiles/run -v Llvm').
-
-new_local_repository(
-    name = "llvm_headers_mac",
-    build_file = "llvm_headers.BUILD",
-    path = "/usr/local/opt/llvm/include",
-)
-
-new_local_repository(
-    name = "llvm_headers_linux",
-    build_file = "llvm_headers.BUILD",
-    path = "/home/linuxbrew/.linuxbrew/opt/llvm/include",
-)
-
-new_local_repository(
-    name = "llvm_mac",
-    build_file = "llvm.BUILD",
-    path = "/usr/local/opt/llvm",
-)
-
-new_local_repository(
-    name = "llvm_linux",
-    build_file = "llvm.BUILD",
-    path = "/home/linuxbrew/.linuxbrew/opt/llvm",
-)
