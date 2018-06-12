@@ -18,11 +18,17 @@ new_http_archive(
 
 # LLVM.
 
+# TODO(cec): Update macOS release version to 6.0.0. I have temporarily
+# downgraded to an older release so that I can link against the libraries on an
+# out-of-date version of macOS, 10.12, wheras version 6.0.0 requires 10.13.
+# Version 6.0.0:
+#   strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
+#   url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
 new_http_archive(
     name = "llvm_mac",
     build_file = "llvm.BUILD",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    strip_prefix = "clang+llvm-4.0.1-x86_64-apple-macosx10.9.0",
+    url = "http://releases.llvm.org/4.0.1/clang+llvm-4.0.1-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
@@ -37,8 +43,8 @@ new_http_archive(
 new_http_archive(
     name = "llvm_headers_mac",
     build_file = "llvm_headers.BUILD",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin/include",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    strip_prefix = "clang+llvm-4.0.1-x86_64-apple-macosx10.9.0/include",
+    url = "http://releases.llvm.org/4.0.1/clang+llvm-4.0.1-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
@@ -54,8 +60,8 @@ new_http_archive(
 new_http_archive(
     name = "libcxx_mac",
     build_file = "libcxx.BUILD",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    strip_prefix = "clang+llvm-4.0.1-x86_64-apple-macosx10.9.0",
+    url = "http://releases.llvm.org/4.0.1/clang+llvm-4.0.1-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
