@@ -23,6 +23,9 @@
 /requirements.txt
 /third_party/tensorflow/BUILD
 /learn/docker/clgen/*.tar.bz2
+/experimental/deeplearning/clgen/docker_worker/*.tar.bz2
+/experimental/deeplearning/clgen/docker_worker/cache
+/experimental/deeplearning/clgen/docker_worker/corpus
 
 # Python files which are generated from in-tree execution.
 *.pyc
