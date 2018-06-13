@@ -130,3 +130,53 @@ load(
 )
 
 pip_grpcio_install()
+
+# Bazel docker rules.
+# See: https://github.com/bazelbuild/rules_docker
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "6dede2c65ce86289969b907f343a1382d33c14fbce5e30dd17bb59bb55bb6593",
+    strip_prefix = "rules_docker-0.4.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/v0.4.0.tar.gz"],
+)
+
+# Enable py3_image() rule.
+
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+    container_repositories = "repositories",
+)
+load(
+    "@io_bazel_rules_docker//python3:image.bzl",
+    _py_image_repos = "repositories",
+)
+
+_py_image_repos()
+
+# Use docker.io containers, since the Google-provided containers do not support
+# specific Python versions.
+
+container_repositories()
+
+# TODO(cec): Use 'digest = "sha256:<sha>"' attribute instead of tag, but
+# that didn't seem to work for me:
+#   Error pulling and saving image
+#   index.docker.io/library/python@sha256:<sha>: 'signatures'
+
+# TODO(cec): Use the '-slim' variants of images, but that doesn't seem to work
+# for me:
+#   docker: Error response from daemon: OCI runtime create failed:
+#   container_linux.go:348: starting container process caused
+#   "exec: \"/usr/bin/python\": stat /usr/bin/python: no such file or
+#   directory": unknown.
+
+container_pull(
+    name = "python3.6",
+    registry = "index.docker.io",
+    repository = "library/python",
+    tag = "3.6",
+)
