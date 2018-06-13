@@ -27,3 +27,10 @@ sh_binary(
     srcs = ["protoc.sh"],
     visibility = ["//visibility:public"],
 )
+
+# Python3 wrapper to workaround docker rules bug.
+sh_binary(
+    name = "py3_wrapper",
+    srcs = ["py3_wrapper.sh"],
+    visibility = ["//visibility:public"],
+)
