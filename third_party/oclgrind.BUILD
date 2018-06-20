@@ -4,6 +4,9 @@
 
 filegroup(
     name = "oclgrind",
-    srcs = glob(["bin/*", "lib/*"]),
+    srcs = glob([
+        "bin/*",
+        "lib/*",
+    ]),
     visibility = ["//visibility:public"],
 )
