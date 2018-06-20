@@ -19,9 +19,9 @@ new_http_archive(
 new_http_archive(
     name = "opencl_headers",
     build_file = "third_party/opencl_headers.BUILD",
+    sha256 = "fab4705dd3b0518f40e9d5d2f234aa57b82569841122f88a4ebcba10ecc17119",
     strip_prefix = "OpenCL-Headers-1.2/opencl12",
     url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/v1.2.tar.gz",
-    sha256 = "fab4705dd3b0518f40e9d5d2f234aa57b82569841122f88a4ebcba10ecc17119",
 )
 
 # LLVM.

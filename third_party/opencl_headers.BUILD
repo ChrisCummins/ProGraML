@@ -3,5 +3,5 @@
 filegroup(
     name = "opencl_headers",
     srcs = glob(["CL/*.h"]),
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
 )
