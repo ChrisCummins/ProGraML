@@ -26,9 +26,10 @@
 /experimental/deeplearning/clgen/docker_worker/*.tar.bz2
 /experimental/deeplearning/clgen/docker_worker/cache
 /experimental/deeplearning/clgen/docker_worker/corpus
-/experimental/deeplearning/deepsmith/opencl_fuzz/*.tar.bz2
-/experimental/deeplearning/deepsmith/opencl_fuzz/cache
 /experimental/deeplearning/deepsmith/opencl_fuzz/*.tar
+/experimental/deeplearning/deepsmith/opencl_fuzz/*.tar.bz2
+/experimental/deeplearning/deepsmith/opencl_fuzz/*.tar.gz
+/experimental/deeplearning/deepsmith/opencl_fuzz/cache
 
 # Python files which are generated from in-tree execution.
 *.pyc
