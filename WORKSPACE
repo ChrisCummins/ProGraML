@@ -65,7 +65,7 @@ new_http_archive(
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
 
-# Intel TBB (pre-build binaries for mac and linux)
+# Intel TBB (pre-built binaries for mac and linux)
 
 new_http_archive(
     name = "tbb_mac",
@@ -81,6 +81,24 @@ new_http_archive(
     sha256 = "c4cd712f8d58d77f7b47286c867eb6fd70a8e8aef097a5c40f6c6b53d9dd83e1",
     strip_prefix = "tbb2017_20170226oss",
     url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz",
+)
+
+# Oclgrind (pre-built binaries for mac and linux).
+
+new_http_archive(
+    name = "oclgrind_mac",
+    build_file = "third_party/oclgrind.BUILD",
+    sha256 = "484d0d66c4bcc46526d031acb31fed52eea375e818a2b3dea3d4a31d686b3018",
+    strip_prefix = "oclgrind-18.3",
+    url = "https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-macOS.tgz",
+)
+
+new_http_archive(
+    name = "oclgrind_linux",
+    build_file = "third_party/oclgrind.BUILD",
+    sha256 = "3cc8b5dfb44b948b454a9806430a7a0add915be0c1f6e2df965733ecd8b5e1fa",
+    strip_prefix = "oclgrind-18.3",
+    url = "https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-Linux.tgz",
 )
 
 # Protocol buffers.
