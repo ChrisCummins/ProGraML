@@ -38,8 +38,8 @@ cc_binary(
         "-DCL_TARGET_OPENCL_VERSION=220",
         "-isystem external/opencl_220_headers",
     ],
-    linkstatic = 1,
     linkshared = 1,
+    linkstatic = 1,
     visibility = ["//visibility:public"],
     deps = ["@opencl_220_headers//:headers"],
 )
