@@ -34,6 +34,14 @@ new_http_archive(
     url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/master.zip",
 )
 
+new_http_archive(
+    name = "libopencl",
+    build_file = "third_party/libOpenCL.BUILD",
+    sha256 = "d7c110a5ed0f26c1314f543df36e0f184783ccd11b754df396e736febbdf490a",
+    strip_prefix = "OpenCL-ICD-Loader-2.2",
+    url = "https://github.com/ChrisCummins/OpenCL-ICD-Loader/archive/v2.2.tar.gz",
+)
+
 # LLVM.
 
 new_http_archive(
