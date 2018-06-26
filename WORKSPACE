@@ -16,12 +16,22 @@ new_http_archive(
     url = "https://github.com/google/benchmark/archive/v1.1.0.tar.gz",
 )
 
+# OpenCL headers.
+
 new_http_archive(
-    name = "opencl_headers",
+    name = "opencl_120_headers",
     build_file = "third_party/opencl_headers.BUILD",
     sha256 = "fab4705dd3b0518f40e9d5d2f234aa57b82569841122f88a4ebcba10ecc17119",
     strip_prefix = "OpenCL-Headers-1.2/opencl12",
     url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/v1.2.tar.gz",
+)
+
+new_http_archive(
+    name = "opencl_220_headers",
+    build_file = "third_party/opencl_headers.BUILD",
+    sha256 = "4b159af0ce0a5260098fff9992cde242af09c24c794ab46ff57390804a65066d",
+    strip_prefix = "OpenCL-Headers-master",
+    url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/master.zip",
 )
 
 # LLVM.
