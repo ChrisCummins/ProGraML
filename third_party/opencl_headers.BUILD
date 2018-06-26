@@ -1,4 +1,4 @@
-# OpenCL 1.2 headers.
+# OpenCL headers.
 
 cc_library(
     name = "headers",
