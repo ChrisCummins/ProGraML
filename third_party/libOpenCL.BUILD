@@ -3,8 +3,8 @@
 
 licenses(["notice"])  # Apache 2.0.
 
-cc_library(
-    name = "libOpenCL",
+filegroup(
+    name = "sources",
     srcs = [
         "icd.c",
         "icd.h",
@@ -12,6 +12,12 @@ cc_library(
         "icd_dispatch.h",
         "icd_linux.c",
     ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "libOpenCL",
+    srcs = [":sources"],
     copts = [
         "-DCL_TARGET_OPENCL_VERSION=220",
         "-isystem external/opencl_220_headers",
