@@ -201,26 +201,23 @@ load(
 
 _py_image_repos()
 
-# Use docker.io containers, since the Google-provided containers do not support
-# specific Python versions.
-
 container_repositories()
 
-# TODO(cec): Use 'digest = "sha256:<sha>"' attribute instead of tag, but
-# that didn't seem to work for me:
-#   Error pulling and saving image
-#   index.docker.io/library/python@sha256:<sha>: 'signatures'
-
-# TODO(cec): Use the '-slim' variants of images, but that doesn't seem to work
-# for me:
-#   docker: Error response from daemon: OCI runtime create failed:
-#   container_linux.go:348: starting container process caused
-#   "exec: \"/usr/bin/python\": stat /usr/bin/python: no such file or
-#   directory": unknown.
-
+# TODO(cec): Deprecate python3.6//:image, replacing all usages with the new
+# "base" image.
 container_pull(
     name = "python3.6",
     registry = "index.docker.io",
     repository = "library/python",
     tag = "3.6",
+)
+
+# My custom base image for bazel-compiled binaries.
+# Defined in //tools/docker/phd_base/Dockerfile.
+
+container_pull(
+    name = "base",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_base",
+    digest = "sha256:3081cdacdb3877fd0a470e06b8608ba4104098c1c501671b5e80499eaac841d8",
 )
