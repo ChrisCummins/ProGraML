@@ -1,5 +1,4 @@
-# Create a minimal Ubuntu environment which is capable of running
-# //experimental/deeplearning/deepsmith/opencl_fuzz.
+# Create a minimal Ubuntu environment for bazel-built binaries.
 FROM python:3.6-slim
 MAINTAINER Chris Cummins <chrisc.101@gmail.com>
 

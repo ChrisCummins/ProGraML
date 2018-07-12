@@ -6,5 +6,5 @@ binaries.
 Build using:
 
 ```sh
-docker build -t phd_base --squash .
+$ docker build -t phd_base --squash $PHD/tools/docker/phd_base
 ```
