@@ -8,12 +8,11 @@ new_http_archive(
     url = "https://github.com/google/googletest/archive/release-1.8.0.zip",
 )
 
-new_http_archive(
-    name = "benchmark",
-    build_file = "benchmark.BUILD",
-    sha256 = "e7334dd254434c6668e33a54c8f839194c7c61840d52f4b6258eee28e9f3b20e",
-    strip_prefix = "benchmark-1.1.0",
-    url = "https://github.com/google/benchmark/archive/v1.1.0.tar.gz",
+http_archive(
+    name = "com_github_google_benchmark",
+    sha256 = "616f252f37d61b15037e3c2ef956905baf9c9eecfeab400cb3ad25bae714e214",
+    strip_prefix = "benchmark-1.4.0",
+    url = "https://github.com/google/benchmark/archive/v1.4.0.tar.gz",
 )
 
 # OpenCL headers.
