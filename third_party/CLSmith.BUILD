@@ -1,6 +1,8 @@
 # CLSmith - A random generator of OpenCL C programs.
 # See: https://github.com/ChrisLidbury/CLSmith
 
+package(default_visibility = ["//visibility:public"])
+
 cc_binary(
     name = "CLSmith",
     copts = ["-Iexternal/CLSmith/src", "-DPACKAGE_STRING=1"],
@@ -206,13 +208,11 @@ cc_binary(
         "src/CLSmith/StatementAtomicReduction.cpp",
         "src/CLSmith/StatementMessage.cpp",
     ],
-    visibility = ["//visibility:public"],
 )
 
 config_setting(
     name = "darwin",
     values = {"cpu": "darwin"},
-    visibility = ["//visibility:public"],
 )
 
 cc_binary(
