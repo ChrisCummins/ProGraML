@@ -128,14 +128,13 @@ new_http_archive(
     url = "https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-Linux.tgz",
 )
 
-
 # CLSmith.
 
 new_http_archive(
     name = "CLSmith",
+    build_file = "third_party/CLSmith.BUILD",
     sha256 = "f37d14fdb003d60ea1dd0640efc06777428ce6debc62e470eeb05dfa128e1d07",
     strip_prefix = "CLSmith-a39a31c43c88352fc65e61dce270d8e1660cbcf0",
-    build_file = "third_party/CLSmith.BUILD",
     url = "https://github.com/ChrisLidbury/CLSmith/archive/a39a31c43c88352fc65e61dce270d8e1660cbcf0.tar.gz",
 )
 

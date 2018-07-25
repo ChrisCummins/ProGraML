@@ -2,9 +2,9 @@
 # See: https://github.com/ChrisLidbury/CLSmith
 
 cc_binary(
-  name = "CLSmith",
-  copts = ["-Iexternal/CLSmith/src", "-DPACKAGE_STRING=1"],
-  srcs = [
+    name = "CLSmith",
+    copts = ["-Iexternal/CLSmith/src", "-DPACKAGE_STRING=1"],
+    srcs = [
         "src/AbsExtension.cpp",
         "src/AbsExtension.h",
         "src/AbsProgramGenerator.cpp",
@@ -205,8 +205,8 @@ cc_binary(
         "src/CLSmith/StatementComm.cpp",
         "src/CLSmith/StatementAtomicReduction.cpp",
         "src/CLSmith/StatementMessage.cpp",
-  ],
-  visibility = ["//visibility:public"],
+    ],
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
@@ -236,7 +236,7 @@ filegroup(
         "runtime/*.h",
         ":cl_safe_math_macros",
         ":safe_math_macros",
-    ])
+    ]),
 )
 
 genrule(
@@ -252,4 +252,3 @@ genrule(
     outs = ["safe_math_macros.h"],
     cmd = "m4 $< > $@",
 )
-
