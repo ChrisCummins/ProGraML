@@ -230,15 +230,6 @@ cc_binary(
     }),
 )
 
-filegroup(
-    name = "runtime_headers",
-    srcs = glob([
-        "runtime/*.h",
-        ":cl_safe_math_macros",
-        ":safe_math_macros",
-    ]),
-)
-
 genrule(
     name = "cl_safe_math_macros",
     srcs = ["runtime/cl_safe_math_macros.m4"],
@@ -251,4 +242,9 @@ genrule(
     srcs = ["runtime/safe_math_macros.m4"],
     outs = ["safe_math_macros.h"],
     cmd = "m4 $< > $@",
+)
+
+filegroup(
+    name = "runtime_headers",
+    srcs = glob(["runtime/*.h"]),
 )
