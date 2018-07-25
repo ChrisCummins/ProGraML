@@ -5,7 +5,6 @@ package(default_visibility = ["//visibility:public"])
 
 cc_binary(
     name = "CLSmith",
-    copts = ["-Iexternal/CLSmith/src", "-DPACKAGE_STRING=1"],
     srcs = [
         "src/AbsExtension.cpp",
         "src/AbsExtension.h",
@@ -208,6 +207,14 @@ cc_binary(
         "src/CLSmith/StatementAtomicReduction.cpp",
         "src/CLSmith/StatementMessage.cpp",
     ],
+    copts = [
+        "-Iexternal/CLSmith/src",
+        "-DPACKAGE_STRING=1",
+    ],
+    linkopts = ["-ldl"] + select({
+        "//:darwin": [],
+        "//conditions:default": ["-pthread"],
+    }),
 )
 
 config_setting(
@@ -220,7 +227,7 @@ cc_binary(
     srcs = ["src/CLSmith/cl_launcher.c"],
     linkopts = ["-ldl"] + select({
         "//:darwin": ["-framework OpenCL"],
-        "//conditions:default": [],
+        "//conditions:default": ["-pthread"],
     }),
     deps = [
         "@opencl_220_headers//:headers",
