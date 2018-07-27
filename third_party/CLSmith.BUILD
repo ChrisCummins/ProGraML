@@ -225,12 +225,9 @@ config_setting(
 cc_binary(
     name = "cl_launcher",
     srcs = ["src/CLSmith/cl_launcher.c"],
-    linkopts = select({
+    linkopts = ["-ldl"] + select({
         "//:darwin": ["-framework OpenCL"],
-        "//conditions:default": [
-            "-ldl",
-            "-lpthread",
-        ],
+        "//conditions:default": ["-pthread"],
     }),
     deps = [
         "@opencl_220_headers//:headers",
