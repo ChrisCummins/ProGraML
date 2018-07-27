@@ -227,7 +227,10 @@ cc_binary(
     srcs = ["src/CLSmith/cl_launcher.c"],
     linkopts = select({
         "//:darwin": ["-framework OpenCL"],
-        "//conditions:default": ["-ldl", "-lpthread"],
+        "//conditions:default": [
+            "-ldl",
+            "-lpthread",
+        ],
     }),
     deps = [
         "@opencl_220_headers//:headers",
