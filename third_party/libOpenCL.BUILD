@@ -41,5 +41,9 @@ cc_binary(
     linkshared = 1,
     linkstatic = 1,
     visibility = ["//visibility:public"],
+    linkopts =  select({
+        "//:darwin": [],
+        "//conditions:default": ["-ldl", "-lpthread"],
+    }),
     deps = ["@opencl_220_headers//:headers"],
 )
