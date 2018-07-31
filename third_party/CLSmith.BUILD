@@ -229,6 +229,7 @@ cc_binary(
         "//:darwin": ["-framework OpenCL"],
         "//conditions:default": [
             "-pthread",
+            "-ldl",
             "-lOpenCL",
         ],
     }),
