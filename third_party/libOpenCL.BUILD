@@ -3,6 +3,12 @@
 
 licenses(["notice"])  # Apache 2.0.
 
+config_setting(
+    name = "darwin",
+    values = {"cpu": "darwin"},
+    visibility = ["//visibility:public"],
+)
+
 filegroup(
     name = "sources",
     srcs = [
@@ -38,12 +44,15 @@ cc_binary(
         "-DCL_TARGET_OPENCL_VERSION=220",
         "-isystem external/opencl_220_headers",
     ],
+    linkopts = select({
+        "//:darwin": [],
+        "//conditions:default": [
+            "-ldl",
+            "-lpthread",
+        ],
+    }),
     linkshared = 1,
     linkstatic = 1,
     visibility = ["//visibility:public"],
-    linkopts =  select({
-        "//:darwin": [],
-        "//conditions:default": ["-ldl", "-lpthread"],
-    }),
     deps = ["@opencl_220_headers//:headers"],
 )
