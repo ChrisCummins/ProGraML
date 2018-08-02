@@ -1,3 +1,7 @@
+# Top level package of the phd repo.
+
+load("@requirements//:requirements.bzl", "requirement")
+
 config_setting(
     name = "darwin",
     values = {"cpu": "darwin"},
@@ -11,7 +15,19 @@ filegroup(
 )
 
 filegroup(
-    name = "config_script",
+    name = "configure_py",
     srcs = ["configure"],
-    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "configure_test",
+    srcs = ["configure_test.py"],
+    data = [":configure_py"],
+    default_python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        "//lib/labm8:bazelutil",
+        requirement("absl-py"),
+        requirement("pytest"),
+    ],
 )
