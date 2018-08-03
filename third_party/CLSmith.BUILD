@@ -1,5 +1,8 @@
 # CLSmith - A random generator of OpenCL C programs.
 # See: https://github.com/ChrisLidbury/CLSmith
+#
+# Note the genrules in this package require the 'm4' binary be in the system
+# $PATH. On Ubuntu, m4 is installed using: $ apt-get install m4
 
 package(default_visibility = ["//visibility:public"])
 
