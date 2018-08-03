@@ -1,3 +1,4 @@
+# An Ubuntu environment configured for building the phd repo.
 FROM ubuntu:18.04
 MAINTAINER Chris Cummins <chrisc.101@gmail.com>
 
@@ -16,7 +17,8 @@ RUN apt-get update
 RUN apt-get install --no-install-recommends -y \
     ca-certificates curl g++ git libmysqlclient-dev ocl-icd-opencl-dev \
     pkg-config python python-dev python3.6 python3.6-dev python3-distutils \
-    unzip zip zlib1g-dev openjdk-11-jdk
+    unzip zip zlib1g-dev openjdk-11-jdk m4 libexempi-dev rsync texlive-full \
+    python3-numpy
 
 # Install bazel.
 RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.14.1/bazel-0.14.1-installer-linux-x86_64.sh && \
@@ -29,6 +31,10 @@ WORKDIR $PHD
 
 # Configure the project.
 RUN ./configure --noninteractive
+
+# Activate build environment, and ensure that new shells do too.
+RUN echo "source $PHD/.env" >> ~/.bashrc
+RUN . $PHD/.env
 
 # Run a py_test target so that the bazel installation is unpacked and python
 # packages are installed.
