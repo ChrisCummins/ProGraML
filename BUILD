@@ -27,7 +27,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         "//lib/labm8:bazelutil",
-        requirement("absl-py"),
-        requirement("pytest"),
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
     ],
 )
