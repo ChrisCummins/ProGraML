@@ -1,7 +1,5 @@
 # Top level package of the phd repo.
 
-load("@requirements//:requirements.bzl", "requirement")
-
 config_setting(
     name = "darwin",
     values = {"cpu": "darwin"},
