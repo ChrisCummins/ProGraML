@@ -7,5 +7,5 @@ the dockerfile version of the
 Build using:
 
 ```sh
-$ docker build -t phd_build --squash $PHD/tools/docker/phd_build
+$ docker build -t phd_build $PHD/tools/docker/phd_build
 ```
