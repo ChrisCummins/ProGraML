@@ -32,12 +32,11 @@ WORKDIR $PHD
 # Configure the project.
 RUN ./configure --noninteractive
 
-# Activate build environment, and ensure that new shells do too.
+# Ensure that new shells use the build env.
 RUN echo "source $PHD/.env" >> ~/.bashrc
-RUN . $PHD/.env
 
 # Run a py_test target so that the bazel installation is unpacked and python
 # packages are installed.
-RUN bazel test //config:getconfig_test
+RUN . $PHD/.env && bazel test //config:getconfig_test
 
 CMD ["/bin/bash"]
