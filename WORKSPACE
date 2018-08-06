@@ -4,7 +4,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 new_http_archive(
     name = "gtest",
-    build_file = "gtest.BUILD",
+    build_file = "third_party/gtest.BUILD",
     sha256 = "f3ed3b58511efd272eb074a3a6d6fb79d7c2e6a0e374323d1e6bcbcc1ef141bf",
     strip_prefix = "googletest-release-1.8.0/googletest",
     url = "https://github.com/google/googletest/archive/release-1.8.0.zip",
@@ -47,14 +47,14 @@ new_http_archive(
 
 new_http_archive(
     name = "llvm_mac",
-    build_file = "llvm.BUILD",
+    build_file = "third_party/llvm.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
     name = "llvm_linux",
-    build_file = "llvm.BUILD",
+    build_file = "third_party/llvm.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
@@ -63,14 +63,14 @@ new_http_archive(
 
 new_http_archive(
     name = "llvm_headers_mac",
-    build_file = "llvm_headers.BUILD",
+    build_file = "third_party/llvm_headers.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin/include",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
     name = "llvm_headers_linux",
-    build_file = "llvm_headers.BUILD",
+    build_file = "third_party/llvm_headers.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/include",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
@@ -80,14 +80,14 @@ new_http_archive(
 
 new_http_archive(
     name = "libcxx_mac",
-    build_file = "libcxx.BUILD",
+    build_file = "third_party/libcxx.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
 )
 
 new_http_archive(
     name = "libcxx_linux",
-    build_file = "libcxx.BUILD",
+    build_file = "third_party/libcxx.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
@@ -96,7 +96,7 @@ new_http_archive(
 
 new_http_archive(
     name = "tbb_mac",
-    build_file = "tbb_mac.BUILD",
+    build_file = "third_party/tbb_mac.BUILD",
     sha256 = "6ff553ec31c33b8340ce2113853be1c42e12b1a4571f711c529f8d4fa762a1bf",
     strip_prefix = "tbb2017_20170226oss",
     url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz",
@@ -104,7 +104,7 @@ new_http_archive(
 
 new_http_archive(
     name = "tbb_lin",
-    build_file = "tbb_lin.BUILD",
+    build_file = "third_party/tbb_lin.BUILD",
     sha256 = "c4cd712f8d58d77f7b47286c867eb6fd70a8e8aef097a5c40f6c6b53d9dd83e1",
     strip_prefix = "tbb2017_20170226oss",
     url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz",
