@@ -1,19 +1,11 @@
 # bzip2 data compressor.
 # See: http://www.bzip.org/
 
-cc_binary(
-    name = "bzip2",
-    srcs = [
-        "bzip2.c",
-    ],
-    deps = [
-        ":bzlib",
-    ],
-)
+package(default_visibility = ["//visibility:public"])
 
-cc_library(
-    name = "bzlib",
-    srcs = glob([
+filegroup(
+    name = "bzlib_srcs",
+    srcs = [
         "blocksort.c",
         "bzlib.c",
         "bzlib.h",
@@ -23,5 +15,30 @@ cc_library(
         "decompress.c",
         "huffman.c",
         "randtable.c",
-    ]),
+    ],
+)
+
+filegroup(
+    name = "bzip2_srcs",
+    srcs = [
+        ":bzlib_srcs",
+        "bzip2.c",
+    ],
+)
+
+cc_binary(
+    name = "bzip2",
+    srcs = [
+        ":bzip2_srcs",
+    ],
+    deps = [
+        ":bzlib",
+    ],
+)
+
+cc_library(
+    name = "bzlib",
+    srcs = [
+        ":bzlib_srcs",
+    ],
 )
