@@ -138,6 +138,16 @@ new_http_archive(
     url = "https://github.com/ChrisLidbury/CLSmith/archive/a39a31c43c88352fc65e61dce270d8e1660cbcf0.tar.gz",
 )
 
+# bzip2.
+
+new_http_archive(
+    name = "bzip2",
+    build_file = "third_party/bzip2.BUILD",
+    sha256 = "a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd",
+    strip_prefix = "bzip2-1.0.6",
+    url = "http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz"
+)
+
 # Protocol buffers.
 
 git_repository(
