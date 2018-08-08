@@ -75,6 +75,13 @@ new_http_archive(
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
 
+new_http_archive(
+    name = "llvm_test_suite",
+    build_file = "third_party/llvm_test_suite.BUILD",
+    strip_prefix = "test-suite-6.0.0.src",
+    url = "http://releases.llvm.org/6.0.0/test-suite-6.0.0.src.tar.xz",
+)
+
 # Now do the same again for headers, but also strip the include/ directory.
 # TODO: Remove these.
 
