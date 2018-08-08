@@ -47,7 +47,7 @@ filegroup(
     name = "SingleSource_Benchmarks_Shootout_hash_srcs",
     srcs = [
         "SingleSource/Benchmarks/Shootout/hash.c",
-        "SingleSource/Benchmarks/Shootout/simgple_hash.h",
+        "SingleSource/Benchmarks/Shootout/simple_hash.h",
     ],
 )
 
