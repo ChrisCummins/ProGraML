@@ -45,7 +45,10 @@ cc_binary(
 
 filegroup(
     name = "SingleSource_Benchmarks_Shootout_hash_srcs",
-    srcs = ["SingleSource/Benchmarks/Shootout/hash.c"],
+    srcs = [
+        "SingleSource/Benchmarks/Shootout/hash.c",
+        "SingleSource/Benchmarks/Shootout/simgple_hash.h",
+    ],
 )
 
 cc_binary(
