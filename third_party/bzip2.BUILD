@@ -21,8 +21,8 @@ filegroup(
 filegroup(
     name = "bzip2_srcs",
     srcs = [
-        ":bzlib_srcs",
         "bzip2.c",
+        ":bzlib_srcs",
     ],
 )
 
