@@ -228,15 +228,6 @@ _py_image_repos()
 
 container_repositories()
 
-# TODO(cec): Deprecate python3.6//:image, replacing all usages with the new
-# "base" image.
-container_pull(
-    name = "python3.6",
-    registry = "index.docker.io",
-    repository = "library/python",
-    tag = "3.6",
-)
-
 # My custom base image for bazel-compiled binaries.
 # Defined in //tools/docker/phd_base/Dockerfile.
 
