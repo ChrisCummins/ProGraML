@@ -150,9 +150,9 @@ new_http_archive(
 new_http_archive(
     name = "bzip2",
     build_file = "third_party/bzip2.BUILD",
-    sha256 = "a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd",
+    sha256 = "ba1abd52e2798aab48f47bcc90975c0da8f6ca70dc416a0e02f02da7355710c4",
     strip_prefix = "bzip2-1.0.6",
-    url = "http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz",
+    url = "https://github.com/ChrisCummins/bzip2/archive/1.0.6.tar.gz",
 )
 
 # Protocol buffers.
