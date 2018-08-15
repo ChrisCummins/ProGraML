@@ -167,6 +167,96 @@ load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
 
 py_proto_repositories()
 
+# Java Maven dependencies.
+
+load("//tools/bzl:maven_jar.bzl", "GERRIT", "MAVEN_LOCAL", "maven_jar")
+
+maven_jar(
+    name = "org_eclipse_jface",
+    artifact = "org.eclipse.platform:org.eclipse.jface.text:3.13.0",
+    sha1 = "8cbaf7f92ffc7a7daa694bd2781169b3ce7678c4",
+)
+
+maven_jar(
+    name = "org_eclipse_text",
+    artifact = "org.eclipse:text:3.2.0-v20060605-1400",
+    attach_source = False,
+    sha1 = "1b5876937d9fe612a51cd5c5023572de6fb34a42",
+)
+
+maven_jar(
+    name = "org_eclipse_core_runtime",
+    artifact = "org.eclipse.platform:org.eclipse.core.runtime:3.14.0",
+    sha1 = "5018d6e829f976519ccf94cf4519486b2e93edfb",
+)
+
+maven_jar(
+    name = "org_eclipse_swt",
+    artifact = "org.eclipse.platform:org.eclipse.swt:3.107.0",
+    attach_source = False,
+    sha1 = "9aec4300f41685a9e84d50d7bd3715d6868c7351",
+)
+
+maven_jar(
+    name = "org_eclipse_equinox_common",
+    artifact = "org.eclipse.platform:org.eclipse.equinox.common:3.10.0",
+    sha1 = "8758736e97bb84bf59f73013073abdc44a4e5602",
+)
+
+maven_jar(
+    name = "org_eclipse_resources",
+    artifact = "org.eclipse.platform:org.eclipse.core.resources:3.13.0",
+    sha1 = "582ea9b37aafb39450825f82ef3a0f5867e4015c",
+)
+
+maven_jar(
+    name = "org_eclipse_jobs",
+    artifact = "org.eclipse.platform:org.eclipse.core.jobs:3.10.0",
+    sha1 = "f7c872a52c86a304a17f6d2902c645e98cfa2dcc",
+)
+
+maven_jar(
+    name = "org_eclipse_jdt_core",
+    artifact = "org.eclipse.jdt:org.eclipse.jdt.core:3.14.0",
+    sha1 = "16ec8157b196520fcf1ed9d7c9b63c770eda278d",
+)
+
+maven_jar(
+    name = "org_eclipse_core_contenttype",
+    artifact = "org.eclipse.platform:org.eclipse.core.contenttype:3.7.0",
+    sha1 = "ee111d57c3fb5fd287f0dbadd3e8bb24f41ba710",
+)
+
+maven_jar(
+    name = "org_eclipse_equinox_preferences",
+    artifact = "org.eclipse.platform:org.eclipse.equinox.preferences:3.7.100",
+    sha1 = "1d47bf96df31261867e9ed88367790aeb8d143f3",
+)
+
+maven_jar(
+    name = "org_eclipse_osgi_util",
+    artifact = "org.eclipse.platform:org.eclipse.osgi.util:3.5.0",
+    sha1 = "2a4a95a956dde4790668d25e5993472d60456b20",
+)
+
+maven_jar(
+    name = "org_eclipse_osgi",
+    artifact = "org.eclipse.platform:org.eclipse.osgi:3.13.0",
+    sha1 = "a71aec640e47045636f9263cc4696af7005d16e2",
+)
+
+maven_jar(
+    name = "org_osgi_framework",
+    artifact = "org.osgi:org.osgi.framework:1.9.0",
+    sha1 = "fdc9ab6e2e7686da9329e3f23958a332cdfabfd1",
+)
+
+maven_jar(
+    name = "org_osgi_service_prefs",
+    artifact = "org.osgi:org.osgi.service.prefs:1.1.1",
+    sha1 = "8549d2a426dce907d6b1253742ca8c11095c515b",
+)
+
 # Python requirements.
 
 # TODO(cec): There is a bug in the requirements implementation which means that
