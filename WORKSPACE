@@ -164,9 +164,11 @@ git_repository(
 )
 
 load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
+
 py_proto_repositories()
 
 load("@org_pubref_rules_protobuf//java:rules.bzl", "java_proto_repositories")
+
 java_proto_repositories()
 
 # Java Maven dependencies.
@@ -261,7 +263,7 @@ maven_jar(
 
 maven_jar(
     name = "com_google_protobuf_java",
-    artifact= "com.google.protobuf:protobuf-java:3.6.1",
+    artifact = "com.google.protobuf:protobuf-java:3.6.1",
     sha1 = "0d06d46ecfd92ec6d0f3b423b4cd81cb38d8b924",
 )
 
