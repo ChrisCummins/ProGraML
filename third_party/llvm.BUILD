@@ -38,6 +38,13 @@ filegroup(
 )
 
 filegroup(
+    name = "llvm-as",
+    srcs = [
+        "bin/llvm-as",
+    ],
+)
+
+filegroup(
     name = "llvm-link",
     srcs = [
         "bin/llvm-link",
