@@ -273,6 +273,18 @@ maven_jar(
     sha1 = "25bfb9ebf5116a67962a64ed29b5a8e29b4ab613",
 )
 
+maven_jar(
+    name = "org_eclipse_ltk_ui_refactoring",
+    artifact = "org.eclipse.platform:org.eclipse.ltk.ui.refactoring:3.9.100",
+    sha1 = "4d1bc4ea798eaab9cca605c54f2b7efd9ace7bf7",
+)
+
+maven_jar(
+    name = "com_google_guava",
+    artifact = "com.google.guava:guava:23.5-jre",
+    sha1 = "e9ce4989adf6092a3dab6152860e93d989e8cf88",
+)
+
 # Python requirements.
 
 # TODO(cec): There is a bug in the requirements implementation which means that
