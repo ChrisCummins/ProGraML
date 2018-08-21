@@ -267,6 +267,12 @@ maven_jar(
     sha1 = "0d06d46ecfd92ec6d0f3b423b4cd81cb38d8b924",
 )
 
+maven_jar(
+    name = "org_eclipse_ltk_core_refactoring",
+    artifact = "org.eclipse.platform:org.eclipse.ltk.core.refactoring:3.9.0",
+    sha1 = "25bfb9ebf5116a67962a64ed29b5a8e29b4ab613",
+)
+
 # Python requirements.
 
 # TODO(cec): There is a bug in the requirements implementation which means that
