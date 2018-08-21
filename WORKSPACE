@@ -173,7 +173,7 @@ java_proto_repositories()
 
 # Java Maven dependencies.
 
-load("//tools/bzl:maven_jar.bzl", "GERRIT", "MAVEN_LOCAL", "maven_jar")
+load("//tools/bzl:maven_jar.bzl", "maven_jar")
 
 maven_jar(
     name = "org_eclipse_jface",
