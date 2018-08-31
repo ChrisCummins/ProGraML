@@ -225,6 +225,11 @@ config_setting(
     values = {"cpu": "darwin"},
 )
 
+filegroup(
+    name = "cl_launcher_src",
+    srcs = ["src/CLSmith/cl_launcher.c"],
+)
+
 cc_binary(
     name = "cl_launcher",
     srcs = ["src/CLSmith/cl_launcher.c"],
