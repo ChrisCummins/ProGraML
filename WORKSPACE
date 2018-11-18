@@ -159,8 +159,8 @@ new_http_archive(
 
 git_repository(
     name = "org_pubref_rules_protobuf",
+    commit = "5cae42382b620aa1e347ecf30b3e92fd0d97998c",
     remote = "https://github.com/pubref/rules_protobuf",
-    tag = "v0.8.1",
 )
 
 load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
