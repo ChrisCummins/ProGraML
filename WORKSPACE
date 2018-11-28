@@ -17,6 +17,19 @@ http_archive(
     url = "https://github.com/google/benchmark/archive/v1.4.0.tar.gz",
 )
 
+# Boost C++ library.
+
+http_archive(
+    name = "com_github_nelhage_rules_boost",
+    sha256 = "d0903f7c13c9ccce88e8a4a315b6d3d6dd3d083ba977cbc98c3ca41cdaf7c53b",
+    strip_prefix = "rules_boost-17d9bf68420ec2e4c63ba85421e9959f52f977aa",
+    url = "https://github.com/nelhage/rules_boost/archive/17d9bf68420ec2e4c63ba85421e9959f52f977aa.tar.gz",
+)
+
+load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
+
+boost_deps()
+
 # OpenCL headers.
 
 new_http_archive(
