@@ -24,7 +24,7 @@ py_test(
     default_python_version = "PY3",
     srcs_version = "PY3",
     deps = [
-        "//lib/labm8:bazelutil",
+        "//labm8:bazelutil",
         "//third_party/py/absl",
         "//third_party/py/pytest",
     ],
