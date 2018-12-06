@@ -14,10 +14,6 @@
 # Build system.
 /bazel-*
 
-# Python virtual environment, which I use only as the Python SDK for IntelliJ.
-# I don't run any actual code using it.
-/venv
-
 # The "husky" package for pre-commit hooks is written in node.
 /node_modules
 
