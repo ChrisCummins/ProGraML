@@ -77,11 +77,6 @@ __pycache__
 /docs/**/*.xdy
 /docs/**/.autotex.deps
 
-# Generated in-tree Protocol Buffer code.
-*.pb.descriptor_set
-*_pb2.py
-*_pb2_grpc.py
-
 # User specific settings for IntelliJ.
 /.idea/workspace.xml
 /.idea/tasks.xml
