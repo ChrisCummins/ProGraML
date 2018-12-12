@@ -11,5 +11,6 @@ py_library(
     srcs = ["jupyter.py"],
     deps = [
         requirement("jupyter-client"),
+        requirement("jupyter_http_over_ws"),
     ],
 )
