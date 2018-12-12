@@ -21,6 +21,7 @@ py_binary(
     deps = [
         "//labm8:bazelutil",
         "//labm8:labdate",
+        "//labm8:labtypes",
         "//labm8:pbutil",
         "//labm8:sqlutil",
         "//labm8:viz",
