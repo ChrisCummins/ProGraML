@@ -16,5 +16,10 @@ filegroup(
 
 filegroup(
     name = "includes",
-    srcs = glob(["include/**/*"]),
+    srcs = glob([
+        "include/**/*",
+        "arch/x86/include/**/*",
+        "arch/ia64/include/**/*",
+        "tools/include/**/*",
+    ]),
 )
