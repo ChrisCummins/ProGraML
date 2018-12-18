@@ -82,6 +82,16 @@ new_http_archive(
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
 
+# Linux sources.
+
+new_http_archive(
+    name = "linux_srcs",
+    build_file = "third_party/linux.BUILD",
+    sha256 = "1865d2130769d4593f3c0cef4afbc9e39cdc791be218b15436a6366708142a81",
+    strip_prefix = "linux-4.19",
+    url = "https://github.com/torvalds/linux/archive/v4.19.tar.gz",
+)
+
 # Now do the same again for headers, but also strip the include/ directory.
 
 new_http_archive(
