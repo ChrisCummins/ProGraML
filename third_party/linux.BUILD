@@ -5,13 +5,13 @@ package(default_visibility = ["//visibility:public"])
 # Linux sources as filegroups.
 
 filegroup(
-    name = "kernel_c_srcs",
-    srcs = glob(["kernel/**/*.c"]),
+    name = "srcs",
+    srcs = glob(["**/*.c"]),
 )
 
 filegroup(
-    name = "kernel_c_hdrs",
-    srcs = glob(["kernel/**/*.h"]),
+    name = "hdrs",
+    srcs = glob(["**/*.h"]),
 )
 
 filegroup(
