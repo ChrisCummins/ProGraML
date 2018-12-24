@@ -117,7 +117,7 @@ def get_stmt_counts(data_set, data_list):
   # Check that all stmts have been counted (for debugging purposes)
   total_stmt_count = sum(data_count.values())
   assert total_stmt_count == len(
-    data_list), "Not all statements have been counted"
+      data_list), "Not all statements have been counted"
 
   # Compute stmt counts (by family)
   print('Counting statement occurrences (by family) ...')
@@ -155,11 +155,11 @@ def get_stmt_counts(data_set, data_list):
         print(data_set[i], "\n\tappears ", num, " times")
 
   assert stmts_categorized <= list(
-    range(len(data_set))), "Not all statements have been categorized"
+      range(len(data_set))), "Not all statements have been categorized"
   assert stmts_categorized >= list(range(
-    len(data_set))), "Some statements have been categorized multiple times"
+      len(data_set))), "Some statements have been categorized multiple times"
   assert total_stmt_count == len(
-    data_list), "Not all statements have been counted"
+      data_list), "Not all statements have been counted"
 
   return data_count, data_operations_count
 
@@ -220,7 +220,7 @@ def read_data_files_from_folder(foldername):
       # open file and import content
       f = open(os.path.join(foldername, file), 'r')
       data.append(
-        f.read().splitlines())  # add this file as an element to the list "data"
+          f.read().splitlines())  # add this file as an element to the list "data"
       f.close()
 
       # Add file name to dictionary
@@ -382,7 +382,7 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     f.write('-' * 80 + '\n')
     for a, b, data in sorted(G.edges(data=True), key=lambda x: sort_key(x)):
       f.write(
-        '({a:<30}, {b:<30}) {w}\n'.format(a=a[:30], b=b[:30], w=data['stmt']))
+          '({a:<30}, {b:<30}) {w}\n'.format(a=a[:30], b=b[:30], w=data['stmt']))
 
     # data flow edges
     dataedges = [(str(n[0]), str(n[1]), str(n[2])) for n in
@@ -391,12 +391,12 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
                  if n[2]['flow'] == 'data']
     f.write('\nData flow edges: \n')
     f.write('#edges: ' + str(len(dataedges)) + ' (' + str(
-      int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
+        int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
             '%)\n')
     f.write('-' * 80 + '\n')
     for e in dataedges:
       f.write(
-        '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
+          '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
 
     # control flow edges
     ctrledges = [(str(n[0]), str(n[1]), str(n[2])) for n in
@@ -405,12 +405,12 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
                  if n[2]['flow'] == 'ctrl']
     f.write('\nCtrl flow edges: \n')
     f.write('#edges: ' + str(len(ctrledges)) + ' (' + str(
-      int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
+        int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
             '%)\n')
     f.write('-' * 80 + '\n')
     for e in ctrledges:
       f.write(
-        '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
+          '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
 
     # multi-edges
     f.write('\nMulti-edges: \n')
@@ -421,7 +421,7 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
             str(int(len(multi_edge_list)) / G.number_of_edges() * 100)[
             :5] + '%)\n')
     f.write('#node pairs connected by multi-edges: ' + str(
-      len(multi_edge_dic.keys())) + ' (' +
+        len(multi_edge_dic.keys())) + ' (' +
             str(int(len(multi_edge_dic)) / G.number_of_edges() * 100)[
             :5] + '%)\n')
     f.write('-' * 80 + '\n')
@@ -479,7 +479,8 @@ def print_dxfg_to_file(D, folder, filename):
     f.write('-' * 80 + '\n')
     for a, b, data in sorted(D.edges(data=True), key=lambda x: sort_key(x)):
       f.write(
-        '({a:<37}, {b:<37}) {w}\n'.format(a=a[:37], b=b[:37], w=data['weight']))
+          '({a:<37}, {b:<37}) {w}\n'.format(a=a[:37], b=b[:37],
+                                            w=data['weight']))
 
 
 ########################################################################################################################
@@ -875,7 +876,7 @@ def get_num_args_func(line, func_name=None):
   modif_line = re.sub(r'<[^<>]+>', '',
                       line)  # commas in vectors/arrays should not be counted as argument-separators
   arg_list_ = find_outer_most_last_parenthesis(
-    modif_line)  # get last parenthesis
+      modif_line)  # get last parenthesis
   if arg_list_ is None:
     # Make sure that this is the case because the function has no arguments
     # and not because there was in error in regex matching
@@ -989,9 +990,9 @@ def construct_function_dictionary(file):
           try:
             if (len(args_) != num_args):
               print(
-                "Could not compute the right number of arguments in " + line + \
-                "\n(a) " + str(len(args_)) + "\n(b) " + str(num_args) + \
-                "\nwith arg-list: " + arg_list_)
+                  "Could not compute the right number of arguments in " + line + \
+                  "\n(a) " + str(len(args_)) + "\n(b) " + str(num_args) + \
+                  "\nwith arg-list: " + arg_list_)
               raise ValueError('FunctionNotSupported')
             if named_args:
               for a in range(num_args):
@@ -1039,10 +1040,10 @@ def construct_function_dictionary(file):
                   line) and 'asm' not in line and ' @' in line:
       # Get the function name
       function_name_ = re.search(
-        r'(' + rgx.func_name + r')( to .*)?\(.*\)($|\n)', line)
+          r'(' + rgx.func_name + r')( to .*)?\(.*\)($|\n)', line)
       if function_name_ is None:
         function_name_ = re.search(
-          r'(' + rgx.local_id + r')( to .*)?\(.*\)($|\n)', line)
+            r'(' + rgx.local_id + r')( to .*)?\(.*\)($|\n)', line)
         assert function_name_ is not None, "Could not identify function name in statement:\n" + line
       else:
         function_name = function_name_.group(1)[1:]
@@ -1182,12 +1183,12 @@ def add_edge(G, parent_prefix, parent_node, child_prefix, child_node, stmt,
   # Assert that the nodes have been added to the graph prior to this
   parent_node_ = parent_prefix + parent_node
   assert parent_node_ in list(
-    G.nodes()), "Node not added to graph:\n" + parent_node_ + \
-                '\nFound while trying to add edge:\n' + stmt
+      G.nodes()), "Node not added to graph:\n" + parent_node_ + \
+                  '\nFound while trying to add edge:\n' + stmt
   child_node_ = child_prefix + child_node
   assert child_node_ in list(
-    G.nodes()), "Node not added to graph:\n" + child_node_ + \
-                '\nFound while trying to add edge:\n' + stmt
+      G.nodes()), "Node not added to graph:\n" + child_node_ + \
+                  '\nFound while trying to add edge:\n' + stmt
 
   # Add edge
   G.add_edge(parent_node_, child_node_, stmt=stmt, flow=flow)
@@ -1212,8 +1213,8 @@ def add_edge_dummy(G, parent_prefix, parent_node, stmt, ad_hoc_count):
   # Assert that the nodes have been added to the graph prior to this
   parent_node_ = parent_prefix + parent_node
   assert parent_node_ in list(
-    G.nodes()), "Node not added to graph:\n" + parent_node_ + \
-                '\nFound while trying to add edge:\n' + stmt
+      G.nodes()), "Node not added to graph:\n" + parent_node_ + \
+                  '\nFound while trying to add edge:\n' + stmt
   ad_hoc_node = 'ad_hoc_' + str(ad_hoc_count)
   G.add_node(ad_hoc_node, id='ad_hoc')
   G.add_edge(parent_node_, ad_hoc_node, stmt=stmt, flow='path')
@@ -1333,7 +1334,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       assert func_prefix is not '', "Empty function prefix at line:\n" + line
       if all_degrees(G, block_ref) == 0:
         G.remove_node(
-          block_ref)  # if the previous block reference has not been used, delete it
+            block_ref)  # if the previous block reference has not been used, delete it
 
       # Update block reference
       label_ = re.match('(?:.*<label>:)?(' + rgx.local_id_no_perc + '):?', line)
@@ -1364,7 +1365,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         # This is just a regular assignment operation (not a phi-statement)
         # Get the operands
         m_loc, m_glob, m_label, m_label2 = get_identifiers_from_line(
-          re.sub(r'{.*}', '', line))
+            re.sub(r'{.*}', '', line))
         if assignee in m_loc:
           m_loc.remove(assignee)
         operands = list()
@@ -1411,12 +1412,12 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                         r'.*), (%?' + rgx.local_id_no_perc + ') \],?', line)
         if len(m_) == 0:
           m_ = re.findall(
-            r'\[ (inttoptr \(' + rgx.base_type + r' ' + rgx.immediate_value_int + r' to ' +
-            rgx.base_type_or_struct_name + r'\**\)|%?-?' + rgx.local_id_no_perc + r'|' +
-            rgx.immediate_value + r'|' + r'|<.*>), ' +
-            r'(%?-?' + rgx.local_id_no_perc + ') \]', line)
+              r'\[ (inttoptr \(' + rgx.base_type + r' ' + rgx.immediate_value_int + r' to ' +
+              rgx.base_type_or_struct_name + r'\**\)|%?-?' + rgx.local_id_no_perc + r'|' +
+              rgx.immediate_value + r'|' + r'|<.*>), ' +
+              r'(%?-?' + rgx.local_id_no_perc + ') \]', line)
         assert len(
-          m_) > 0, "Could not identify arguments in phi-statement: " + line
+            m_) > 0, "Could not identify arguments in phi-statement: " + line
 
         # Loop over the list of arguments
         for m in m_:
@@ -1445,31 +1446,32 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       if re.match('store ', line):
         # eg store float %11, float* %6, align 4
         m = re.match(
-          r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.immediate_or_local_id +
-          '|undef), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + '|null)',
-          line)
+            r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.immediate_or_local_id +
+            '|undef), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + '|null)',
+            line)
         if m is None:
           m = re.match(
-            r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.global_id +
-            '), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + ')',
-            line)
+              r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.global_id +
+              '), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + ')',
+              line)
           if m is None:
             line_modif = re.sub(r'\([^\(\)]+\)', '', line)
             line_modif = re.sub(r'\{[^\{\}]+\}', '', line_modif)
             m = re.match(
-              r'store (?:volatile )?.* (' + rgx.local_or_global_id + ')(?: to .*)?, .*\* (' +
-              rgx.local_or_global_id + ')', line_modif)
+                r'store (?:volatile )?.* (' + rgx.local_or_global_id + ')(?: to .*)?, .*\* (' +
+                rgx.local_or_global_id + ')', line_modif)
             if m is None:
               m_loc_, m_glob_, m_label_, m_label2_ = get_identifiers_from_line(
-                line)
+                  line)
               m_imm_ = re.search(
-                r'(?<!%)(?<!align )' + rgx.immediate_value + r'(?!( x ))', line)
+                  r'(?<!%)(?<!align )' + rgx.immediate_value + r'(?!( x ))',
+                  line)
               l = m_loc_ + m_glob_
               if len(l) == 1 and m_imm_ is not None:
                 l.append(m_imm_.group(0))
               assert len(
-                l) >= 2, "Cannot identify operands in:\n" + line + "\nGot: " + str(
-                l)
+                  l) >= 2, "Cannot identify operands in:\n" + line + "\nGot: " + str(
+                  l)
               pos = list()
               for ll in l:
                 pos_ = line.find(ll)
@@ -1570,8 +1572,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
 
           # Get all components
           m = re.match(
-            r'br i1 (.*), label (' + rgx.local_id + r'), label (' + rgx.local_id + r')',
-            line)
+              r'br i1 (.*), label (' + rgx.local_id + r'), label (' + rgx.local_id + r')',
+              line)
           assert m is not None, "Could not match components of statement:\n" + line
           comparator = m.group(1)
           labelT = m.group(2)
@@ -1685,8 +1687,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         assert switchlist_ is not None, "Could not identify switch list in:\n" + line
         switchlist = switchlist_.group(0)
         m_ = re.findall(
-          rgx.base_type + ' (' + rgx.immediate_or_local_id + r'), label (' + rgx.local_id + r')',
-          switchlist)
+            rgx.base_type + ' (' + rgx.immediate_or_local_id + r'), label (' + rgx.local_id + r')',
+            switchlist)
         assert m_ is not None, "Could not match components of switch statement:\n" + line
         vals = list()
         labels = list()
@@ -1736,7 +1738,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
           func_name_ = re.search(r' asm (?:sideeffect )?(\".*\")\(', line)
         else:
           func_name_ = re.search(
-            r'(' + rgx.func_name + r')( to .*)?\(.*\)($|\n)', line)
+              r'(' + rgx.func_name + r')( to .*)?\(.*\)($|\n)', line)
         if func_name_ is None:
           func_name_ = re.search(r'(' + rgx.local_id + r')\(.*\)($|\n)', line)
         assert func_name_ is not None, "Could not identify function name in:\n" + line
@@ -1787,14 +1789,14 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             assert to_modif is not None, "Unexpected number of arguments in " + line
             for i in range(1, int(len(to_modif.groups())), 2):
               arg_list = arg_list.replace(
-                to_modif.group(i) + ',' + to_modif.group(i + 1),
-                to_modif.group(i) + ' ' + to_modif.group(i + 1))
+                  to_modif.group(i) + ',' + to_modif.group(i + 1),
+                  to_modif.group(i) + ' ' + to_modif.group(i + 1))
             to_match = arg_list.split(',')
           assert len(
-            to_match) == num_args, "Wrong number of arguments in line " + line + \
-                                   " (args: " + arg_list + ", expected " + str(
-            num_args) + \
-                                   " arguments."
+              to_match) == num_args, "Wrong number of arguments in line " + line + \
+                                     " (args: " + arg_list + ", expected " + str(
+              num_args) + \
+                                     " arguments."
 
           # Get all individual arguments (can contain immediates!)
           # (these are the called arguments, not the defined ones!)
@@ -1805,8 +1807,9 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
               if re.search(rgx.local_id + r'(?!\* )(?=([\s,\)]|$))',
                            t) is not None:
                 args.append(
-                  re.search(rgx.local_id + r'(?!\)\* )(?=([\s,]|$))', t).group(
-                    0))
+                    re.search(rgx.local_id + r'(?!\)\* )(?=([\s,]|$))',
+                              t).group(
+                        0))
               elif re.search(rgx.global_id, t) is not None:
                 args.append(re.search(rgx.global_id, t).group(0))
               elif re.search(rgx.immediate_value_or_undef + r'$',
@@ -1818,8 +1821,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                 # eg call void @llvm.dbg.value(metadata i32 %call())
                 # eg call void @llvm.dbg.value(metadata i32 0())
                 args.append(re.search(
-                  rgx.immediate_or_local_id_or_undef + r'(?!\)\* )(?=\()',
-                  t).group(0))
+                    rgx.immediate_or_local_id_or_undef + r'(?!\)\* )(?=\()',
+                    t).group(0))
               elif re.search(r'\s+$', t) is not None or 'metadata' in t:
                 args.append(str(1000))
               else:
@@ -1882,7 +1885,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             # Get return statement
             ret_ = functions_defined_in_file[func_key][2]
             ret_node_match = re.match(
-              r'ret .* (%?' + rgx.local_id_no_perc + r'|false|true)', ret_)
+                r'ret .* (%?' + rgx.local_id_no_perc + r'|false|true)', ret_)
             assert ret_node_match is not None, "Return statement could not be identified in " + \
                                                "function:\n" + line + "\nreturn stmt:\n" + ret_
             ret_node = ret_node_match.group(1)
@@ -1984,7 +1987,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
               # Connect "void" to the normal and unwind labels in invocation
               m_loc, m_glob, m_label, m_label2 = get_identifiers_from_line(line)
               assert len(
-                m_label) == 2, "Could not identify 2 labels in:\n" + line
+                  m_label) == 2, "Could not identify 2 labels in:\n" + line
               add_node(G, func_prefix, m_label[0], 'label', ids_in_basic_block)
               add_node(G, func_prefix, m_label[1], 'label', ids_in_basic_block)
               add_edge(G, '', block_ref, func_prefix, m_label[0], line, 'ctrl')
@@ -2017,7 +2020,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             if re.match(rgx.local_id + r' = (tail )?( fastcc)?invoke', line):
               m_loc, m_glob, m_label, m_label2 = get_identifiers_from_line(line)
               assert len(
-                m_label) == 2, "Could not identify 2 labels in:\n" + line
+                  m_label) == 2, "Could not identify 2 labels in:\n" + line
               add_node(G, func_prefix, m_label[0], 'label', ids_in_basic_block)
               add_node(G, func_prefix, m_label[1], 'label', ids_in_basic_block)
               add_edge(G, func_prefix, assignee, func_prefix, m_label[0], line,
@@ -2118,7 +2121,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       else:
         lines_not_added_to_graph.append(line)
         assert False, "Could not recognize statement one line " + str(
-          i) + ":\n" + line
+            i) + ":\n" + line
 
   # Put things together
   for k, v in functions_defined_in_file.items():
@@ -2151,9 +2154,9 @@ def check_vocabulary_size(preprocessed_file, G):
 
   # Construct graph-vocabulary
   vocabulary_after_graph_construction = sorted(
-    set([e[2]['stmt'] for e in G.edges(data=True)]))
+      set([e[2]['stmt'] for e in G.edges(data=True)]))
   vocabulary_size_after_graph_construction = len(
-    vocabulary_after_graph_construction)
+      vocabulary_after_graph_construction)
 
   # Perform checks
   try:
@@ -2161,7 +2164,7 @@ def check_vocabulary_size(preprocessed_file, G):
       source_data_after_preprocessing_file = "vocabulary_text.txt"
       source_data_after_graph_construction_file = "vocabulary_graph.txt"
       source_data_after_graph_construction = list(
-        vocabulary_after_graph_construction)
+          vocabulary_after_graph_construction)
       print_data(vocabulary_after_preprocessing,
                  source_data_after_preprocessing_file)
       print_data(source_data_after_graph_construction,
@@ -2170,24 +2173,24 @@ def check_vocabulary_size(preprocessed_file, G):
             vocabulary_size_after_preprocessing - vocabulary_size_after_graph_construction,
             ' words more in the text representation than in the graph representation')
       in_graph_not_text = set(vocabulary_after_graph_construction) - set(
-        vocabulary_after_preprocessing)
+          vocabulary_after_preprocessing)
       if in_graph_not_text:
         print(
-          "The following words are in the graph representation but not in the text representation: ")
+            "The following words are in the graph representation but not in the text representation: ")
         for s in in_graph_not_text:
           print('\t', s)
         print(
-          "The words above are in the graph representation but not in the text representation: ")
+            "The words above are in the graph representation but not in the text representation: ")
         raise ValueError('GraphMisconstructed')
       in_text_not_graph = list(set(vocabulary_after_preprocessing) - set(
-        vocabulary_after_graph_construction))
+          vocabulary_after_graph_construction))
       if in_text_not_graph:
         print(
-          "The following words are in the text representation but not in the graph representation: ")
+            "The following words are in the text representation but not in the graph representation: ")
         for s in in_text_not_graph:
           print('\t', s)
         print(
-          "The words above are in the text representation but not in the graph representation: ")
+            "The words above are in the text representation but not in the graph representation: ")
         raise ValueError('GraphMisconstructed')
   except ValueError:
     return None
@@ -2527,7 +2530,7 @@ def construct_struct_types_dictionary_for_file(data):
           use_previously_inlined_stmts = True
         else:
           assert cycle_found, "Counter step: " + str(
-            counter) + ", could not inline " + str(len(to_process)) \
+              counter) + ", could not inline " + str(len(to_process)) \
                               + " statements : \n" + string_of_items(to_process)
       else:
         use_previously_inlined_stmts = False  # reset
@@ -2536,7 +2539,7 @@ def construct_struct_types_dictionary_for_file(data):
 
     # Stopping condition in case we've been looping for a suspiciously long time
     assert counter < 1000, "Could not inline " + str(
-      len(to_process)) + " statements after " + str(counter) + \
+        len(to_process)) + " statements after " + str(counter) + \
                            " steps: \n" + string_of_items(to_process)
 
   # Move contents of "to_inline" to "ready"
@@ -2596,7 +2599,7 @@ def inline_struct_types(G, data_with_struct_def, file_name,
 
   # Construct a dictionary ["structure name", "corresponding literal structure"]
   data_with_struct_def, dict_temp = construct_struct_types_dictionary_for_file(
-    data_with_struct_def)
+      data_with_struct_def)
 
   # If the dictionary is empty
   if not dict_temp:
@@ -2850,7 +2853,7 @@ def check_sanity(D, G):
       assert "D-graph is disconnected"
     if D.number_of_nodes() != G.number_of_edges():
       print("WARNING! The number of nodes in the D-graph (" + str(
-        D.number_of_nodes()) \
+          D.number_of_nodes()) \
             + ") does not match the vnumber of edges in the G-graph (" + str(
           G.number_of_edges()) + ")")
       assert "Mismatch"
@@ -2882,7 +2885,7 @@ def construct_xfg(data_folder):
 
   # Get raw data sub-folders
   assert os.path.exists(
-    data_folder), "Folder " + data_folder + " does not exist"
+      data_folder), "Folder " + data_folder + " does not exist"
   folders_raw = list()
   listing_to_explore = [os.path.join(data_folder, f) for f in
                         os.listdir(data_folder + '/')]
@@ -2964,7 +2967,7 @@ def construct_xfg(data_folder):
         preprocessed_data_with_structure_def = raw_data
         # save the vocabulary for later checks
         vocabulary_after_preprocessing = list(
-          set(collapse_into_one_list(preprocessed_data)))
+            set(collapse_into_one_list(preprocessed_data)))
 
         # Dump pre-processed data into a folder to be reused
         print('Writing pre-processed data into folder ', folder_preprocessed,
@@ -2986,7 +2989,7 @@ def construct_xfg(data_folder):
         with open(data_preprocessed_filename, 'rb') as f:
           preprocessed_data, functions_declared_in_files, \
           preprocessed_data_with_structure_def, vocabulary_after_preprocessing = pickle.load(
-            f)
+              f)
 
       # Print statistics and release memory
       source_data_list, source_data = data_statistics(preprocessed_data,
