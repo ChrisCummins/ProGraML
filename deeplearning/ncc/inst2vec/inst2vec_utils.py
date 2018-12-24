@@ -22,51 +22,50 @@
 # ==============================================================================
 """inst2vec utility functions"""
 
-import sys
-import pickle
 import datetime
+import pickle
 import re
+import sys
 
 
 # Maximum number of bytes to pickle in one chunk
-max_bytes = 2**31 - 1
+max_bytes = 2 ** 31 - 1
 
 
 def safe_pickle(data, file):
-    """
-    Pickle big files safely, processing them in chunks
-    :param data: data to be pickled
-    :param file: file to pickle it into
-    """
-    pickle_out = pickle.dumps(data)
-    n_bytes = sys.getsizeof(pickle_out)
-    with open(file, 'wb') as f:
-        count = 0
-        for i in range(0, n_bytes, max_bytes):
-            f.write(pickle_out[i:min(n_bytes, i + max_bytes)])
-            count += 1
+  """
+  Pickle big files safely, processing them in chunks
+  :param data: data to be pickled
+  :param file: file to pickle it into
+  """
+  pickle_out = pickle.dumps(data)
+  n_bytes = sys.getsizeof(pickle_out)
+  with open(file, 'wb') as f:
+    count = 0
+    for i in range(0, n_bytes, max_bytes):
+      f.write(pickle_out[i:min(n_bytes, i + max_bytes)])
+      count += 1
 
 
 def set_file_signature(param, data_folder, set_from_date_time=False):
-    """
-    Set file signature to differentiate between embedding trainings
-    :param param: parameters of the inst2vec training
-    :param data_folder: string containing the path to the parent directory of raw data sub-folders
-    :param set_from_date_time: set file signature according to time and date instead of parameters
-    :return: file signature
-    """
-    if set_from_date_time:
-        file_signature = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M")
-    else:
-        file_signature = '_' + re.sub(r'/', '_', data_folder) + \
-                         '_d-' + str(param['embedding_size']) + \
-                         '_m-' + str(param['mini_batch_size']) + \
-                         '_s-' + str(param['num_sampled']) + \
-                         '_e-' + str(param['learning_rate']) + \
-                         '_r-' + str(param['beta']) + \
-                         '_cw-' + str(param['context_width']) + \
-                         '_N-' + str(param['num_epochs'])
+  """
+  Set file signature to differentiate between embedding trainings
+  :param param: parameters of the inst2vec training
+  :param data_folder: string containing the path to the parent directory of raw data sub-folders
+  :param set_from_date_time: set file signature according to time and date instead of parameters
+  :return: file signature
+  """
+  if set_from_date_time:
+    file_signature = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M")
+  else:
+    file_signature = '_' + re.sub(r'/', '_', data_folder) + \
+                     '_d-' + str(param['embedding_size']) + \
+                     '_m-' + str(param['mini_batch_size']) + \
+                     '_s-' + str(param['num_sampled']) + \
+                     '_e-' + str(param['learning_rate']) + \
+                     '_r-' + str(param['beta']) + \
+                     '_cw-' + str(param['context_width']) + \
+                     '_N-' + str(param['num_epochs'])
 
-    print("File signature: ", file_signature)
-    return file_signature
-
+  print("File signature: ", file_signature)
+  return file_signature
