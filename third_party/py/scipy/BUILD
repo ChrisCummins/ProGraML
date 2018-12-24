@@ -21,3 +21,11 @@ py_library(
         requirement("scikit-image"),
     ],
 )
+
+py_library(
+    name = "scikit_learn",
+    srcs = ["scipy.py"],
+    deps = [
+        requirement("scikit-learn"),
+    ],
+)
