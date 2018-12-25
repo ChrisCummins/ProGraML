@@ -35,6 +35,27 @@ py_library(
 )
 
 py_binary(
+    name = "train_inst2vec",
+    srcs = ["train_inst2vec.py"],
+    deps = [
+        "//deeplearning/ncc/inst2vec:inst2vec_datagen",
+        "//deeplearning/ncc/inst2vec:inst2vec_embedding",
+        "//deeplearning/ncc/inst2vec:inst2vec_evaluate",
+        "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
+        "//deeplearning/ncc/inst2vec:inst2vec_vocabulary",
+        "//third_party/py/absl",
+    ],
+)
+
+sh_test(
+    name = "train_inst2vec_smoke_test",
+    srcs = ["train_inst2vec_smoke_test.sh"],
+    data = [
+        ":train_inst2vec",
+    ],
+)
+
+py_binary(
     name = "train_task_classifyapp",
     srcs = ["train_task_classifyapp.py"],
     deps = [
