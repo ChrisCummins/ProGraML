@@ -35,6 +35,33 @@ py_library(
 )
 
 py_binary(
+    name = "train_task_classifyapp",
+    srcs = ["train_task_classifyapp.py"],
+    deps = [
+        ":rgx_utils",
+        ":task_utils",
+        ":vocabulary",
+        "//labm8:fs",
+        "//third_party/py/absl",
+        "//third_party/py/keras",
+        "//third_party/py/numpy",
+        "//third_party/py/pandas",
+        "//third_party/py/scipy:scikit_learn",
+        "//third_party/py/tensorflow",
+    ],
+)
+
+sh_test(
+    name = "train_task_classifyapp_smoke_test",
+    srcs = ["train_task_classifyapp_smoke_test.sh"],
+    data = [
+        ":train_task_classifyapp",
+        "//deeplearning/ncc/published_results:embeddings",
+        "//deeplearning/ncc/published_results:vocabulary",
+    ],
+)
+
+py_binary(
     name = "train_task_devmap",
     srcs = ["train_task_devmap.py"],
     deps = [
