@@ -27,25 +27,25 @@ py_library(
     deps = [
         ":rgx_utils",
         ":vocabulary",
-        "//third_party/py/wget",
-        "//third_party/py/absl",
-        "//labm8:bazelutil",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
-    ]
+        "//labm8:bazelutil",
+        "//third_party/py/absl",
+        "//third_party/py/wget",
+    ],
 )
 
 py_binary(
     name = "train_task_devmap",
     srcs = ["train_task_devmap.py"],
     deps = [
-        "//labm8:fs",
+        ":rgx_utils",
         ":task_utils",
         ":vocabulary",
-        ":rgx_utils",
+        "//labm8:fs",
         "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
-    ]
+    ],
 )
 
 sh_test(
@@ -62,15 +62,15 @@ py_binary(
     name = "train_task_threadcoarsening",
     srcs = ["train_task_threadcoarsening.py"],
     deps = [
-        "//labm8:fs",
-        ":task_utils",
         ":rgx_utils",
+        ":task_utils",
         ":vocabulary",
+        "//labm8:fs",
         "//third_party/py/absl",
         "//third_party/py/numpy",
-        "//third_party/py/scipy:scikit_learn",
         "//third_party/py/pandas",
-    ]
+        "//third_party/py/scipy:scikit_learn",
+    ],
 )
 
 sh_test(
@@ -87,7 +87,7 @@ py_library(
     srcs = ["vocabulary.py"],
     deps = [
         "//third_party/py/absl",
-    ]
+    ],
 )
 
 py_test(
@@ -96,8 +96,8 @@ py_test(
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":vocabulary",
+        "//labm8:bazelutil",
         "//third_party/py/absl",
         "//third_party/py/pytest",
-        "//labm8:bazelutil",
-    ]
+    ],
 )

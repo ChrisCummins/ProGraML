@@ -3,10 +3,10 @@ py_library(
     srcs = ["inst2vec_preprocess.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/networkx",
-        "//deeplearning/ncc:rgx_utils",
         ":inst2vec_utils",
-    ]
+        "//deeplearning/ncc:rgx_utils",
+        "//third_party/py/networkx",
+    ],
 )
 
 py_library(
