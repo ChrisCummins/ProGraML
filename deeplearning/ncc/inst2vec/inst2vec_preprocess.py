@@ -28,8 +28,9 @@ import pickle
 import re
 
 import networkx as nx
-import rgx_utils as rgx
-from inst2vec import inst2vec_utils as i2v_utils
+
+from deeplearning.ncc import rgx_utils as rgx
+from deeplearning.ncc.inst2vec import inst2vec_utils as i2v_utils
 
 
 ########################################################################################################################
