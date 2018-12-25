@@ -14,6 +14,7 @@ py_library(
 py_library(
     name = "inst2vec_appflags",
     srcs = ["inst2vec_appflags.py"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         "//third_party/py/absl",
     ],
@@ -23,6 +24,7 @@ py_library(
 py_library(
     name = "inst2vec_datagen",
     srcs = ["inst2vec_datagen.py"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         "//third_party/py/wget",
     ],
@@ -32,6 +34,7 @@ py_library(
 py_library(
     name = "inst2vec_embedding",
     srcs = ["inst2vec_embedding.py"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         ":inst2vec_evaluate",
         ":inst2vec_utils",
@@ -45,6 +48,7 @@ py_library(
 py_library(
     name = "inst2vec_evaluate",
     srcs = ["inst2vec_evaluate.py"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         ":inst2vec_analogygen",
         ":inst2vec_utils",
@@ -62,7 +66,7 @@ py_library(
 py_library(
     name = "inst2vec_preprocess",
     srcs = ["inst2vec_preprocess.py"],
-    visibility = ["//visibility:public"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
