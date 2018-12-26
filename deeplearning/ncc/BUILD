@@ -92,10 +92,12 @@ sh_test(
 py_binary(
     name = "train_task_devmap",
     srcs = ["train_task_devmap.py"],
+    data = ["//deeplearning/ncc/published_results:task_devmap"],
     deps = [
         ":rgx_utils",
         ":task_utils",
         ":vocabulary",
+        "//labm8:bazelutil",
         "//labm8:fs",
         "//third_party/py/absl",
         "//third_party/py/numpy",
