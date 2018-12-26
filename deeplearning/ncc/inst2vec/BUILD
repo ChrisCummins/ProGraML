@@ -30,6 +30,16 @@ py_library(
     ],
 )
 
+py_test(
+    name = "inst2vec_datagen_test",
+    srcs = ["inst2vec_datagen_test.py"],
+    deps = [
+        ":inst2vec_datagen",
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
+    ]
+)
+
 # inst2vec embedding training.
 py_library(
     name = "inst2vec_embedding",
