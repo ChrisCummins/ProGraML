@@ -37,7 +37,7 @@ py_test(
         ":inst2vec_datagen",
         "//third_party/py/absl",
         "//third_party/py/pytest",
-    ]
+    ],
 )
 
 # inst2vec embedding training.
@@ -81,6 +81,16 @@ py_library(
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
         "//third_party/py/networkx",
+    ],
+)
+
+py_test(
+    name = "inst2vec_preprocess_test",
+    srcs = ["inst2vec_preprocess_test.py"],
+    deps = [
+        ":inst2vec_preprocess",
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
     ],
 )
 

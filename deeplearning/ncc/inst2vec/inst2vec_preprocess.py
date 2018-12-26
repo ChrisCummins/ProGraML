@@ -298,17 +298,17 @@ def print_node_family_to_file(G, f, nodetype):
   if nodetype == 'root':
     node_family = [n for n in G.nodes() if
                    G.out_degree(n) > 0 and G.in_degree(n) == 0]
-    node_family = sorted(node_family, key=lambda x: sort_key(x))
+    node_family = sorted(node_family, key=sort_key)
   elif nodetype == 'leaf':
     node_family = [n for n in G.nodes() if
                    G.out_degree(n) == 0 and G.in_degree(n) >= 1]
-    node_family = sorted(node_family, key=lambda x: sort_key(x))
+    node_family = sorted(node_family, key=sort_key)
   elif nodetype == 'isolated':
     node_family = [n for n in G.nodes() if G.degree(n) == 0]
-    node_family = sorted(node_family, key=lambda x: sort_key(x))
+    node_family = sorted(node_family, key=sort_key)
   else:
     node_family = [n[0] for n in sorted(list(G.nodes(data=True)),
-                                        key=lambda x: sort_key(x)) if
+                                        key=sort_key) if
                    n[1]['id'] == nodetype]
 
   # Write to file
@@ -341,7 +341,7 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     # all
     f.write('Nodes (' + str(G.number_of_nodes()) + '):\n')
     f.write('-' * 80 + '\n')
-    for n, data in sorted(G.nodes(data=True), key=lambda x: sort_key(x)):
+    for n, data in sorted(G.nodes(data=True), key=sort_key):
       f.write('{n:<60}, {w}\n'.format(n=n[:60], w=data['id']))
 
     # local
@@ -381,14 +381,14 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     # all
     f.write('Edges (' + str(G.number_of_edges()) + ')\n')
     f.write('-' * 80 + '\n')
-    for a, b, data in sorted(G.edges(data=True), key=lambda x: sort_key(x)):
+    for a, b, data in sorted(G.edges(data=True), key=sort_key):
       f.write(
           '({a:<30}, {b:<30}) {w}\n'.format(a=a[:30], b=b[:30], w=data['stmt']))
 
     # data flow edges
     dataedges = [(str(n[0]), str(n[1]), str(n[2])) for n in
                  sorted(list(G.edges(data=True)),
-                        key=lambda x: sort_key(x))
+                        key=sort_key)
                  if n[2]['flow'] == 'data']
     f.write('\nData flow edges: \n')
     f.write('#edges: ' + str(len(dataedges)) + ' (' + str(
@@ -402,7 +402,7 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     # control flow edges
     ctrledges = [(str(n[0]), str(n[1]), str(n[2])) for n in
                  sorted(list(G.edges(data=True)),
-                        key=lambda x: sort_key(x))
+                        key=sort_key)
                  if n[2]['flow'] == 'ctrl']
     f.write('\nCtrl flow edges: \n')
     f.write('#edges: ' + str(len(ctrledges)) + ' (' + str(
@@ -452,19 +452,19 @@ def print_structure_dictionary(dic, folder, filename):
       f.write('{:<70}   {}\n'.format(key, string_from_list(value)))
 
 
-def print_dxfg_to_file(D, folder, filename):
-  """
-  Print dual-XFG graph to file
-  :param D: dual-XFG graphs
-  :param folder: name of folder in which to print dictionary
-  :param filename: name of file in which to print dictionary
+def PrintDualXfgToFile(D, folder, filename):
+  """Print dual-XFG graph to file.
+
+  Args:
+    D: dual-XFG graphs
+    folder: name of folder in which to print dictionary
+    filename: name of file in which to print dictionary
   """
   # Print to file
   graph_filename = os.path.join(folder, filename[:-3] + '.txt')
   print('Printing graph to  file : ', graph_filename)
 
   with open(graph_filename, 'w') as f:
-
     # GENERAL
     f.write('#nodes: ' + str(D.number_of_nodes()) + '\n')
     f.write('#edges: ' + str(D.number_of_edges()) + '\n\n')
@@ -472,16 +472,17 @@ def print_dxfg_to_file(D, folder, filename):
     # INFORMATION ON NODES
     f.write('Nodes (' + str(D.number_of_nodes()) + ')\n')
     f.write('-' * 80 + '\n')
-    for n, data in sorted(D.nodes(data=True), key=lambda x: sort_key(x)):
-      f.write('{n:<60}\n'.format(n=n))
+    for n, _ in sorted(D.nodes(data=True), key=sort_key):
+      f.write(f'{n:<60}\n')
     f.write('\n')
     # INFORMATION ON EDGES
     f.write('Edges (' + str(D.number_of_edges()) + ')\n')
     f.write('-' * 80 + '\n')
-    for a, b, data in sorted(D.edges(data=True), key=lambda x: sort_key(x)):
+    for a, b, data in sorted(D.edges(data=True), key=sort_key):
       f.write(
-          '({a:<37}, {b:<37}) {w}\n'.format(a=a[:37], b=b[:37],
-                                            w=data['weight']))
+          '({a:<37}, {b:<37}) {w}\n'.format(
+              a=a[:37], b=b[:37],
+              w=data['weight']))
 
 
 ########################################################################################################################
@@ -2217,7 +2218,7 @@ def check_graph_construction(G, filename):
 
   # Make sure there are no isolated nodes
   isolated_nodes = [n for n in G.nodes() if all_degrees(G, n) == 0]
-  isolated_nodes = sorted(isolated_nodes, key=lambda x: sort_key(x))
+  isolated_nodes = sorted(isolated_nodes, key=sort_key)
   if len(isolated_nodes) > 0:
     print('\nIsolated nodes: ')
     for n in isolated_nodes:
@@ -2860,14 +2861,8 @@ def check_sanity(D, G):
       assert "Mismatch"
 
 
-########################################################################################################################
-# Main function for XFG-construction
-########################################################################################################################
-def construct_xfg(data_folder):
-  """
-  Preprocess raw LLVM IR code into XFGs (conteXtual Flow Graphs)
-  :param data_folder: string containing the path to the parent directory of the subfolders containing raw LLVM IR code
-  :return data_folders: list of subfolders containing raw LLVM IR code
+def CreateContextualFlowGraphsFromBytecodes(data_folder):
+  """Construct XFGs (conteXtual Flow Graphs) from LLVM IR code.
 
   Input files:
       data_folder/*/*.ll
@@ -2882,14 +2877,20 @@ def construct_xfg(data_folder):
       data_folder/*_preprocessed/structure_dictionaries/
       data_folder/*_preprocessed/xfg/
       data_folder/*_preprocessed/xfg_dual/
-  """
 
+  Args:
+    data_folder: the path to the parent directory of the subfolders containing
+      raw LLVM IR code.
+
+  Returns:
+    List of subfolders containing raw LLVM IR code.
+  """
   # Get raw data sub-folders
   assert os.path.exists(
       data_folder), "Folder " + data_folder + " does not exist"
   folders_raw = list()
-  listing_to_explore = [os.path.join(data_folder, f) for f in
-                        os.listdir(data_folder + '/')]
+  listing_to_explore = [
+    os.path.join(data_folder, f) for f in os.listdir(data_folder + '/')]
   while len(listing_to_explore) > 0:
     f = listing_to_explore.pop()
     if os.path.isdir(f):
@@ -3073,8 +3074,13 @@ def construct_xfg(data_folder):
             G_diff = disambiguate_stmts(G)
             D = build_dual_graph(G_diff)  # dual-XFG
             check_sanity(D, G)  # check the sanity of the produced graph
-            print_dxfg_to_file(D, dual_graph_folder,
-                               file_name)  # print data to external file
+            # TODO(cec): In my unit tests, nodes in 'D' contain non-ASCII 
+            # values, which causes this text serialization to fail. For now I'm
+            # disabling printing DXFGs, but will investigate further if the 
+            # files are deemed necessary (I think they're just for debugging).
+            #
+            # PrintDualXfgToFile(D, dual_graph_folder,
+            #                    file_name)  # print data to external file
 
             # Write dual graphs to file
             print('Writing dual graphs to file ', dual_graphs_filename)

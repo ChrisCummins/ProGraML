@@ -33,10 +33,11 @@ max_bytes = 2 ** 31 - 1
 
 
 def safe_pickle(data, file):
-  """
-  Pickle big files safely, processing them in chunks
-  :param data: data to be pickled
-  :param file: file to pickle it into
+  """Pickle big files safely, processing them in chunks
+
+  Args:
+    data: data to be pickled
+    file: file to pickle it into
   """
   pickle_out = pickle.dumps(data)
   n_bytes = sys.getsizeof(pickle_out)
