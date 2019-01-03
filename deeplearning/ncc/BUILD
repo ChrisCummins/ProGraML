@@ -67,7 +67,6 @@ py_binary(
 
 sh_test(
     name = "train_inst2vec_smoke_test",
-    size = "enormous",
     srcs = ["train_inst2vec_smoke_test.sh"],
     data = [
         ":train_inst2vec",
@@ -118,7 +117,6 @@ py_binary(
 
 sh_test(
     name = "train_task_devmap_smoke_test",
-    size = "enormous",
     srcs = ["train_task_devmap_smoke_test.sh"],
     data = [
         ":train_task_devmap",
@@ -144,7 +142,6 @@ py_binary(
 
 sh_test(
     name = "train_task_threadcoarsening_smoke_test",
-    size = "enormous",
     srcs = ["train_task_threadcoarsening_smoke_test.sh"],
     data = [
         ":train_task_threadcoarsening",
