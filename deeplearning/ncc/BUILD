@@ -38,6 +38,18 @@ py_library(
     ],
 )
 
+py_test(
+    name = "task_utils_test",
+    srcs = ["task_utils_test.py"],
+    data = ["//deeplearning/ncc/published_results:vocabulary"],
+    deps = [
+        ":vocabulary",
+        ":task_utils",
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
+    ]
+)
+
 py_binary(
     name = "train_inst2vec",
     srcs = ["train_inst2vec.py"],
