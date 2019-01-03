@@ -65,7 +65,6 @@ py_binary(
     name = "train_task_classifyapp",
     srcs = ["train_task_classifyapp.py"],
     deps = [
-        ":rgx_utils",
         ":task_utils",
         ":vocabulary",
         "//labm8:fs",
@@ -94,7 +93,6 @@ py_binary(
     srcs = ["train_task_devmap.py"],
     data = ["//deeplearning/ncc/published_results:task_devmap"],
     deps = [
-        ":rgx_utils",
         ":task_utils",
         ":vocabulary",
         "//labm8:bazelutil",
@@ -120,7 +118,6 @@ py_binary(
     name = "train_task_threadcoarsening",
     srcs = ["train_task_threadcoarsening.py"],
     deps = [
-        ":rgx_utils",
         ":task_utils",
         ":vocabulary",
         "//labm8:fs",
@@ -145,6 +142,8 @@ py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
     deps = [
+        ":rgx_utils",
+        "//labm8:decorators",
         "//third_party/py/absl",
     ],
 )

@@ -1,11 +1,15 @@
 """Support for unzipping vocabulary files at runtime."""
 
 import pathlib
+import pickle
 import shutil
 import tempfile
 import zipfile
 
 from absl import flags
+
+from deeplearning.ncc import rgx_utils
+from labm8 import decorators
 
 
 FLAGS = flags.FLAGS
@@ -39,6 +43,19 @@ class VocabularyZipFile(object):
     if not self._uncompressed_path:
       raise TypeError("VocabularyZipFile must be used as a context manager")
     return self._uncompressed_path
+
+  @decorators.memoized_property
+  def unknown_token_index(self) -> int:
+    """Get the numeric vocabulary index of the "unknown" token.
+
+    The unknown token is used to mark tokens which fall out-of-vocabulary. It
+    can also be used as a pad character for sequences.
+    """
+    with open(self.dictionary_pickle, 'rb') as f:
+      dictionary = pickle.load(f)
+    unknown_token_index = dictionary[rgx_utils.unknown_token]
+    del dictionary
+    return unknown_token_index
 
   def __enter__(self):
     self._uncompressed_path = pathlib.Path(tempfile.mkdtemp(prefix='phd_'))
