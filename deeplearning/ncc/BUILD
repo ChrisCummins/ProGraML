@@ -117,6 +117,7 @@ sh_test(
 py_binary(
     name = "train_task_threadcoarsening",
     srcs = ["train_task_threadcoarsening.py"],
+    data = ["//deeplearning/ncc/published_results:task_threadcoarsening"],
     deps = [
         ":task_utils",
         ":vocabulary",

@@ -6,11 +6,19 @@ filegroup(
     visibility = ["//deeplearning/ncc:__subpackages__"],
 )
 
-# Data for devmap task, originally hosted at:
+# Data for devmap task, downloaded from:
 # https://polybox.ethz.ch/index.php/s/U08Z3xLhvbLk8io/download
 filegroup(
     name = "task_devmap",
     srcs = ["task_devmap.zip"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
+)
+
+# Data for threadcoarsening task, downloaded from:
+# https://polybox.ethz.ch/index.php/s/Dl8v8dKbuoWS3Ck/download
+filegroup(
+    name = "task_threadcoarsening",
+    srcs = ["task_threadcoarsening.zip"],
     visibility = ["//deeplearning/ncc:__subpackages__"],
 )
 
