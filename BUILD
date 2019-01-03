@@ -22,6 +22,10 @@ py_library(
     testonly = 1,
     srcs = ["conftest.py"],
     visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
+    ],
 )
 
 py_test(
@@ -32,7 +36,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         "//labm8:bazelutil",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )

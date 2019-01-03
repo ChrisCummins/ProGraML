@@ -17,8 +17,8 @@ py_test(
     deps = [
         ":api",
         "//labm8:bazelutil",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -57,8 +57,8 @@ py_test(
     srcs = ["inst2vec_datagen_test.py"],
     deps = [
         ":inst2vec_datagen",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -111,8 +111,8 @@ py_test(
     srcs = ["inst2vec_preprocess_test.py"],
     deps = [
         ":inst2vec_preprocess",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )
 

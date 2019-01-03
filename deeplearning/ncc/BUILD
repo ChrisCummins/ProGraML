@@ -46,8 +46,8 @@ py_test(
         ":task_utils",
         ":vocabulary",
         "//labm8:bazelutil",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -149,6 +149,7 @@ sh_test(
     data = [
         ":train_task_threadcoarsening",
         "//deeplearning/ncc/published_results:embeddings",
+        "//deeplearning/ncc/published_results:vocabulary",
     ],
 )
 
@@ -170,7 +171,7 @@ py_test(
     deps = [
         ":vocabulary",
         "//labm8:bazelutil",
+        "//labm8:test",
         "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )
