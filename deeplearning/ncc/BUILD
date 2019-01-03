@@ -43,11 +43,12 @@ py_test(
     srcs = ["task_utils_test.py"],
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
-        ":vocabulary",
         ":task_utils",
+        ":vocabulary",
+        "//labm8:bazelutil",
         "//third_party/py/absl",
         "//third_party/py/pytest",
-    ]
+    ],
 )
 
 py_binary(
@@ -154,6 +155,7 @@ sh_test(
 py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
+    visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         ":rgx_utils",
         "//labm8:decorators",

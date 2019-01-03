@@ -1,5 +1,27 @@
 # Embeddings for code comprehension.
 
+py_library(
+    name = "api",
+    srcs = ["api.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//deeplearning/ncc:vocabulary",
+        "//third_party/py/absl",
+    ],
+)
+
+py_test(
+    name = "api_test",
+    srcs = ["api_test.py"],
+    data = ["//deeplearning/ncc/published_results:vocabulary"],
+    deps = [
+        ":api",
+        "//labm8:bazelutil",
+        "//third_party/py/absl",
+        "//third_party/py/pytest",
+    ],
+)
+
 # Helper module for analogy generation.
 py_library(
     name = "inst2vec_analogygen",
