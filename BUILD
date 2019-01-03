@@ -17,6 +17,13 @@ filegroup(
     srcs = ["configure"],
 )
 
+py_library(
+    name = "conftest",
+    testonly = 1,
+    srcs = ["conftest.py"],
+    visibility = ["//visibility:public"],
+)
+
 py_test(
     name = "configure_test",
     srcs = ["configure_test.py"],
