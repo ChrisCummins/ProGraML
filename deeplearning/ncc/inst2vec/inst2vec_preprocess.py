@@ -530,12 +530,13 @@ def keep(line):
   :return: boolean: True if the line is to be kept,
                     False if the line is to be discarded
   """
+  # Ignore empty lines.
   if line == '':
     return False
 
-  if line[0] == ';':
-    if not line[0:9] == '; <label>':
-      return False
+  # Ignore comment lines (except labels).
+  if line[0] == ';' and not line[0:9] == '; <label>':
+    return False
 
   if line[0] == '!' or line[0] == '\n':
     return False
@@ -544,25 +545,26 @@ def keep(line):
     0] == '[' or line.strip()[0] == ']':
     return False
 
+  # Ignore empty lines (NOTE: possible dupe of `if line == ''` above?).
   if len(line) == 0:
     return False
 
-  if re.match('source_filename', line):
+  if 'source_filename' in line:
     return False
 
-  if re.match('target triple', line):
+  if 'target triple' in line:
     return False
 
-  if re.match('target datalayout', line):
+  if 'target datalayout' in line:
     return False
 
-  if re.match('attributes', line):
+  if 'attributes' in line:
     return False
 
-  if re.match('module asm ', line):
+  if 'module asm ' in line:
     return False
 
-  if re.match('declare', line):
+  if 'declare' in line:
     return False
 
   modif_line = re.sub(r'\".*\"', '', line)
@@ -580,7 +582,7 @@ def keep(line):
   if match:
     return False
 
-  # If none of the above matched, keep the line
+  # If none of the above matched, keep the line.
   return True
 
 
