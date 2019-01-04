@@ -1,6 +1,5 @@
 """Support for unzipping vocabulary files at runtime."""
 
-import collections
 import pathlib
 import pickle
 import re
@@ -108,27 +107,17 @@ class VocabularyZipFile(object):
 
     llvm_bytecode_lines = llvm_bytecode.split('\n')
 
-    # Source code transformation: simple pre-processing
-    preprocessed_data, functions_declared_in_files = i2v_prep.preprocess(
+    # Source code pre-processing.
+    # TODO(cec): Merge i2v_prep.preprocess() and PreprocessLlvmBytecode().
+    preprocessed_data, _ = i2v_prep.preprocess(
         [llvm_bytecode_lines])
-    preprocessed_data_with_structure_def = [llvm_bytecode_lines]
-
-    # IR processing (inline structures, abstract statements)
-
-    # Source code transformation: inline structure types
-    processed_data, _ = inline_struct_types_txt(
-        preprocessed_data, preprocessed_data_with_structure_def)
-
-    # Source code transformation: identifier processing (abstract statements)
-    processed_data = abstract_statements_from_identifiers_txt(processed_data)
-
-    file = processed_data[0]
-
-    _MaybeSetBytecodeAfterPreprocessing(file)
+    llvm_bytecode_lines = preprocessed_data[0]
+    llvm_bytecode_lines = PreprocessLlvmBytecode(llvm_bytecode_lines)
+    _MaybeSetBytecodeAfterPreprocessing(llvm_bytecode_lines)
 
     stmt_indexed = []  # Construct indexed sequence
 
-    for i, stmt in enumerate(file):
+    for i, stmt in enumerate(llvm_bytecode_lines):
       # check whether this is a label, in which case we ignore it
       if re.match(r'((?:<label>:)?(<LABEL>):|; <label>:<LABEL>)', stmt):
         continue
@@ -150,198 +139,91 @@ class VocabularyZipFile(object):
     return result
 
 
-# TODO(cec): Tidy up and test everything below
+def GetStructDict(bytecode_lines: typing.List[str]):
+  # Construct a dictionary ["structure name", "corresponding literal structure"]
+  _, struct_dict = i2v_prep.construct_struct_types_dictionary_for_file(
+      bytecode_lines)
+
+  # If the dictionary is empty
+  if not struct_dict:
+    for line in bytecode_lines:
+      if re.match(
+          rgx_utils.struct_name + ' = type (<?\{ .* \}|opaque|{})', line):
+        # "Structures' dictionary is empty for file containing type definitions"
+        # + data[0] + '\n' + data[1] + '\n' + data + '\n'
+        assert False
+
+  return struct_dict
 
 
-def inline_struct_types_in_file(data, dic):
+def PreprocessLlvmBytecode(lines: typing.List[str]):
+  """Simplify lines of code by stripping them from their identifiers,
+  unnamed values, etc. so that LLVM IR statements can be abstracted from them.
   """
-  Inline structure types in the whole file
-  :param data: list of strings representing the content of one file
-  :param dic: dictionary ["structure name", "corresponding literal structure"]
-  :return: modified data
-  """
+  struct_dict = GetStructDict(lines)
+
   # Remove all "... = type {..." statements since we don't need them anymore
-  data = [stmt for stmt in data if not re.match('.* = type ', stmt)]
+  lines = [
+    stmt for stmt in lines if not re.match('.* = type ', stmt)]
 
-  # Inline the named structures throughout the file
-  for i in range(len(data)):
+  for i in range(len(lines)):
 
-    possible_struct = re.findall('(' + rgx_utils.struct_name + ')', data[i])
-    if len(possible_struct) > 0:
-      for s in possible_struct:
-        if s in dic and not re.match(s + r'\d* = ', data[i]):
-          # Replace them by their value in dictionary
-          data[i] = re.sub(re.escape(s) + rgx_utils.struct_lookahead, dic[s],
-                           data[i])
+    # Inline structure types in the src file.
+    possible_structs = re.findall('(' + rgx_utils.struct_name + ')', lines[i])
+    if possible_structs:
+      for possible_struct in possible_structs:
+        if (possible_struct in struct_dict and
+            not re.match(possible_struct + r'\d* = ', lines[i])):
+          # Replace them by their value in dictionary.
+          lines[i] = re.sub(
+              re.escape(possible_struct) + rgx_utils.struct_lookahead,
+              struct_dict[possible_struct], lines[i])
 
-  return data
+    # Replace all local identifiers (%## expressions) by "<%ID>".
+    lines[i] = re.sub(rgx_utils.local_id, "<%ID>", lines[i])
+    # Replace all local identifiers (@## expressions) by "<@ID>".
+    lines[i] = re.sub(rgx_utils.global_id, "<@ID>", lines[i])
 
+    # Replace label declarations by token '<LABEL>'.
+    if re.match(r'; <label>:\d+:?(\s+; preds = )?', lines[i]):
+      lines[i] = re.sub(r":\d+", ":<LABEL>", lines[i])
+      lines[i] = re.sub("<%ID>", "<LABEL>", lines[i])
+    elif re.match(rgx_utils.local_id_no_perc + r':(\s+; preds = )?', lines[i]):
+      lines[i] = re.sub(rgx_utils.local_id_no_perc + ':', "<LABEL>:", lines[i])
+      lines[i] = re.sub("<%ID>", "<LABEL>", lines[i])
 
-def inline_struct_types_txt(data, data_with_structure_def):
-  """
-  Inline structure types so that the code has no more named structures but only explicit aggregate types
-  And construct a dictionary of these named structures
-  :param data: input data as a list of files where each file is a list of strings
-  :return: data: modified input data
-           dictio: list of dictionaries corresponding to source files,
-                   where each dictionary has entries ["structure name", "corresponding literal structure"]
-  """
-  print('\tConstructing dictionary of structures and inlining structures...')
-  dictio = collections.defaultdict(list)
+    if '; preds = ' in lines[i]:
+      s = lines[i].split('  ')
+      if s[-1][0] == ' ':
+        lines[i] = s[0] + s[-1]
+      else:
+        lines[i] = s[0] + ' ' + s[-1]
 
-  # Loop on all files in the dataset
-  for i in range(len(data)):
-    # Construct a dictionary ["structure name", "corresponding literal structure"]
-    data_with_structure_def[i], dict_temp = \
-      i2v_prep.construct_struct_types_dictionary_for_file(
-          data_with_structure_def[i])
+    # Replace unnamed_values with abstract tokens. Abstract tokens map:
+    #   integers: <INT>
+    #   floating points: <FLOAT> (whether in decimal or hexadecimal notation)
+    #   string: <STRING>
+    #
+    # Hexadecimal notation.
+    lines[i] = re.sub(
+        r' ' + rgx_utils.immediate_value_float_hexa, " <FLOAT>", lines[i])
+    # Decimal / scientific notation.
+    lines[i] = re.sub(
+        r' ' + rgx_utils.immediate_value_float_sci, " <FLOAT>", lines[i])
+    if (re.match("<%ID> = extractelement", lines[i]) is None and
+        re.match("<%ID> = extractvalue", lines[i]) is None and
+        re.match("<%ID> = insertelement", lines[i]) is None and
+        re.match("<%ID> = insertvalue", lines[i]) is None):
+      lines[i] = re.sub(
+          r'(?<!align)(?<!\[) ' + rgx_utils.immediate_value_int,
+          " <INT>", lines[i])
 
-    # If the dictionary is empty
-    if not dict_temp:
-      found_type = False
-      for l in data[i]:
-        if re.match(
-            rgx_utils.struct_name + ' = type (<?\{ .* \}|opaque|{})', l):
-          found_type = True
-          break
-      assert not found_type, "Structures' dictionary is empty for file containing type definitions: \n" + \
-                             data[i][0] + '\n' + data[i][1] + '\n' + data[
-                               i] + '\n'
+    lines[i] = re.sub(rgx_utils.immediate_value_string, " <STRING>", lines[i])
 
-    # Use the constructed dictionary to substitute named structures
-    # by their corresponding literal structure throughout the program
-    data[i] = inline_struct_types_in_file(data[i], dict_temp)
+    # Replace the index type in expressions containing "extractelement" or
+    # "insertelement" by token <TYP>.
+    if (re.match("<%ID> = extractelement", lines[i]) is not None or
+        re.match("<%ID> = insertelement", lines[i]) is not None):
+      lines[i] = re.sub(r'i\d+ ', '<TYP> ', lines[i])
 
-    # Add the entries of the dictionary to the big dictionary
-    for k, v in dict_temp.items():
-      dictio[k].append(v)
-
-  return data, dictio
-
-
-def abstract_statements_from_identifiers_txt(data):
-  """
-  Simplify lines of code by stripping them from their identifiers,
-  unnamed values, etc. so that LLVM IR statements can be abstracted from them
-  :param data: input data as a list of files where each file is a list of strings
-  :return: modified input data
-  """
-  data = remove_local_identifiers(data)
-  data = remove_global_identifiers(data)
-  data = remove_labels(data)
-  data = replace_unnamed_values(data)
-  data = remove_index_types(data)
-
-  return data
-
-
-def remove_local_identifiers(data):
-  """
-  Replace all local identifiers (%## expressions) by "<%ID>"
-  :param data: input data as a list of files where each file is a list of strings
-  :return: modified input data
-  """
-  print('\tRemoving local identifiers ...')
-  for i in range(len(data)):
-    for j in range(len(data[i])):
-      data[i][j] = re.sub(rgx_utils.local_id, "<%ID>", data[i][j])
-
-  return data
-
-
-def remove_global_identifiers(data):
-  """
-  Replace all local identifiers (@## expressions) by "<@ID>"
-  :param data: input data as a list of files where each file is a list of strings
-  :return: modified input data
-  """
-  print('\tRemoving global identifiers ...')
-  for i in range(len(data)):
-    for j in range(len(data[i])):
-      data[i][j] = re.sub(rgx_utils.global_id, "<@ID>", data[i][j])
-
-  return data
-
-
-def remove_labels(data):
-  """Replace label declarations by token '<LABEL>'.
-
-  Args:
-    data: A list of list of strings to modify.
-
-  Returns:
-     The list of list of strings.
-  """
-  for i in range(len(data)):
-    for j in range(len(data[i])):
-      if re.match(r'; <label>:\d+:?(\s+; preds = )?', data[i][j]):
-        data[i][j] = re.sub(r":\d+", ":<LABEL>", data[i][j])
-        data[i][j] = re.sub("<%ID>", "<LABEL>", data[i][j])
-      elif re.match(rgx_utils.local_id_no_perc + r':(\s+; preds = )?',
-                    data[i][j]):
-        data[i][j] = re.sub(rgx_utils.local_id_no_perc + ':', "<LABEL>:",
-                            data[i][j])
-        data[i][j] = re.sub("<%ID>", "<LABEL>", data[i][j])
-      if '; preds = ' in data[i][j]:
-        s = data[i][j].split('  ')
-        if s[-1][0] == ' ':
-          data[i][j] = s[0] + s[-1]
-        else:
-          data[i][j] = s[0] + ' ' + s[-1]
-
-  return data
-
-
-def replace_unnamed_values(data):
-  """Replace unnamed_values with abstract tokens.
-
-  Abstract tokens map:
-    integers: <INT>
-    floating points: <FLOAT> (whether in decimal or hexadecimal notation)
-    string: <STRING>
-
-  Args:
-    data: A list of list of strings to modify.
-
-  Returns:
-     The list of list of strings.
-  """
-  for i in range(len(data)):
-    for j in range(len(data[i])):
-      # Hexadecimal notation.
-      data[i][j] = re.sub(
-          r' ' + rgx_utils.immediate_value_float_hexa, " <FLOAT>", data[i][j])
-      # Decimal / scientific notation.
-      data[i][j] = re.sub(
-          r' ' + rgx_utils.immediate_value_float_sci, " <FLOAT>", data[i][j])
-      if (re.match("<%ID> = extractelement", data[i][j]) is None and
-          re.match("<%ID> = extractvalue", data[i][j]) is None and
-          re.match("<%ID> = insertelement", data[i][j]) is None and
-          re.match("<%ID> = insertvalue", data[i][j]) is None):
-        data[i][j] = re.sub(
-            r'(?<!align)(?<!\[) ' + rgx_utils.immediate_value_int,
-            " <INT>", data[i][j])
-
-      data[i][j] = re.sub(rgx_utils.immediate_value_string, " <STRING>",
-                          data[i][j])
-
-  return data
-
-
-def remove_index_types(data):
-  """Replace the index type in expressions containing "extractelement" or
-  "insertelement" by token <TYP>.
-
-  Args:
-    data: A list of list of strings to modify.
-
-  Returns:
-     The list of list of strings.
-  """
-  for i in range(len(data)):
-    for j in range(len(data[i])):
-      if (re.match("<%ID> = extractelement", data[i][j]) is not None or
-          re.match("<%ID> = insertelement", data[i][j]) is not None):
-        data[i][j] = re.sub(r'i\d+ ', '<TYP> ', data[i][j])
-
-  return data
+  return lines
