@@ -42,7 +42,6 @@ py_library(
         ":inst2vec_py_pb2",
         ":rgx_utils",
         ":vocabulary",
-        "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:bazelutil",
         "//third_party/py/absl",
         "//third_party/py/numpy",
