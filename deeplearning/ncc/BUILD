@@ -11,12 +11,21 @@
 #   1. Support for execution within bazel sandbox.
 #   2. Tests!
 
+load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_library")
+
 licenses(["notice"])  # BSD
 
 exports_files([
     "LICENSE",
     "README.md",
 ])
+
+py_proto_library(
+    name = "inst2vec_py_pb2",
+    protos = ["inst2vec.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["//third_party/py/protobuf"],
+)
 
 py_library(
     name = "rgx_utils",
@@ -30,6 +39,7 @@ py_library(
     data = ["//deeplearning/ncc/published_results:embeddings"],
     visibility = ["//visibility:public"],
     deps = [
+        ":inst2vec_py_pb2",
         ":rgx_utils",
         ":vocabulary",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
@@ -158,6 +168,8 @@ py_library(
     visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
         ":rgx_utils",
+        ":inst2vec_py_pb2",
+        "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:decorators",
         "//third_party/py/absl",
     ],

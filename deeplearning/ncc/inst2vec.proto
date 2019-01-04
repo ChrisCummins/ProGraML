@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+message EncodeBytecodeOptions {
+  optional bool set_bytecode_after_preprocessing = 1 [default = false];
+  optional bool set_unknown_statements = 2 [default = false];
+}
+
+message EncodeBytecodeResult {
+  optional string input_bytecode = 1;
+  repeated int64 encoded = 2;
+
+  // Debug stats.
+  optional string bytecode_after_preprocessing = 3;
+  repeated string unknown_statements = 4;
+}
