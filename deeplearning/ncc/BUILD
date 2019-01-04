@@ -167,8 +167,8 @@ py_library(
     srcs = ["vocabulary.py"],
     visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
-        ":rgx_utils",
         ":inst2vec_py_pb2",
+        ":rgx_utils",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:decorators",
         "//third_party/py/absl",
