@@ -34,6 +34,7 @@ py_library(
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:bazelutil",
         "//third_party/py/absl",
+        "//third_party/py/numpy",
         "//third_party/py/wget",
     ],
 )
