@@ -28,6 +28,7 @@ py_library(
     name = "task_utils",
     srcs = ["task_utils.py"],
     data = ["//deeplearning/ncc/published_results:embeddings"],
+    visibility = ["//visibility:public"],
     deps = [
         ":rgx_utils",
         ":vocabulary",

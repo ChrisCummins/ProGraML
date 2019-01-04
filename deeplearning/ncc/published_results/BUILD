@@ -1,9 +1,10 @@
 # Data from published results.
 
+package(default_visibility = ["//visibility:public"])
+
 filegroup(
     name = "embeddings",
     srcs = ["emb.p"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
 )
 
 # Data for devmap task, downloaded from:
@@ -11,7 +12,6 @@ filegroup(
 filegroup(
     name = "task_devmap",
     srcs = ["task_devmap.zip"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
 )
 
 # Data for threadcoarsening task, downloaded from:
@@ -19,11 +19,9 @@ filegroup(
 filegroup(
     name = "task_threadcoarsening",
     srcs = ["task_threadcoarsening.zip"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
 )
 
 filegroup(
     name = "vocabulary",
     srcs = ["vocabulary.zip"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
 )
