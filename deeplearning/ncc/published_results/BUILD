@@ -14,8 +14,8 @@ filegroup(
     srcs = ["task_devmap.zip"],
 )
 
-# The above zipfile, but only the 'kernels_cl' dir, and with missing
-# npb-3.3-SP-initialize*.cl files added.
+# The 'kernels_cl' dir in the above zipfile, and with half a dozen or so
+# missing files added.
 filegroup(
     name = "task_devmap_kernels",
     srcs = ["task_devmap_kernels.zip"],
