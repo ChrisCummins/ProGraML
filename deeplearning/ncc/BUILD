@@ -164,7 +164,7 @@ sh_test(
 py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":inst2vec_py_pb2",
         ":rgx_utils",
