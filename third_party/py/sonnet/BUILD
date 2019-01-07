@@ -11,6 +11,6 @@ py_library(
     srcs = ["sonnet.py"],
     deps = [
         requirement("dm-sonnet"),
-        requirement("tensorflow"),
+        "//third_party/py/tensorflow",
     ],
 )

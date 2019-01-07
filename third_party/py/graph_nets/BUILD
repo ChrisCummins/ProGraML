@@ -11,7 +11,7 @@ py_library(
     srcs = ["graph_nets.py"],
     deps = [
         requirement("graph_nets"),
-        requirement("dm-sonnet"),
-        requirement("tensorflow"),
+        "//third_party/py/sonnet",
+        "//third_party/py/tensorflow",
     ],
 )
