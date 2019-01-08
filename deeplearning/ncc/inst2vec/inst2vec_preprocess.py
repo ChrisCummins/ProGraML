@@ -744,8 +744,7 @@ def remove_structure_definitions(data):
 
 
 def preprocess(data):
-  """
-  Pre-processing of source code:
+  """Pre-processing of source code:
   - remove non-representative lines of code
   - remove leading spaces (indentation)
   - remove trailing comments and metadata
