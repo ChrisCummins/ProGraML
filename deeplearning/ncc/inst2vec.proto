@@ -4,6 +4,7 @@ syntax = "proto2";
 message EncodeBytecodeOptions {
   optional bool set_bytecode_after_preprocessing = 1 [default = false];
   optional bool set_unknown_statements = 2 [default = false];
+  optional bool set_struct_dict = 3 [default = false];
 }
 
 // The result of EncodeLlvmBytecode() being called on a vocabulary with a
@@ -12,7 +13,16 @@ message EncodeBytecodeResult {
   optional string input_bytecode = 1;
   repeated int64 encoded = 2;
 
-  // Debug stats.
+  // Optional debugging values. Each one of these fields has a corresponding
+  // `set_` field in the EncodeBytecodeOptions message. Setting that field
+  // will set these fields.
+
+  // The LLVM bytecode after pre-processing has been applied.
   optional string bytecode_after_preprocessing = 3;
+  // A list of all lines that appear in the bytecode that weren't in the
+  // vocabulary.
   repeated string unknown_statements = 4;
+  // The dictionary of struct -> literal type rewrites derived from this
+  // bytecode.
+  map<string, string> struct_dict = 5;
 }

@@ -85,14 +85,19 @@ class VocabularyZipFile(object):
 
   def EncodeLlvmBytecode(
       self, llvm_bytecode: str,
-      options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.EncodeBytecodeOptions()
+      options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.EncodeBytecodeOptions(),
+      struct_dict: typing.Dict[str, str] = None,
   ) -> inst2vec_pb2.EncodeBytecodeResult:
     """Encode an LLVM bytecode using the given vocabulary.
 
     Args:
       llvm_bytecode: LLVM bytecode as a string.
-      vocab: The vocabulary to use for encoding.
-    :return:
+      options: The options to use for encoding.
+      struct_dict: The struct rewrite table. If not provided, this is derived
+        automatically.
+
+    Returns:
+      An EncodeBytecodeResult message.
     """
     result = inst2vec_pb2.EncodeBytecodeResult(input_bytecode=llvm_bytecode)
 
@@ -105,41 +110,51 @@ class VocabularyZipFile(object):
       if options.set_bytecode_after_preprocessing:
         result.bytecode_after_preprocessing = '\n'.join(preprocessed_lines)
 
+    def _MaybeSetStructDict() -> None:
+      if options.set_struct_dict:
+        for k, v in struct_dict.items():
+          result.struct_dict[k] = v
+
     llvm_bytecode_lines = llvm_bytecode.split('\n')
+
+    # Get the dictionary of structures defined the file.
+    struct_dict = struct_dict or GetStructDict(llvm_bytecode_lines)
+    _MaybeSetStructDict()
 
     # Source code pre-processing.
     # TODO(cec): Merge i2v_prep.preprocess() and PreprocessLlvmBytecode().
     preprocessed_data, _ = i2v_prep.preprocess(
         [llvm_bytecode_lines])
     llvm_bytecode_lines = preprocessed_data[0]
-    llvm_bytecode_lines = PreprocessLlvmBytecode(llvm_bytecode_lines)
+    llvm_bytecode_lines = PreprocessLlvmBytecode(
+        llvm_bytecode_lines, struct_dict)
     _MaybeSetBytecodeAfterPreprocessing(llvm_bytecode_lines)
 
-    stmt_indexed = []  # Construct indexed sequence
-
-    for i, stmt in enumerate(llvm_bytecode_lines):
+    # Construct indexed sequence.
+    encoded = []
+    for i, line in enumerate(llvm_bytecode_lines):
       # check whether this is a label, in which case we ignore it
-      if re.match(r'((?:<label>:)?(<LABEL>):|; <label>:<LABEL>)', stmt):
+      if re.match(r'((?:<label>:)?(<LABEL>):|; <label>:<LABEL>)', line):
         continue
 
       # check whether this is an unknown
-      if stmt in self.cutoff_stmts:
-        _MaybeSetUnknownStatement(stmt)
-        stmt = rgx_utils.unknown_token
+      if line in self.cutoff_stmts:
+        _MaybeSetUnknownStatement(line)
+        line = rgx_utils.unknown_token
 
       # lookup and add to list
-      if stmt not in self.dictionary.keys():
-        _MaybeSetUnknownStatement(stmt)
-        stmt = rgx_utils.unknown_token
+      if line not in self.dictionary.keys():
+        _MaybeSetUnknownStatement(line)
+        line = rgx_utils.unknown_token
 
-      stmt_indexed.append(self.dictionary[stmt])
+      encoded.append(self.dictionary[line])
 
-    result.encoded.extend(stmt_indexed)
+    result.encoded.extend(encoded)
 
     return result
 
 
-def GetStructDict(bytecode_lines: typing.List[str]):
+def GetStructDict(bytecode_lines: typing.List[str]) -> typing.Dict[str, str]:
   # Construct a dictionary ["structure name", "corresponding literal structure"]
   _, struct_dict = i2v_prep.construct_struct_types_dictionary_for_file(
       bytecode_lines)
@@ -156,12 +171,11 @@ def GetStructDict(bytecode_lines: typing.List[str]):
   return struct_dict
 
 
-def PreprocessLlvmBytecode(lines: typing.List[str]):
+def PreprocessLlvmBytecode(lines: typing.List[str],
+                           struct_dict: typing.Dict[str, str]):
   """Simplify lines of code by stripping them from their identifiers,
   unnamed values, etc. so that LLVM IR statements can be abstracted from them.
   """
-  struct_dict = GetStructDict(lines)
-
   # Remove all "... = type {..." statements since we don't need them anymore
   lines = [
     stmt for stmt in lines if not re.match('.* = type ', stmt)]
