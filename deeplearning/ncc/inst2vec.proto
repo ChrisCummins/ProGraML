@@ -1,10 +1,13 @@
 syntax = "proto2";
 
+// Options which control the setting of fields in EncodeBytecodeResult messages.
 message EncodeBytecodeOptions {
   optional bool set_bytecode_after_preprocessing = 1 [default = false];
   optional bool set_unknown_statements = 2 [default = false];
 }
 
+// The result of EncodeLlvmBytecode() being called on a vocabulary with a
+// bytecode.
 message EncodeBytecodeResult {
   optional string input_bytecode = 1;
   repeated int64 encoded = 2;
