@@ -132,6 +132,15 @@ new_http_archive(
     url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
 )
 
+# Skylark rules for PlatformIO.
+# See: https://github.com/mum4k/platformio_rules
+
+git_repository(
+    name = "platformio_rules",
+    commit = "de06a6ff52dd38288479852ec4b8157445065fd3",
+    remote = "http://github.com/ChrisCummins/platformio_rules.git",
+)
+
 # Intel TBB (pre-built binaries for mac and linux)
 
 new_http_archive(
