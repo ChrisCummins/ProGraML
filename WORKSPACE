@@ -42,6 +42,8 @@ boost_deps()
 
 # OpenCL headers.
 
+# TODO(cec): Replace the (now unsupported) new_http_archive with http_archive.
+
 new_http_archive(
     name = "opencl_120_headers",
     build_file = "third_party/opencl_headers.BUILD",
