@@ -2,6 +2,6 @@
 
 filegroup(
     name = "data_files",
-    srcs = glob(["**"]),
+    srcs = glob(["**/*"]),
     visibility = "//visibility:public",
 )
