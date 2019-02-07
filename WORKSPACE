@@ -201,15 +201,15 @@ new_http_archive(
 
 # Data files for the Rodinia Benchmark Suite.
 # Used by //datasets/benchmarks/gpgpu/rodinia-3.1.
-# The code itself is checked in; this large (361 MB) archive contains the data
+# The code itself is checked in; this large (340 MB) archive contains the data
 # files that the benchmarks use.
 
 new_http_archive(
     name = "rodinia_data",
     build_file = "third_party/rodinia_data.BUILD",
-    sha256 = "faebac7c11ed8f8fcf6bf2d7e85c3086fc2d11f72204d6dfc28dc5b2e8f2acfd",
-    strip_prefix = "rodinia_3.1/data",
-    url = "http://www.cs.virginia.edu/~kw5na/lava/Rodinia/Packages/Current/rodinia_3.1.tar.bz2",
+    sha256 = "4dc9981bd1655652e9e74d8572a0c3a5876a3d818ffb0a622fc432b25f91c712",
+    strip_prefix = "rodinia-3.1-data-1.0.1/data",
+    url = "https://github.com/ChrisCummins/rodinia-3.1-data/archive/v1.0.1.tar.gz",
 )
 
 # Protocol buffers.
