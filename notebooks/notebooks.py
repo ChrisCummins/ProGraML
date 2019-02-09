@@ -17,6 +17,10 @@ FLAGS = flags.FLAGS
 flags.DEFINE_bool('with_colaboratory', True,
                   'Allow server to be used as a local runtime for Google '
                   'Colaboratory notebooks.')
+flags.DEFINE_bool('generate_jupyter_config_file', False,
+                  'Generate a default config file and write it to '
+                  '~/.jupyter/jupyter_notebook_config.py. If this file '
+                  'already exists, you are prompted to overwrite.')
 
 
 def main(argv: typing.List[str]):
@@ -31,6 +35,9 @@ def main(argv: typing.List[str]):
       "--NotebookApp.allow_origin='https://colab.research.google.com'",
       '--NotebookApp.port_retries=0',
     ]
+
+  if FLAGS.generate_jupyter_config_file:
+    options += ['--JupyterApp.generate_config=True']
 
   # Append any arguments not parsed by absl.
   options += argv[1:]
