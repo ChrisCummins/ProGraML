@@ -12,8 +12,8 @@
 #      ],
 #    )
 #
-# Use the run_notebooks.sh script to launch this target in the root of the
-# source tree: bash notebooks/run_notebooks.sh.
+# Use the run_notebooks.sh script to launch this target in the source tree:
+# bash notebooks/run_notebooks.sh.
 py_binary(
     name = "notebooks",
     srcs = ["notebooks.py"],
