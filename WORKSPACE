@@ -217,7 +217,7 @@ new_http_archive(
 
 git_repository(
     name = "org_pubref_rules_protobuf",
-    commit = "5cae42382b620aa1e347ecf30b3e92fd0d97998c",
+    commit = "99043441e3c473809f633f5ad049945606124b60",
     remote = "https://github.com/pubref/rules_protobuf",
 )
 
