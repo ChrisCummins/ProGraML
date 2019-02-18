@@ -2193,20 +2193,23 @@ def check_vocabulary_size(preprocessed_file, G):
     return None
 
 
-def check_graph_construction(G, filename):
-  """
-  Assess the validity of the construction of this graph using following criteria:
-  - Does every node have an ID?
-  - Have all statements been added to the graph?
-  - Are there any isolated nodes?
-  - Are there any global nodes which are leaf nodes (i.e. are not re-used)
-  - Make a list of multi-edges
-  - Make sure the graph is connected
+def CheckGraphOrDie(G, filename):
+  """Assess the validity of the construction of this graph using following
+  criteria:
+    - Does every node have an ID?
+    - Have all statements been added to the graph?
+    - Are there any isolated nodes?
+    - Are there any global nodes which are leaf nodes (i.e. are not re-used)
+    - Make a list of multi-edges
+    - Make sure the graph is connected
   :param G: context graph to be checked
   :param filename: name of file
   :return: multi-edges: list of edges for which parallel edges exist
            G
   """
+  # TODO(cec): Should this rais exception or assertion? Currently it's a mixture
+  # of both.
+  
   # Make sure each node has an id
   for n in sorted(list(G.nodes(data=True))):
     assert n[1], 'Node \"' + n[0] + '\" has no id (file ' + filename + ')'
@@ -2287,42 +2290,47 @@ def check_graph_construction(G, filename):
   return multi_edges, G
 
 
-def build_graph(file, functions_declared_in_file, filename):
+def BuildContextualFlowGraph(llvm_lines, functions_declared_in_file, filename):
   """
   Given a file of source code, construct a context graph
   This function is called once for each file
-  :param file: LLVM-IR source file (list of strings containing lines of LLVM IR)
-  :param functions_declared_in_file:
-  :param filename: name of file
-  :return: G: a directed graph in which nodes are identifiers or ad-hoc and edges are statements which is meant as a
-              representation of both data and flow control of the code capturing the notion of context
-           lines_not_added_to_graph: list of lines that could not be added to the graph (used for debugging)
-           multi_edges: list of edges that have parallel edges
-  """
 
+  Args:
+    llvm_lines: LLVM-IR source file (list of strings containing lines of LLVM
+      IR).
+    functions_declared_in_file:
+    filename: name of file
+
+  Returns:
+    A <digraph, multi_edge_list> tuple, where <digraph> is a directed graph in
+    which nodes are identifiers or ad-hoc and edges are statements which is
+    meant as a representation of both data and flow control of the code
+    capturing the notion of context; and <multi_edge_list> is a list of edges
+    that have parallel edges.
+  """
   # Create a graph
-  G = nx.MultiDiGraph()
+  graph = nx.MultiDiGraph()
 
   try:
     # Dictionary of functions defined in the file
     # keys: names of functions which are defined (not just declared) in this file
     # values: pair: [shortened function name, its corresponding return statement]
-    functions_defined_in_file = construct_function_dictionary(file)
+    functions_defined_in_file = construct_function_dictionary(llvm_lines)
 
     # Add lines to graph
-    G = add_stmts_to_graph(G, file, functions_defined_in_file,
-                           functions_declared_in_file)
+    graph = add_stmts_to_graph(graph, llvm_lines, functions_defined_in_file,
+                               functions_declared_in_file)
 
     # Make sure the vocabulary size in the graph representation matches the one in the text representation
-    check_vocabulary_size(file, G)
+    check_vocabulary_size(llvm_lines, graph)
 
-    # Make sure the graph was correctly constructed
-    multi_edges, G = check_graph_construction(G, filename)
+    # Make sure the graph was correctly constructed.
+    multi_edges, graph = CheckGraphOrDie(graph, filename)
 
   except ValueError:
     raise
 
-  return G, multi_edges
+  return graph, multi_edges
 
 
 def get_data_characteristics(data_folders):
@@ -2926,7 +2934,14 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
 
       data_read_from_folder_filename = os.path.join(folder_raw,
                                                     'data_read_pickle')
-      if not os.path.exists(data_read_from_folder_filename):
+      if os.path.exists(data_read_from_folder_filename):
+        # Load pre-processed data
+        print('\n--- Loading data read from folder ', folder_raw, ' from file ',
+              data_read_from_folder_filename)
+        with open(data_read_from_folder_filename, 'rb') as f:
+          raw_data, file_names = pickle.load(f)
+
+      else:
 
         # Read data from folder and pickle it
         print('\n--- Read data from folder ', folder_raw)
@@ -2935,14 +2950,6 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
               data_read_from_folder_filename)
         i2v_utils.safe_pickle([raw_data, file_names],
                               data_read_from_folder_filename)
-
-      else:
-
-        # Load pre-processed data
-        print('\n--- Loading data read from folder ', folder_raw, ' from file ',
-              data_read_from_folder_filename)
-        with open(data_read_from_folder_filename, 'rb') as f:
-          raw_data, file_names = pickle.load(f)
 
       # Print data statistics and release memory
       source_data_list, source_data = data_statistics(raw_data,
@@ -3021,9 +3028,10 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
 
           # Construct graph
           try:
-            G, multi_edges = build_graph(preprocessed_file,
-                                         functions_declared_in_files[i],
-                                         file_names[i])
+            G, multi_edges = BuildContextualFlowGraph(preprocessed_file,
+                                                      functions_declared_in_files[
+                                                        i],
+                                                      file_names[i])
           except ValueError:
             continue
 
