@@ -215,7 +215,7 @@ http_archive(
 
 git_repository(
     name = "org_pubref_rules_protobuf",
-    commit = "a58399a5c8e2908630eb65c31a1a8e2a3e320044",
+    commit = "99043441e3c473809f633f5ad049945606124b60",
     remote = "https://github.com/pubref/rules_protobuf",
 )
 
