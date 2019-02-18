@@ -19,6 +19,7 @@
 
 # In-tree generated files.
 /.env
+/bootstrap.sh
 /config.pbtxt
 /requirements.txt
 /third_party/py/tensorflow/BUILD

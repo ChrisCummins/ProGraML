@@ -1,0 +1,59 @@
+# Global dependencies.
+macos: # Install homebrew:
+macos: test -f /usr/local/bin/brew || yes | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+macos: brew install bazel
+macos: brew install coreutils
+macos: brew install exempi
+macos: brew install findutils
+macos: brew install gnu-indent
+macos: brew install gnu-sed
+macos: brew install gnu-tar
+macos: brew install gnu-time
+macos: brew install gnu-which
+macos: brew install libomp
+macos: brew install python
+macos: brew install cmake
+macos: brew install boost
+macos: brew install sdl2
+macos: brew install wget
+macos: brew install ffmpeg
+linux: # Install bazel:
+linux: curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.14.1/bazel-0.14.1-installer-linux-x86_64.sh
+linux: sudo bash /tmp/bazel.sh && rm /tmp/bazel.sh
+linux: # Update package index:
+linux: sudo apt-get update
+linux: sudo apt install -y --no-install-recommends ca-certificates
+linux: sudo apt install -y --no-install-recommends curl
+linux: sudo apt install -y --no-install-recommends g++
+linux: sudo apt install -y --no-install-recommends git
+linux: sudo apt install -y --no-install-recommends ocl-icd-opencl-dev
+linux: sudo apt install -y --no-install-recommends pkg-config
+linux: sudo apt install -y --no-install-recommends python
+linux: sudo apt install -y --no-install-recommends python-dev
+linux: sudo apt install -y --no-install-recommends python3.6
+linux: sudo apt install -y --no-install-recommends python3.6-dev
+linux: sudo apt install -y --no-install-recommends python3-distutils
+linux: sudo apt install -y --no-install-recommends unzip
+linux: sudo apt install -y --no-install-recommends zip
+linux: sudo apt install -y --no-install-recommends zlib1g-dev
+linux: sudo apt install -y --no-install-recommends openjdk-11-jdk
+linux: sudo apt install -y --no-install-recommends m4
+linux: sudo apt install -y --no-install-recommends libexempi-dev
+linux: sudo apt install -y --no-install-recommends rsync
+linux: sudo apt install -y --no-install-recommends texlive-full
+linux: sudo apt install -y --no-install-recommends python3-numpy
+linux: sudo apt install -y --no-install-recommends build-essential
+linux: sudo apt install -y --no-install-recommends libsdl2-dev
+linux: sudo apt install -y --no-install-recommends libjpeg-dev
+linux: sudo apt install -y --no-install-recommends nasm
+linux: sudo apt install -y --no-install-recommends tar
+linux: sudo apt install -y --no-install-recommends libbz2-dev
+linux: sudo apt install -y --no-install-recommends libgtk2.0-dev
+linux: sudo apt install -y --no-install-recommends cmake
+linux: sudo apt install -y --no-install-recommends libfluidsynth-dev
+linux: sudo apt install -y --no-install-recommends libgme-dev
+linux: sudo apt install -y --no-install-recommends libopenal-dev
+linux: sudo apt install -y --no-install-recommends timidity
+linux: sudo apt install -y --no-install-recommends libwildmidi-dev
+linux: sudo apt install -y --no-install-recommends libboost-all-dev
+linux: sudo apt install -y --no-install-recommends libsdl2-dev
