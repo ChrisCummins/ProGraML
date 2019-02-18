@@ -43,96 +43,94 @@ boost_deps()
 
 # OpenCL headers.
 
-# TODO(cec): Replace the (now unsupported) new_http_archive with http_archive.
-
-new_http_archive(
+http_archive(
     name = "opencl_120_headers",
-    build_file = "third_party/opencl_headers.BUILD",
+    build_file = "//:third_party/opencl_headers.BUILD",
     sha256 = "fab4705dd3b0518f40e9d5d2f234aa57b82569841122f88a4ebcba10ecc17119",
     strip_prefix = "OpenCL-Headers-1.2/opencl12",
-    url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/v1.2.tar.gz",
+    urls = ["https://github.com/ChrisCummins/OpenCL-Headers/archive/v1.2.tar.gz"],
 )
 
-new_http_archive(
+http_archive(
     name = "opencl_220_headers",
-    build_file = "third_party/opencl_headers.BUILD",
+    build_file = "//:third_party/opencl_headers.BUILD",
     sha256 = "4b159af0ce0a5260098fff9992cde242af09c24c794ab46ff57390804a65066d",
     strip_prefix = "OpenCL-Headers-master",
-    url = "https://github.com/ChrisCummins/OpenCL-Headers/archive/master.zip",
+    urls = ["https://github.com/ChrisCummins/OpenCL-Headers/archive/master.zip"],
 )
 
-new_http_archive(
+http_archive(
     name = "libopencl",
-    build_file = "third_party/libOpenCL.BUILD",
+    build_file = "//:third_party/libOpenCL.BUILD",
     sha256 = "d7c110a5ed0f26c1314f543df36e0f184783ccd11b754df396e736febbdf490a",
     strip_prefix = "OpenCL-ICD-Loader-2.2",
-    url = "https://github.com/ChrisCummins/OpenCL-ICD-Loader/archive/v2.2.tar.gz",
+    urls = ["https://github.com/ChrisCummins/OpenCL-ICD-Loader/archive/v2.2.tar.gz"],
 )
 
 # LLVM.
 
-new_http_archive(
+http_archive(
     name = "llvm_mac",
-    build_file = "third_party/llvm.BUILD",
+    build_file = "//:third_party/llvm.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz"],
 )
 
-new_http_archive(
+http_archive(
     name = "llvm_linux",
-    build_file = "third_party/llvm.BUILD",
+    build_file = "//:third_party/llvm.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
 
 # Linux sources.
 
-new_http_archive(
+http_archive(
     name = "linux_srcs",
-    build_file = "third_party/linux.BUILD",
+    build_file = "//:third_party/linux.BUILD",
     sha256 = "1865d2130769d4593f3c0cef4afbc9e39cdc791be218b15436a6366708142a81",
     strip_prefix = "linux-4.19",
-    url = "https://github.com/torvalds/linux/archive/v4.19.tar.gz",
+    urls = ["https://github.com/torvalds/linux/archive/v4.19.tar.gz"],
 )
 
 # Now do the same again for headers, but also strip the include/ directory.
 
-new_http_archive(
+http_archive(
     name = "llvm_headers_mac",
-    build_file = "third_party/llvm_headers.BUILD",
+    build_file = "//:third_party/llvm_headers.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin/include",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz"],
 )
 
-new_http_archive(
+http_archive(
     name = "llvm_headers_linux",
-    build_file = "third_party/llvm_headers.BUILD",
+    build_file = "//:third_party/llvm_headers.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/include",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
 
-new_http_archive(
+http_archive(
     name = "llvm_test_suite",
-    build_file = "third_party/llvm_test_suite.BUILD",
+    build_file = "//:third_party/llvm_test_suite.BUILD",
     strip_prefix = "test-suite-6.0.0.src",
-    url = "http://releases.llvm.org/6.0.0/test-suite-6.0.0.src.tar.xz",
+    urls = ["http://releases.llvm.org/6.0.0/test-suite-6.0.0.src.tar.xz"],
 )
 
 # Now do the same again for headers, but also strip the include/ directory.
 # TODO: Remove these.
 
-new_http_archive(
+http_archive(
     name = "libcxx_mac",
-    build_file = "third_party/libcxx.BUILD",
+    build_file = "//:third_party/libcxx.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz"],
 )
 
-new_http_archive(
+http_archive(
     name = "libcxx_linux",
-    build_file = "third_party/libcxx.BUILD",
+    build_file = "//:third_party/libcxx.BUILD",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
-    url = "https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
 
 # Skylark rules for PlatformIO.
@@ -146,58 +144,58 @@ git_repository(
 
 # Intel TBB (pre-built binaries for mac and linux)
 
-new_http_archive(
+http_archive(
     name = "tbb_mac",
-    build_file = "third_party/tbb_mac.BUILD",
+    build_file = "//:third_party/tbb_mac.BUILD",
     sha256 = "6ff553ec31c33b8340ce2113853be1c42e12b1a4571f711c529f8d4fa762a1bf",
     strip_prefix = "tbb2017_20170226oss",
-    url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz",
+    urls = ["https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_mac.tgz"],
 )
 
-new_http_archive(
+http_archive(
     name = "tbb_lin",
-    build_file = "third_party/tbb_lin.BUILD",
+    build_file = "//:third_party/tbb_lin.BUILD",
     sha256 = "c4cd712f8d58d77f7b47286c867eb6fd70a8e8aef097a5c40f6c6b53d9dd83e1",
     strip_prefix = "tbb2017_20170226oss",
-    url = "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz",
+    urls = ["https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz"],
 )
 
 # Oclgrind (pre-built binaries for mac and linux).
 
-new_http_archive(
+http_archive(
     name = "oclgrind_mac",
-    build_file = "third_party/oclgrind.BUILD",
+    build_file = "//:third_party/oclgrind.BUILD",
     sha256 = "484d0d66c4bcc46526d031acb31fed52eea375e818a2b3dea3d4a31d686b3018",
     strip_prefix = "oclgrind-18.3",
-    url = "https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-macOS.tgz",
+    urls = ["https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-macOS.tgz"],
 )
 
-new_http_archive(
+http_archive(
     name = "oclgrind_linux",
-    build_file = "third_party/oclgrind.BUILD",
+    build_file = "//:third_party/oclgrind.BUILD",
     sha256 = "3cc8b5dfb44b948b454a9806430a7a0add915be0c1f6e2df965733ecd8b5e1fa",
     strip_prefix = "oclgrind-18.3",
-    url = "https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-Linux.tgz",
+    urls = ["https://github.com/jrprice/Oclgrind/releases/download/v18.3/Oclgrind-18.3-Linux.tgz"],
 )
 
 # CLSmith.
 
-new_http_archive(
+http_archive(
     name = "CLSmith",
-    build_file = "third_party/CLSmith.BUILD",
+    build_file = "//:third_party/CLSmith.BUILD",
     sha256 = "f37d14fdb003d60ea1dd0640efc06777428ce6debc62e470eeb05dfa128e1d07",
     strip_prefix = "CLSmith-a39a31c43c88352fc65e61dce270d8e1660cbcf0",
-    url = "https://github.com/ChrisLidbury/CLSmith/archive/a39a31c43c88352fc65e61dce270d8e1660cbcf0.tar.gz",
+    urls = ["https://github.com/ChrisLidbury/CLSmith/archive/a39a31c43c88352fc65e61dce270d8e1660cbcf0.tar.gz"],
 )
 
 # bzip2.
 
-new_http_archive(
+http_archive(
     name = "bzip2",
-    build_file = "third_party/bzip2.BUILD",
+    build_file = "//:third_party/bzip2.BUILD",
     sha256 = "ba1abd52e2798aab48f47bcc90975c0da8f6ca70dc416a0e02f02da7355710c4",
     strip_prefix = "bzip2-1.0.6",
-    url = "https://github.com/ChrisCummins/bzip2/archive/1.0.6.tar.gz",
+    urls = ["https://github.com/ChrisCummins/bzip2/archive/1.0.6.tar.gz"],
 )
 
 # Data files for the Rodinia Benchmark Suite.
@@ -205,19 +203,19 @@ new_http_archive(
 # The code itself is checked in; this large (340 MB) archive contains the data
 # files that the benchmarks use.
 
-new_http_archive(
+http_archive(
     name = "rodinia_data",
-    build_file = "third_party/rodinia_data.BUILD",
+    build_file = "//:third_party/rodinia_data.BUILD",
     sha256 = "4dc9981bd1655652e9e74d8572a0c3a5876a3d818ffb0a622fc432b25f91c712",
     strip_prefix = "rodinia-3.1-data-1.0.1/data",
-    url = "https://github.com/ChrisCummins/rodinia-3.1-data/archive/v1.0.1.tar.gz",
+    urls = ["https://github.com/ChrisCummins/rodinia-3.1-data/archive/v1.0.1.tar.gz"],
 )
 
 # Protocol buffers.
 
 git_repository(
     name = "org_pubref_rules_protobuf",
-    commit = "99043441e3c473809f633f5ad049945606124b60",
+    commit = "a58399a5c8e2908630eb65c31a1a8e2a3e320044",
     remote = "https://github.com/pubref/rules_protobuf",
 )
 
