@@ -379,22 +379,32 @@ load(
 
 pip_grpcio_install()
 
+# Needed by rules_docker.
+# See: https://github.com/bazelbuild/bazel-skylib
+
+git_repository(
+    name = "bazel_skylib",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
+    tag = "0.7.0",
+)
+
 # Bazel docker rules.
 # See: https://github.com/bazelbuild/rules_docker
 
-git_repository(
+http_archive(
     name = "io_bazel_rules_docker",
-    commit = "c7a93454d27e09ef707dfca53887ed0ff4372f04",
-    remote = "https://github.com/bazelbuild/rules_docker.git",
+    sha256 = "aed1c249d4ec8f703edddf35cbe9dfaca0b5f5ea6e4cd9e83e99f3b0d1136c3d",
+    strip_prefix = "rules_docker-0.7.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/v0.7.0.tar.gz"],
 )
 
 # Enable py3_image() rule.
 
 load(
-    "@io_bazel_rules_docker//container:container.bzl",
-    "container_pull",
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
     container_repositories = "repositories",
 )
+load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 load(
     "@io_bazel_rules_docker//python3:image.bzl",
     _py_image_repos = "repositories",
