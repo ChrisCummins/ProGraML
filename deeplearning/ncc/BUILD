@@ -76,13 +76,14 @@ py_binary(
     ],
 )
 
-sh_test(
-    name = "train_inst2vec_smoke_test",
-    srcs = ["train_inst2vec_smoke_test.sh"],
-    data = [
-        ":train_inst2vec",
-    ],
-)
+# TODO(cec): Create tiny dataset for < 60 second run.
+#sh_test(
+#    name = "train_inst2vec_smoke_test",
+#    srcs = ["train_inst2vec_smoke_test.sh"],
+#    data = [
+#        ":train_inst2vec",
+#    ],
+#)
 
 py_binary(
     name = "train_task_classifyapp",
@@ -100,16 +101,17 @@ py_binary(
     ],
 )
 
-sh_test(
-    name = "train_task_classifyapp_smoke_test",
-    size = "enormous",
-    srcs = ["train_task_classifyapp_smoke_test.sh"],
-    data = [
-        ":train_task_classifyapp",
-        "//deeplearning/ncc/published_results:embeddings",
-        "//deeplearning/ncc/published_results:vocabulary",
-    ],
-)
+# TODO(cec): Create tiny dataset for < 60 second run.
+#sh_test(
+#    name = "train_task_classifyapp_smoke_test",
+#    size = "enormous",
+#    srcs = ["train_task_classifyapp_smoke_test.sh"],
+#    data = [
+#        ":train_task_classifyapp",
+#        "//deeplearning/ncc/published_results:embeddings",
+#        "//deeplearning/ncc/published_results:vocabulary",
+#    ],
+#)
 
 py_binary(
     name = "train_task_devmap",
@@ -126,15 +128,16 @@ py_binary(
     ],
 )
 
-sh_test(
-    name = "train_task_devmap_smoke_test",
-    srcs = ["train_task_devmap_smoke_test.sh"],
-    data = [
-        ":train_task_devmap",
-        "//deeplearning/ncc/published_results:embeddings",
-        "//deeplearning/ncc/published_results:vocabulary",
-    ],
-)
+# TODO(cec): Create tiny dataset for < 60 second run.
+#sh_test(
+#    name = "train_task_devmap_smoke_test",
+#    srcs = ["train_task_devmap_smoke_test.sh"],
+#    data = [
+#        ":train_task_devmap",
+#        "//deeplearning/ncc/published_results:embeddings",
+#        "//deeplearning/ncc/published_results:vocabulary",
+#    ],
+#)
 
 py_binary(
     name = "train_task_threadcoarsening",
@@ -151,15 +154,16 @@ py_binary(
     ],
 )
 
-sh_test(
-    name = "train_task_threadcoarsening_smoke_test",
-    srcs = ["train_task_threadcoarsening_smoke_test.sh"],
-    data = [
-        ":train_task_threadcoarsening",
-        "//deeplearning/ncc/published_results:embeddings",
-        "//deeplearning/ncc/published_results:vocabulary",
-    ],
-)
+# TODO(cec): Create tiny dataset for < 60 second run.
+#sh_test(
+#    name = "train_task_threadcoarsening_smoke_test",
+#    srcs = ["train_task_threadcoarsening_smoke_test.sh"],
+#    data = [
+#        ":train_task_threadcoarsening",
+#        "//deeplearning/ncc/published_results:embeddings",
+#        "//deeplearning/ncc/published_results:vocabulary",
+#    ],
+#)
 
 py_library(
     name = "vocabulary",
