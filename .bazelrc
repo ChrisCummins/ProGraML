@@ -1,13 +1,5 @@
 # See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
 
-# Force Python 3.6. This requires that python3.6 is in $PATH. Otherwise,
-# change these values to the absolute path of python3.6.
-# TODO(cec): Try removing this to see if it still works. We'll either need to
-# remove this, or generate this file during ./configure, if we are to add
-# python 3.7 support.
-test --python_path=python3.6
-run --python_path=python3.6
-
 # Build and test options:
 build --verbose_failures
 test --verbose_failures
@@ -15,10 +7,9 @@ test --verbose_failures
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
-# Build options:
-build --compilation_mode opt
-build --ignore_unsupported_sandboxing
-
 # Test options:
 test --test_output=errors
 test --keep_going
+
+# Temporary workaround for deprecated bazel feature.
+build --incompatible_remove_native_http_archive=false
