@@ -15,7 +15,6 @@ from deeplearning.ncc import rgx_utils
 from deeplearning.ncc.inst2vec import inst2vec_preprocess as i2v_prep
 from labm8 import decorators
 
-
 FLAGS = flags.FLAGS
 
 
@@ -84,8 +83,10 @@ class VocabularyZipFile(object):
     shutil.rmtree(self._uncompressed_path_val)
 
   def EncodeLlvmBytecode(
-      self, llvm_bytecode: str,
-      options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.EncodeBytecodeOptions(),
+      self,
+      llvm_bytecode: str,
+      options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.
+      EncodeBytecodeOptions(),
       struct_dict: typing.Dict[str, str] = None,
   ) -> inst2vec_pb2.EncodeBytecodeResult:
     """Encode an LLVM bytecode using the given vocabulary.
@@ -123,11 +124,10 @@ class VocabularyZipFile(object):
 
     # Source code pre-processing.
     # TODO(cec): Merge i2v_prep.preprocess() and PreprocessLlvmBytecode().
-    preprocessed_data, _ = i2v_prep.preprocess(
-        [llvm_bytecode_lines])
+    preprocessed_data, _ = i2v_prep.preprocess([llvm_bytecode_lines])
     llvm_bytecode_lines = preprocessed_data[0]
-    llvm_bytecode_lines = PreprocessLlvmBytecode(
-        llvm_bytecode_lines, struct_dict)
+    llvm_bytecode_lines = PreprocessLlvmBytecode(llvm_bytecode_lines,
+                                                 struct_dict)
     _MaybeSetBytecodeAfterPreprocessing(llvm_bytecode_lines)
 
     # Construct indexed sequence.
@@ -162,8 +162,8 @@ def GetStructDict(bytecode_lines: typing.List[str]) -> typing.Dict[str, str]:
   # If the dictionary is empty
   if not struct_dict:
     for line in bytecode_lines:
-      if re.match(
-          rgx_utils.struct_name + ' = type (<?\{ .* \}|opaque|{})', line):
+      if re.match(rgx_utils.struct_name + ' = type (<?\{ .* \}|opaque|{})',
+                  line):
         # "Structures' dictionary is empty for file containing type definitions"
         # + data[0] + '\n' + data[1] + '\n' + data + '\n'
         assert False
@@ -177,8 +177,7 @@ def PreprocessLlvmBytecode(lines: typing.List[str],
   unnamed values, etc. so that LLVM IR statements can be abstracted from them.
   """
   # Remove all "... = type {..." statements since we don't need them anymore
-  lines = [
-    stmt for stmt in lines if not re.match('.* = type ', stmt)]
+  lines = [stmt for stmt in lines if not re.match('.* = type ', stmt)]
 
   for i in range(len(lines)):
 
@@ -219,18 +218,17 @@ def PreprocessLlvmBytecode(lines: typing.List[str],
     #   string: <STRING>
     #
     # Hexadecimal notation.
-    lines[i] = re.sub(
-        r' ' + rgx_utils.immediate_value_float_hexa, " <FLOAT>", lines[i])
+    lines[i] = re.sub(r' ' + rgx_utils.immediate_value_float_hexa, " <FLOAT>",
+                      lines[i])
     # Decimal / scientific notation.
-    lines[i] = re.sub(
-        r' ' + rgx_utils.immediate_value_float_sci, " <FLOAT>", lines[i])
+    lines[i] = re.sub(r' ' + rgx_utils.immediate_value_float_sci, " <FLOAT>",
+                      lines[i])
     if (re.match("<%ID> = extractelement", lines[i]) is None and
         re.match("<%ID> = extractvalue", lines[i]) is None and
         re.match("<%ID> = insertelement", lines[i]) is None and
         re.match("<%ID> = insertvalue", lines[i]) is None):
-      lines[i] = re.sub(
-          r'(?<!align)(?<!\[) ' + rgx_utils.immediate_value_int,
-          " <INT>", lines[i])
+      lines[i] = re.sub(r'(?<!align)(?<!\[) ' + rgx_utils.immediate_value_int,
+                        " <INT>", lines[i])
 
     lines[i] = re.sub(rgx_utils.immediate_value_string, " <STRING>", lines[i])
 

@@ -155,8 +155,8 @@ def get_stmt_counts(data_set, data_list):
       if num > 1:
         print(data_set[i], "\n\tappears ", num, " times")
 
-  assert stmts_categorized <= list(
-      range(len(data_set))), "Not all statements have been categorized"
+  assert stmts_categorized <= list(range(
+      len(data_set))), "Not all statements have been categorized"
   assert stmts_categorized >= list(range(
       len(data_set))), "Some statements have been categorized multiple times"
   assert total_stmt_count == len(
@@ -220,8 +220,8 @@ def read_data_files_from_folder(foldername):
       # If this isn't a hidden file and it is an LLVM IR file ('.ll' extension),
       # open file and import content
       f = open(os.path.join(foldername, file), 'r')
-      data.append(
-          f.read().splitlines())  # add this file as an element to the list "data"
+      data.append(f.read().splitlines()
+                 )  # add this file as an element to the list "data"
       f.close()
 
       # Add file name to dictionary
@@ -296,20 +296,24 @@ def print_node_family_to_file(G, f, nodetype):
 
   # Construct node family
   if nodetype == 'root':
-    node_family = [n for n in G.nodes() if
-                   G.out_degree(n) > 0 and G.in_degree(n) == 0]
+    node_family = [
+        n for n in G.nodes() if G.out_degree(n) > 0 and G.in_degree(n) == 0
+    ]
     node_family = sorted(node_family, key=sort_key)
   elif nodetype == 'leaf':
-    node_family = [n for n in G.nodes() if
-                   G.out_degree(n) == 0 and G.in_degree(n) >= 1]
+    node_family = [
+        n for n in G.nodes() if G.out_degree(n) == 0 and G.in_degree(n) >= 1
+    ]
     node_family = sorted(node_family, key=sort_key)
   elif nodetype == 'isolated':
     node_family = [n for n in G.nodes() if G.degree(n) == 0]
     node_family = sorted(node_family, key=sort_key)
   else:
-    node_family = [n[0] for n in sorted(list(G.nodes(data=True)),
-                                        key=sort_key) if
-                   n[1]['id'] == nodetype]
+    node_family = [
+        n[0]
+        for n in sorted(list(G.nodes(data=True)), key=sort_key)
+        if n[1]['id'] == nodetype
+    ]
 
   # Write to file
   f.write('#nodes: ' + str(len(node_family)) + '\n')
@@ -382,36 +386,32 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     f.write('Edges (' + str(G.number_of_edges()) + ')\n')
     f.write('-' * 80 + '\n')
     for a, b, data in sorted(G.edges(data=True), key=sort_key):
-      f.write(
-          '({a:<30}, {b:<30}) {w}\n'.format(a=a[:30], b=b[:30], w=data['stmt']))
+      f.write('({a:<30}, {b:<30}) {w}\n'.format(
+          a=a[:30], b=b[:30], w=data['stmt']))
 
     # data flow edges
-    dataedges = [(str(n[0]), str(n[1]), str(n[2])) for n in
-                 sorted(list(G.edges(data=True)),
-                        key=sort_key)
+    dataedges = [(str(n[0]), str(n[1]), str(n[2]))
+                 for n in sorted(list(G.edges(data=True)), key=sort_key)
                  if n[2]['flow'] == 'data']
     f.write('\nData flow edges: \n')
-    f.write('#edges: ' + str(len(dataedges)) + ' (' + str(
-        int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
-            '%)\n')
+    f.write('#edges: ' + str(len(dataedges)) + ' (' +
+            str(int(len(dataedges)) / G.number_of_edges() * 100)[:5] + '%)\n')
     f.write('-' * 80 + '\n')
     for e in dataedges:
-      f.write(
-          '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
+      f.write('({a:<30}, {b:<30}) {c}\n'.format(
+          a=e[0][:30], b=e[1][:30], c=e[2]))
 
     # control flow edges
-    ctrledges = [(str(n[0]), str(n[1]), str(n[2])) for n in
-                 sorted(list(G.edges(data=True)),
-                        key=sort_key)
+    ctrledges = [(str(n[0]), str(n[1]), str(n[2]))
+                 for n in sorted(list(G.edges(data=True)), key=sort_key)
                  if n[2]['flow'] == 'ctrl']
     f.write('\nCtrl flow edges: \n')
-    f.write('#edges: ' + str(len(ctrledges)) + ' (' + str(
-        int(len(dataedges)) / G.number_of_edges() * 100)[:5] +
-            '%)\n')
+    f.write('#edges: ' + str(len(ctrledges)) + ' (' +
+            str(int(len(dataedges)) / G.number_of_edges() * 100)[:5] + '%)\n')
     f.write('-' * 80 + '\n')
     for e in ctrledges:
-      f.write(
-          '({a:<30}, {b:<30}) {c}\n'.format(a=e[0][:30], b=e[1][:30], c=e[2]))
+      f.write('({a:<30}, {b:<30}) {c}\n'.format(
+          a=e[0][:30], b=e[1][:30], c=e[2]))
 
     # multi-edges
     f.write('\nMulti-edges: \n')
@@ -419,12 +419,12 @@ def print_graph_to_file(G, multi_edge_dic, folder, filename):
     for k, v in multi_edge_dic.items():  # Compile the multi-edges
       multi_edge_list += v
     f.write('#multi-edges: ' + str(len(multi_edge_list)) + ' (' +
-            str(int(len(multi_edge_list)) / G.number_of_edges() * 100)[
-            :5] + '%)\n')
-    f.write('#node pairs connected by multi-edges: ' + str(
-        len(multi_edge_dic.keys())) + ' (' +
-            str(int(len(multi_edge_dic)) / G.number_of_edges() * 100)[
-            :5] + '%)\n')
+            str(int(len(multi_edge_list)) / G.number_of_edges() * 100)[:5] +
+            '%)\n')
+    f.write('#node pairs connected by multi-edges: ' +
+            str(len(multi_edge_dic.keys())) + ' (' +
+            str(int(len(multi_edge_dic)) / G.number_of_edges() * 100)[:5] +
+            '%)\n')
     f.write('-' * 80 + '\n')
     for k, v_ in multi_edge_dic.items():
       n = re.match(r'(.*) \|\|\| (.*)', k)
@@ -479,10 +479,8 @@ def PrintDualXfgToFile(D, folder, filename):
     f.write('Edges (' + str(D.number_of_edges()) + ')\n')
     f.write('-' * 80 + '\n')
     for a, b, data in sorted(D.edges(data=True), key=sort_key):
-      f.write(
-          '({a:<37}, {b:<37}) {w}\n'.format(
-              a=a[:37], b=b[:37],
-              w=data['weight']))
+      f.write('({a:<37}, {b:<37}) {w}\n'.format(
+          a=a[:37], b=b[:37], w=data['weight']))
 
 
 ########################################################################################################################
@@ -541,8 +539,8 @@ def keep(line):
   if line[0] == '!' or line[0] == '\n':
     return False
 
-  if line.strip()[0] == '{' or line.strip()[0] == '}' or line.strip()[
-    0] == '[' or line.strip()[0] == ']':
+  if line.strip()[0] == '{' or line.strip()[0] == '}' or line.strip(
+  )[0] == '[' or line.strip()[0] == ']':
     return False
 
   # Ignore empty lines (NOTE: possible dupe of `if line == ''` above?).
@@ -684,22 +682,22 @@ def collapse_stmt_units_to_a_line(data):
 
       if re.match(rgx.local_id + ' = landingpad', file[i]):
         if i + 1 < len(file):
-          if re.match(r'cleanup', file[i + 1]) or re.match(r'filter', file[
-            i + 1]) or re.match(r'catch', file[i + 1]):
+          if re.match(r'cleanup', file[i + 1]) or re.match(
+              r'filter', file[i + 1]) or re.match(r'catch', file[i + 1]):
             file[i] += separator + file[i + 1]  # collapse lines
             file[i + 1] = erase_token  # mark as "to erase"
           else:
             continue
         if i + 2 < len(file):
-          if re.match(r'cleanup', file[i + 2]) or re.match(r'filter', file[
-            i + 2]) or re.match(r'catch', file[i + 2]):
+          if re.match(r'cleanup', file[i + 2]) or re.match(
+              r'filter', file[i + 2]) or re.match(r'catch', file[i + 2]):
             file[i] += separator + file[i + 2]  # collapse lines
             file[i + 2] = erase_token  # mark as "to erase"
           else:
             continue
         if i + 3 < len(file):
-          if re.match(r'cleanup', file[i + 3]) or re.match(r'filter', file[
-            i + 3]) or re.match(r'catch', file[i + 3]):
+          if re.match(r'cleanup', file[i + 3]) or re.match(
+              r'filter', file[i + 3]) or re.match(r'catch', file[i + 3]):
             file[i] += separator + file[i + 3]  # collapse lines
             file[i + 3] = erase_token  # mark as "to erase"
           else:
@@ -737,8 +735,10 @@ def remove_structure_definitions(data):
   :return: input data with non-representative lines of code removed
   """
   for i in range(len(data)):
-    data[i] = [line for line in data[i] if
-               not re.match('%.* = type (<?{ .* }|opaque|{})', line)]
+    data[i] = [
+        line for line in data[i]
+        if not re.match('%.* = type (<?{ .* }|opaque|{})', line)
+    ]
 
   return data
 
@@ -870,8 +870,9 @@ def get_num_args_func(line, func_name=None):
   :return num_args: number of arguments
           arg_list: list of arguments
   """
-  modif_line = re.sub(r'<[^<>]+>', '',
-                      line)  # commas in vectors/arrays should not be counted as argument-separators
+  modif_line = re.sub(
+      r'<[^<>]+>', '', line
+  )  # commas in vectors/arrays should not be counted as argument-separators
   arg_list_ = find_outer_most_last_parenthesis(
       modif_line)  # get last parenthesis
   if arg_list_ is None:
@@ -959,8 +960,9 @@ def construct_function_dictionary(file):
       func_name_short = func_name[:20] + '_' + str(name_occurrences)
 
       # Construct its list of arguments
-      modified_line = re.sub(r'<[^<>]*>', '',
-                             line)  # commas in vectors/arrays not counted as arg-separators
+      modified_line = re.sub(
+          r'<[^<>]*>', '',
+          line)  # commas in vectors/arrays not counted as arg-separators
       arg_list_ = re.match(r'define .* ' + rgx.func_name + '\((.*)\)',
                            modified_line)
       if arg_list_ is None:
@@ -998,9 +1000,10 @@ def construct_function_dictionary(file):
                   # Sometimes (eg. rodinia/openmp_particle_filter.ll),
                   # some functions have unnamed args even though most are named
                   # Check whether that is the case
-                  if re.match(rgx.any_type_or_struct +
-                              r'( nocapture| readonly| readnone| dereferenceable)*',
-                              args_[a]):
+                  if re.match(
+                      rgx.any_type_or_struct +
+                      r'( nocapture| readonly| readnone| dereferenceable)*',
+                      args_[a]):
                     arg_list.append('%' + str(a))
                   else:
                     arg_ = re.match(r'(\.\.\.)$', args_[a])
@@ -1019,11 +1022,13 @@ def construct_function_dictionary(file):
       if func_name in functions_defined_in_file.keys():
         called = functions_defined_in_file[func_name][1]
       if named_args:
-        functions_defined_in_file[func_name] = [func_name_short, called,
-                                                'no_return', num_args, arg_list]
+        functions_defined_in_file[func_name] = [
+            func_name_short, called, 'no_return', num_args, arg_list
+        ]
       else:
-        functions_defined_in_file[func_name] = [func_name_short, called,
-                                                'no_return', num_args]
+        functions_defined_in_file[func_name] = [
+            func_name_short, called, 'no_return', num_args
+        ]
 
     # If it's a return statement
     elif re.match(r'ret .*', line):
@@ -1048,8 +1053,9 @@ def construct_function_dictionary(file):
         if function_name in functions_defined_in_file.keys():
           functions_defined_in_file[function_name][1] = True
         else:
-          functions_defined_in_file[function_name] = ['REMOVE', True, 'REMOVE',
-                                                      num_args]
+          functions_defined_in_file[function_name] = [
+              'REMOVE', True, 'REMOVE', num_args
+          ]
 
   # Reconstruct dictionary removing the calls that did not have defines
   functions_defined_in_file_DEF = dict()
@@ -1075,10 +1081,10 @@ def all_edges(G, nbunch=None, data=False):
   :return: corresponding list of all (both incoming and outgoing) edges (no duplicates in list)
   """
   if data:
-    result = [(e[0], e[1], e[2]['stmt']) for e in
-              G.in_edges(nbunch=nbunch, data=data)]
-    result += [(e[0], e[1], e[2]['stmt']) for e in
-               G.out_edges(nbunch=nbunch, data=data)]
+    result = [(e[0], e[1], e[2]['stmt'])
+              for e in G.in_edges(nbunch=nbunch, data=data)]
+    result += [(e[0], e[1], e[2]['stmt'])
+               for e in G.out_edges(nbunch=nbunch, data=data)]
     return list(set(result))
   else:  # data == False
     result = list(G.in_edges(nbunch=nbunch, data=data))
@@ -1235,9 +1241,11 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
   """
 
   # Helper-variables
-  lines_not_added_to_graph = list()  # lines which couldn't be added to the graph (debugging purposes)
-  G.add_node('@0',
-             id='global')  # add a global reference node to connect declaration of gloal variales to
+  lines_not_added_to_graph = list(
+  )  # lines which couldn't be added to the graph (debugging purposes)
+  G.add_node(
+      '@0', id='global'
+  )  # add a global reference node to connect declaration of gloal variales to
   glob_ref = list(G.nodes)[0]  # handle to global reference node
   func_prefix = ''  # function prefix (for construction of identifier nodes)
   block_ref = ''  # block reference
@@ -1331,7 +1339,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       assert func_prefix is not '', "Empty function prefix at line:\n" + line
       if all_degrees(G, block_ref) == 0:
         G.remove_node(
-            block_ref)  # if the previous block reference has not been used, delete it
+            block_ref
+        )  # if the previous block reference has not been used, delete it
 
       # Update block reference
       label_ = re.match('(?:.*<label>:)?(' + rgx.local_id_no_perc + '):?', line)
@@ -1404,15 +1413,18 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         add_edge(G, '', block_ref, func_prefix, assignee, line, 'path')
 
         # get a list of pairs of arguments
-        m_ = re.findall(r'\[ (%?' + rgx.local_id_no_perc +
-                        r'|true|false|<.*>|getelementptr inbounds \([ \d\w\[\]\*\.@,]+\)|.*' + rgx.global_id +
-                        r'.*), (%?' + rgx.local_id_no_perc + ') \],?', line)
+        m_ = re.findall(
+            r'\[ (%?' + rgx.local_id_no_perc +
+            r'|true|false|<.*>|getelementptr inbounds \([ \d\w\[\]\*\.@,]+\)|.*'
+            + rgx.global_id + r'.*), (%?' + rgx.local_id_no_perc + ') \],?',
+            line)
         if len(m_) == 0:
           m_ = re.findall(
-              r'\[ (inttoptr \(' + rgx.base_type + r' ' + rgx.immediate_value_int + r' to ' +
-              rgx.base_type_or_struct_name + r'\**\)|%?-?' + rgx.local_id_no_perc + r'|' +
-              rgx.immediate_value + r'|' + r'|<.*>), ' +
-              r'(%?-?' + rgx.local_id_no_perc + ') \]', line)
+              r'\[ (inttoptr \(' + rgx.base_type + r' ' +
+              rgx.immediate_value_int + r' to ' + rgx.base_type_or_struct_name +
+              r'\**\)|%?-?' + rgx.local_id_no_perc + r'|' + rgx.immediate_value
+              + r'|' + r'|<.*>), ' + r'(%?-?' + rgx.local_id_no_perc + ') \]',
+              line)
         assert len(
             m_) > 0, "Could not identify arguments in phi-statement: " + line
 
@@ -1423,13 +1435,13 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             add_node(G, func_prefix, m[0], 'local', ids_in_basic_block)
             add_edge(G, func_prefix, m[0], func_prefix, assignee, line, 'data')
 
-          elif re.match(r'.*' + rgx.global_id + r'.*', m[0]) or m[0][
-                                                                :13] == 'getelementptr':
+          elif re.match(r'.*' + rgx.global_id + r'.*',
+                        m[0]) or m[0][:13] == 'getelementptr':
             # if it is from a global id
             # (val nodes) --[stmt]--> (assignee)
             m_g = re.search(rgx.global_id, m[0]).group(0)
             if m_g in functions_declared_in_file or m_g[
-                                                    1:] in functions_defined_in_file.keys():
+                1:] in functions_defined_in_file.keys():
               add_node(G, '', m_g, 'global', None)
               add_edge(G, '', glob_ref, '', m_g, line, 'path')
             add_edge(G, '', m_g, func_prefix, assignee, line, 'data')
@@ -1443,20 +1455,22 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       if re.match('store ', line):
         # eg store float %11, float* %6, align 4
         m = re.match(
-            r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.immediate_or_local_id +
-            '|undef), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + '|null)',
-            line)
+            r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' +
+            rgx.immediate_or_local_id +
+            '|undef), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' +
+            rgx.local_or_global_id + '|null)', line)
         if m is None:
           m = re.match(
-              r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' + rgx.global_id +
-              '), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' + rgx.local_or_global_id + ')',
-              line)
+              r'store (?:volatile )?\{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}? (' +
+              rgx.global_id + '), \{?[\"\:\%\.\,\_\*\d\s\w\<\>]+\}?\* (' +
+              rgx.local_or_global_id + ')', line)
           if m is None:
             line_modif = re.sub(r'\([^\(\)]+\)', '', line)
             line_modif = re.sub(r'\{[^\{\}]+\}', '', line_modif)
             m = re.match(
-                r'store (?:volatile )?.* (' + rgx.local_or_global_id + ')(?: to .*)?, .*\* (' +
-                rgx.local_or_global_id + ')', line_modif)
+                r'store (?:volatile )?.* (' + rgx.local_or_global_id +
+                ')(?: to .*)?, .*\* (' + rgx.local_or_global_id + ')',
+                line_modif)
             if m is None:
               m_loc_, m_glob_, m_label_, m_label2_ = get_identifiers_from_line(
                   line)
@@ -1467,7 +1481,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
               if len(l) == 1 and m_imm_ is not None:
                 l.append(m_imm_.group(0))
               assert len(
-                  l) >= 2, "Cannot identify operands in:\n" + line + "\nGot: " + str(
+                  l
+              ) >= 2, "Cannot identify operands in:\n" + line + "\nGot: " + str(
                   l)
               pos = list()
               for ll in l:
@@ -1500,12 +1515,12 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         for m2 in m2_:
           if re.match(rgx.global_id, m1):
             if m1 in functions_declared_in_file or m1[
-                                                   1:] in functions_defined_in_file.keys():
+                1:] in functions_defined_in_file.keys():
               add_node(G, '', m1, 'global', None)
               add_edge(G, '', glob_ref, '', m1, line, 'path')
             if re.match(rgx.global_id, m2):
               if m2 in functions_declared_in_file or m2[
-                                                     1:] in functions_defined_in_file.keys():
+                  1:] in functions_defined_in_file.keys():
                 add_node(G, '', m2, 'global', None)
                 add_edge(G, '', glob_ref, '', m2, line, 'path')
               add_edge(G, '', m1, '', m2, line, 'data')
@@ -1517,7 +1532,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             add_node(G, func_prefix, m1, 'local', None)
             if re.match(rgx.global_id, m2):
               if m2 in functions_declared_in_file or m2[
-                                                     1:] in functions_defined_in_file.keys():
+                  1:] in functions_defined_in_file.keys():
                 add_node(G, '', m2, 'global', None)
                 add_edge(G, '', glob_ref, '', m2, line, 'path')
               add_edge(G, func_prefix, m1, '', m2, line, 'data')
@@ -1527,7 +1542,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
           else:  # re.match(r'(' + rgx.immediate_value_or_undef + r'|null)', m1):
             if re.match(rgx.global_id, m2):
               if m2 in functions_declared_in_file or m2[
-                                                     1:] in functions_defined_in_file.keys():
+                  1:] in functions_defined_in_file.keys():
                 add_node(G, '', m2, 'global', None)
                 add_edge(G, '', glob_ref, '', a, line, 'path')
               add_edge(G, '', block_ref, '', m2, line, 'data')
@@ -1557,8 +1572,9 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                 add_edge(G, '', n, func_prefix, label, line, 'ctrl')
                 added_edge = True
             if not added_edge:
-              add_edge(G, '', list(set(ids_in_basic_block))[-1], func_prefix,
-                       label, line, 'ctrl')
+              add_edge(G, '',
+                       list(set(ids_in_basic_block))[-1], func_prefix, label,
+                       line, 'ctrl')
 
           else:
             # there are no local ids in this basic block, connect to the block reference
@@ -1569,8 +1585,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
 
           # Get all components
           m = re.match(
-              r'br i1 (.*), label (' + rgx.local_id + r'), label (' + rgx.local_id + r')',
-              line)
+              r'br i1 (.*), label (' + rgx.local_id + r'), label (' +
+              rgx.local_id + r')', line)
           assert m is not None, "Could not match components of statement:\n" + line
           comparator = m.group(1)
           labelT = m.group(2)
@@ -1684,8 +1700,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         assert switchlist_ is not None, "Could not identify switch list in:\n" + line
         switchlist = switchlist_.group(0)
         m_ = re.findall(
-            rgx.base_type + ' (' + rgx.immediate_or_local_id + r'), label (' + rgx.local_id + r')',
-            switchlist)
+            rgx.base_type + ' (' + rgx.immediate_or_local_id + r'), label (' +
+            rgx.local_id + r')', switchlist)
         assert m_ is not None, "Could not match components of switch statement:\n" + line
         vals = list()
         labels = list()
@@ -1720,7 +1736,6 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             add_node(G, func_prefix, label, 'label', None)
             add_edge(G, func_prefix, comparator, func_prefix, label, line,
                      'ctrl')
-
 
       ############################################################################################################
       # function call
@@ -1805,8 +1820,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                            t) is not None:
                 args.append(
                     re.search(rgx.local_id + r'(?!\)\* )(?=([\s,]|$))',
-                              t).group(
-                        0))
+                              t).group(0))
               elif re.search(rgx.global_id, t) is not None:
                 args.append(re.search(rgx.global_id, t).group(0))
               elif re.search(rgx.immediate_value_or_undef + r'$',
@@ -1817,9 +1831,10 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                   t) is not None:
                 # eg call void @llvm.dbg.value(metadata i32 %call())
                 # eg call void @llvm.dbg.value(metadata i32 0())
-                args.append(re.search(
-                    rgx.immediate_or_local_id_or_undef + r'(?!\)\* )(?=\()',
-                    t).group(0))
+                args.append(
+                    re.search(
+                        rgx.immediate_or_local_id_or_undef + r'(?!\)\* )(?=\()',
+                        t).group(0))
               elif re.search(r'\s+$', t) is not None or 'metadata' in t:
                 args.append(str(1000))
               else:
@@ -1958,7 +1973,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                   a_connected = a
                   if re.match(rgx.global_id, a):
                     if a in functions_declared_in_file or a[
-                                                          1:] in functions_defined_in_file.keys():
+                        1:] in functions_defined_in_file.keys():
                       add_node(G, '', a, 'global', None)
                       add_edge(G, '', glob_ref, '', a, line, 'path')
                     ad_hoc_count = add_edge_dummy(G, '', a, line, ad_hoc_count)
@@ -1969,8 +1984,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
             if no_parent:
               # (block ref) --[stmt]--> (assignee)
               if a_connected != '' and a_connected != 'null' and re.match(
-                  rgx.immediate_value_or_undef,
-                  a_connected) is None:
+                  rgx.immediate_value_or_undef, a_connected) is None:
                 if re.match(rgx.global_id, a_connected):
                   add_edge(G, '', block_ref, '', a_connected, line, 'path')
                 else:
@@ -2000,7 +2014,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
                   # (arg) --[stmt]--> (assignee)
                   if re.match(rgx.global_id, a):
                     if a in functions_declared_in_file or a[
-                                                          1:] in functions_defined_in_file.keys():
+                        1:] in functions_defined_in_file.keys():
                       add_node(G, '', a, 'global', None)
                       add_edge(G, '', glob_ref, '', a, line, 'path')
                     add_edge(G, '', a, func_prefix, assignee, line, 'data')
@@ -2070,7 +2084,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
           ret = m.group(1)
           # (id) --[stmt]--> (ad hoc)
           if ret in functions_declared_in_file or ret[
-                                                  1:] in functions_defined_in_file.keys():
+              1:] in functions_defined_in_file.keys():
             add_node(G, '', ret, 'global', None)
             add_edge(G, '', glob_ref, '', ret, line, 'path')
           ad_hoc_count = add_edge_dummy(G, '', ret, line, ad_hoc_count)
@@ -2083,7 +2097,6 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         else:
 
           assert False, "Could not identify returned value in:\n" + line
-
 
       ############################################################################################################
       # return statement
@@ -2104,7 +2117,6 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
         if func_prefix + var not in ids_in_basic_block:
           # (block ref) --[stmt]--> (var)
           add_edge(G, '', block_ref, func_prefix, var, line, 'path')
-
 
       ############################################################################################################
       # unreachable or fence
@@ -2145,8 +2157,9 @@ def check_vocabulary_size(preprocessed_file, G):
       vocabulary_after_preprocessing):  # Remove 'label' statements
     if re.match(rgx.start_basic_block, t):
       vocabulary_after_preprocessing[i] = 'REMOVE'
-  vocabulary_after_preprocessing = [t for t in vocabulary_after_preprocessing if
-                                    t != 'REMOVE']
+  vocabulary_after_preprocessing = [
+      t for t in vocabulary_after_preprocessing if t != 'REMOVE'
+  ]
   vocabulary_size_after_preprocessing = len(vocabulary_after_preprocessing)
 
   # Construct graph-vocabulary
@@ -2166,28 +2179,35 @@ def check_vocabulary_size(preprocessed_file, G):
                  source_data_after_preprocessing_file)
       print_data(source_data_after_graph_construction,
                  source_data_after_graph_construction_file)
-      print('There are ',
-            vocabulary_size_after_preprocessing - vocabulary_size_after_graph_construction,
-            ' words more in the text representation than in the graph representation')
+      print(
+          'There are ', vocabulary_size_after_preprocessing -
+          vocabulary_size_after_graph_construction,
+          ' words more in the text representation than in the graph representation'
+      )
       in_graph_not_text = set(vocabulary_after_graph_construction) - set(
           vocabulary_after_preprocessing)
       if in_graph_not_text:
         print(
-            "The following words are in the graph representation but not in the text representation: ")
+            "The following words are in the graph representation but not in the text representation: "
+        )
         for s in in_graph_not_text:
           print('\t', s)
         print(
-            "The words above are in the graph representation but not in the text representation: ")
+            "The words above are in the graph representation but not in the text representation: "
+        )
         raise ValueError('GraphMisconstructed')
-      in_text_not_graph = list(set(vocabulary_after_preprocessing) - set(
-          vocabulary_after_graph_construction))
+      in_text_not_graph = list(
+          set(vocabulary_after_preprocessing) -
+          set(vocabulary_after_graph_construction))
       if in_text_not_graph:
         print(
-            "The following words are in the text representation but not in the graph representation: ")
+            "The following words are in the text representation but not in the graph representation: "
+        )
         for s in in_text_not_graph:
           print('\t', s)
         print(
-            "The words above are in the text representation but not in the graph representation: ")
+            "The words above are in the text representation but not in the graph representation: "
+        )
         raise ValueError('GraphMisconstructed')
   except ValueError:
     return None
@@ -2209,7 +2229,7 @@ def CheckGraphOrDie(G, filename):
   """
   # TODO(cec): Should this rais exception or assertion? Currently it's a mixture
   # of both.
-  
+
   # Make sure each node has an id
   for n in sorted(list(G.nodes(data=True))):
     assert n[1], 'Node \"' + n[0] + '\" has no id (file ' + filename + ')'
@@ -2224,8 +2244,9 @@ def CheckGraphOrDie(G, filename):
     assert False, "Isolated nodes found in construction of context graph for file " + filename
 
   # Make sure there is only one root node
-  root_nodes = [n for n in G.nodes() if
-                G.out_degree(n) > 0 and G.in_degree(n) == 0]
+  root_nodes = [
+      n for n in G.nodes() if G.out_degree(n) > 0 and G.in_degree(n) == 0
+  ]
   if len(root_nodes) != 1:
     # Found more than one root node
     for n in root_nodes:
@@ -2235,8 +2256,10 @@ def CheckGraphOrDie(G, filename):
     print("Found more than one root node")
 
   # Make sure there are no leaf nodes which are labels
-  leaf_nodes = [n for n in G.nodes(data=True) if
-                G.out_degree(n[0]) == 0 and G.in_degree(n[0]) >= 1]
+  leaf_nodes = [
+      n for n in G.nodes(data=True)
+      if G.out_degree(n[0]) == 0 and G.in_degree(n[0]) >= 1
+  ]
   if len(leaf_nodes) > 0:
     label_leaf = False
     for l in leaf_nodes:
@@ -2250,8 +2273,8 @@ def CheckGraphOrDie(G, filename):
   # Make a list of all multi-edges (i.e. edges for which there exists another edge which connects the same nodes)
   multi_edges = dict()
   for e in G.edges(data=True):
-    if G.number_of_edges(e[0], e[1]) > 1 and (
-        e[0] + ' ||| ' + e[1]) not in multi_edges.keys():
+    if G.number_of_edges(
+        e[0], e[1]) > 1 and (e[0] + ' ||| ' + e[1]) not in multi_edges.keys():
       edges_ = G[e[0]][e[1]]
       s1 = edges_[0]['stmt']
       s_ = list()
@@ -2342,13 +2365,13 @@ def get_data_characteristics(data_folders):
   # Determine whether the data set uses structure names with a pattern ('%"[^"]*") different from local identifiers
   specific_struct_name_pattern = False
   for folder in data_folders:
-    if folder in ['data/testing/ll_1', 'data/testing/ll_2',
-                  'data/testing/ll_20',
-                  'data/eigen/ll_350a', 'data/eigen/ll_350b',
-                  'data/eigen/ll_1000',
-                  'data/eigen/eigen_addsub', 'data/eigen/eigen_matdec',
-                  'data/eigen/eigen_matmul',
-                  'data/eigen/eigen_sparse', 'data/eigen/eigen_vecops']:
+    if folder in [
+        'data/testing/ll_1', 'data/testing/ll_2', 'data/testing/ll_20',
+        'data/eigen/ll_350a', 'data/eigen/ll_350b', 'data/eigen/ll_1000',
+        'data/eigen/eigen_addsub', 'data/eigen/eigen_matdec',
+        'data/eigen/eigen_matmul', 'data/eigen/eigen_sparse',
+        'data/eigen/eigen_vecops'
+    ]:
       specific_struct_name_pattern = True
 
   # Return
@@ -2398,12 +2421,14 @@ function_type = rgx.first_class_type + ' \(' + rgx.any_of(
     [rgx.first_class_type, vector_type, array_type, '...'], ',') \
                 + '*' + rgx.any_of(
     [rgx.first_class_type, vector_type, array_type, '...']) + '\)\**'
-structure_entry = rgx.any_of(
-    [rgx.first_class_type, vector_type, array_type, array_of_array_type,
-     function_type])
-structure_entry_with_comma = rgx.any_of(
-    [rgx.first_class_type, vector_type, array_type, array_of_array_type,
-     function_type], ',')
+structure_entry = rgx.any_of([
+    rgx.first_class_type, vector_type, array_type, array_of_array_type,
+    function_type
+])
+structure_entry_with_comma = rgx.any_of([
+    rgx.first_class_type, vector_type, array_type, array_of_array_type,
+    function_type
+], ',')
 literal_structure = '(<?{ ' + structure_entry_with_comma + '*' + structure_entry + ' }>?|opaque|{})'
 literal_structure_with_comma = literal_structure + ', '
 
@@ -2420,13 +2445,15 @@ def construct_struct_types_dictionary_for_file(data):
 
   # Three dictionaries
   to_process = dict()  # contains non-literal structures
-  to_inline = dict()  # contains literal structures to be inlined in "to_process"
+  to_inline = dict(
+  )  # contains literal structures to be inlined in "to_process"
   ready = dict()  # contains literal structures which have already been inlined
 
   # Helper strings
   struct_prev = [structure_entry, literal_structure]
-  struct_prev_with_comma = [structure_entry_with_comma,
-                            literal_structure_with_comma]
+  struct_prev_with_comma = [
+      structure_entry_with_comma, literal_structure_with_comma
+  ]
   use_previously_inlined_stmts = False
 
   # Put all "type" expressions from "data" into "to_process"
@@ -2511,21 +2538,21 @@ def construct_struct_types_dictionary_for_file(data):
           cycle_found = True
           new_entry = i[0] + '_cyclic'
           to_inline[new_entry] = 'opaque'
-          to_process[i[0]] = re.sub(re.escape(i[0]) + rgx.struct_lookahead,
-                                    new_entry, i[1])
+          to_process[i[0]] = re.sub(
+              re.escape(i[0]) + rgx.struct_lookahead, new_entry, i[1])
         #                    break
         if not cycle_found:
           # - Cyclic, eg
           # %"class.std::ios_base": { i32 (...)**, i64, i32, %"struct.std::ios_base::_Callback_list"*, ...}
           # %"struct.std::ios_base::_Callback_list": { opaque*, void (i32, %"class.std::ios_base"*, i32)* }
           for j in list(to_process.items()):
-            if i != j and re.search(re.escape(i[0]) + rgx.struct_lookahead,
-                                    j[1]):
+            if i != j and re.search(
+                re.escape(i[0]) + rgx.struct_lookahead, j[1]):
               cycle_found = True
               new_entry = i[0] + '_cyclic'
               to_inline[new_entry] = 'opaque'
-              to_process[j[0]] = re.sub(re.escape(i[0]) + rgx.struct_lookahead,
-                                        new_entry, j[1])
+              to_process[j[0]] = re.sub(
+                  re.escape(i[0]) + rgx.struct_lookahead, new_entry, j[1])
       #                            break
 
       # If no cyclic type definition was found although no progress was made since the last pass, abort
@@ -2584,8 +2611,8 @@ def inline_struct_types_in_file(G, dic, specific_struct_name_pattern):
         for s in possible_struct:
           if s in dic and not re.match(s + r'\d* = ', e[2]['stmt']):
             # Replace them by their value in dictionary
-            e[2]['stmt'] = re.sub(re.escape(s) + rgx.struct_lookahead, dic[s],
-                                  e[2]['stmt'])
+            e[2]['stmt'] = re.sub(
+                re.escape(s) + rgx.struct_lookahead, dic[s], e[2]['stmt'])
 
   return G
 
@@ -2893,7 +2920,8 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
       data_folder), "Folder " + data_folder + " does not exist"
   folders_raw = list()
   listing_to_explore = [
-    os.path.join(data_folder, f) for f in os.listdir(data_folder + '/')]
+      os.path.join(data_folder, f) for f in os.listdir(data_folder + '/')
+  ]
   while len(listing_to_explore) > 0:
     f = listing_to_explore.pop()
     if os.path.isdir(f):
@@ -2952,8 +2980,8 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
                               data_read_from_folder_filename)
 
       # Print data statistics and release memory
-      source_data_list, source_data = data_statistics(raw_data,
-                                                      descr="reading data from source files")
+      source_data_list, source_data = data_statistics(
+          raw_data, descr="reading data from source files")
       del source_data_list
 
       ############################################################################################################
@@ -2980,10 +3008,10 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
                                 file_names)
         print('Dumping pre-processed data info file ',
               data_preprocessed_filename)
-        i2v_utils.safe_pickle([preprocessed_data, functions_declared_in_files,
-                               preprocessed_data_with_structure_def,
-                               vocabulary_after_preprocessing],
-                              data_preprocessed_filename)
+        i2v_utils.safe_pickle([
+            preprocessed_data, functions_declared_in_files,
+            preprocessed_data_with_structure_def, vocabulary_after_preprocessing
+        ], data_preprocessed_filename)
 
       else:
 
@@ -2996,8 +3024,8 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
               f)
 
       # Print statistics and release memory
-      source_data_list, source_data = data_statistics(preprocessed_data,
-                                                      descr="pre-processing code")
+      source_data_list, source_data = data_statistics(
+          preprocessed_data, descr="pre-processing code")
       del source_data_list
 
       # Make sure folders exist
@@ -3028,10 +3056,9 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
 
           # Construct graph
           try:
-            G, multi_edges = BuildContextualFlowGraph(preprocessed_file,
-                                                      functions_declared_in_files[
-                                                        i],
-                                                      file_names[i])
+            G, multi_edges = BuildContextualFlowGraph(
+                preprocessed_file, functions_declared_in_files[i],
+                file_names[i])
           except ValueError:
             continue
 
@@ -3047,11 +3074,9 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
             rgx.struct_name = '%"[^"]*"'  # Adjust structure names in accordance
 
           # Source code transformation: inline structure types
-          G, structures_dictionary = inline_struct_types(G,
-                                                         preprocessed_data_with_structure_def[
-                                                           i],
-                                                         file_name,
-                                                         specific_struct_name_pattern)
+          G, structures_dictionary = inline_struct_types(
+              G, preprocessed_data_with_structure_def[i], file_name,
+              specific_struct_name_pattern)
 
           # Print structures dictionary
           print_structure_dictionary(structures_dictionary, structures_folder,
@@ -3077,9 +3102,9 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
             G_diff = disambiguate_stmts(G)
             D = build_dual_graph(G_diff)  # dual-XFG
             check_sanity(D, G)  # check the sanity of the produced graph
-            # TODO(cec): In my unit tests, nodes in 'D' contain non-ASCII 
+            # TODO(cec): In my unit tests, nodes in 'D' contain non-ASCII
             # values, which causes this text serialization to fail. For now I'm
-            # disabling printing DXFGs, but will investigate further if the 
+            # disabling printing DXFGs, but will investigate further if the
             # files are deemed necessary (I think they're just for debugging).
             #
             # PrintDualXfgToFile(D, dual_graph_folder,

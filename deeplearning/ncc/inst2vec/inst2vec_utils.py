@@ -27,9 +27,8 @@ import pickle
 import re
 import sys
 
-
 # Maximum number of bytes to pickle in one chunk
-max_bytes = 2 ** 31 - 1
+max_bytes = 2**31 - 1
 
 
 def safe_pickle(data, file):
