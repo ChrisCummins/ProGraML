@@ -11,16 +11,17 @@ from absl import flags
 from absl import logging
 from notebook import notebookapp
 
-
 FLAGS = flags.FLAGS
 
-flags.DEFINE_bool('with_colaboratory', True,
-                  'Allow server to be used as a local runtime for Google '
-                  'Colaboratory notebooks.')
-flags.DEFINE_bool('generate_jupyter_config_file', False,
-                  'Generate a default config file and write it to '
-                  '~/.jupyter/jupyter_notebook_config.py. If this file '
-                  'already exists, you are prompted to overwrite.')
+flags.DEFINE_bool(
+    'with_colaboratory', True,
+    'Allow server to be used as a local runtime for Google '
+    'Colaboratory notebooks.')
+flags.DEFINE_bool(
+    'generate_jupyter_config_file', False,
+    'Generate a default config file and write it to '
+    '~/.jupyter/jupyter_notebook_config.py. If this file '
+    'already exists, you are prompted to overwrite.')
 
 
 def main(argv: typing.List[str]):
@@ -31,9 +32,9 @@ def main(argv: typing.List[str]):
   # Colaboratory.
   if FLAGS.with_colaboratory:
     options += [
-      "--NotebookApp.nbserver_extensions={'jupyter_http_over_ws':True}",
-      "--NotebookApp.allow_origin='https://colab.research.google.com'",
-      '--NotebookApp.port_retries=0',
+        "--NotebookApp.nbserver_extensions={'jupyter_http_over_ws':True}",
+        "--NotebookApp.allow_origin='https://colab.research.google.com'",
+        '--NotebookApp.port_retries=0',
     ]
 
   if FLAGS.generate_jupyter_config_file:
