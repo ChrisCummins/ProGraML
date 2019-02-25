@@ -8,26 +8,6 @@ sh_binary(
     visibility = ["//visibility:public"],
 )
 
-sh_binary(
-    name = "jupyter",
-    srcs = ["run_jupyter_notebook.sh"],
-    visibility = ["//visibility:public"],
-)
-
-# Cannot be run using bazel.
-sh_binary(
-    name = "buildifier",
-    srcs = ["buildifier.sh"],
-    visibility = ["//visibility:public"],
-)
-
-# Cannot be run using bazel.
-sh_binary(
-    name = "protoc",
-    srcs = ["protoc.sh"],
-    visibility = ["//visibility:public"],
-)
-
 # Python3 wrapper to workaround docker rules bug.
 sh_binary(
     name = "py3_wrapper",
