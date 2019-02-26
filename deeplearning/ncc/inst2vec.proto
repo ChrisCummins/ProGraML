@@ -11,8 +11,7 @@ message EncodeBytecodeOptions {
 // bytecode.
 message EncodeBytecodeResult {
   optional string input_bytecode = 1;
-  repeated int64 encoded = 2;
-
+  optional int64 encoded = 2;
   // Optional debugging values. Each one of these fields has a corresponding
   // `set_` field in the EncodeBytecodeOptions message. Setting that field
   // will set these fields.
@@ -21,7 +20,7 @@ message EncodeBytecodeResult {
   optional string bytecode_after_preprocessing = 3;
   // A list of all lines that appear in the bytecode that weren't in the
   // vocabulary.
-  repeated string unknown_statements = 4;
+  optional string unknown_statements = 4;
   // The dictionary of struct -> literal type rewrites derived from this
   // bytecode.
   map<string, string> struct_dict = 5;
