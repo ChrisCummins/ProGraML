@@ -222,6 +222,10 @@ http_archive(
 
 # Protocol buffers.
 
+# NOTE(cec): These proto rules have been deprecated in favor of the new
+# implementation at https://github.com/stackb/rules_proto. However, as of
+# writing (2019-02-25) I don't feel the need to upgrade as it will require
+# large scale refactoring of my proto BUILD files.
 git_repository(
     name = "org_pubref_rules_protobuf",
     commit = "99043441e3c473809f633f5ad049945606124b60",
