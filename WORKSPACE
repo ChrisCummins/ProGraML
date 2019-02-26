@@ -28,6 +28,15 @@ http_archive(
     url = "https://github.com/abseil/abseil-cpp/archive/3088e76c597e068479e82508b1770a7ad0c806b6.tar.gz",
 )
 
+# Flags library.
+
+http_archive(
+    name = "com_github_gflags_gflags",
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
 # Boost C++ library.
 
 http_archive(
