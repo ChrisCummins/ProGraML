@@ -24,6 +24,7 @@ linux: # Update package index:
 linux: sudo apt-get update
 linux: sudo apt install -y --no-install-recommends ca-certificates
 linux: sudo apt install -y --no-install-recommends curl
+linux: sudo apt install -y --no-install-recommends wget
 linux: sudo apt install -y --no-install-recommends g++
 linux: sudo apt install -y --no-install-recommends git
 linux: sudo apt install -y --no-install-recommends ocl-icd-opencl-dev
