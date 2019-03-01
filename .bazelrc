@@ -1,9 +1,5 @@
 # See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
 
-# Build and test options:
-build --verbose_failures
-test --verbose_failures
-
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
