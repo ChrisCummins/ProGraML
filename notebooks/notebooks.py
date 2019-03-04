@@ -13,10 +13,12 @@ from notebook import notebookapp
 
 FLAGS = flags.FLAGS
 
+flags.DEFINE_integer('port', 8888, 'The port to launch the Jupyter server on.')
 flags.DEFINE_bool(
     'with_colaboratory', True,
     'Allow server to be used as a local runtime for Google '
     'Colaboratory notebooks.')
+flags.DEFINE_bool('browser', False, 'Open a web browser upon server launch.')
 flags.DEFINE_bool(
     'generate_jupyter_config_file', False,
     'Generate a default config file and write it to '
@@ -26,7 +28,10 @@ flags.DEFINE_bool(
 
 def main(argv: typing.List[str]):
   """Main entry point."""
-  options = []
+  options = [
+      f'--NotebookApp.port={FLAGS.port}',
+      f'--NotebookApp.open_browser={FLAGS.browser}',
+  ]
 
   # Optionally enable server to be used as a local runtime for Google
   # Colaboratory.
