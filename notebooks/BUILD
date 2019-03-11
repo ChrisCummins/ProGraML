@@ -19,6 +19,7 @@ py_binary(
     srcs = ["notebooks.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:labdate",
         "//labm8:labtypes",
@@ -27,7 +28,6 @@ py_binary(
         "//labm8:prof",
         "//labm8:sqlutil",
         "//labm8:viz",
-        "//third_party/py/absl",
         "//third_party/py/bokeh",
         "//third_party/py/graph_nets",
         "//third_party/py/jupyter",

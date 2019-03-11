@@ -42,8 +42,8 @@ py_library(
         ":inst2vec_py_pb2",
         ":rgx_utils",
         ":vocabulary",
+        "//labm8:app",
         "//labm8:bazelutil",
-        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/wget",
     ],
@@ -56,9 +56,9 @@ py_test(
     deps = [
         ":task_utils",
         ":vocabulary",
+        "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:test",
-        "//third_party/py/absl",
     ],
 )
 
@@ -72,7 +72,7 @@ py_binary(
         "//deeplearning/ncc/inst2vec:inst2vec_evaluate",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//deeplearning/ncc/inst2vec:inst2vec_vocabulary",
-        "//third_party/py/absl",
+        "//labm8:app",
     ],
 )
 
@@ -91,8 +91,8 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
+        "//labm8:app",
         "//labm8:fs",
-        "//third_party/py/absl",
         "//third_party/py/keras",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
@@ -120,9 +120,9 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
+        "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:fs",
-        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
     ],
@@ -146,8 +146,8 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
+        "//labm8:app",
         "//labm8:fs",
-        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
         "//third_party/py/scipy:scikit_learn",
@@ -173,8 +173,8 @@ py_library(
         ":inst2vec_py_pb2",
         ":rgx_utils",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
+        "//labm8:app",
         "//labm8:decorators",
-        "//third_party/py/absl",
     ],
 )
 
@@ -184,8 +184,8 @@ py_test(
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":vocabulary",
+        "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:test",
-        "//third_party/py/absl",
     ],
 )

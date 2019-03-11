@@ -6,20 +6,19 @@ save files within the project source tree.
 """
 import typing
 
-from absl import app
-from absl import flags
-from absl import logging
 from notebook import notebookapp
 
-FLAGS = flags.FLAGS
+from labm8 import app
 
-flags.DEFINE_integer('port', 8888, 'The port to launch the Jupyter server on.')
-flags.DEFINE_bool(
+FLAGS = app.FLAGS
+
+app.DEFINE_integer('port', 8888, 'The port to launch the Jupyter server on.')
+app.DEFINE_boolean(
     'with_colaboratory', True,
     'Allow server to be used as a local runtime for Google '
     'Colaboratory notebooks.')
-flags.DEFINE_bool('browser', False, 'Open a web browser upon server launch.')
-flags.DEFINE_bool(
+app.DEFINE_boolean('browser', False, 'Open a web browser upon server launch.')
+app.DEFINE_boolean(
     'generate_jupyter_config_file', False,
     'Generate a default config file and write it to '
     '~/.jupyter/jupyter_notebook_config.py. If this file '
@@ -48,9 +47,9 @@ def main(argv: typing.List[str]):
   # Append any arguments not parsed by absl.
   options += argv[1:]
 
-  logging.info('Starting Jupyter notebook server with options: %s', options)
+  app.Info('Starting Jupyter notebook server with options: %s', options)
   notebookapp.main(options)
 
 
 if __name__ == '__main__':
-  app.run(main)
+  app.RunWithArgs(main)

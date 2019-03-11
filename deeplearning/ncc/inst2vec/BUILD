@@ -6,7 +6,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ncc:vocabulary",
-        "//third_party/py/absl",
+        "//labm8:app",
     ],
 )
 
@@ -16,9 +16,9 @@ py_test(
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":api",
+        "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:test",
-        "//third_party/py/absl",
     ],
 )
 
@@ -38,7 +38,7 @@ py_library(
     srcs = ["inst2vec_appflags.py"],
     visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
-        "//third_party/py/absl",
+        "//labm8:app",
     ],
 )
 
@@ -57,8 +57,8 @@ py_test(
     srcs = ["inst2vec_datagen_test.py"],
     deps = [
         ":inst2vec_datagen",
+        "//labm8:app",
         "//labm8:test",
-        "//third_party/py/absl",
     ],
 )
 
@@ -70,7 +70,7 @@ py_library(
     deps = [
         ":inst2vec_evaluate",
         ":inst2vec_utils",
-        "//third_party/py/absl",
+        "//labm8:app",
         "//third_party/py/numpy",
         "//third_party/py/tensorflow",
     ],
@@ -85,7 +85,7 @@ py_library(
         ":inst2vec_analogygen",
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
-        "//third_party/py/absl",
+        "//labm8:app",
         "//third_party/py/bokeh",
         "//third_party/py/numpy",
         "//third_party/py/scipy:scikit_learn",
@@ -111,8 +111,8 @@ py_test(
     srcs = ["inst2vec_preprocess_test.py"],
     deps = [
         ":inst2vec_preprocess",
+        "//labm8:app",
         "//labm8:test",
-        "//third_party/py/absl",
     ],
 )
 
@@ -130,7 +130,7 @@ py_library(
     deps = [
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
-        "//third_party/py/absl",
+        "//labm8:app",
         "//third_party/py/networkx",
         "//third_party/py/scipy",
     ],

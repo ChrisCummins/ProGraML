@@ -8,14 +8,13 @@ import tempfile
 import typing
 import zipfile
 
-from absl import flags
-
 from deeplearning.ncc import inst2vec_pb2
 from deeplearning.ncc import rgx_utils
 from deeplearning.ncc.inst2vec import inst2vec_preprocess as i2v_prep
+from labm8 import app
 from labm8 import decorators
 
-FLAGS = flags.FLAGS
+FLAGS = app.FLAGS
 
 
 class VocabularyZipFile(object):
