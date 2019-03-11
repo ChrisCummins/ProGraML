@@ -47,7 +47,7 @@ def main(argv: typing.List[str]):
   # Append any arguments not parsed by absl.
   options += argv[1:]
 
-  app.Info('Starting Jupyter notebook server with options: %s', options)
+  app.Log(1, 'Starting Jupyter notebook server with options: %s', options)
   notebookapp.main(options)
 
 
