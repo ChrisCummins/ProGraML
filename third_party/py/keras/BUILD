@@ -11,5 +11,6 @@ py_library(
     srcs = ["keras.py"],
     deps = [
         requirement("keras"),
+        "//third_party/py/tensorflow",
     ],
 )
