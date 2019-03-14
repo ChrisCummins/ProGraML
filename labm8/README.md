@@ -2,5 +2,5 @@
 
 Copyright 2015-2018 Chris Cummins <chrisc.101@gmail.com>.
 
-Released under the terms of the GPLv3 license. See
+Released under the terms of the Apache 2.0 license. See
 `LICENSE` for details.
