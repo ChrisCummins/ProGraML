@@ -356,10 +356,13 @@ maven_jar(
 
 # Python requirements.
 
+# FIXME(https://github.com/bazelbuild/rules_python/issues/71): Tensorflow
+# doesn't work with the current rules python implementation. Use @jkinkead's
+# fork which has a workaround.
 git_repository(
     name = "io_bazel_rules_python",
-    commit = "a558949cce478e537c6474c3bc5848a7d90e42c0",
-    remote = "https://github.com/bazelbuild/rules_python.git",
+    commit = "220c1133af2bb5c37f20c87b4c2ccfeee596ecda",
+    remote = "https://github.com/jkinkead/rules_python.git",
 )
 
 load(
