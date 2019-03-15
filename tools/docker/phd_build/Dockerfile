@@ -1,5 +1,5 @@
 # An Ubuntu environment configured for building the phd repo.
-FROM ubuntu:18.04
+FROM chriscummins/phd_base
 MAINTAINER Chris Cummins <chrisc.101@gmail.com>
 
 # Disable post-install interactive configuration.
@@ -12,19 +12,34 @@ ENV HOME /root
 ENV USER docker
 ENV PHD /phd
 
-# Install essential packages.
+# Install packages required to install bazel.
 RUN apt-get update
-RUN apt-get install --no-install-recommends -y \
-    ca-certificates curl g++ git libmysqlclient-dev ocl-icd-opencl-dev \
-    pkg-config python python-dev python3.6 python3.6-dev python3-distutils \
-    unzip zip zlib1g-dev openjdk-11-jdk m4 libexempi-dev rsync texlive-full \
-    python3-numpy
+RUN apt-get install -y curl unzip
 
 # Install bazel.
-RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.14.1/bazel-0.14.1-installer-linux-x86_64.sh && \
+RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.20.0/bazel-0.20.0-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
+# Workaround for broken JDK8 install.
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199#23.
+RUN mkdir -p /usr/share/man/man1
+
+# Install packages required to build the code.
+RUN apt-get install -y default-libmysqlclient-dev g++ zlib1g-dev \
+  ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
+  ca-certificates gnupg-agent software-properties-common
+
+# Install docker (needed to build docker images).
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
+    && apt-get update
+RUN apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# Install my preferred development tools.
+RUN apt-get install -y zsh vim
+
 # Clone the source code for this project.
+RUN apt-get install -y git
 RUN git clone https://github.com/ChrisCummins/phd.git $PHD
 
 WORKDIR $PHD
@@ -32,11 +47,7 @@ WORKDIR $PHD
 # Configure the project.
 RUN ./configure --noninteractive
 
-# Ensure that new shells use the build env.
-RUN echo "source $PHD/.env" >> ~/.bashrc
+# Install my Zsh and Vim configs.
+RUN $PHD/system/dotfiles/run -v Zsh Vim
 
-# Run a py_test target so that the bazel installation is unpacked and python
-# packages are installed.
-RUN . $PHD/.env && bazel test //config:getconfig_test
-
-CMD ["/bin/bash"]
+CMD ["/bin/zsh"]
