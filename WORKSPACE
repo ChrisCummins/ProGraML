@@ -392,6 +392,14 @@ load(
 
 pip_grpcio_install()
 
+# Support for standalone python binaries using par_binary().
+
+git_repository(
+    name = "subpar",
+    remote = "https://github.com/google/subpar",
+    tag = "1.0.0",
+)
+
 # Needed by rules_docker.
 # See: https://github.com/bazelbuild/bazel-skylib
 
