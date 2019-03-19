@@ -12,6 +12,7 @@ py_library(
     deps = [
         requirement("pytest"),
         requirement("pytest-benchmark"),
+        requirement("pytest-cov"),
         requirement("pytest-mock"),
     ],
 )
