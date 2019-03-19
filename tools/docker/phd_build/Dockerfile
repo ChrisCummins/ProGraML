@@ -25,7 +25,7 @@ RUN mkdir -p /usr/share/man/man1
 # Install packages required to build the code.
 RUN apt-get install -y default-libmysqlclient-dev g++ zlib1g-dev \
   ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
-  ca-certificates gnupg-agent software-properties-common
+  ca-certificates gnupg-agent software-properties-common texlive-full
 
 # Install docker (needed to build docker images).
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
