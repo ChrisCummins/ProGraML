@@ -8,6 +8,6 @@ mkdir -pv $HOME/.cache/bazel/_bazel_docker
 
 docker run \
   -v/var/run/docker.sock:/var/run/docker.sock \
-  -v$HOME/.cache/bazel/_bazel_docker:$HOME/.cache/bazel/_bazel_docker \
+  -v$HOME/.cache/bazel/_bazel_docker:/home/docker/.cache/bazel/_bazel_docker \
   -v$PHD:/phd \
   -it phd_build $@
