@@ -447,7 +447,7 @@ container_repositories()
 
 container_pull(
     name = "base",
-    digest = "sha256:efeb3cc5a15b830929e9507f3bf5600fd48b546fdb73b1de3bb811f0eeea871d",
+    digest = "sha256:db2dfcac7d72ea693670ffc741c11634e906a59a03e6f28897e111784bcf4291",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
