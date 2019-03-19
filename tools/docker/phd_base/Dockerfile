@@ -12,9 +12,10 @@ RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
 #   * libreadline6-dev to provide libreadline.so which is needed by oclgrind.
 #   * lbzip2 which is needed by tar to unpack .tar.bz2 files, which clgen
 #     uses to encode corpus archives.
+#   * git is needed by //third_party/py/git and my own tools.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2
+    binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2 git
 
 # Dirty hack to workaround the fact that oclgrind demands libreadline.so.6, but
 # the current Ubuntu package provides libreadline.so.7.

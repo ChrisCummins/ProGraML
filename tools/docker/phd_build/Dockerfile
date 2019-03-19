@@ -37,4 +37,7 @@ RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
 USER docker
 
+# Needed for compatability with broken python 3 support.
+ENV BAZEL_PYTHON /phd/tools/py3_wrapper.sh
+
 ENTRYPOINT ["/bin/bash"]
