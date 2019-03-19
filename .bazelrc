@@ -3,6 +3,8 @@
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
+build --workspace_status_command=tools/workspace_status.sh
+
 # Test options:
 test --test_output=errors
 test --keep_going
