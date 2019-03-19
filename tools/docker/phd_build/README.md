@@ -9,16 +9,6 @@ Build this image using:
 $ docker build -t phd_build $PHD/tools/docker/phd_build
 ```
 
-Run it using:
+Run it using `tools/docker/phd_build/run.sh`.
 
-```sh
-$ docker run -it -v/var/run/docker.sock:/var/run/docker.sock -v$HOME/.ssh:/root/.ssh phd_build
-```
-
-To update the image, run (from the host):
-
-```sh
-$ docker ps
-# copy CONTAINER ID
-$ docker commit CONTAINER phd_build_instance:latest
-```
+Update the dockerhob version using `tools/docker/phd_build/export.sh`.
