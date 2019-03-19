@@ -34,6 +34,9 @@ RUN rm -rf /usr/share/doc
 # Create a non-root user to execute commands with. This is so that generated
 # files in mapped volumes will be created as this user, rather than as root.
 RUN useradd -ms /bin/bash docker
+# Add docker to a 'other_docker' group, which enables read permission when
+# mapping /var/run/docker.sock to enable nested docker.
+RUN groupadd --gid 123 other_docker && usermod -a -G other_docker docker
 USER docker
 
 ENTRYPOINT ["/bin/bash"]

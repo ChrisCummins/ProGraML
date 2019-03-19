@@ -1,16 +1,14 @@
 # An Ubuntu environment configured for building the phd repo.
-FROM chriscummins/phd_base
+FROM chriscummins/phd_base:latest
 MAINTAINER Chris Cummins <chrisc.101@gmail.com>
+
+# Switch back to root user to do the installation admin.
+USER root
 
 # Disable post-install interactive configuration.
 # For example, the package tzdata runs a post-installation prompt to select the
 # timezone.
 ENV DEBIAN_FRONTEND noninteractive
-
-# Setup the environment.
-ENV HOME /root
-ENV USER docker
-ENV PHD /phd
 
 # Install packages required to install bazel.
 RUN apt-get update
@@ -35,19 +33,8 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 
-# Install my preferred development tools.
-RUN apt-get install -y zsh vim
+RUN mkdir -pv /phd && chown docker:docker -R /phd
+WORKDIR /phd
+USER docker
 
-# Clone the source code for this project.
-RUN apt-get install -y git
-RUN git clone https://github.com/ChrisCummins/phd.git $PHD
-
-WORKDIR $PHD
-
-# Configure the project.
-RUN ./configure --noninteractive
-
-# Install my Zsh and Vim configs.
-RUN $PHD/system/dotfiles/run -v Zsh Vim
-
-CMD ["/bin/zsh"]
+ENTRYPOINT ["/bin/bash"]
