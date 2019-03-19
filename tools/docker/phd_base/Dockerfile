@@ -21,4 +21,9 @@ RUN apt-get update && \
 RUN ln -s /lib/x86_64-linux-gnu/libreadline.so.7 \
     /lib/x86_64-linux-gnu/libreadline.so.6
 
+# Create a non-root user to execute commands with. This is so that generated
+# files in mapped volumes will be created as this user, rather than as root.
+RUN useradd -ms /bin/bash docker
+USER docker
+
 ENTRYPOINT ["/bin/bash"]
