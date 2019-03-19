@@ -12,7 +12,7 @@ $ docker build -t phd_build $PHD/tools/docker/phd_build
 Run it using:
 
 ```sh
-$ docker run -it -v/var/run/docker.sock:/var/run/docker.sock phd_build
+$ docker run -it -v/var/run/docker.sock:/var/run/docker.sock -v$HOME/.ssh:/root/.ssh phd_build
 ```
 
 To update the image, run (from the host):
