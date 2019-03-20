@@ -33,6 +33,13 @@ cc_library(
         "-DCL_TARGET_OPENCL_VERSION=220",
         "-isystem external/opencl_220_headers",
     ],
+    linkopts = select({
+        "//:darwin": [],
+        "//conditions:default": [
+            "-ldl",
+            "-lpthread",
+        ],
+    }),
     visibility = ["//visibility:public"],
     deps = ["@opencl_220_headers//:headers"],
 )
