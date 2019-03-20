@@ -25,7 +25,7 @@ RUN mkdir -p /usr/share/man/man1
 # Install packages required to build the code.
 RUN apt-get install -y default-libmysqlclient-dev g++ zlib1g-dev \
   ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
-  ca-certificates gnupg-agent software-properties-common texlive-full
+  ca-certificates gnupg-agent software-properties-common texlive-full rsync
 
 # Install docker (needed to build docker images).
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
@@ -36,6 +36,9 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
 USER docker
+
+# For compiling arduino code.
+RUN python -m pip install platformio
 
 # Needed for compatability with broken python 3 support.
 ENV BAZEL_PYTHON /phd/tools/py3_wrapper.sh
