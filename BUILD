@@ -23,6 +23,7 @@ py_library(
     srcs = ["conftest.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//config:build_info",
         "//labm8:app",
         "//third_party/py/pytest",
     ],
