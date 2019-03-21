@@ -23,12 +23,13 @@ RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/downlo
 RUN mkdir -p /usr/share/man/man1
 
 # Install packages required to build the code.
-RUN apt-get install -y default-libmysqlclient-dev g++ zlib1g-dev \
-  ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
+RUN apt-get install -y --no-install-recommends default-libmysqlclient-dev g++ \
+  zlib1g-dev ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
   ca-certificates gnupg-agent software-properties-common texlive-full rsync
 
 # Install docker (needed to build docker images).
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+RUN apt-get install -y gnupg2 \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
     && apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io
