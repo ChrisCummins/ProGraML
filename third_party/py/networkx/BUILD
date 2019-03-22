@@ -11,5 +11,6 @@ py_library(
     srcs = ["networkx.py"],
     deps = [
         requirement("networkx"),
+        requirement("decorator"),  # Implicit dependency.
     ],
 )
