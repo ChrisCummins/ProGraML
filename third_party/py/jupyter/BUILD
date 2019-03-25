@@ -12,5 +12,8 @@ py_library(
     deps = [
         requirement("jupyter-client"),
         requirement("jupyter_http_over_ws"),
+        requirement("notebook"),
+        requirement("nbformat"),
+        requirement("prometheus_client"),
     ],
 )
