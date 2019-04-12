@@ -34,6 +34,13 @@ RUN apt-get install -y gnupg2 \
     && apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 
+# Install linters.
+RUN sudo apt install -y --no-install-recommends golang-go clang-format \
+    && go get github.com/bazelbuild/buildtools/buildifier \
+    && go get github.com/uber/prototool/cmd/prototool \
+    && python -m pip install yapf sqlparse \
+    && npm install -g js-beautify
+
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
 USER docker
