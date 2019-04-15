@@ -14,9 +14,12 @@ RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
 #     uses to encode corpus archives.
 #   * git is needed by //third_party/py/git and my own tools.
 #   * rsync is needed by a handful of targets, e.g. //system/machines.
+#   * libexempi is required by //third_party/py/libxmp.
+#   * ping is needed by //system/machines.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2 git rsync
+    binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2 git rsync \
+    libexempi-dev ping
 
 # Dirty hack to workaround the fact that oclgrind demands libreadline.so.6, but
 # the current Ubuntu package provides libreadline.so.7.
