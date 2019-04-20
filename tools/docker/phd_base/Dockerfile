@@ -20,7 +20,7 @@ RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2 git rsync \
-    libexempi-dev ping rsync
+    libexempi-dev iputils-ping rsync
 
 # Dirty hack to workaround the fact that oclgrind demands libreadline.so.6, but
 # the current Ubuntu package provides libreadline.so.7.
