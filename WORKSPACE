@@ -225,16 +225,52 @@ http_archive(
 
 http_archive(
     name = "build_stack_rules_proto",
-    sha256 = "e15b267a546a32c663d71850c44fb7efe42365c1e6a8778962cefbee167a981e",
-    strip_prefix = "rules_proto-b0ee0b9a2c3d3a98aafe855f1f933bf464e74e29",
-    urls = ["https://github.com/stackb/rules_proto/archive/b0ee0b9a2c3d3a98aafe855f1f933bf464e74e29.tar.gz"],
+    sha256 = "8a9cf001e3ba5c97d45ed8eb09985f15355df4bbe2dc6dd4844cccfe71f17d3e",
+    strip_prefix = "rules_proto-9e68c7eb1e36bd08e9afebc094883ebc4debdb09",
+    urls = ["https://github.com/stackb/rules_proto/archive/9e68c7eb1e36bd08e9afebc094883ebc4debdb09.tar.gz"],
 )
+
+# C++ protobufs.
+
+load("@build_stack_rules_proto//cpp:deps.bzl", "cpp_proto_library")
+
+cpp_proto_library()
 
 # Python protobufs.
 
 load("@build_stack_rules_proto//python:deps.bzl", "python_proto_compile")
 
 python_proto_compile()
+
+load("@build_stack_rules_proto//python:deps.bzl", "python_grpc_library")
+
+python_grpc_library()
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+
+pip_repositories()
+
+pip_import(
+    name = "protobuf_py_deps",
+    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
+)
+
+load("@protobuf_py_deps//:requirements.bzl", protobuf_pip_install = "pip_install")
+
+protobuf_pip_install()
+
+pip_import(
+    name = "grpc_py_deps",
+    requirements = "@build_stack_rules_proto//python:requirements.txt",
+)
+
+load("@grpc_py_deps//:requirements.bzl", grpc_pip_install = "pip_install")
+
+grpc_pip_install()
 
 # Java protobufs.
 
