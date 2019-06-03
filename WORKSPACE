@@ -222,23 +222,24 @@ http_archive(
 
 # Protocol buffers.
 
-# NOTE(cec): These proto rules have been deprecated in favor of the new
-# implementation at https://github.com/stackb/rules_proto. However, as of
-# writing (2019-02-25) I don't feel the need to upgrade as it will require
-# large scale refactoring of my proto BUILD files.
-git_repository(
-    name = "org_pubref_rules_protobuf",
-    commit = "99043441e3c473809f633f5ad049945606124b60",
-    remote = "https://github.com/pubref/rules_protobuf",
+http_archive(
+    name = "build_stack_rules_proto",
+    sha256 = "e15b267a546a32c663d71850c44fb7efe42365c1e6a8778962cefbee167a981e",
+    strip_prefix = "rules_proto-b0ee0b9a2c3d3a98aafe855f1f933bf464e74e29",
+    urls = ["https://github.com/stackb/rules_proto/archive/b0ee0b9a2c3d3a98aafe855f1f933bf464e74e29.tar.gz"],
 )
 
-load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
+# Python protobufs.
 
-py_proto_repositories()
+load("@build_stack_rules_proto//python:deps.bzl", "python_proto_compile")
 
-load("@org_pubref_rules_protobuf//java:rules.bzl", "java_proto_repositories")
+python_proto_compile()
 
-java_proto_repositories()
+# Java protobufs.
+
+load("@build_stack_rules_proto//java:deps.bzl", "java_proto_compile")
+
+java_proto_compile()
 
 # Java Maven dependencies.
 
@@ -356,13 +357,10 @@ maven_jar(
 
 # Python requirements.
 
-# FIXME(https://github.com/bazelbuild/rules_python/issues/71): Tensorflow
-# doesn't work with the current rules python implementation. Use @jkinkead's
-# fork which has a workaround.
 git_repository(
     name = "io_bazel_rules_python",
-    commit = "220c1133af2bb5c37f20c87b4c2ccfeee596ecda",
-    remote = "https://github.com/jkinkead/rules_python.git",
+    commit = "6b6aedda3aab264dc1e27470655e0ae0cfb2b5bc",
+    remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
 load(
@@ -373,12 +371,17 @@ load(
 
 pip_repositories()
 
-# Add grpcio.
-
 pip_import(
-    name = "pip_grpcio",
-    requirements = "@org_pubref_rules_protobuf//python:requirements.txt",
+    name = "protobuf_py_deps",
+    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
 )
+
+load(
+    "@protobuf_py_deps//:requirements.bzl",
+    protobuf_pip_install = "pip_install",
+)
+
+protobuf_pip_install()
 
 pip_import(
     name = "requirements",
