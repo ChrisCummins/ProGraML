@@ -1,6 +1,6 @@
 # Top level package of the phd repo.
 
-load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
+load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
 
 config_setting(
     name = "darwin",
@@ -52,9 +52,12 @@ filegroup(
 proto_library(
     name = "config_pb",
     srcs = ["config.proto"],
+    visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+# Use GRPC so that dependent targets can be GRPC libraries. Otherwise, if
+# a python_proto_library, there is a conflict.
+python_grpc_library(
     name = "config_pb_py",
     visibility = ["//visibility:public"],
     deps = ["//:config_pb"],
