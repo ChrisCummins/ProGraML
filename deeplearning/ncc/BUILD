@@ -11,7 +11,7 @@
 #   1. Support for execution within bazel sandbox.
 #   2. Tests!
 
-load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_library")
+load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
 licenses(["notice"])  # BSD
 
@@ -20,11 +20,15 @@ exports_files([
     "README.md",
 ])
 
-py_proto_library(
-    name = "inst2vec_py_pb2",
-    protos = ["inst2vec.proto"],
+proto_library(
+    name = "inst2vec_pb",
+    srcs = [":inst2vec.proto"],
+)
+
+python_proto_library(
+    name = "inst2vec_pb_py",
     visibility = ["//visibility:public"],
-    deps = ["//third_party/py/protobuf"],
+    deps = [":inst2vec_pb"],
 )
 
 py_library(
@@ -39,7 +43,7 @@ py_library(
     data = ["//deeplearning/ncc/published_results:embeddings"],
     visibility = ["//visibility:public"],
     deps = [
-        ":inst2vec_py_pb2",
+        ":inst2vec_pb_py",
         ":rgx_utils",
         ":vocabulary",
         "//labm8:app",
@@ -170,7 +174,7 @@ py_library(
     srcs = ["vocabulary.py"],
     visibility = ["//visibility:public"],
     deps = [
-        ":inst2vec_py_pb2",
+        ":inst2vec_pb_py",
         ":rgx_utils",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:app",
