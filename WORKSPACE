@@ -230,17 +230,7 @@ http_archive(
     urls = ["https://github.com/stackb/rules_proto/archive/9e68c7eb1e36bd08e9afebc094883ebc4debdb09.tar.gz"],
 )
 
-# C++ protobufs.
-
-load("@build_stack_rules_proto//cpp:deps.bzl", "cpp_proto_library")
-
-cpp_proto_library()
-
 # Python protobufs.
-
-load("@build_stack_rules_proto//python:deps.bzl", "python_proto_compile")
-
-python_proto_compile()
 
 load("@build_stack_rules_proto//python:deps.bzl", "python_grpc_library")
 
