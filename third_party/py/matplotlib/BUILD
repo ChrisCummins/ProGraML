@@ -11,5 +11,8 @@ py_library(
     srcs = ["matplotlib.py"],
     deps = [
         requirement("matplotlib"),
+        "//third_party/py/pyparsing",  # Implicit dependency.
+        requirement("cycler"),  # Implicit dependency.
+        requirement("kiwisolver"),  # Implicit dependency.
     ],
 )

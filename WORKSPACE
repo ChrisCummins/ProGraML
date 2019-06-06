@@ -38,12 +38,13 @@ http_archive(
 )
 
 # Boost C++ library.
+# See: https://github.com/nelhage/rules_boost
 
 http_archive(
     name = "com_github_nelhage_rules_boost",
-    sha256 = "d0903f7c13c9ccce88e8a4a315b6d3d6dd3d083ba977cbc98c3ca41cdaf7c53b",
-    strip_prefix = "rules_boost-17d9bf68420ec2e4c63ba85421e9959f52f977aa",
-    url = "https://github.com/nelhage/rules_boost/archive/17d9bf68420ec2e4c63ba85421e9959f52f977aa.tar.gz",
+    sha256 = "391c6988d9f7822176fb9cf7da8930ef4474b0b35b4f24c78973cb6075fd17e4",
+    strip_prefix = "rules_boost-417642961150e987bc1ac78c7814c617566ffdaa",
+    url = "https://github.com/nelhage/rules_boost/archive/417642961150e987bc1ac78c7814c617566ffdaa.tar.gz",
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
@@ -222,23 +223,50 @@ http_archive(
 
 # Protocol buffers.
 
-# NOTE(cec): These proto rules have been deprecated in favor of the new
-# implementation at https://github.com/stackb/rules_proto. However, as of
-# writing (2019-02-25) I don't feel the need to upgrade as it will require
-# large scale refactoring of my proto BUILD files.
-git_repository(
-    name = "org_pubref_rules_protobuf",
-    commit = "99043441e3c473809f633f5ad049945606124b60",
-    remote = "https://github.com/pubref/rules_protobuf",
+http_archive(
+    name = "build_stack_rules_proto",
+    sha256 = "8a9cf001e3ba5c97d45ed8eb09985f15355df4bbe2dc6dd4844cccfe71f17d3e",
+    strip_prefix = "rules_proto-9e68c7eb1e36bd08e9afebc094883ebc4debdb09",
+    urls = ["https://github.com/stackb/rules_proto/archive/9e68c7eb1e36bd08e9afebc094883ebc4debdb09.tar.gz"],
 )
 
-load("@org_pubref_rules_protobuf//python:rules.bzl", "py_proto_repositories")
+# Python protobufs.
 
-py_proto_repositories()
+load("@build_stack_rules_proto//python:deps.bzl", "python_grpc_library")
 
-load("@org_pubref_rules_protobuf//java:rules.bzl", "java_proto_repositories")
+python_grpc_library()
 
-java_proto_repositories()
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+
+pip_repositories()
+
+pip_import(
+    name = "protobuf_py_deps",
+    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
+)
+
+load("@protobuf_py_deps//:requirements.bzl", protobuf_pip_install = "pip_install")
+
+protobuf_pip_install()
+
+pip_import(
+    name = "grpc_py_deps",
+    requirements = "@build_stack_rules_proto//python:requirements.txt",
+)
+
+load("@grpc_py_deps//:requirements.bzl", grpc_pip_install = "pip_install")
+
+grpc_pip_install()
+
+# Java protobufs.
+
+load("@build_stack_rules_proto//java:deps.bzl", "java_proto_compile")
+
+java_proto_compile()
 
 # Java Maven dependencies.
 
@@ -356,13 +384,10 @@ maven_jar(
 
 # Python requirements.
 
-# FIXME(https://github.com/bazelbuild/rules_python/issues/71): Tensorflow
-# doesn't work with the current rules python implementation. Use @jkinkead's
-# fork which has a workaround.
 git_repository(
     name = "io_bazel_rules_python",
-    commit = "220c1133af2bb5c37f20c87b4c2ccfeee596ecda",
-    remote = "https://github.com/jkinkead/rules_python.git",
+    commit = "6b6aedda3aab264dc1e27470655e0ae0cfb2b5bc",
+    remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
 load(
@@ -373,12 +398,17 @@ load(
 
 pip_repositories()
 
-# Add grpcio.
-
 pip_import(
-    name = "pip_grpcio",
-    requirements = "@org_pubref_rules_protobuf//python:requirements.txt",
+    name = "protobuf_py_deps",
+    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
 )
+
+load(
+    "@protobuf_py_deps//:requirements.bzl",
+    protobuf_pip_install = "pip_install",
+)
+
+protobuf_pip_install()
 
 pip_import(
     name = "requirements",

@@ -10,10 +10,6 @@ test --workspace_status_command=tools/workspace_status.sh
 test --test_output=errors
 test --keep_going
 
-# Temporary workaround for deprecated bazel feature.
-build --incompatible_remove_native_http_archive=false
-test --incompatible_remove_native_http_archive=false
-
 # Address sanitizer
 # To use it: bazel build --config asan
 build:asan --strip=never
