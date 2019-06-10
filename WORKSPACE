@@ -249,7 +249,10 @@ pip_import(
     requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
 )
 
-load("@protobuf_py_deps//:requirements.bzl", protobuf_pip_install = "pip_install")
+load(
+    "@protobuf_py_deps//:requirements.bzl",
+    protobuf_pip_install = "pip_install",
+)
 
 protobuf_pip_install()
 
@@ -258,7 +261,10 @@ pip_import(
     requirements = "@build_stack_rules_proto//python:requirements.txt",
 )
 
-load("@grpc_py_deps//:requirements.bzl", grpc_pip_install = "pip_install")
+load(
+    "@grpc_py_deps//:requirements.bzl",
+    grpc_pip_install = "pip_install",
+)
 
 grpc_pip_install()
 
@@ -426,8 +432,8 @@ pip_grpcio_install()
 
 git_repository(
     name = "subpar",
+    commit = "35bb9f0092f71ea56b742a520602da9b3638a24f",
     remote = "https://github.com/google/subpar",
-    tag = "1.0.0",
 )
 
 # Needed by rules_docker.
