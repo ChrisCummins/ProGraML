@@ -450,9 +450,9 @@ git_repository(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "aed1c249d4ec8f703edddf35cbe9dfaca0b5f5ea6e4cd9e83e99f3b0d1136c3d",
-    strip_prefix = "rules_docker-0.7.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/v0.7.0.tar.gz"],
+    sha256 = "eda1443edcb4ef73948d9c4847f1cf046981decb075cab7331c089a78bbd368e",
+    strip_prefix = "rules_docker-b79827ad2c72cfabe49dca550f69281856929c1f",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/b79827ad2c72cfabe49dca550f69281856929c1f.tar.gz"],
 )
 
 # Enable py3_image() rule.
