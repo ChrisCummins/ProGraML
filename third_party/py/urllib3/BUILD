@@ -4,14 +4,12 @@ load("@requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
-licenses(["notice"])  # BSD
+licenses(["notice"])  # MIT
 
 py_library(
-    name = "requests",
-    srcs = ["requests.py"],
+    name = "urllib3",
+    srcs = ["urllib3.py"],
     deps = [
-        requirement("requests"),
-        requirement("idna"),
-        "//third_party/py/urllib3",
+        requirement("urllib3"),
     ],
 )
