@@ -10,36 +10,33 @@ USER root
 # timezone.
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install packages required to install bazel.
-RUN apt-get update
-RUN apt-get install -y curl unzip
-
-# Install bazel.
-RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
-    bash /tmp/bazel.sh && rm /tmp/bazel.sh
-
 # Workaround for broken JDK8 install.
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199#23.
 RUN mkdir -p /usr/share/man/man1
 
 # Install packages required to build the code.
-RUN apt-get install -y --no-install-recommends default-libmysqlclient-dev g++ \
-  zlib1g-dev ocl-icd-opencl-dev python openjdk-8-jdk apt-transport-https \
-  ca-certificates gnupg-agent software-properties-common texlive-full rsync
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  curl unzip default-libmysqlclient-dev g++ zlib1g-dev ocl-icd-opencl-dev python \
+  openjdk-8-jdk apt-transport-https ca-certificates gnupg-agent \
+  software-properties-common texlive-full rsync
 
 # Install docker (needed to build docker images).
-RUN apt-get install -y gnupg2 \
+RUN apt-get update && apt-get install -y gnupg2 \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
-    && apt-get update
-RUN apt-get install -y docker-ce docker-ce-cli containerd.io
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Install linters.
-RUN sudo apt install -y --no-install-recommends golang-go clang-format \
+RUN apt update && apt-get install -y --no-install-recommends golang-go \
+    clang-format \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
     && python -m pip install yapf sqlparse \
     && npm install -g js-beautify
+
+# Install bazel.
+RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
+    bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
