@@ -15,7 +15,7 @@ RUN apt-get update
 RUN apt-get install -y curl unzip
 
 # Install bazel.
-RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.20.0/bazel-0.20.0-installer-linux-x86_64.sh && \
+RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
 # Workaround for broken JDK8 install.
