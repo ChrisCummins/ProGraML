@@ -3,6 +3,6 @@
 # Build and publish updated docker image.
 set -eux
 
-docker build -t phd_build $PHD/tools/docker/phd_build
-docker tag phd_build chriscummins/phd_build:latest
-docker push chriscummins/phd_build:latest
+docker build -t phd_base $PHD/tools/docker/phd_base
+docker tag phd_base chriscummins/phd_base:latest
+docker push chriscummins/phd_base:latest
