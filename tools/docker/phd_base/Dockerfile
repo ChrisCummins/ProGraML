@@ -17,17 +17,18 @@ RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
 #   * libexempi is required by //third_party/py/libxmp.
 #   * ping is needed by //system/machines.
 #   * rsync is needed by //system/machines.
+#   * libmariadbclient18 is needed by //third_party/py/mysql
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     binutils libgcc-6-dev libc6-dev libreadline6-dev lbzip2 git rsync \
-    libexempi-dev iputils-ping rsync
+    libexempi-dev iputils-ping rsync libmariadbclient18
 
 # Dirty hack to workaround the fact that oclgrind demands libreadline.so.6, but
 # the current Ubuntu package provides libreadline.so.7.
 RUN ln -s /lib/x86_64-linux-gnu/libreadline.so.7 \
     /lib/x86_64-linux-gnu/libreadline.so.6
 
-# Install libmysqlalchemy.so needed by //third_party/py/sqlalchemy.
+# Install libmysql.so needed by //third_party/py/sqlalchemy.
 RUN apt-get install -y --no-install-recommends wget mysql-common && \
   wget http://launchpadlibrarian.net/407536926/libmysqlclient20_5.7.25-0ubuntu0.16.04.2_amd64.deb && \
   dpkg -i libmysqlclient20_5.7.25-0ubuntu0.16.04.2_amd64.deb && \
