@@ -26,8 +26,19 @@ RUN apt-get update && apt-get install -y gnupg2 \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
 RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
 
+# Install golang.
+RUN curl https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz > /tmp/go.tar.gz \
+    && tar -C /usr/local -xzf /tmp/go.tar.gz \
+    && rm /tmp/go.tar.gz
+    ENV PATH /usr/local/go/bin:$PATH
+ENV GOPATH /docker/go
+
+# Install nodejs.
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - \
+    && apt-get update && apt-get install -y nodejs && npm -v
+
 # Install linters.
-RUN apt update && apt-get install -y --no-install-recommends golang-go \
+RUN apt update && apt-get install -y --no-install-recommends \
     clang-format \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
@@ -38,12 +49,21 @@ RUN apt update && apt-get install -y --no-install-recommends golang-go \
 RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
+# For compiling arduino code.
+# We need to use python2 because of the time of writing:
+#   PlatformIO Core v3.6.7 does not run under Python version 3.6.8 (default,
+#       Mar  4 2019, 23:39:18)
+#   [GCC 6.3.0 20170516].
+#   Minimum supported version is 2.7, please upgrade Python.
+#   Python 3 is not yet supported.
+RUN apt-get update && apt-get install -y python-pip
+RUN pip2 install platformio
+
+RUN apt-get install libmariadbclient18
+
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
 USER docker
-
-# For compiling arduino code.
-RUN python -m pip install platformio
 
 # Needed for compatability with broken python 3 support.
 ENV BAZEL_PYTHON /phd/tools/py3_wrapper.sh
