@@ -487,3 +487,10 @@ container_pull(
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
+
+container_pull(
+    name = "base_java",
+    digest = "sha256:03c81341f676a53400abdb8000df693d764449bf8756d7b4311e781a95eb1f5b",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_base_java",
+)
