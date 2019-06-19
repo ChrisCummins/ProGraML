@@ -276,6 +276,23 @@ java_proto_compile()
 
 # Java Maven dependencies.
 
+# To add a Java Maven dependency:
+#
+#  1) Find a maven repo hosted online, e.g.:
+#        https://mvnrepository.com/artifact/org.apache.commons/commons-jci/1.1
+#  2) Find the maven repo XML description, e.g.:
+#        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-jci -->
+#        <dependency>
+#            <groupId>org.apache.commons</groupId>
+#            <artifactId>commons-jci</artifactId>
+#            <version>1.1</version>
+#            <type>pom</type>
+#        </dependency>
+#  3) Create a maven_jar() rule here.
+#  4) Set the artifact property to <groupId>:<atfifactId>:<version>
+#  5) Set the name to something descriptive.
+#
+
 load("//tools/bzl:maven_jar.bzl", "maven_jar")
 
 maven_jar(
@@ -386,6 +403,49 @@ maven_jar(
     name = "com_google_guava",
     artifact = "com.google.guava:guava:23.5-jre",
     sha1 = "e9ce4989adf6092a3dab6152860e93d989e8cf88",
+)
+
+# TODO: Add sha1 checksums for maven_jars.
+
+maven_jar(
+    name = "org_apache_commons_jci_examples",
+    artifact = "org.apache.commons:commons-jci-examples:1.0",
+)
+
+maven_jar(
+    name = "org_apache_commons_jci_core",
+    artifact = "org.apache.commons:commons-jci-core:1.0",
+)
+
+maven_jar(
+    name = "org_apache_commons_jci_eclipse",
+    artifact = "org.apache.commons:commons-jci-eclipse:1.0",
+)
+
+maven_jar(
+    name = "org_apache_commons_jci_eclipse",
+    artifact = "org.apache.commons:commons-jci-eclipse:1.0",
+)
+
+maven_jar(
+    name = "org_apache_commons_cli",
+    artifact = "commons-cli:commons-cli:1.0",
+)
+
+maven_jar(
+    name = "org_apache_commons_logging_api",
+    artifact = "commons-logging:commons-logging-api:1.1",
+    attach_source = False,
+)
+
+maven_jar(
+    name = "org_apache_commons_io",
+    artifact = "commons-io:commons-io:1.3.1",
+)
+
+maven_jar(
+    name = "asm",
+    artifact = "asm:asm:2.2.1",
 )
 
 # Python requirements.
