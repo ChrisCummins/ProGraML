@@ -1,5 +1,5 @@
 # An Ubuntu environment configured for building the phd repo.
-FROM chriscummins/phd_base:latest
+FROM chriscummins/phd_base_java:latest
 MAINTAINER Chris Cummins <chrisc.101@gmail.com>
 
 # Switch back to root user to do the installation admin.
@@ -10,14 +10,10 @@ USER root
 # timezone.
 ENV DEBIAN_FRONTEND noninteractive
 
-# Workaround for broken JDK8 install.
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199#23.
-RUN mkdir -p /usr/share/man/man1
-
 # Install packages required to build the code.
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl unzip default-libmysqlclient-dev g++ zlib1g-dev ocl-icd-opencl-dev python \
-  openjdk-8-jdk apt-transport-https ca-certificates gnupg-agent \
+  apt-transport-https ca-certificates gnupg-agent \
   software-properties-common texlive-full rsync
 
 # Install docker (needed to build docker images).
