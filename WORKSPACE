@@ -118,7 +118,7 @@ go_rules_dependencies()
 
 go_register_toolchains()
 
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
 
 gazelle_dependencies()
 
@@ -582,4 +582,10 @@ container_pull(
     digest = "sha256:03c81341f676a53400abdb8000df693d764449bf8756d7b4311e781a95eb1f5b",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_java",
+)
+
+go_repository(
+    name = "com_github_stretchr_testify",
+    commit = "34c6fa2dc70986bccbbffcc6130f6920a924b075",
+    importpath = "github.com/stretchr/testify",
 )
