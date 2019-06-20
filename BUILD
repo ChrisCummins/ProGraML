@@ -1,6 +1,9 @@
-# Top level package of the phd repo.
-
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
+
+# Top level package of the phd repo.
 
 config_setting(
     name = "darwin",
@@ -111,3 +114,9 @@ py_test(
         "//labm8:test",
     ],
 )
+
+# Golang.
+# Gazelle directive:
+# gazelle:prefix github.com/ChrisCummins/phd
+
+gazelle(name = "gazelle")
