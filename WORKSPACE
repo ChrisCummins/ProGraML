@@ -570,6 +570,7 @@ container_repositories()
 # My custom base image for bazel-compiled binaries.
 # Defined in //tools/docker/phd_base/Dockerfile.
 
+# Minimal python base image.
 container_pull(
     name = "base",
     digest = "sha256:0741b012da76fde785be4be3d0b1f0ac0d6d8764eeb77171ad2622ae691788af",
@@ -577,11 +578,20 @@ container_pull(
     repository = "chriscummins/phd_base",
 )
 
+# Same as base, but with a Java environment.
 container_pull(
     name = "base_java",
     digest = "sha256:03c81341f676a53400abdb8000df693d764449bf8756d7b4311e781a95eb1f5b",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_java",
+)
+
+# Full build environment with all required toolchains.
+container_pull(
+    name = "phd_build",
+    digest = "sha256:a74da7168ec1231ec096c77c9e06690acd0ca5b9c5f2941d4d1aa415d3839281",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_build",
 )
 
 go_repository(
