@@ -14,7 +14,7 @@ py_library(
     srcs = ["pandas.py"],
     deps = [
         requirement("pandas"),
-        requirement("numpy"),
+        "//third_party/py/numpy",
         requirement("pytz"),
         requirement("python-dateutil"),
     ],
