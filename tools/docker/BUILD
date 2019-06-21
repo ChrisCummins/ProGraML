@@ -6,3 +6,13 @@ filegroup(
     name = "phd",
     srcs = ["Dockerfile"],
 )
+
+py_binary(
+    name = "publish",
+    srcs = ["publish.py"],
+    data = ["//tools/docker/phd_build:phd_build.tar"],
+    deps = [
+        "//labm8:app",
+        "//labm8:dockerutil",
+    ],
+)
