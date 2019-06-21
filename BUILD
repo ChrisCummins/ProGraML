@@ -118,5 +118,6 @@ py_test(
 # Golang.
 # Gazelle directive:
 # gazelle:prefix github.com/ChrisCummins/phd
+# gazelle:proto disable
 
 gazelle(name = "gazelle")
