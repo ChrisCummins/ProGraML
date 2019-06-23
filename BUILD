@@ -1,5 +1,3 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
 
