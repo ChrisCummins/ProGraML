@@ -601,3 +601,21 @@ go_repository(
     commit = "34c6fa2dc70986bccbbffcc6130f6920a924b075",
     importpath = "github.com/stretchr/testify",
 )
+
+go_repository(
+    name = "com_github_jinzhu_gorm",
+    commit = "a6b790ffd00da9beddc60a0d2d5b9e31f03a3ffd",
+    importpath = "github.com/jinzhu/gorm",
+)
+
+go_repository(
+    name = "com_github_jinzhu_inflection",
+    commit = "f5c5f50e6090ae76a29240b61ae2a90dd810112e",
+    importpath = "github.com/jinzhu/inflection",
+)
+
+go_repository(
+    name = "com_github_mattn_go_sqlite3",
+    commit = "5dd71670cca4bc0ee90371eabd0f1bdba1ac6f35",
+    importpath = "github.com/mattn/go-sqlite3",
+)
