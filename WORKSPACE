@@ -144,6 +144,7 @@ http_archive(
 http_archive(
     name = "llvm_headers_linux",
     build_file = "//:third_party/llvm_headers.BUILD",
+    sha256 = "cc99fda45b4c740f35d0a367985a2bf55491065a501e2dd5d1ad3f97dcac89da",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/include",
     urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
@@ -168,6 +169,7 @@ http_archive(
 http_archive(
     name = "libcxx_linux",
     build_file = "//:third_party/libcxx.BUILD",
+    sha256 = "cc99fda45b4c740f35d0a367985a2bf55491065a501e2dd5d1ad3f97dcac89da",
     strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
     urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
