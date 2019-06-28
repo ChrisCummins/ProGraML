@@ -328,6 +328,11 @@ java_proto_compile()
 load("//tools/bzl:maven_jar.bzl", "maven_jar")
 
 maven_jar(
+    name = "org_junit",
+    artifact = "junit:junit:4.12",
+)
+
+maven_jar(
     name = "org_eclipse_jface",
     artifact = "org.eclipse.platform:org.eclipse.jface.text:3.13.0",
     sha1 = "8cbaf7f92ffc7a7daa694bd2781169b3ce7678c4",
@@ -446,17 +451,12 @@ maven_jar(
 
 maven_jar(
     name = "org_apache_commons_jci_core",
-    artifact = "org.apache.commons:commons-jci-core:1.0",
+    artifact = "org.apache.commons:commons-jci-core:1.1",
 )
 
 maven_jar(
     name = "org_apache_commons_jci_eclipse",
-    artifact = "org.apache.commons:commons-jci-eclipse:1.0",
-)
-
-maven_jar(
-    name = "org_apache_commons_jci_eclipse",
-    artifact = "org.apache.commons:commons-jci-eclipse:1.0",
+    artifact = "org.apache.commons:commons-jci-eclipse:1.1",
 )
 
 maven_jar(
