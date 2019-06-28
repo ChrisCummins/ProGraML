@@ -2,7 +2,7 @@
 
 package(default_visibility = ["//visibility:public"])
 
-# Pre-compiled binaries.
+# Pre-compiled binary filegroups.
 
 filegroup(
     name = "clang",
