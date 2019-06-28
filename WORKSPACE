@@ -135,6 +135,10 @@ http_archive(
 )
 
 # Now do the same again for headers, but also strip the include/ directory.
+# The reason for the duplication between @llvm_headers_XXX and @llvm_XXX is
+# because the headers packages strip the include/ path prefix, so that the
+# headers can be included by any cc_library with the package in the deps
+# attributes, without having to set a custom -I path in copts.
 
 http_archive(
     name = "llvm_headers_mac",
