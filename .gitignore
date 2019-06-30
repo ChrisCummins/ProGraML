@@ -16,6 +16,7 @@
 /*.gls
 /*.idx
 /*.ilg
+/*.iml
 /*.ind
 /*.ist
 /*.loa
@@ -40,3 +41,5 @@
 /*.xdy
 /.aspell.en.prepl
 /.autotex.deps
+/.idea
+/_minted-*
