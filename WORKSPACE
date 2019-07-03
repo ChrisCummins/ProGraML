@@ -158,6 +158,7 @@ http_archive(
 http_archive(
     name = "llvm_test_suite",
     build_file = "//:third_party/llvm_test_suite.BUILD",
+    sha256 = "74e0055efa27b2143415148ee93b817155e6333337d9cadd4cc5d468ad3c0edf",
     strip_prefix = "test-suite-6.0.0.src",
     urls = ["http://releases.llvm.org/6.0.0/test-suite-6.0.0.src.tar.xz"],
 )
