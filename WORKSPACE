@@ -283,18 +283,6 @@ load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
 pip_repositories()
 
 pip_import(
-    name = "protobuf_py_deps",
-    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
-)
-
-load(
-    "@protobuf_py_deps//:requirements.bzl",
-    protobuf_pip_install = "pip_install",
-)
-
-protobuf_pip_install()
-
-pip_import(
     name = "grpc_py_deps",
     requirements = "@build_stack_rules_proto//python:requirements.txt",
 )
