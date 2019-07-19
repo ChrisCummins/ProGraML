@@ -1,6 +1,11 @@
 ![labm8](https://raw.github.com/ChrisCummins/phd/master/labm8/.labm8.jpg)
 
-[![Build Status](https://travis-ci.org/ChrisCummins/labm8.svg?branch=master)](https://travis-ci.org/ChrisCummins/labm8)
+<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
+  <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat">
+</a>
+<a href="https://travis-ci.org/ChrisCummins/labm8">
+  <img src="https://travis-ci.org/ChrisCummins/labm8.svg?branch=master">
+</a>
 
 Copyright 2015-2018 Chris Cummins <chrisc.101@gmail.com>.
 
