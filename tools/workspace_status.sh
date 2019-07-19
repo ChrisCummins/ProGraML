@@ -23,5 +23,5 @@ else
 fi
 
 echo "STABLE_GIT_BRANCH $(git branch | grep \* | cut -d ' ' -f2)"
-echo "STABLE_GIT_REMOTE $(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
-echo "STABLE_GIT_REMOTE_URL $(git ls-remote --get-url $(git rev-parse --abbrev-ref @{upstream} | cut -f1 -d'/'))"
+echo "STABLE_GIT_REMOTE $(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo null)"
+echo "STABLE_GIT_REMOTE_URL $(git ls-remote --get-url $(git rev-parse --abbrev-ref @{upstream} 2>/dev/null | cut -f1 -d'/') 2>/dev/null || echo null)"
