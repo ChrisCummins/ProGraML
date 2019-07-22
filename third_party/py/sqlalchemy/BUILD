@@ -12,6 +12,6 @@ py_library(
     deps = [
         requirement("sqlalchemy"),
         # Implicit dependency when connecting to MySQL databases.
-        requirement("mysqlclient"),
+        "//third_party/py/mysql",
     ],
 )
