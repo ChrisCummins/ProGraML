@@ -628,3 +628,9 @@ go_repository(
     commit = "5dd71670cca4bc0ee90371eabd0f1bdba1ac6f35",
     importpath = "github.com/mattn/go-sqlite3",
 )
+
+go_repository(
+    name = "com_github_bazelbuild_buildtools",
+    commit = "c4e649df7ade24c3662729fdabd7bcff67866fef",
+    importpath = "github.com/bazelbuild/buildtools",
+)
