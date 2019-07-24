@@ -8,7 +8,7 @@ licenses(["notice"])  # Apache.
 
 py_library(
     name = "absl",
-    srcs = ["absl.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("absl-py"),
         requirement("six"),
