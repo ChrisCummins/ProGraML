@@ -1,14 +1,40 @@
-# Docker image: phd
+# Docker image: phd_build
 
 A self-contained environment configured to build and run the code in this 
 project.
 
-Build this image using:
+
+## Usage
+
+Start an interactive bash session using: `./tools/docker/phd_build/run.sh`.
+
+To make an image from a python target, add to your `BUILD` file:
 
 ```sh
-$ docker build -t phd_build $PHD/tools/docker/phd_build
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
+
+py3_image(
+    name = "image",
+    srcs = [":foo"],
+    main = ["foo.py"],
+    base = "@base_phd//image",
+    deps = [":foo"],
+)
 ```
 
-Run it using `tools/docker/phd_build/run.sh`.
 
-Update the dockerhob version using `tools/docker/phd_build/export.sh`.
+
+## Updating [chriscummins/phd_build](https://hub.docker.com/r/chriscummins/phd_build)
+
+1. Modify `tools/docker/phd_build/Dockerfile` with your desired changes.
+2. Build and export the image using: `$ ./tools/docker/phd_build/export.sh`.
+3. Update the digest in the `WORKSPACE` file:
+
+```
+container_pull(
+    name = "phd_build",
+    digest = "sha256:<new_digest>",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_build",
+)
+```
