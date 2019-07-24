@@ -533,6 +533,7 @@ git_repository(
     name = "subpar",
     commit = "35bb9f0092f71ea56b742a520602da9b3638a24f",
     remote = "https://github.com/google/subpar",
+    shallow_since = "1557863961 -0400",
 )
 
 # Needed by rules_docker.
