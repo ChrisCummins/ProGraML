@@ -26,8 +26,8 @@ RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
 RUN curl https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz > /tmp/go.tar.gz \
     && tar -C /usr/local -xzf /tmp/go.tar.gz \
     && rm /tmp/go.tar.gz
-ENV PATH /usr/local/go/bin:$PATH
-ENV GOPATH /usr/local/go
+ENV GOPATH /home/docker/go
+ENV PATH /usr/local/go/bin:/home/docker/go/bin:$PATH
 
 # Install nodejs.
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - \
