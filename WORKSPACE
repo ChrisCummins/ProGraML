@@ -108,6 +108,22 @@ http_archive(
     urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
 )
 
+# git-sizer <https://github.com/github/git-sizer/>
+
+http_archive(
+    name = "git_sizer_linux",
+    build_file = "//:third_party/git-sizer.BUILD",
+    sha256 = "44570533f2ba434bedb70ee90a83d65f9b4da03b008041f2dad755ba6cd47377",
+    urls = ["https://github.com/github/git-sizer/releases/download/v1.3.0/git-sizer-1.3.0-linux-386.zip"],
+)
+
+http_archive(
+    name = "git_sizer_mac",
+    build_file = "//:third_party/git-sizer.BUILD",
+    sha256 = "d80fcd2f28bfd2b531fd469bf65bd7dd2908c82a52bf4f82fdbf1caf34392124",
+    urls = ["https://github.com/github/git-sizer/releases/download/v1.3.0/git-sizer-1.3.0-darwin-386.zip"],
+)
+
 # Golang and gazelle.
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
