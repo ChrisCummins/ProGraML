@@ -39,7 +39,7 @@ RUN apt update && apt-get install -y --no-install-recommends \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
     && python -m pip install yapf sqlparse \
-    && npm install -g js-beautify
+    && npm install -g js-beautify jsonlint
 
 # Install bazel.
 RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
