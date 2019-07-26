@@ -24,4 +24,4 @@ fi
 set -x
 docker run \
   -v/var/run/docker.sock:/var/run/docker.sock \
-  $prearg phd_base $@
+  $prearg chriscummins/phd_base:latest $@

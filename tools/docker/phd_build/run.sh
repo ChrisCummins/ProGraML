@@ -33,4 +33,4 @@ docker run \
   -v/var/run/docker.sock:/var/run/docker.sock \
   -v$HOME/.cache/bazel/_bazel_docker:/home/docker/.cache/bazel/_bazel_docker \
   -v$PHD:/phd \
-  $prearg phd_build $@
+  $prearg chriscummins/phd_build:latest $@
