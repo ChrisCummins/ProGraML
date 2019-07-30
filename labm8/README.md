@@ -1,5 +1,14 @@
-![labm8](https://raw.github.com/ChrisCummins/phd/master/labm8/.labm8.jpg)
+![labm8](https://raw.github.com/ChrisCummins/labm8/master/labm8/labm8.jpg)
 
+<a href="https://github.com/ChrisCummins/labm8">
+  <img src="https://pepy.tech/badge/labm8">
+</a>
+<a href="https://github.com/ChrisCummins/labm8">
+  <img src="https://pepy.tech/badge/labm8/month">
+</a>
+<a href="https://badge.fury.io/py/labm8">
+    <img src="https://badge.fury.io/py/labm8.svg" alt="PyPI version" height="18">
+</a>
 <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
   <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat">
 </a>
