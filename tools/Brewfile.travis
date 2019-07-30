@@ -1,0 +1,5 @@
+update
+tap "homebrew/cask-versions"
+cask "java8"
+tap "bazelbuild/tap", pin:true
+brew "bazel"
