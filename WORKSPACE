@@ -573,6 +573,28 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_docker/archive/b79827ad2c72cfabe49dca550f69281856929c1f.tar.gz"],
 )
 
+# Bazel rules for assembling and deploying software distributions.
+# https://github.com/graknlabs/bazel-distribution
+
+http_archive(
+    name = "graknlabs_bazel_distribution",
+    sha256 = "7b771d57dfdb426c511ad95301737027f37c632a627b452d85d01d76e0c8ce17",
+    strip_prefix = "bazel-distribution-8dc6490f819d330361f46201e3390ce5457564a2",
+    urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
+)
+
+pip_import(
+    name = "graknlabs_bazel_distribution_pip",
+    requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
+)
+
+load(
+    "@graknlabs_bazel_distribution_pip//:requirements.bzl",
+    graknlabs_bazel_distribution_pip_install = "pip_install",
+)
+
+graknlabs_bazel_distribution_pip_install()
+
 # Enable py3_image() rule.
 
 load(
