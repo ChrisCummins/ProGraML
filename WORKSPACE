@@ -568,9 +568,9 @@ git_repository(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "eda1443edcb4ef73948d9c4847f1cf046981decb075cab7331c089a78bbd368e",
-    strip_prefix = "rules_docker-b79827ad2c72cfabe49dca550f69281856929c1f",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/b79827ad2c72cfabe49dca550f69281856929c1f.tar.gz"],
+    sha256 = "6706b3979498802672252e77a45674dae0a1036f246a7efe5d3adbe53dcbea31",
+    strip_prefix = "rules_docker-31c38b0f506d8aff07487c274ed045c0017f689f",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/31c38b0f506d8aff07487c274ed045c0017f689f.tar.gz"],
 )
 
 # Bazel rules for assembling and deploying software distributions.
