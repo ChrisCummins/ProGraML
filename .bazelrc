@@ -3,6 +3,8 @@
 # Temporary workarounds until updated to new bazel version.
 build --incompatible_use_python_toolchains=false
 build --incompatible_string_join_requires_strings
+test --incompatible_use_python_toolchains=false
+test --incompatible_string_join_requires_strings
 
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
