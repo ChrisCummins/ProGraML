@@ -1,5 +1,9 @@
 # See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
 
+# Temporary workarounds until updated to new bazel version.
+build --incompatible_use_python_toolchains=false
+build --incompatible_string_join_requires_strings
+
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
