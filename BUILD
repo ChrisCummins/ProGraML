@@ -1,7 +1,12 @@
+# Top level package of the phd repo.
+
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
 
-# Top level package of the phd repo.
+exports_files([
+    "README.md",
+    "version.txt",
+])
 
 config_setting(
     name = "darwin",
