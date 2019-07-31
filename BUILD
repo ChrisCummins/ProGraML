@@ -6,6 +6,7 @@ load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_li
 exports_files([
     "README.md",
     "version.txt",
+    "deployment.properties",
 ])
 
 config_setting(
