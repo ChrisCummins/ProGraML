@@ -43,7 +43,7 @@ RUN apt update && apt-get install -y --no-install-recommends \
 
 # Install bazel.
 ENV BAZEL_VERSION 0.28.1
-RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
+RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
 # For compiling arduino code.
