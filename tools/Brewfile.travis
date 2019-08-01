@@ -1,3 +1,4 @@
+brew "mysql"
 brew "zlib"
 tap "homebrew/cask-versions"
 cask "java8"
