@@ -42,7 +42,8 @@ RUN apt update && apt-get install -y --no-install-recommends \
     && npm install -g js-beautify jsonlint
 
 # Install bazel.
-RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh && \
+ENV BAZEL_VERSION 0.28.1
+RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
 # For compiling arduino code.
