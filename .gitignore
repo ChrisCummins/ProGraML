@@ -117,3 +117,7 @@ __pycache__
 /talks/2018_03_facebook/2018_03_facebook/
 /talks/2018_07_isagt/2018_07_isagt/
 /talks/2018_07_issta/slides/
+
+
+# TODO(github.com/ChrisCummins/phd/issues/49): Work in progress.in
+/tools/venv/phd

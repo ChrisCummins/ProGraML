@@ -674,3 +674,8 @@ go_repository(
     commit = "c4e649df7ade24c3662729fdabd7bcff67866fef",
     importpath = "github.com/bazelbuild/buildtools",
 )
+
+# TODO(github.com/ChrisCummins/phd/issues/49): Work in progress.
+register_toolchains(
+    "//tools/venv:my_platform_python_toolchain",
+)
