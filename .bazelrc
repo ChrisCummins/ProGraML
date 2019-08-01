@@ -59,4 +59,4 @@ build:ubsan --linkopt -fsanitize=undefined
 build:ubsan --linkopt -lubsan
 
 # Control progress output when invoked by Travis
-build:travis --noshow_progress --show_task_finish --action_env=PATH --action_env=PYENV_VERSION=3.6.3
+build:travis --show_task_finish --action_env=PATH
