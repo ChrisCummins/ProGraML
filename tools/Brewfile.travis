@@ -1,3 +1,4 @@
+brew "python"
 brew "mysql"
 brew "pybind11"
 brew "zlib"
