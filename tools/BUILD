@@ -4,8 +4,11 @@
 
 sh_binary(
     name = "whoami",
-    data = ["//:build_info_pbtxt"],
     srcs = ["whoami.sh"],
+    data = [
+        "//:build_info_pbtxt",
+        "//:config",
+    ],
 )
 
 sh_binary(
