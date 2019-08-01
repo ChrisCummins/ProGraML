@@ -58,6 +58,9 @@ RUN pip2 install platformio
 
 RUN apt-get install libmariadbclient18
 
+# Install a text editor.
+RUN apt-get update && apt-get install -y --no-install-recommends vim
+
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
 USER docker
