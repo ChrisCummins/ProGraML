@@ -3,6 +3,12 @@
 # using bazel, please see the comments.
 
 sh_binary(
+    name = "whoami",
+    data = ["//:build_info_pbtxt"],
+    srcs = ["whoami.sh"],
+)
+
+sh_binary(
     name = "autotex",
     srcs = ["autotex.sh"],
     visibility = ["//visibility:public"],
