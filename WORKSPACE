@@ -299,6 +299,48 @@ http_archive(
     urls = ["https://github.com/stackb/rules_proto/archive/d9a123032f8436dbc34069cfc3207f2810a494ee.tar.gz"],
 )
 
+# Python requirements.
+
+http_archive(
+    name = "rules_python",
+    sha256 = "edfe76ac7ff3a365408c5ec17b713f76ae8f584572dfe5f91069331290003c01",
+    strip_prefix = "rules_python-944be4608911c91161a89f40c1f26182f892a9d0",
+    urls = ["https://github.com/ChrisCummins/rules_python/archive/944be4608911c91161a89f40c1f26182f892a9d0.tar.gz"],
+)
+
+load(
+    "@rules_python//python:pip.bzl",
+    "pip_import",
+    "pip_repositories",
+)
+
+pip_repositories()
+
+pip_import(
+    name = "protobuf_py_deps",
+    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
+)
+
+load(
+    "@protobuf_py_deps//:requirements.bzl",
+    protobuf_pip_install = "pip_install",
+)
+
+protobuf_pip_install()
+
+pip_import(
+    name = "requirements",
+    timeout = 3600,
+    requirements = "//:requirements.txt",
+)
+
+load(
+    "@requirements//:requirements.bzl",
+    pip_grpcio_install = "pip_install",
+)
+
+pip_grpcio_install()
+
 # Python protobufs.
 
 load("@build_stack_rules_proto//python:deps.bzl", "python_grpc_library")
@@ -309,12 +351,9 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
-load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
-
-pip_repositories()
-
 pip_import(
     name = "grpc_py_deps",
+    timeout = 3600,
     requirements = "@build_stack_rules_proto//python:requirements.txt",
 )
 
@@ -504,46 +543,6 @@ maven_jar(
     name = "asm",
     artifact = "asm:asm:2.2.1",
 )
-
-# Python requirements.
-
-git_repository(
-    name = "io_bazel_rules_python",
-    commit = "6b6aedda3aab264dc1e27470655e0ae0cfb2b5bc",
-    remote = "https://github.com/bazelbuild/rules_python.git",
-)
-
-load(
-    "@io_bazel_rules_python//python:pip.bzl",
-    "pip_import",
-    "pip_repositories",
-)
-
-pip_repositories()
-
-pip_import(
-    name = "protobuf_py_deps",
-    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
-)
-
-load(
-    "@protobuf_py_deps//:requirements.bzl",
-    protobuf_pip_install = "pip_install",
-)
-
-protobuf_pip_install()
-
-pip_import(
-    name = "requirements",
-    requirements = "//:requirements.txt",
-)
-
-load(
-    "@requirements//:requirements.bzl",
-    pip_grpcio_install = "pip_install",
-)
-
-pip_grpcio_install()
 
 # Support for standalone python binaries using par_binary().
 
