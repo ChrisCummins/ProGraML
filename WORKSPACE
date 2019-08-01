@@ -318,6 +318,7 @@ pip_repositories()
 
 pip_import(
     name = "protobuf_py_deps",
+    timeout = 3600,
     requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
 )
 
@@ -584,6 +585,7 @@ http_archive(
 
 pip_import(
     name = "graknlabs_bazel_distribution_pip",
+    timeout = 3600,
     requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
 )
 
