@@ -1,3 +1,4 @@
+brew "coreutils"
 brew "findutils"
 brew "gnu-sed"
 brew "python"
