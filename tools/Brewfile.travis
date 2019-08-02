@@ -1,4 +1,5 @@
 brew "findutils"
+brew "gnu-sed"
 brew "python"
 brew "mysql"
 brew "pybind11"
