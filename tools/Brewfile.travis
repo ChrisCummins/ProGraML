@@ -1,9 +1,0 @@
-brew "findutils"
-brew "python"
-brew "mysql"
-brew "pybind11"
-brew "zlib"
-tap "homebrew/cask-versions"
-cask "java8"
-tap "bazelbuild/tap", pin:true
-brew "bazel"
