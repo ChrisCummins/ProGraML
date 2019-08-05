@@ -677,6 +677,6 @@ go_repository(
 )
 
 # TODO(github.com/ChrisCummins/phd/issues/49): Work in progress.
-register_toolchains(
-    "//tools/venv:virtualenv_platform_python_toolchain",
-)
+# register_toolchains(
+#     "//tools/venv:virtualenv_platform_python_toolchain",
+# )
