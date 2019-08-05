@@ -48,7 +48,7 @@ cc_library(
 cc_test(
     name = "bazelutil_test",
     srcs = ["bazelutil_test.cc"],
-    data = ["//phd/test:data_file"],
+    data = ["//labm8/cpp/test:data_file"],
     deps = [
         ":bazelutil",
         ":test",
@@ -173,7 +173,7 @@ cc_test(
     deps = [
         ":pbutil",
         ":test",
-        "//phd/test:protos_pb_cc",
+        "//labm8/cpp/test:protos_pb_cc",
     ],
 )
 
