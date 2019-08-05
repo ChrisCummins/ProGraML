@@ -11,7 +11,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "pandas",
-    srcs = ["pandas.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("pandas"),
         "//third_party/py/numpy",
