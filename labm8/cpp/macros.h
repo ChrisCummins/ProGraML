@@ -143,8 +143,8 @@ struct CompileAssert {};
 #if __cplusplus >= 201103L
 #define COMPILE_ASSERT(expr, msg) static_assert(expr, #msg)
 #else
-#define COMPILE_ASSERT(expr, msg)                                        \
-  ::phd::internal::CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]; \
+#define COMPILE_ASSERT(expr, msg)                                          \
+  ::labm8::internal::CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]; \
   (void)msg
 // Implementation details of COMPILE_ASSERT:
 //

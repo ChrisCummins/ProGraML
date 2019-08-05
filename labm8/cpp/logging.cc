@@ -95,7 +95,7 @@ LogMessage &LogMessage::operator<<(const StringPiece &value) {
 // FIXME:
 //
 // LogMessage& LogMessage::operator<<(
-//    const ::phd::Status& status) {
+//    const ::labm8::Status& status) {
 //  message_ += status.ToString();
 //  return *this;
 //}

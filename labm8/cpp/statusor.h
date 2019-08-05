@@ -72,7 +72,7 @@
 //
 //  StatusOr<Foo*> FooFactory::MakeNewFoo(int arg) {
 //    if (arg <= 0) {
-//      return ::Status(::phd::error::INVALID_ARGUMENT,
+//      return ::Status(::labm8::error::INVALID_ARGUMENT,
 //                            "Arg must be positive");
 //    } else {
 //      return new Foo(arg);

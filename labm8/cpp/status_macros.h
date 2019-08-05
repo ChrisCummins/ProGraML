@@ -48,7 +48,7 @@ namespace labm8 {
 #define RETURN_IF_ERROR(expr)                                                \
   do {                                                                       \
     /* Using _status below to avoid capture problems if expr is "status". */ \
-    const ::phd::Status _status = (expr);                                    \
+    const ::labm8::Status _status = (expr);                                  \
     if (PREDICT_FALSE(!_status.ok())) return _status;                        \
   } while (0)
 
@@ -64,8 +64,8 @@ Status DoAssignOrReturn(T& lhs, StatusOr<T> result) {
   return result.status();
 }
 
-#define ASSIGN_OR_RETURN_IMPL(status, lhs, rexpr)               \
-  ::phd::Status status = ::phd::DoAssignOrReturn(lhs, (rexpr)); \
+#define ASSIGN_OR_RETURN_IMPL(status, lhs, rexpr)                   \
+  ::labm8::Status status = ::labm8::DoAssignOrReturn(lhs, (rexpr)); \
   if (PREDICT_FALSE(!status.ok())) return status;
 
 // Executes an expression that returns a util::StatusOr, extracting its value
