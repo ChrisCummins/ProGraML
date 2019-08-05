@@ -88,7 +88,7 @@ py_library(
         "//labm8:app",
         "//third_party/py/bokeh",
         "//third_party/py/numpy",
-        "//third_party/py/scipy:scikit_learn",
+        "//third_party/py/scikit_learn",
         "//third_party/py/tensorflow",
         "//third_party/py/umap",
     ],

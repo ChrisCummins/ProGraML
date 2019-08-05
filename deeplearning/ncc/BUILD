@@ -100,7 +100,7 @@ py_binary(
         "//third_party/py/keras",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
-        "//third_party/py/scipy:scikit_learn",
+        "//third_party/py/scikit_learn",
         "//third_party/py/tensorflow",
     ],
 )
@@ -154,7 +154,7 @@ py_binary(
         "//labm8:fs",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
-        "//third_party/py/scipy:scikit_learn",
+        "//third_party/py/scikit_learn",
     ],
 )
 
