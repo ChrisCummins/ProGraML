@@ -1,6 +1,6 @@
 #pragma once
 
-#import "phd/string.h"
+#include "labm8/cpp/string.h"
 
 #include "boost/filesystem.hpp"
 

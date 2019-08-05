@@ -1,6 +1,6 @@
 #include "labm8/cpp/bazelutil.h"
 
-#import "phd/logging.h"
+#include "labm8/cpp/logging.h"
 
 namespace labm8 {
 
