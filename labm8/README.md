@@ -12,6 +12,10 @@
 <a href="https://github.com/ChrisCummins/labm8">
   <img src="https://pepy.tech/badge/labm8">
 </a>
+<!-- commit counter -->
+<a href="https://github.com/ChrisCummins/labm8">
+  <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/labm8.svg?color=yellow">
+</a>
 <!-- repo size -->
 <a href="https://github.com/ChrisCummins/labm8">
     <img src="https://img.shields.io/github/repo-size/ChrisCummins/labm8.svg">
