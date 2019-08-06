@@ -1,5 +1,6 @@
 # Top level package of the phd repo.
 
+load("//tools/bzl:string_genrule.bzl", "python_string_genrule")
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
 
@@ -70,6 +71,12 @@ python_grpc_library(
     deps = ["//:config_pb"],
 )
 
+python_string_genrule(
+    name = "config_pbtxt_py",
+    src = ":config",
+    out = "config_pbtxt.py",
+)
+
 filegroup(
     name = "configure_py",
     srcs = ["configure"],
@@ -101,10 +108,10 @@ py_test(
 py_library(
     name = "getconfig",
     srcs = ["getconfig.py"],
-    data = ["//:config"],
     visibility = ["//visibility:public"],
     deps = [
         "//:config_pb_py",
+        "//:config_pbtxt_py",
         "//labm8:pbutil",
     ],
 )
