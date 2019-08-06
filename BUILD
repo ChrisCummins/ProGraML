@@ -19,11 +19,10 @@ config_setting(
 py_library(
     name = "build_info",
     srcs = ["build_info.py"],
-    data = ["//:build_info_pbtxt"],
     visibility = ["//visibility:public"],
     deps = [
+        "//:build_info_pbtxt_py",
         "//:config_pb_py",
-        "//labm8:bazelutil",
         "//labm8:pbutil",
     ],
 )
@@ -44,6 +43,12 @@ genrule(
     stamp = 1,
     tools = [":make_build_info_pbtxt"],
     visibility = ["//visibility:public"],
+)
+
+python_string_genrule(
+    name = "build_info_pbtxt_py",
+    src = ":build_info.pbtxt",
+    out = "build_info_pbtxt.py",
 )
 
 sh_binary(
