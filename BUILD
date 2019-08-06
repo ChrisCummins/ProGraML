@@ -10,6 +10,11 @@ exports_files([
     "deployment.properties",
 ])
 
+python_string_genrule(
+    name = "version_py",
+    src = "version.txt",
+)
+
 config_setting(
     name = "darwin",
     values = {"cpu": "darwin"},
@@ -23,6 +28,7 @@ py_library(
     deps = [
         "//:build_info_pbtxt_py",
         "//:config_pb_py",
+        "//:version_py",
         "//labm8:pbutil",
     ],
 )
