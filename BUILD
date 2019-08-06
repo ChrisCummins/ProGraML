@@ -48,7 +48,6 @@ genrule(
 python_string_genrule(
     name = "build_info_pbtxt_py",
     src = ":build_info.pbtxt",
-    out = "build_info_pbtxt.py",
 )
 
 sh_binary(
@@ -79,7 +78,6 @@ python_grpc_library(
 python_string_genrule(
     name = "config_pbtxt_py",
     src = ":config",
-    out = "config_pbtxt.py",
 )
 
 filegroup(
