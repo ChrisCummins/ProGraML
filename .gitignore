@@ -1,5 +1,6 @@
 .DS_Store
 
+*.bak
 /*-blx.bib
 /*.acn
 /*.acr
