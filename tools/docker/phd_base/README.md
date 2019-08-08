@@ -37,3 +37,5 @@ container_pull(
     repository = "chriscummins/phd_base",
 )
 ```
+
+4. Update the version tag in `phd_java` docker image.

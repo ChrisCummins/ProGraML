@@ -625,7 +625,7 @@ container_repositories()
 # Minimal python base image.
 container_pull(
     name = "base",
-    digest = "sha256:0741b012da76fde785be4be3d0b1f0ac0d6d8764eeb77171ad2622ae691788af",
+    digest = "sha256:ced0127e8ed4032cdd581f4c5c4a1f781e10a7ffed083ebca402f96a258b76f8",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
@@ -633,7 +633,7 @@ container_pull(
 # Same as base, but with a Java environment.
 container_pull(
     name = "base_java",
-    digest = "sha256:03c81341f676a53400abdb8000df693d764449bf8756d7b4311e781a95eb1f5b",
+    digest = "sha256:31719c1233ac4be59e7c546fd53f5d164c209fa374ca73b387104fc4d0919bc1",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_java",
 )
@@ -641,7 +641,7 @@ container_pull(
 # Full build environment with all required toolchains.
 container_pull(
     name = "phd_build",
-    digest = "sha256:197154fa733dec15f7e7f5b48f4b086b3c8b631a5ff889dbb91f030126b6cf6f",
+    digest = "sha256:7c37c2a47758f442de65e93476d3b279c61b517cee1365df624a02665dd6f514",
     registry = "index.docker.io",
     repository = "chriscummins/phd_build",
 )

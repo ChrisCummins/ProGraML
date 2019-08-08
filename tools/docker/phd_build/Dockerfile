@@ -1,6 +1,6 @@
 # An Ubuntu environment configured for building the phd repo.
-FROM chriscummins/phd_base_java:latest
-MAINTAINER Chris Cummins <chrisc.101@gmail.com>
+FROM chriscummins/phd_base_java:2019.08.06
+LABEL maintainer="Chris Cummins <chrisc.101@gmail.com>"
 
 # Switch back to root user to do the installation admin.
 USER root
@@ -14,13 +14,17 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl unzip default-libmysqlclient-dev g++ zlib1g-dev ocl-icd-opencl-dev python \
   apt-transport-https ca-certificates gnupg-agent \
-  software-properties-common texlive-full rsync
+  software-properties-common texlive-full rsync \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install docker (needed to build docker images).
-RUN apt-get update && apt-get install -y gnupg2 \
+RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
+    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install golang.
 RUN curl https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz > /tmp/go.tar.gz \
@@ -30,18 +34,22 @@ ENV GOPATH /home/docker/go
 ENV PATH /usr/local/go/bin:/home/docker/go/bin:$PATH
 
 # Install nodejs.
-RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - \
-    && apt-get update && apt-get install -y nodejs && npm -v
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs && npm -v \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install linters.
-RUN apt update && apt-get install -y --no-install-recommends \
-    clang-format \
+RUN apt update \
+    && apt-get install -y --no-install-recommends clang-format wget \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
     && python -m pip install yapf sqlparse \
     && npm install -g js-beautify jsonlint \
     && wget https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_386 -O /usr/local/bin/shfmt \
-    && chmod +x /usr/local/bin/shfmt
+    && chmod +x /usr/local/bin/shfmt \
+    && apt-get remove -y wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install bazel.
 ENV BAZEL_VERSION 0.28.1
@@ -55,13 +63,14 @@ RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/downlo
 #   [GCC 6.3.0 20170516].
 #   Minimum supported version is 2.7, please upgrade Python.
 #   Python 3 is not yet supported.
-RUN apt-get update && apt-get install -y python-pip
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python-pip python-setuptools \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip2 install platformio
 
-RUN apt-get install libmariadbclient18
-
 # Install a text editor.
-RUN apt-get update && apt-get install -y --no-install-recommends vim
+RUN apt-get update && apt-get install -y --no-install-recommends vim \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -pv /phd && chown docker:docker -R /phd
 WORKDIR /phd
