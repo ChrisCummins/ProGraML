@@ -7,7 +7,6 @@
 #
 # Example usage:
 #    $ ./tools/flaky_bazel.sh test //...
-# <to be reverted>
 set -eu
 export max_attempts=5
 export returncode=1
