@@ -33,3 +33,8 @@ filegroup(
         "util.py",
     ],
 )
+
+sh_binary(
+    name = "remove_all_docker_images",
+    srcs = ["remove_all_docker_images.sh"],
+)
