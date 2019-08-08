@@ -25,6 +25,9 @@
   <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
 </a>
 
+```sh
+$ python -m pip install -U labm8
+```
 
 Copyright 2015-2019 Chris Cummins <chrisc.101@gmail.com>.
 
