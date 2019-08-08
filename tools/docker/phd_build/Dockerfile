@@ -39,7 +39,9 @@ RUN apt update && apt-get install -y --no-install-recommends \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
     && python -m pip install yapf sqlparse \
-    && npm install -g js-beautify jsonlint
+    && npm install -g js-beautify jsonlint \
+    && wget https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_386 -O /usr/local/bin/shfmt \
+    && chmod +x /usr/local/bin/shfmt
 
 # Install bazel.
 ENV BAZEL_VERSION 0.28.1
