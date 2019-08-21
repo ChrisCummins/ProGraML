@@ -8,6 +8,10 @@
 <a href="https://badge.fury.io/py/labm8">
     <img src="https://img.shields.io/pypi/v/labm8.svg?color=brightgreen">
 </a>
+<!-- Better code -->
+<a href="https://bettercodehub.com/results/ChrisCummins/labm8">
+  <img src="https://bettercodehub.com/edge/badge/ChrisCummins/labm8?branch=master">
+</a>
 <!-- Travis CI -->
 <a href="https://github.com/ChrisCummins/labm8">
   <img src="https://img.shields.io/travis/ChrisCummins/labm8/master.svg">
