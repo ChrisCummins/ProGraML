@@ -301,11 +301,13 @@ http_archive(
 
 # Python requirements.
 
+# I use my own fork rather than the official upstream as a I have a collection
+# of workarounds that I must maintain.
 http_archive(
     name = "rules_python",
     sha256 = "edfe76ac7ff3a365408c5ec17b713f76ae8f584572dfe5f91069331290003c01",
-    strip_prefix = "rules_python-944be4608911c91161a89f40c1f26182f892a9d0",
-    urls = ["https://github.com/ChrisCummins/rules_python/archive/944be4608911c91161a89f40c1f26182f892a9d0.tar.gz"],
+    strip_prefix = "rules_python-01f56e54267d047bde75499371a17b412354adcb",
+    urls = ["https://github.com/ChrisCummins/rules_python/archive/01f56e54267d047bde75499371a17b412354adcb.tar.gz"],
 )
 
 load(
