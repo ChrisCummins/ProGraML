@@ -25,6 +25,7 @@ py_binary(
         "//labm8:labtypes",
         "//labm8:logutil",
         "//labm8:pbutil",
+        "//labm8:pdutil",
         "//labm8:prof",
         "//labm8:sqlutil",
         "//labm8:viz",
