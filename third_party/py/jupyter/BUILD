@@ -14,6 +14,8 @@ py_library(
         requirement("jupyter_http_over_ws"),
         requirement("notebook"),
         requirement("nbformat"),
+        # requirement("nbconvert"),
         requirement("prometheus_client"),
+        "//third_party/py/jinja2",
     ],
 )
