@@ -22,12 +22,12 @@
 # ==============================================================================
 """Preprocess LLVM IR code to XFG for inst2vec training"""
 
-import copy
 import os
+
+import copy
+import networkx as nx
 import pickle
 import re
-
-import networkx as nx
 
 from deeplearning.ncc import rgx_utils as rgx
 from deeplearning.ncc.inst2vec import inst2vec_utils as i2v_utils
@@ -486,6 +486,24 @@ def PrintDualXfgToFile(D, folder, filename):
 ########################################################################################################################
 # LLVM IR preprocessing
 ########################################################################################################################
+def GetFunctionsDeclaredInFile(bytecode_lines):
+  functions_declared_in_file = []
+
+  # Loop on all lines in data
+  for line in bytecode_lines:
+
+    # Check whether it contains a function declaration
+    if re.match('declare', line):
+      # Find the function name
+      func = re.match(r'declare .*(' + rgx.func_name + r')', line)
+      assert func is not None, "Could not match function name in " + line
+      func = func.group(1)
+
+      # Add it to the list
+      functions_declared_in_file.append(func)
+
+  return functions_declared_in_file
+
 def get_functions_declared_in_files(data):
   """
   For each file, construct a list of names of the functions declared in the file, before the corresponding statements
@@ -494,30 +512,7 @@ def get_functions_declared_in_files(data):
   :param data: input data as a list of files where each file is a list of strings
   :return: functions_declared_in_files: list of lists of names of the functions declared in this file
   """
-  functions_declared_in_files = list()
-
-  # Loop on all data files
-  for file in data:
-    functions_declared_in_file = list()
-
-    # Loop on all lines in data
-    for line in file:
-
-      # Check whether it contains a function declaration
-      if re.match('declare', line):
-        # Find the function name
-        func = re.match(r'declare .*(' + rgx.func_name + r')', line)
-        assert func is not None, "Could not match function name in " + line
-        func = func.group(1)
-
-        # Add it to the list
-        functions_declared_in_file.append(func)
-
-    # Add this list to the list of lists
-    functions_declared_in_files.append(functions_declared_in_file)
-
-  # Return
-  return functions_declared_in_files
+  return [GetFunctionsDeclaredInFile(file) for file in data]
 
 
 def keep(line):
@@ -2227,8 +2222,8 @@ def CheckGraphOrDie(G, filename):
   :return: multi-edges: list of edges for which parallel edges exist
            G
   """
-  # TODO(cec): Should this rais exception or assertion? Currently it's a mixture
-  # of both.
+  # TODO(cec): Should this raise exception or assertion? Currently it's a
+  # mixture of both.
 
   # Make sure each node has an id
   for n in sorted(list(G.nodes(data=True))):
