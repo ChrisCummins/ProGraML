@@ -6,6 +6,9 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ncc:vocabulary",
+        ":inst2vec_preprocess",
+        "//third_party/py/numpy",
+        "//third_party/py/networkx",
         "//labm8:app",
     ],
 )
