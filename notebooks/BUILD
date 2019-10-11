@@ -31,6 +31,7 @@ py_binary(
         "//labm8:viz",
         "//third_party/py/bokeh",
         "//third_party/py/graph_nets",
+        "//third_party/py/fs",
         "//third_party/py/jupyter",
         "//third_party/py/keras",
         "//third_party/py/matplotlib",
