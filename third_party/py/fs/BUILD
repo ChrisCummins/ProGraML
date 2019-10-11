@@ -12,5 +12,8 @@ py_library(
     deps = [
         requirement("fs"),
         requirement("fs.sshfs"),
+        requirement("paramiko"),
+        requirement("appdirs"),
+        requirement("property-cached"),
     ],
 )
