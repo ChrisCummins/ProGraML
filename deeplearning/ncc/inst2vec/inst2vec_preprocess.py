@@ -2649,163 +2649,6 @@ def inline_struct_types(G, data_with_struct_def, file_name,
   return G, dict_temp
 
 
-def remove_local_identifiers(G, to_track):
-  """
-  Replace all local identifiers (%## expressions) by "<%ID>"
-  :param G: graph of statements
-  :param to_track: debugging purposes
-  :return: modified input data
-  """
-  found_track = False
-  for e in G.edges(data=True):
-    if e[2]['stmt'] == to_track:
-      print('Found ', to_track)
-      found_track = True
-    e[2]['stmt'] = re.sub(rgx.local_id, "<%ID>", e[2]['stmt'])
-    if found_track:
-      if e[2]['stmt'] == to_track:
-        print('... remained unchanged by "remove local identifiers"')
-      else:
-        print('became', e[2]['stmt'], 'in "remove local identifiers"')
-        to_track = e[2]['stmt']
-      found_track = False
-
-  return G, to_track
-
-
-def remove_global_identifiers(G, to_track):
-  """
-  Replace all local identifiers (@## expressions) by "<@ID>"
-  :param G: graph of statements
-  :param to_track: debugging purposes
-  :return: modified input data
-  """
-  found_track = False
-  for e in G.edges(data=True):
-    if e[2]['stmt'] == to_track:
-      print('Found ', to_track)
-      found_track = True
-    e[2]['stmt'] = re.sub(rgx.global_id, "<@ID>", e[2]['stmt'])
-    if found_track:
-      if e[2]['stmt'] == to_track:
-        print('... remained unchanged by "remove global identifiers"')
-      else:
-        print('became', e[2]['stmt'], 'in "remove global identifiers"')
-        to_track = e[2]['stmt']
-      found_track = False
-
-  return G, to_track
-
-
-def remove_labels(G, to_track):
-  """
-  Replace label declarations by token '<LABEL>'
-  :param G: graph of statements
-  :param to_track: debugging purposes
-  :return: modified list of graphs
-  """
-  found_track = False
-  for e in G.edges(data=True):
-    if e[2]['stmt'] == to_track:
-      print('Found ', to_track)
-      found_track = True
-    if re.match(r'; <label>:\d+:?(\s+; preds = )?', e[2]['stmt']):
-      e[2]['stmt'] = re.sub(r":\d+", ":<LABEL>", e[2]['stmt'])
-      e[2]['stmt'] = re.sub("<%ID>", "<LABEL>", e[2]['stmt'])
-    elif re.match(rgx.local_id_no_perc + r':(\s+; preds = )?', e[2]['stmt']):
-      e[2]['stmt'] = re.sub(rgx.local_id_no_perc + ':', "<LABEL>:",
-                            e[2]['stmt'])
-      e[2]['stmt'] = re.sub("<%ID>", "<LABEL>", e[2]['stmt'])
-    if '; preds = ' in e[2]['stmt']:
-      s = e[2]['stmt'].split('  ')
-      if s[-1][0] == ' ':
-        e[2]['stmt'] = s[0] + s[-1]
-      else:
-        e[2]['stmt'] = s[0] + ' ' + s[-1]
-    if found_track:
-      if e[2]['stmt'] == to_track:
-        print('... remained unchanged by "remove labels"')
-      else:
-        print('became', e[2]['stmt'], 'in "remove labels"')
-        to_track = e[2]['stmt']
-      found_track = False
-
-  return G, to_track
-
-
-def remove_unnamed_values(G, to_track):
-  """
-  Replace unnamed_values by abstract token:
-      integers: <INT>
-      floating points: <FLOAT> (whether in decimal or hexadecimal notation)
-      string: <STRING>
-  :param G: graph of statements
-  :param to_track: debugging purposes
-  :return: modified list of graphs
-  """
-  found_track = False
-  for e in G.edges(data=True):
-
-    if e[2]['stmt'] == to_track:
-      print('Found ', to_track)
-      found_track = True
-
-    # Remove floating point values
-    e[2]['stmt'] = re.sub(rgx.immediate_value_float_hexa, "<FLOAT>",
-                          e[2]['stmt'])
-    e[2]['stmt'] = re.sub(rgx.immediate_value_float_sci, "<FLOAT>",
-                          e[2]['stmt'])
-
-    # Remove integer values
-    if re.match("<%ID> = extractelement", e[2]['stmt']) is None and \
-        re.match("<%ID> = extractvalue", e[2]['stmt']) is None and \
-        re.match("<%ID> = insertelement", e[2]['stmt']) is None and \
-        re.match("<%ID> = insertvalue", e[2]['stmt']) is None:
-      e[2]['stmt'] = re.sub(r'(?<!align)(?<!\[) ' + rgx.immediate_value_int,
-                            " <INT>", e[2]['stmt'])
-
-    # Remove string values
-    e[2]['stmt'] = re.sub(rgx.immediate_value_string, " <STRING>", e[2]['stmt'])
-    if found_track:
-      if e[2]['stmt'] == to_track:
-        print('remained unchanged by "remove unnamed values"')
-      else:
-        print('became', e[2]['stmt'], 'in "remove unnamed values"')
-        to_track = e[2]['stmt']
-      found_track = False
-
-  return G, to_track
-
-
-def remove_index_types(G, to_track, to_reverse_track):
-  """
-  Replace the index type in expressions containing "extractelement" or "insertelement" by token <TYP>
-  :param G: graph of statements
-  :param to_track: debugging purposes
-  :param to_reverse_track: debugging purposes
-  :return: modified list of graphs
-  """
-  found_track = False
-  for e in G.edges(data=True):
-    if e[2]['stmt'] == to_track:
-      print('Found  ', to_track)
-      found_track = True
-    if re.match("<%ID> = extractelement", e[2]['stmt']) is not None or \
-        re.match("<%ID> = insertelement", e[2]['stmt']) is not None:
-      e[2]['stmt'] = re.sub(r'i\d+ ', '<TYP> ', e[2]['stmt'])
-    if found_track:
-      if e[2]['stmt'] == to_track:
-        print('... remained unchanged by "remove index types"')
-      else:
-        print('became', e[2]['stmt'], 'in "remove index types"')
-        to_track = e[2]['stmt']
-      found_track = False
-    if e[2]['stmt'] == to_reverse_track:
-      print('Found  ', e[2]['stmt'])
-
-  return G, to_track
-
-
 def abstract_statements_from_identifiers(G):
   """
   Simplify lines of code by stripping them from their identifiers,
@@ -2813,18 +2656,52 @@ def abstract_statements_from_identifiers(G):
   :param G: graph of statements
   :return: modified input data
   """
-  # Optional, used for debugging
-  to_track = ''
-  to_reverse_track = ''
-
-  # Perform abstractions
-  G, to_track = remove_local_identifiers(G, to_track)
-  G, to_track = remove_global_identifiers(G, to_track)
-  G, to_track = remove_labels(G, to_track)
-  G, to_track = remove_unnamed_values(G, to_track)
-  G, to_track = remove_index_types(G, to_track, to_reverse_track)
-
+  for _, _, data in G.edges(data=True):
+    data['stmt'] = PreprocessStatement(data['stmt'])
   return G
+
+
+def PreprocessStatement(stmt: str) -> str:
+  # Remove local identifiers
+  stmt = re.sub(rgx.local_id, "<%ID>", stmt)
+  # Global identifiers
+  stmt = re.sub(rgx.global_id, "<@ID>", stmt)
+  # Remove labels
+  if re.match(r'; <label>:\d+:?(\s+; preds = )?', stmt):
+    stmt = re.sub(r":\d+", ":<LABEL>", stmt)
+    stmt = re.sub("<%ID>", "<LABEL>", stmt)
+  elif re.match(rgx.local_id_no_perc + r':(\s+; preds = )?', stmt):
+    stmt = re.sub(rgx.local_id_no_perc + ':', "<LABEL>:",
+                          stmt)
+    stmt = re.sub("<%ID>", "<LABEL>", stmt)
+  if '; preds = ' in stmt:
+    s = stmt.split('  ')
+    if s[-1][0] == ' ':
+      stmt = s[0] + s[-1]
+    else:
+      stmt = s[0] + ' ' + s[-1]
+
+  # Remove floating point values
+  stmt = re.sub(rgx.immediate_value_float_hexa, "<FLOAT>", stmt)
+  stmt = re.sub(rgx.immediate_value_float_sci, "<FLOAT>", stmt)
+
+  # Remove integer values
+  if (re.match("<%ID> = extractelement", stmt) is None and
+      re.match("<%ID> = extractvalue", stmt) is None and
+      re.match("<%ID> = insertelement", stmt) is None and
+      re.match("<%ID> = insertvalue", stmt) is None):
+    stmt = re.sub(r'(?<!align)(?<!\[) ' + rgx.immediate_value_int,
+                  " <INT>", stmt)
+
+  # Remove string values
+  stmt = re.sub(rgx.immediate_value_string, " <STRING>", stmt)
+
+  # Remove index types
+  if (re.match("<%ID> = extractelement", stmt) is not None or
+      re.match("<%ID> = insertelement", stmt) is not None):
+    stmt = re.sub(r'i\d+ ', '<TYP> ', stmt)
+
+  return stmt
 
 
 ########################################################################################################################
