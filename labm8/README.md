@@ -52,5 +52,5 @@ $ bazel run //labm8:export
 3. Deploy a new versioned release to [pypi](https://pypi.org/project/labm8/):
 
 ```sh
-$ bazel run //labm8:deploy
+$ bazel run //labm8:deploy -- --release_type=release
 ```
