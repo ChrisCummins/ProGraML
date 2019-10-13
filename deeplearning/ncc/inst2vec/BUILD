@@ -101,7 +101,7 @@ py_library(
 py_library(
     name = "inst2vec_preprocess",
     srcs = ["inst2vec_preprocess.py"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
