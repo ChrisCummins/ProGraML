@@ -37,3 +37,18 @@ Copyright 2015-2019 Chris Cummins <chrisc.101@gmail.com>.
 
 Released under the terms of the Apache 2.0 license. See
 `LICENSE` for details.
+
+
+## Deployment Instructions
+
+1. Export the source tree to the public [github repository](https://github.com/ChrisCummins/labm8):
+
+```sh
+$ bazel run //labm8:export
+```
+
+2. Deploy a new versioned release to [pypi](https://pypi.org/project/labm8/):
+
+```sh
+$ bazel run //labm8:deploy
+```
