@@ -5,11 +5,11 @@ py_library(
     srcs = ["api.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//deeplearning/ncc:vocabulary",
         ":inst2vec_preprocess",
-        "//third_party/py/numpy",
-        "//third_party/py/networkx",
+        "//deeplearning/ncc:vocabulary",
         "//labm8:app",
+        "//third_party/py/networkx",
+        "//third_party/py/numpy",
     ],
 )
 
