@@ -219,6 +219,7 @@ git_repository(
     name = "platformio_rules",
     commit = "de06a6ff52dd38288479852ec4b8157445065fd3",
     remote = "http://github.com/ChrisCummins/platformio_rules.git",
+    shallow_since = "1547446061 +0000",
 )
 
 # Intel TBB (pre-built binaries for mac and linux)
