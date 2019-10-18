@@ -28,10 +28,10 @@ py_library(
     srcs = ["graph_database_reader.py"],
     visibility = ["//visibility:public"],
     deps = [
+        ":graph_database",
         "//labm8:app",
         "//labm8:sqlutil",
         "//third_party/py/sqlalchemy",
-        ":graph_database",
     ],
 )
 
