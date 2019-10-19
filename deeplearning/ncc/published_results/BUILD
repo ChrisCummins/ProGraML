@@ -7,6 +7,11 @@ filegroup(
     srcs = ["emb.p"],
 )
 
+filegroup(
+    name = "dictionary",
+    srcs = ["dic_pickle"],
+)
+
 # Data for devmap task, downloaded from:
 # https://polybox.ethz.ch/index.php/s/U08Z3xLhvbLk8io/download
 filegroup(
