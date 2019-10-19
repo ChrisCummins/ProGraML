@@ -15,6 +15,10 @@ exports_repo(
         "docs/wip_graph/notebooks/run_notebook.sh",
     ],
     github_repo = "ml4pl",
+    move_file_mapping = {
+        "deeplearning/ml4pl/README.md": "README.md",
+        "deeplearning/ml4pl/travis.yml": ".travis.yml",
+    },
     targets = [
         "//deeplearning/ml4pl/...",
         "//docs/wip_graph/notebooks/...",
