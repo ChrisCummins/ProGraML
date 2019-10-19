@@ -5,9 +5,11 @@ py_library(
     srcs = ["graph_database.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//deeplearning/ml4pl/graphs/labelled/graph_dict",
         "//labm8:app",
         "//labm8:labdate",
         "//labm8:sqlutil",
+        "//third_party/py/networkx",
         "//third_party/py/sqlalchemy",
     ],
 )
