@@ -8,6 +8,7 @@
 
 * Ubuntu >= 16.04
 * Python >= 3.6
+* Bazel == 0.26.0
 * MySQL
 
 ### Installation
