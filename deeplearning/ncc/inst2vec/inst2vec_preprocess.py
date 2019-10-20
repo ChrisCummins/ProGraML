@@ -2330,24 +2330,20 @@ def BuildContextualFlowGraph(llvm_lines, functions_declared_in_file, filename):
   # Create a graph
   graph = nx.MultiDiGraph()
 
-  try:
-    # Dictionary of functions defined in the file
-    # keys: names of functions which are defined (not just declared) in this file
-    # values: pair: [shortened function name, its corresponding return statement]
-    functions_defined_in_file = construct_function_dictionary(llvm_lines)
+  # Dictionary of functions defined in the file
+  # keys: names of functions which are defined (not just declared) in this file
+  # values: pair: [shortened function name, its corresponding return statement]
+  functions_defined_in_file = construct_function_dictionary(llvm_lines)
 
-    # Add lines to graph
-    graph = add_stmts_to_graph(graph, llvm_lines, functions_defined_in_file,
-                               functions_declared_in_file)
+  # Add lines to graph
+  graph = add_stmts_to_graph(graph, llvm_lines, functions_defined_in_file,
+                             functions_declared_in_file)
 
-    # Make sure the vocabulary size in the graph representation matches the one in the text representation
-    check_vocabulary_size(llvm_lines, graph)
+  # Make sure the vocabulary size in the graph representation matches the one in the text representation
+  check_vocabulary_size(llvm_lines, graph)
 
-    # Make sure the graph was correctly constructed.
-    multi_edges, graph = CheckGraphOrDie(graph, filename)
-
-  except ValueError:
-    raise
+  # Make sure the graph was correctly constructed.
+  multi_edges, graph = CheckGraphOrDie(graph, filename)
 
   return graph, multi_edges
 
