@@ -2125,7 +2125,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file,
       # Default
       else:
         lines_not_added_to_graph.append(line)
-        assert False, "Could not recognize statement one line " + str(
+        assert False, "Could not recognize statement on line " + str(
             i) + ":\n" + line
 
   # Put things together
