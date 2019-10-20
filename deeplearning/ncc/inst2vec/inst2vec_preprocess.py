@@ -1180,13 +1180,14 @@ def add_edge(G, parent_prefix, parent_node, child_prefix, child_node, stmt,
 
   # Assert that the nodes have been added to the graph prior to this
   parent_node_ = parent_prefix + parent_node
-  assert parent_node_ in list(
-      G.nodes()), "Node not added to graph:\n" + parent_node_ + \
-                  '\nFound while trying to add edge:\n' + stmt
+  nodes = list(G.nodes())
+  if parent_node_ not in nodes:
+    raise ValueError("Node not added to graph:\n" + parent_node_ +
+                     '\nFound while trying to add edge:\n' + stmt)
   child_node_ = child_prefix + child_node
-  assert child_node_ in list(
-      G.nodes()), "Node not added to graph:\n" + child_node_ + \
-                  '\nFound while trying to add edge:\n' + stmt
+  if child_node_ not in nodes:
+    raise ValueError("Node not added to graph:\n" + child_node_ +
+                     '\nFound while trying to add edge:\n' + stmt)
 
   # Add edge
   G.add_edge(parent_node_, child_node_, stmt=stmt, flow=flow)
