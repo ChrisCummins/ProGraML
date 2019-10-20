@@ -24,17 +24,26 @@ Run unit tests:
 $ bazel test //deeplearning/ml4pl/...
 ```
 
+### Setup database
+
+Create a file with the username, password, and hostname of your MySQL server in the form:
+
+```sh
+$ cat /tmp/mysql.txt
+mysql://user:pass@hostname/
+```
+
 ### Create a bytecode database
 
 Download the 
 [POJ-104 IR dataset](https://polybox.ethz.ch/index.php/s/JOBjrfmAjOeWCyl/download) 
 from:
 
-Create a bytecode database:
+Create a database and import the bytecodes:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/bytecode/create:import_from_poj104 -- \
-    --db='file:///path/to/db.mysql?ml4pl_bytecode?charset=utf8' \
+    --db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
     --dataset=/path/to/root/of/dataset
 ```
 
@@ -46,8 +55,8 @@ Create the dataset:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/graphs/labelled/classifyapp:make_classifyapp_dataset -- \
-    --bytecode_db='file:///var/phd/db/cc1.mysql?ml4pl_bytecode?charset=utf8' \
-    --graph_db='file:///var/phd/db/cc1.mysql?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
+    --bytecode_db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
+    --graph_db='file:///tmp/mysql.txt?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
     --database_exporter_batch_size=5000 \
     --alsologtostderr
 ```
@@ -56,9 +65,8 @@ Train and evaluate a model:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/ggnn:ggnn_graph_classifier -- \
-    --graph_db='file:///var/phd/db/cc1.mysql?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
-    --working_dir='/var/phd/shared/ml4pl/models/classifyapp_xfg_poj104' \
-    --max_instance_count=0 \
+    --graph_db='file:///tmp/mysql.txt?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
+    --working_dir='/var/ml4pl/models/classifyapp_xfg_poj104' \
     --layer_timesteps=2,2,2 \
     --alsologtostderr
 ```
@@ -66,7 +74,7 @@ $ bazel run //deeplearning/ml4pl/models/ggnn:ggnn_graph_classifier -- \
 View logs
 
 ```sh
-$ tensorboard --logdir /var/phd/shared/ml4pl/models/classifyapp_xfg_poj104/tensorboard
+$ tensorboard --logdir /var/ml4pl/models/classifyapp_xfg_poj104/tensorboard
 ```
 
 ### Reachability
@@ -75,25 +83,27 @@ Create the dataset:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/graphs/labelled/reachability:make_reachability_dataset -- \
-    --bytecode_db='file:///var/phd/db/cc1.mysql?ml4pl_bytecode?charset=utf8' \
-    --graph_db='file:///var/phd/db/cc1.mysql?ml4pl_reachability_poj104?charset=utf8' \
+    --bytecode_db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
+    --graph_db='file:///tmp/mysql.txt?ml4pl_reachability_poj104?charset=utf8' \
     --bytecode_split_type='poj104' \
+    --reachability_dataset_max_instances_per_graph=3 \
     --alsologtostderr
 ```
 
-Train a model on <= 10 step graphs:
+Train a model on graphs requiring <= 15 time steps:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/ggnn:ggnn_node_classifier -- \
-    --graph_db='file:///var/phd/db/cc1.mysql?ml4pl_reachability_cfg_poj104?charset=utf8' \
-    --working_dir='/var/phd/shared/ml4pl/models/reachability_poj104/m10' \
+    --graph_db='file:///tmp/mysql.txt?ml4pl_reachability_cfg_poj104?charset=utf8' \
+    --working_dir='/var/ml4pl/models/reachability_poj104' \
     --max_instance_count=10000 \
-    --max_steps=10 \
+    --layer_timesteps=15 \
+    --limit_data_flow_max_steps_required_to_message_passing_steps \
     --alsologtostderr
 ```
 
 View logs:
 
 ```sh
-$ tensorboard --logdir /var/phd/shared/ml4pl/models/reachability_poj104/m10/tensorboard
+$ tensorboard --logdir /var/ml4pl/models/reachability_poj104/tensorboard
 ```
