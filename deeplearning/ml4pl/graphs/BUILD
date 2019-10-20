@@ -55,9 +55,10 @@ py_library(
     deps = [
         ":graph_database",
         "//labm8:app",
-        "//labm8:humanize",
         "//labm8:decorators",
+        "//labm8:humanize",
         "//labm8:prof",
+        "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
     ],
 )
@@ -70,6 +71,7 @@ py_test(
         ":graph_database_stats",
         "//labm8:app",
         "//labm8:test",
+        "//third_party/py/numpy",
     ],
 )
 
