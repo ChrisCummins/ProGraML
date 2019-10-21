@@ -24,6 +24,7 @@ py_binary(
         "//labm8:labdate",
         "//labm8:labtypes",
         "//labm8:logutil",
+        "//labm8:jsonutil",
         "//labm8:pbutil",
         "//labm8:pdutil",
         "//labm8:prof",
