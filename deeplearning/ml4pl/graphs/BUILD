@@ -118,3 +118,14 @@ py_test(
         "//third_party/py/networkx",
     ],
 )
+
+py_library(
+    name = "graph_viz",
+    srcs = ["graph_viz.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/py/networkx",
+        "//labm8:app",
+        ":graph_iterators",
+    ]
+)
