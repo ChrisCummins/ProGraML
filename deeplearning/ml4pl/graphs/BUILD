@@ -124,8 +124,10 @@ py_library(
     srcs = ["graph_viz.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/networkx",
         "//labm8:app",
+        "//labm8:labtypes",
+        "//labm8:fs",
         ":graph_iterators",
+        "//third_party/py/networkx",
     ]
 )
