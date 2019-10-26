@@ -32,7 +32,8 @@ py_library(
     deps = [
         ":graph_database",
         "//labm8:app",
-        "//labm8:sqlutil",
+        "//labm8:humanize",
+        "//labm8:prof",
         "//third_party/py/sqlalchemy",
     ],
 )
