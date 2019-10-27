@@ -10,6 +10,7 @@ py_library(
         "//labm8:app",
         "//labm8:humanize",
         "//labm8:labtypes",
+        "//labm8:ppar",
         "//labm8:sqlutil",
     ],
 )
