@@ -104,6 +104,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_iterators",
+        "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:app",
         "//third_party/py/networkx",
     ],
