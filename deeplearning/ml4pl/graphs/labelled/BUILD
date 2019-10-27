@@ -11,6 +11,7 @@ py_library(
         "//labm8:humanize",
         "//labm8:labtypes",
         "//labm8:ppar",
+        "//labm8:prof",
         "//labm8:sqlutil",
     ],
 )
