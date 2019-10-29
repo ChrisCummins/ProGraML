@@ -19,7 +19,7 @@ py_library(
 py_binary(
     name = "make_data_flow_analysis_dataset",
     srcs = ["make_data_flow_analysis_dataset.py"],
-    visibility = ["//deeplearning/ml4pl/graphs/labelled:__subpackages__"],
+    visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
         ":database_exporters",
         "//deeplearning/ml4pl:ml4pl_pb_py",
