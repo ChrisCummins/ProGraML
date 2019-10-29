@@ -21,10 +21,10 @@ py_binary(
     deps = [
         "//labm8:app",
         "//labm8:bazelutil",
+        "//labm8:jsonutil",
         "//labm8:labdate",
         "//labm8:labtypes",
         "//labm8:logutil",
-        "//labm8:jsonutil",
         "//labm8:pbutil",
         "//labm8:pdutil",
         "//labm8:prof",
