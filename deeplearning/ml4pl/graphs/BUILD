@@ -10,6 +10,7 @@ py_library(
         "//labm8:labdate",
         "//labm8:sqlutil",
         "//third_party/py/networkx",
+        "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
     ],
 )
