@@ -28,7 +28,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs:graph_database",
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
-        "//deeplearning/ml4pl/graphs/labelled/graph_dict",
+        "//deeplearning/ml4pl/graphs/labelled/graph_tuple",
         "//deeplearning/ml4pl/graphs/labelled/liveness",
         "//deeplearning/ml4pl/graphs/labelled/reachability",
         "//deeplearning/ml4pl/graphs/unlabelled/cdfg:control_and_data_flow_graph",
