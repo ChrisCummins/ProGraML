@@ -1,6 +1,34 @@
 # Databases of graphs.
 
 py_library(
+    name = "database_exporters",
+    srcs = ["database_exporters.py"],
+    visibility = ["//deeplearning/ml4pl:__subpackages__"],
+    deps = [
+        ":graph_database",
+        "//deeplearning/ml4pl/bytecode:bytecode_database",
+        "//labm8:app",
+        "//labm8:humanize",
+        "//labm8:labtypes",
+        "//labm8:ppar",
+        "//labm8:prof",
+        "//labm8:sqlutil",
+    ],
+)
+
+py_test(
+    name = "database_exporters_test",
+    srcs = ["database_exporters_test.py"],
+    deps = [
+        ":database_exporters",
+        "//labm8:app",
+        "//labm8:sqlutil",
+        "//labm8:test",
+        "//third_party/py/networkx",
+    ],
+)
+
+py_library(
     name = "graph_database",
     srcs = ["graph_database.py"],
     data = ["//deeplearning/ml4pl/graphs/unlabelled/cdfg/node_embeddings:embeddings"],
