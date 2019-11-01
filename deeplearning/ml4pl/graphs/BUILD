@@ -3,12 +3,14 @@
 py_library(
     name = "graph_database",
     srcs = ["graph_database.py"],
+    data = ["//deeplearning/ml4pl/graphs/unlabelled/cdfg/node_embeddings:embeddings"],
     visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ml4pl/graphs:graph_query",
         "//deeplearning/ml4pl/graphs/labelled/graph_tuple",
         "//labm8:app",
         "//labm8:bazelutil",
+        "//labm8:decorators",
         "//labm8:labdate",
         "//labm8:sqlutil",
         "//third_party/py/networkx",
