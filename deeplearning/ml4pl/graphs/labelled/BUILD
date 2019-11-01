@@ -5,10 +5,10 @@ py_binary(
     srcs = ["make_data_flow_analysis_dataset.py"],
     visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
-        ":database_exporters",
         "//deeplearning/ml4pl:ml4pl_pb_py",
         "//deeplearning/ml4pl/bytecode:bytecode_database",
         "//deeplearning/ml4pl/bytecode:splitters",
+        "//deeplearning/ml4pl/graphs:database_exporters",
         "//deeplearning/ml4pl/graphs:graph_database",
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
