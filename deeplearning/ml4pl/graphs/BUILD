@@ -8,6 +8,7 @@ py_library(
         "//deeplearning/ml4pl/graphs:graph_query",
         "//deeplearning/ml4pl/graphs/labelled/graph_tuple",
         "//labm8:app",
+        "//labm8:bazelutil",
         "//labm8:labdate",
         "//labm8:sqlutil",
         "//third_party/py/networkx",
@@ -54,6 +55,9 @@ py_test(
 py_library(
     name = "graph_database_stats",
     srcs = ["graph_database_stats.py"],
+    data = [
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg/node_embeddings:embeddings",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         ":graph_database",
