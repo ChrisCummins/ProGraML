@@ -34,7 +34,7 @@ python_proto_library(
 py_library(
     name = "rgx_utils",
     srcs = ["rgx_utils.py"],
-    visibility = ["//deeplearning/ncc:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 py_library(

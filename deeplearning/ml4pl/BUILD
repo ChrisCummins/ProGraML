@@ -21,6 +21,8 @@ exports_repo(
     },
     targets = [
         "//deeplearning/ml4pl/...",
+        "//deeplearning/clgen/corpuses/lexer/...",
+        "//deeplearning/clgen/proto/...",
         "//docs/wip_graph/notebooks/...",
     ],
 )
