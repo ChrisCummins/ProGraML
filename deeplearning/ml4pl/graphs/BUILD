@@ -1,5 +1,16 @@
 # Databases of graphs.
 
+py_binary(
+    name = "copy_database",
+    srcs = ["copy_database.py"],
+    deps = [
+        ":graph_database",
+        "//labm8:app",
+        "//labm8:humanize",
+        "//labm8:prof",
+    ],
+)
+
 py_library(
     name = "database_exporters",
     srcs = ["database_exporters.py"],
