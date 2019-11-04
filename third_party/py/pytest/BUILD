@@ -14,5 +14,6 @@ py_library(
         requirement("pytest-benchmark"),
         requirement("pytest-cov"),
         requirement("pytest-mock"),
+        requirement("flaky"),
     ],
 )
