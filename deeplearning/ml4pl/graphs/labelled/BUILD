@@ -11,6 +11,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
         "//deeplearning/ml4pl/graphs/labelled/liveness",
         "//deeplearning/ml4pl/graphs/labelled/reachability",
+        "//deeplearning/ml4pl/graphs/labelled/subexpressions",
         "//labm8:app",
         "//third_party/py/numpy",
     ],
