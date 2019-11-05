@@ -93,7 +93,7 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled/reachability:make_reachability_
 Train a model on graphs requiring <= 15 time steps:
 
 ```sh
-$ bazel run //deeplearning/ml4pl/models/ggnn:ggnn_node_classifier -- \
+$ bazel run //deeplearning/ml4pl/models/ggnn:ggnn -- \
     --graph_db='file:///tmp/mysql.txt?ml4pl_reachability_cfg_poj104?charset=utf8' \
     --working_dir='/var/ml4pl/models/reachability_poj104' \
     --max_instance_count=10000 \
