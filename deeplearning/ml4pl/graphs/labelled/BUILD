@@ -9,6 +9,7 @@ py_binary(
     deps = [
         "//deeplearning/ml4pl/graphs:database_exporters",
         "//deeplearning/ml4pl/graphs:graph_database",
+        "//deeplearning/ml4pl/graphs/labelled/alias_set",
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
         "//deeplearning/ml4pl/graphs/labelled/liveness",
