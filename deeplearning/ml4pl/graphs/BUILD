@@ -18,12 +18,14 @@ py_library(
     deps = [
         ":graph_database",
         "//deeplearning/ml4pl/bytecode:bytecode_database",
+        "//deeplearning/ml4pl/bytecode:splitters",
         "//labm8:app",
         "//labm8:fs",
         "//labm8:humanize",
         "//labm8:labtypes",
         "//labm8:prof",
         "//labm8:sqlutil",
+        "//labm8:system",
     ],
 )
 
