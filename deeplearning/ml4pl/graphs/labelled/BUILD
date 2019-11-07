@@ -27,3 +27,12 @@ py3_image(
     main = "make_data_flow_analysis_dataset.py",
     deps = [":make_data_flow_analysis_dataset"],
 )
+
+py_test(
+    name = "make_data_flow_analysis_dataset_test",
+    srcs = ["make_data_flow_analysis_dataset_test.py"],
+    deps = [
+        ":make_data_flow_analysis_dataset",
+        "//labm8:test",
+    ],
+)
