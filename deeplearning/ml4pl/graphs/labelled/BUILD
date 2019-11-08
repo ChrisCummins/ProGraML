@@ -16,7 +16,9 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled/reachability",
         "//deeplearning/ml4pl/graphs/labelled/subexpressions",
         "//labm8:app",
+        "//third_party/py/networkx",
         "//third_party/py/numpy",
+        "//third_party/py/sqlalchemy",
     ],
 )
 
