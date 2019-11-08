@@ -52,6 +52,7 @@ py_library(
         "//labm8:app",
         "//labm8:bazelutil",
         "//labm8:decorators",
+        "//labm8:humanize",
         "//labm8:labdate",
         "//labm8:sqlutil",
         "//third_party/py/networkx",
