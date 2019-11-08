@@ -13,6 +13,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
         "//deeplearning/ml4pl/graphs/labelled/liveness",
+        "//deeplearning/ml4pl/graphs/labelled/polyhedra",
         "//deeplearning/ml4pl/graphs/labelled/reachability",
         "//deeplearning/ml4pl/graphs/labelled/subexpressions",
         "//labm8:app",
