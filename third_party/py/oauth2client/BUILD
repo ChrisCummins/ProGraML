@@ -11,5 +11,9 @@ py_library(
     srcs = ["oauth2client.py"],
     deps = [
         requirement("oauth2client"),
+        requirement("httplib2"),
+        requirement("rsa"),
+        requirement("pyasn1"),
+        requirement("pyasn1_modules"),
     ],
 )

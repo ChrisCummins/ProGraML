@@ -11,5 +11,6 @@ py_library(
     srcs = ["gspread.py"],
     deps = [
         requirement("gspread"),
+        requirement("gspread-dataframe"),
     ],
 )
