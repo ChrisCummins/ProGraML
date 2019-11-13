@@ -173,11 +173,13 @@ py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
     visibility = ["//visibility:public"],
+    data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":inst2vec_pb_py",
         ":rgx_utils",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8:app",
+        "//labm8:bazelutil",
         "//labm8:decorators",
     ],
 )

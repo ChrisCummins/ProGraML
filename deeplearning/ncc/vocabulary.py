@@ -12,9 +12,14 @@ from deeplearning.ncc import inst2vec_pb2
 from deeplearning.ncc import rgx_utils
 from deeplearning.ncc.inst2vec import inst2vec_preprocess as i2v_prep
 from labm8 import app
+from labm8 import bazelutil
 from labm8 import decorators
 
+
 FLAGS = app.FLAGS
+
+PUBLISHED_VOCABULARY = bazelutil.DataPath(
+    'phd/deeplearning/ncc/published_results/vocabulary.zip')
 
 
 class VocabularyZipFile(object):
@@ -31,6 +36,11 @@ class VocabularyZipFile(object):
     self._compressed_path = pathlib.Path(compressed_path)
     if not self._compressed_path.is_file():
       raise FileNotFoundError(f'File not found: {self._compressed_path}')
+
+  @classmethod
+  def CreateFromPublishedResults(cls) -> 'VocabularyZipFile':
+    """Construct from the NeurIPS'18 published vocabulary."""
+    return VocabularyZipFile(PUBLISHED_VOCABULARY)
 
   # Public properties.
 
