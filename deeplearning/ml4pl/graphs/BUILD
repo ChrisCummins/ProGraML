@@ -87,12 +87,14 @@ py_library(
 
 py_test(
     name = "graph_database_reader_test",
+    timeout = "long",
     srcs = ["graph_database_reader_test.py"],
     deps = [
         ":graph_database",
         ":graph_database_reader",
         "//labm8:app",
         "//labm8:test",
+        "//third_party/py/numpy",
     ],
 )
 
