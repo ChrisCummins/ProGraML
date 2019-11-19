@@ -8,7 +8,7 @@ licenses(["notice"])  # MIT
 
 py_library(
     name = "gspread",
-    srcs = ["gspread.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("gspread"),
         requirement("gspread-dataframe"),

@@ -8,7 +8,7 @@ licenses(["notice"])  # Apache
 
 py_library(
     name = "sonnet",
-    srcs = ["sonnet.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("dm-sonnet"),
         "//third_party/py/tensorflow",

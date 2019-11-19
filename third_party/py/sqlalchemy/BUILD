@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "sqlalchemy",
-    srcs = ["sqlalchemy.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("sqlalchemy"),
         # Implicit dependency when connecting to MySQL databases.

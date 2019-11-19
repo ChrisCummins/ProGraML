@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "seaborn",
-    srcs = ["seaborn.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("seaborn"),
         "//third_party/py/matplotlib",

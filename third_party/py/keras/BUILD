@@ -8,7 +8,7 @@ licenses(["notice"])  # MIT
 
 py_library(
     name = "keras",
-    srcs = ["keras.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("keras"),
         "//third_party/py/tensorflow",

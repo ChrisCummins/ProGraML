@@ -8,7 +8,7 @@ licenses(["notice"])  # Apache v2
 
 py_library(
     name = "oauth2client",
-    srcs = ["oauth2client.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("oauth2client"),
         requirement("httplib2"),

@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "pytz",
-    srcs = ["pytz.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("pytz"),
     ],

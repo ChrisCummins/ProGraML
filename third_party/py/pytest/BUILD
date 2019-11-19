@@ -8,9 +8,10 @@ licenses(["notice"])  # MIT
 
 py_library(
     name = "pytest",
-    srcs = ["pytest.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("pytest"),
+        # Pytest plugins:
         requirement("pytest-benchmark"),
         requirement("pytest-cov"),
         requirement("pytest-mock"),

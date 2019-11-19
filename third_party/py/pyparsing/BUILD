@@ -8,7 +8,7 @@ licenses(["notice"])  # MIT
 
 py_library(
     name = "pyparsing",
-    srcs = ["pyparsing.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("pyparsing"),
     ],

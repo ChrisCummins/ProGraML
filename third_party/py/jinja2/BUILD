@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "jinja2",
-    srcs = ["jinja2.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("jinja2"),
     ],

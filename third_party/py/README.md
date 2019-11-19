@@ -1,10 +1,10 @@
 # Third party Python packages
 
-This directory contains "mock" packages for pulling in python `requirements`. We
+This directory contains mock packages for pulling in python `requirements`. We
 do this to allow for packages which contain undocumented dependencies which must
 be added (see `//third_party/py/progressbar` for an example), or to allow us to
 group multiple packages under a single bazel target (see
-`//third_party/py/pytest`).
+`//third_party/py/pytest` for an example).
 
 ## To add a package
 

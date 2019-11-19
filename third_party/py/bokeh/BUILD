@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "bokeh",
-    srcs = ["bokeh.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("bokeh"),
         requirement("pandas-bokeh"),

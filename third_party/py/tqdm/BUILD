@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "tqdm",
-    srcs = ["tqdm.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("tqdm"),
     ],

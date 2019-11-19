@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "networkx",
-    srcs = ["networkx.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("networkx"),
         requirement("decorator"),  # Implicit dependency.

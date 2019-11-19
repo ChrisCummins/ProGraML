@@ -8,7 +8,7 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "numpy",
-    srcs = ["numpy.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("numpy"),
     ],
