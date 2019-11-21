@@ -11,5 +11,6 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("scikit-learn"),
+        "//third_party/py/scipy",
     ],
 )
