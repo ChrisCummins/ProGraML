@@ -1,13 +1,16 @@
-# Docker image for phd
+# Docker images
 
-Build using:
+This package contains docker images for to be by bazel for creating dockerized 
+builds, for example:
 
-```sh
-docker build -t phd --squash .
 ```
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
-Run using:
-
-```sh
-$ docker run -it phd /bin/zsh
+py3_image(
+    name = "foo_image",
+    srcs = ["foo.py"],
+    base = "@base//image",
+    main = "foo.py",
+    deps = [":foo"],
+)
 ```
