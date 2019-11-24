@@ -37,3 +37,8 @@ python_proto_library(
     visibility = ["//visibility:public"],
     deps = [":ml4pl_pb"],
 )
+
+proto_library(
+    name = "programl_pb",
+    srcs = ["programl.proto"],
+)
