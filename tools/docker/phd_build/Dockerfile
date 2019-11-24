@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl unzip default-libmysqlclient-dev g++ zlib1g-dev ocl-icd-opencl-dev python \
   apt-transport-https ca-certificates gnupg-agent \
-  software-properties-common texlive-full rsync \
+  software-properties-common texlive-full rsync patch \
   && rm -rf /var/lib/apt/lists/*
 
 # Install docker (needed to build docker images).
