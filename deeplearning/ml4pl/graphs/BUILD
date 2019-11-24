@@ -1,5 +1,17 @@
 # Databases of graphs.
 
+py_library(
+    name = "conftest",
+    testonly = 1,
+    srcs = ["conftest.py"],
+    deps = [
+        ":graph_database",
+        "//labm8:test",
+        "//third_party/py/numpy",
+        "//third_party/py/pytest",
+    ],
+)
+
 py_binary(
     name = "copy_database",
     srcs = ["copy_database.py"],
@@ -90,11 +102,23 @@ py_test(
     timeout = "long",
     srcs = ["graph_database_reader_test.py"],
     deps = [
+        ":conftest",
         ":graph_database",
         ":graph_database_reader",
-        "//labm8:app",
         "//labm8:test",
         "//third_party/py/numpy",
+    ],
+)
+
+py_test(
+    name = "graph_database_reader_benchmark_test",
+    timeout = "long",
+    srcs = ["graph_database_reader_benchmark_test.py"],
+    deps = [
+        ":conftest",
+        ":graph_database",
+        ":graph_database_reader",
+        "//labm8:test",
     ],
 )
 
