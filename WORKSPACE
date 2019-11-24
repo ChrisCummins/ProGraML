@@ -217,9 +217,9 @@ http_archive(
 
 git_repository(
     name = "platformio_rules",
-    commit = "de06a6ff52dd38288479852ec4b8157445065fd3",
-    remote = "http://github.com/ChrisCummins/platformio_rules.git",
-    shallow_since = "1547446061 +0000",
+    commit = "621c69fa0a890302e869d83c89fd31133e8c0e21",
+    remote = "https://github.com/mum4k/platformio_rules.git",
+    shallow_since = "1571659731 -0400",
 )
 
 # Intel TBB (pre-built binaries for mac and linux)
