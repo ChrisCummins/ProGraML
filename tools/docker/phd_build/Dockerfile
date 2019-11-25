@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
     && rm -rf /var/lib/apt/lists/*
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io \
+    && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io=1.2.2-3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install golang.
