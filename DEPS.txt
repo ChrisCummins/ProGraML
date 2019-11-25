@@ -58,5 +58,7 @@ linux: sudo apt install -y --no-install-recommends timidity
 linux: sudo apt install -y --no-install-recommends libwildmidi-dev
 linux: sudo apt install -y --no-install-recommends libboost-all-dev
 linux: sudo apt install -y --no-install-recommends libsdl2-dev
-# Required by bazel workspace rules:
+linux: # Required by bazel workspace rules:
 linux: sudo apt install -y --no-install-recommends patch
+# Required for building pyopencl:
+all: python -m pip install 'pybind11==2.4.3'
