@@ -52,7 +52,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bazel.
-ENV BAZEL_VERSION 1.20.0
+ENV BAZEL_VERSION 1.2.0
 RUN curl -L -o /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
     bash /tmp/bazel.sh && rm /tmp/bazel.sh
 
