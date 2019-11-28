@@ -1,5 +1,4 @@
 """Support for unzipping vocabulary files at runtime."""
-
 import pathlib
 import pickle
 import re
@@ -11,10 +10,9 @@ import zipfile
 from deeplearning.ncc import inst2vec_pb2
 from deeplearning.ncc import rgx_utils
 from deeplearning.ncc.inst2vec import inst2vec_preprocess as i2v_prep
-from labm8 import app
-from labm8 import bazelutil
-from labm8 import decorators
-
+from labm8.py import app
+from labm8.py import bazelutil
+from labm8.py import decorators
 
 FLAGS = app.FLAGS
 

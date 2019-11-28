@@ -16,7 +16,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled/polyhedra",
         "//deeplearning/ml4pl/graphs/labelled/reachability",
         "//deeplearning/ml4pl/graphs/labelled/subexpressions",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
@@ -36,6 +36,6 @@ py_test(
     srcs = ["make_data_flow_analysis_dataset_test.py"],
     deps = [
         ":make_data_flow_analysis_dataset",
-        "//labm8:test",
+        "//labm8/py:test",
     ],
 )

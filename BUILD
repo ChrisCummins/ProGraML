@@ -29,7 +29,7 @@ py_library(
         "//:build_info_pbtxt_py",
         "//:config_pb_py",
         "//:version_py",
-        "//labm8:pbutil",
+        "//labm8/py:pbutil",
     ],
 )
 
@@ -38,7 +38,7 @@ py_test(
     srcs = ["build_info_test.py"],
     deps = [
         ":build_info",
-        "//labm8:test",
+        "//labm8/py:test",
     ],
 )
 
@@ -98,7 +98,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//:build_info",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/pytest",
     ],
 )
@@ -108,9 +108,9 @@ py_test(
     srcs = ["configure_test.py"],
     data = [":configure_py"],
     deps = [
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:test",
     ],
 )
 
@@ -121,7 +121,7 @@ py_library(
     deps = [
         "//:config_pb_py",
         "//:config_pbtxt_py",
-        "//labm8:pbutil",
+        "//labm8/py:pbutil",
     ],
 )
 
@@ -130,8 +130,8 @@ py_test(
     srcs = ["getconfig_test.py"],
     deps = [
         ":getconfig",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
     ],
 )
 

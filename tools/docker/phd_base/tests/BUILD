@@ -4,7 +4,7 @@ py_test(
     name = "basic_app_test",
     srcs = ["basic_app_test.py"],
     deps = [
-        "//labm8:app",
+        "//labm8/py:app",
     ],
 )
 
@@ -29,7 +29,7 @@ py_test(
     name = "mysql_test",
     srcs = ["mysql_test.py"],
     deps = [
-        "//labm8:test",
+        "//labm8/py:test",
         "//third_party/py/mysql",
     ],
 )

@@ -6,7 +6,7 @@ py_library(
     srcs = ["conftest.py"],
     deps = [
         ":graph_database",
-        "//labm8:test",
+        "//labm8/py:test",
         "//third_party/py/numpy",
         "//third_party/py/pytest",
     ],
@@ -17,9 +17,9 @@ py_binary(
     srcs = ["copy_database.py"],
     deps = [
         ":graph_database",
-        "//labm8:app",
-        "//labm8:humanize",
-        "//labm8:prof",
+        "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:prof",
     ],
 )
 
@@ -31,13 +31,13 @@ py_library(
         ":graph_database",
         "//deeplearning/ml4pl/bytecode:bytecode_database",
         "//deeplearning/ml4pl/bytecode:splitters",
-        "//labm8:app",
-        "//labm8:fs",
-        "//labm8:humanize",
-        "//labm8:labtypes",
-        "//labm8:prof",
-        "//labm8:sqlutil",
-        "//labm8:system",
+        "//labm8/py:app",
+        "//labm8/py:fs",
+        "//labm8/py:humanize",
+        "//labm8/py:labtypes",
+        "//labm8/py:prof",
+        "//labm8/py:sqlutil",
+        "//labm8/py:system",
     ],
 )
 
@@ -46,9 +46,9 @@ py_test(
     srcs = ["database_exporters_test.py"],
     deps = [
         ":database_exporters",
-        "//labm8:app",
-        "//labm8:sqlutil",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:sqlutil",
+        "//labm8/py:test",
         "//third_party/py/networkx",
     ],
 )
@@ -61,12 +61,12 @@ py_library(
     deps = [
         "//deeplearning/ml4pl/graphs:graph_query",
         "//deeplearning/ml4pl/graphs/labelled/graph_tuple",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:decorators",
-        "//labm8:humanize",
-        "//labm8:labdate",
-        "//labm8:sqlutil",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:decorators",
+        "//labm8/py:humanize",
+        "//labm8/py:labdate",
+        "//labm8/py:sqlutil",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
@@ -78,8 +78,8 @@ py_test(
     srcs = ["graph_database_test.py"],
     deps = [
         ":graph_database",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
         "//third_party/py/networkx",
     ],
 )
@@ -90,9 +90,9 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_database",
-        "//labm8:app",
-        "//labm8:humanize",
-        "//labm8:prof",
+        "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:prof",
         "//third_party/py/sqlalchemy",
     ],
 )
@@ -105,7 +105,7 @@ py_test(
         ":conftest",
         ":graph_database",
         ":graph_database_reader",
-        "//labm8:test",
+        "//labm8/py:test",
         "//third_party/py/numpy",
     ],
 )
@@ -118,7 +118,7 @@ py_test(
         ":conftest",
         ":graph_database",
         ":graph_database_reader",
-        "//labm8:test",
+        "//labm8/py:test",
     ],
 )
 
@@ -131,10 +131,10 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_database",
-        "//labm8:app",
-        "//labm8:decorators",
-        "//labm8:humanize",
-        "//labm8:prof",
+        "//labm8/py:app",
+        "//labm8/py:decorators",
+        "//labm8/py:humanize",
+        "//labm8/py:prof",
         "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
     ],
@@ -146,8 +146,8 @@ py_test(
     deps = [
         ":graph_database",
         ":graph_database_stats",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
         "//third_party/py/numpy",
     ],
 )
@@ -157,7 +157,7 @@ py_library(
     srcs = ["graph_iterators.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/networkx",
     ],
 )
@@ -168,8 +168,8 @@ py_test(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_iterators",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
         "//third_party/py/networkx",
     ],
 )
@@ -181,7 +181,7 @@ py_library(
     deps = [
         ":graph_iterators",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/networkx",
     ],
 )
@@ -192,8 +192,8 @@ py_test(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_query",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
         "//third_party/py/networkx",
     ],
 )
@@ -204,9 +204,9 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_iterators",
-        "//labm8:app",
-        "//labm8:fs",
-        "//labm8:labtypes",
+        "//labm8/py:app",
+        "//labm8/py:fs",
+        "//labm8/py:labtypes",
         "//third_party/py/networkx",
     ],
 )

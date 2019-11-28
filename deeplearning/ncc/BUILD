@@ -46,8 +46,8 @@ py_library(
         ":inst2vec_pb_py",
         ":rgx_utils",
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:bazelutil",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
         "//third_party/py/numpy",
         "//third_party/py/wget",
     ],
@@ -60,9 +60,9 @@ py_test(
     deps = [
         ":task_utils",
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:test",
     ],
 )
 
@@ -76,7 +76,7 @@ py_binary(
         "//deeplearning/ncc/inst2vec:inst2vec_evaluate",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//deeplearning/ncc/inst2vec:inst2vec_vocabulary",
-        "//labm8:app",
+        "//labm8/py:app",
     ],
 )
 
@@ -95,8 +95,8 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:fs",
+        "//labm8/py:app",
+        "//labm8/py:fs",
         "//third_party/py/keras",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
@@ -124,9 +124,9 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:fs",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:fs",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
     ],
@@ -150,8 +150,8 @@ py_binary(
     deps = [
         ":task_utils",
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:fs",
+        "//labm8/py:app",
+        "//labm8/py:fs",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
         "//third_party/py/scikit_learn",
@@ -172,15 +172,15 @@ py_binary(
 py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
-    visibility = ["//visibility:public"],
     data = ["//deeplearning/ncc/published_results:vocabulary"],
+    visibility = ["//visibility:public"],
     deps = [
         ":inst2vec_pb_py",
         ":rgx_utils",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:decorators",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:decorators",
     ],
 )
 
@@ -190,8 +190,8 @@ py_test(
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":vocabulary",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:test",
     ],
 )

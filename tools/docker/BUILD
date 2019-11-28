@@ -12,7 +12,7 @@ py_binary(
     srcs = ["publish.py"],
     data = ["//tools/docker/phd_build:phd_build.tar"],
     deps = [
-        "//labm8:app",
-        "//labm8:dockerutil",
+        "//labm8/py:app",
+        "//labm8/py:dockerutil",
     ],
 )

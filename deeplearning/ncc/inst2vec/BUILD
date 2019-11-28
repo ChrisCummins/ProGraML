@@ -8,8 +8,8 @@ py_library(
     deps = [
         ":inst2vec_preprocess",
         "//deeplearning/ncc:vocabulary",
-        "//labm8:app",
-        "//labm8:bazelutil",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
     ],
@@ -21,9 +21,9 @@ py_test(
     data = ["//deeplearning/ncc/published_results:vocabulary"],
     deps = [
         ":api",
-        "//labm8:app",
-        "//labm8:bazelutil",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:bazelutil",
+        "//labm8/py:test",
     ],
 )
 
@@ -43,7 +43,7 @@ py_library(
     srcs = ["inst2vec_appflags.py"],
     visibility = ["//deeplearning/ncc:__subpackages__"],
     deps = [
-        "//labm8:app",
+        "//labm8/py:app",
     ],
 )
 
@@ -62,8 +62,8 @@ py_test(
     srcs = ["inst2vec_datagen_test.py"],
     deps = [
         ":inst2vec_datagen",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
     ],
 )
 
@@ -75,7 +75,7 @@ py_library(
     deps = [
         ":inst2vec_evaluate",
         ":inst2vec_utils",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/numpy",
         "//third_party/py/tensorflow",
     ],
@@ -90,7 +90,7 @@ py_library(
         ":inst2vec_analogygen",
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/bokeh",
         "//third_party/py/numpy",
         "//third_party/py/scikit_learn",
@@ -116,8 +116,8 @@ py_test(
     srcs = ["inst2vec_preprocess_test.py"],
     deps = [
         ":inst2vec_preprocess",
-        "//labm8:app",
-        "//labm8:test",
+        "//labm8/py:app",
+        "//labm8/py:test",
     ],
 )
 
@@ -135,7 +135,7 @@ py_library(
     deps = [
         ":inst2vec_utils",
         "//deeplearning/ncc:rgx_utils",
-        "//labm8:app",
+        "//labm8/py:app",
         "//third_party/py/networkx",
         "//third_party/py/scipy",
     ],

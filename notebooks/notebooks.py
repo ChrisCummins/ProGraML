@@ -8,7 +8,7 @@ import typing
 
 from notebook import notebookapp
 
-from labm8 import app
+from labm8.py import app
 
 FLAGS = app.FLAGS
 

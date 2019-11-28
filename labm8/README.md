@@ -46,11 +46,11 @@ Released under the terms of the Apache 2.0 license. See
 2. Export the source tree to the public [github repository](https://github.com/ChrisCummins/labm8):
 
 ```sh
-$ bazel run //labm8:export
+$ bazel run //labm8/py:export
 ```
 
 3. Deploy a new versioned release to [pypi](https://pypi.org/project/labm8/):
 
 ```sh
-$ bazel run //labm8:deploy -- --release_type=release
+$ bazel run //labm8/py:deploy -- --release_type=release
 ```
