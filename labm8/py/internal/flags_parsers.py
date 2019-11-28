@@ -8,10 +8,9 @@ from absl import flags as absl_flags
 class PathParser(absl_flags.ArgumentParser):
   """Parser of path values."""
 
-  def __init__(self,
-               must_exist: bool = True,
-               exist_ok: bool = True,
-               is_dir: bool = False):
+  def __init__(
+    self, must_exist: bool = True, exist_ok: bool = True, is_dir: bool = False
+  ):
     """Create a path values parser.
 
     Args:
@@ -29,23 +28,23 @@ class PathParser(absl_flags.ArgumentParser):
     val = self.convert(argument)
     if self.must_exist:
       if not val.exists():
-        raise ValueError('not found')
+        raise ValueError("not found")
       if self.is_dir and not val.is_dir():
-        raise ValueError('not a directory')
+        raise ValueError("not a directory")
       elif not self.is_dir and not val.is_file():
-        raise ValueError('not a file')
+        raise ValueError("not a file")
     elif not self.exist_ok and val.exists():
-      raise ValueError('already exists')
+      raise ValueError("already exists")
     return val
 
   def convert(self, argument: str) -> pathlib.Path:
     """Returns the value of this argument."""
     if not argument:
-      raise TypeError('Path flag must be set')
+      raise TypeError("Path flag must be set")
     return pathlib.Path(argument)
 
 
-class _Database():
+class _Database:
   """A parsed database. This is instantiated by DatabaseParser.convert() and
   used to provide a repr()-friendly method for instantiating databases.
 
@@ -63,7 +62,7 @@ class _Database():
       return self.database_class(url=self.url, must_exist=self.must_exist)
     except Exception as e:
       raise TypeError(
-          f"Failed to construct database {self.database_class}({self.url}): {e}"
+        f"Failed to construct database {self.database_class}({self.url}): {e}"
       )
 
   def __repr__(self):
@@ -87,12 +86,12 @@ class DatabaseParser(absl_flags.ArgumentParser):
     self.database_class = database_class
     self.must_exist = must_exist
 
-  def parse(self, argument) -> 'sqlutil.Database':
+  def parse(self, argument) -> "sqlutil.Database":
     """See base class."""
     return self.convert(argument)
 
-  def convert(self, argument: str) -> Callable[[], 'sqlutil.Database']:
+  def convert(self, argument: str) -> Callable[[], "sqlutil.Database"]:
     """Returns the value of this argument."""
     if not argument:
-      raise TypeError('Path flag must be set')
+      raise TypeError("Path flag must be set")
     return _Database(self.database_class, argument, self.must_exist)

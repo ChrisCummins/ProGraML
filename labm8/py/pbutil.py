@@ -32,16 +32,19 @@ Enum = int
 
 class ProtoValueError(ValueError):
   """Raised in case of a value error from a proto."""
+
   pass
 
 
 class EncodeError(ProtoValueError):
   """Raised in case of error encoding a proto."""
+
   pass
 
 
 class DecodeError(ProtoValueError):
   """Raised in case of error decoding a proto."""
+
   pass
 
 
@@ -49,10 +52,7 @@ class ProtoWorkerTimeoutError(subprocess.CalledProcessError):
   """Raised is a protobuf worker binary times out."""
 
   def __init__(
-      self,
-      cmd: typing.List[str],
-      timeout_seconds: int,
-      returncode: int,
+    self, cmd: typing.List[str], timeout_seconds: int, returncode: int,
   ):
     self.cmd = cmd
     self.timeout_seconds = timeout_seconds
@@ -60,14 +60,14 @@ class ProtoWorkerTimeoutError(subprocess.CalledProcessError):
     self.returncode = returncode
 
   def __repr__(self) -> str:
-    return (f'Proto worker timeout after {self.timeout_seconds} '
-            f"seconds: {' '.join(self.cmd)}")
+    return (
+      f"Proto worker timeout after {self.timeout_seconds} "
+      f"seconds: {' '.join(self.cmd)}"
+    )
 
 
 def FromString(
-    string: str,
-    message: ProtocolBuffer,
-    uninitialized_okay: bool = False,
+  string: str, message: ProtocolBuffer, uninitialized_okay: bool = False,
 ) -> ProtocolBuffer:
   """Read a text format protocol buffer from a string.
 
@@ -91,16 +91,16 @@ def FromString(
     raise DecodeError(e)
 
   if not uninitialized_okay and not message.IsInitialized():
-    raise DecodeError(f'Required fields not set')
+    raise DecodeError(f"Required fields not set")
 
   return message
 
 
 def FromFile(
-    path: pathlib.Path,
-    message: ProtocolBuffer,
-    assume_filename: typing.Optional[typing.Union[str, pathlib.Path]] = None,
-    uninitialized_okay: bool = False,
+  path: pathlib.Path,
+  message: ProtocolBuffer,
+  assume_filename: typing.Optional[typing.Union[str, pathlib.Path]] = None,
+  uninitialized_okay: bool = False,
 ) -> ProtocolBuffer:
   """Read a protocol buffer from a file.
 
@@ -140,28 +140,31 @@ def FromFile(
     else:
       raise FileNotFoundError(f"File not found: '{path}'")
 
-  suffixes = pathlib.Path(
-      assume_filename,).suffixes if assume_filename else path.suffixes
-  if suffixes and suffixes[-1] == '.gz':
+  suffixes = (
+    pathlib.Path(assume_filename,).suffixes
+    if assume_filename
+    else path.suffixes
+  )
+  if suffixes and suffixes[-1] == ".gz":
     suffixes.pop()
     open_function = gzip.open
   else:
     open_function = open
 
-  suffix = suffixes[-1] if suffixes else ''
+  suffix = suffixes[-1] if suffixes else ""
   try:
-    with open_function(path, 'rb') as f:
-      if suffix == '.txt' or suffix == '.pbtxt':
+    with open_function(path, "rb") as f:
+      if suffix == ".txt" or suffix == ".pbtxt":
         # Allow uninitialized fields here because we will catch the error later,
         # allowing us to report the path of the proto.
-        FromString(f.read().decode('utf-8'), message, uninitialized_okay=True)
-      elif suffix == '.json':
+        FromString(f.read().decode("utf-8"), message, uninitialized_okay=True)
+      elif suffix == ".json":
         google.protobuf.json_format.Parse(f.read(), message)
       else:
         message.ParseFromString(f.read())
   except (
-      google.protobuf.text_format.ParseError,
-      google.protobuf.json_format.ParseError,
+    google.protobuf.text_format.ParseError,
+    google.protobuf.json_format.ParseError,
   ) as e:
     # The exception raised during parsing depends on the message format. Catch
     # them all under a single DecodeError exception type.
@@ -174,10 +177,10 @@ def FromFile(
 
 
 def ToFile(
-    message: ProtocolBuffer,
-    path: pathlib.Path,
-    exist_ok: bool = True,
-    assume_filename: typing.Optional[typing.Union[str, pathlib.Path]] = None,
+  message: ProtocolBuffer,
+  path: pathlib.Path,
+  exist_ok: bool = True,
+  assume_filename: typing.Optional[typing.Union[str, pathlib.Path]] = None,
 ) -> ProtocolBuffer:
   """Write a protocol buffer to a file.
 
@@ -213,7 +216,7 @@ def ToFile(
     FileExistsError: If the requested path already exists and exist_ok is False.
   """
   if not exist_ok and path.exists():
-    raise FileExistsError(f'Refusing to overwrite {path}')
+    raise FileExistsError(f"Refusing to overwrite {path}")
 
   # The SerializeToString() method refuses to encode a message which is not
   # initialized, whereas the MessageToString() and MessageToJson() methods do
@@ -223,33 +226,36 @@ def ToFile(
     class_name = type(message).__name__
     raise EncodeError(f"Required fields not set: '{class_name}'")
 
-  suffixes = pathlib.Path(
-      assume_filename,).suffixes if assume_filename else path.suffixes
-  if suffixes and suffixes[-1] == '.gz':
+  suffixes = (
+    pathlib.Path(assume_filename,).suffixes
+    if assume_filename
+    else path.suffixes
+  )
+  if suffixes and suffixes[-1] == ".gz":
     suffixes.pop()
     open_function = gzip.open
   else:
     open_function = open
 
-  suffix = suffixes[-1] if suffixes else ''
-  mode = 'wt' if suffix in {'.txt', '.pbtxt', '.json'} else 'wb'
+  suffix = suffixes[-1] if suffixes else ""
+  mode = "wt" if suffix in {".txt", ".pbtxt", ".json"} else "wb"
 
   with open_function(path, mode) as f:
-    if suffix == '.txt' or suffix == '.pbtxt':
+    if suffix == ".txt" or suffix == ".pbtxt":
       f.write(google.protobuf.text_format.MessageToString(message))
-    elif suffix == '.json':
+    elif suffix == ".json":
       f.write(
-          google.protobuf.json_format.MessageToJson(
-              message,
-              preserving_proto_field_name=True,
-          ),)
+        google.protobuf.json_format.MessageToJson(
+          message, preserving_proto_field_name=True,
+        ),
+      )
     else:
       f.write(message.SerializeToString())
 
   return message
 
 
-def ToJson(message: ProtocolBuffer) -> 'jsonutil.JSON':
+def ToJson(message: ProtocolBuffer) -> "jsonutil.JSON":
   """Return a JSON encoded representation of a protocol buffer.
 
   Args:
@@ -259,8 +265,7 @@ def ToJson(message: ProtocolBuffer) -> 'jsonutil.JSON':
     JSON encoded message.
   """
   return google.protobuf.json_format.MessageToDict(
-      message,
-      preserving_proto_field_name=True,
+    message, preserving_proto_field_name=True,
   )
 
 
@@ -275,15 +280,14 @@ def _TruncatedString(string: str, n: int = 80) -> str:
     The truncated string.
   """
   if len(string) > n:
-    return string[:n - 3] + '...'
+    return string[: n - 3] + "..."
   else:
     return string
 
 
 def _TruncateDictionaryStringValues(
-    data: 'jsonutil.JSON',
-    n: int = 62,
-) -> 'jsonutil.JSON':
+  data: "jsonutil.JSON", n: int = 62,
+) -> "jsonutil.JSON":
   """Truncate all string values in a nested dictionary.
 
   Args:
@@ -315,16 +319,14 @@ def PrettyPrintJson(message: ProtocolBuffer, truncate: int = 52) -> str:
   """
   data = ToJson(message)
   return json.dumps(
-      _TruncateDictionaryStringValues(data) if truncate else data,
-      indent=2,
-      sort_keys=True,
+    _TruncateDictionaryStringValues(data) if truncate else data,
+    indent=2,
+    sort_keys=True,
   )
 
 
 def RaiseIfNotSet(
-    proto: ProtocolBuffer,
-    field: str,
-    err: ValueError,
+  proto: ProtocolBuffer, field: str, err: ValueError,
 ) -> typing.Any:
   """Check that a proto field is set before returning it.
 
@@ -340,15 +342,14 @@ def RaiseIfNotSet(
     ValueError: If the field is not set.
   """
   if not proto.HasField(field):
-    raise err(f'datastore field {field} not set')
+    raise err(f"datastore field {field} not set")
   elif not getattr(proto, field):
-    raise err(f'datastore field {field} not set')
+    raise err(f"datastore field {field} not set")
   return getattr(proto, field)
 
 
 def ProtoIsReadable(
-    path: typing.Union[str, pathlib.Path],
-    message: ProtocolBuffer,
+  path: typing.Union[str, pathlib.Path], message: ProtocolBuffer,
 ) -> bool:
   """Return whether a file is a readable protocol buffer.
 
@@ -368,9 +369,7 @@ def ProtoIsReadable(
 
 
 def AssertFieldIsSet(
-    proto: ProtocolBuffer,
-    field_name: str,
-    fail_message: str = None,
+  proto: ProtocolBuffer, field_name: str, fail_message: str = None,
 ) -> typing.Optional[typing.Any]:
   """Assert that protocol buffer field is set.
 
@@ -393,15 +392,16 @@ def AssertFieldIsSet(
   if not proto.HasField(field_name):
     proto_class_name = type(proto).__name__
     raise ProtoValueError(
-        fail_message or f"Field not set: '{proto_class_name}.{field_name}'",)
+      fail_message or f"Field not set: '{proto_class_name}.{field_name}'",
+    )
   return getattr(proto, field_name) if hasattr(proto, field_name) else None
 
 
 def AssertFieldConstraint(
-    proto: ProtocolBuffer,
-    field_name: str,
-    constraint: typing.Callable[[typing.Any], bool] = lambda x: True,
-    fail_message: str = None,
+  proto: ProtocolBuffer,
+  field_name: str,
+  constraint: typing.Callable[[typing.Any], bool] = lambda x: True,
+  fail_message: str = None,
 ) -> typing.Any:
   """Assert a constraint on the value of a protocol buffer field.
 
@@ -427,24 +427,25 @@ def AssertFieldConstraint(
   if not constraint(value):
     proto_class_name = type(proto).__name__
     raise ProtoValueError(
-        fail_message or
-        f"Field fails constraint check: '{proto_class_name}.{field_name}'",)
+      fail_message
+      or f"Field fails constraint check: '{proto_class_name}.{field_name}'",
+    )
   else:
     return value
 
 
 def RunProcessMessage(
-    cmd: typing.List[str],
-    input_proto: ProtocolBuffer,
-    timeout_seconds: int = 360,
-    env: typing.Dict[str, str] = None,
+  cmd: typing.List[str],
+  input_proto: ProtocolBuffer,
+  timeout_seconds: int = 360,
+  env: typing.Dict[str, str] = None,
 ) -> str:
   # Run the C++ worker process, capturing it's output.
   process = subprocess.Popen(
-      ['timeout', '-s9', str(timeout_seconds)] + cmd,
-      stdin=subprocess.PIPE,
-      stdout=subprocess.PIPE,
-      env=env,
+    ["timeout", "-s9", str(timeout_seconds)] + cmd,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    env=env,
   )
   # Send the input proto to the C++ worker process.
   # TODO: Add timeout.
@@ -453,9 +454,7 @@ def RunProcessMessage(
   # TODO: Check signal value, not hardcoded int.
   if process.returncode == -9 or process.returncode == 9:
     raise ProtoWorkerTimeoutError(
-        cmd=cmd,
-        timeout_seconds=timeout_seconds,
-        returncode=process.returncode,
+      cmd=cmd, timeout_seconds=timeout_seconds, returncode=process.returncode,
     )
   elif process.returncode:
     raise subprocess.CalledProcessError(process.returncode, cmd)
@@ -464,35 +463,30 @@ def RunProcessMessage(
 
 
 def RunProcessMessageToProto(
-    cmd: typing.List[str],
-    input_proto: ProtocolBuffer,
-    output_proto: ProtocolBuffer,
-    timeout_seconds: int = 360,
-    env: typing.Dict[str, str] = None,
+  cmd: typing.List[str],
+  input_proto: ProtocolBuffer,
+  output_proto: ProtocolBuffer,
+  timeout_seconds: int = 360,
+  env: typing.Dict[str, str] = None,
 ):
   stdout = RunProcessMessage(
-      cmd,
-      input_proto,
-      timeout_seconds=timeout_seconds,
-      env=env,
+    cmd, input_proto, timeout_seconds=timeout_seconds, env=env,
   )
   output_proto.ParseFromString(stdout)
   return output_proto
 
 
 def RunProcessMessageInPlace(
-    cmd: typing.List[str],
-    input_proto: ProtocolBuffer,
-    timeout_seconds: int = 360,
-    env: typing.Dict[str, str] = None,
+  cmd: typing.List[str],
+  input_proto: ProtocolBuffer,
+  timeout_seconds: int = 360,
+  env: typing.Dict[str, str] = None,
 ):
   input_proto.ParseFromString(
-      RunProcessMessage(
-          cmd,
-          input_proto,
-          timeout_seconds=timeout_seconds,
-          env=env,
-      ),)
+    RunProcessMessage(
+      cmd, input_proto, timeout_seconds=timeout_seconds, env=env,
+    ),
+  )
   return input_proto
 
 
@@ -508,6 +502,7 @@ class ProtoBackedMixin(object):
   Attributes:
     proto_t: The protocol buffer class that backs instances of this class.
   """
+
   # Inheritinc classes must set this attribute to the Protocol Buffer class.
   proto_t = None
 
@@ -522,10 +517,11 @@ class ProtoBackedMixin(object):
     """
     # ABSTRACT METHOD. Inheriting classes must implement!
     raise NotImplementedError(
-        f'{type(self).__name__}.SetProto() not implemented',)
+      f"{type(self).__name__}.SetProto() not implemented",
+    )
 
   @classmethod
-  def FromProto(cls, proto: ProtocolBuffer) -> 'ProtoBackedMixin':
+  def FromProto(cls, proto: ProtocolBuffer) -> "ProtoBackedMixin":
     """Return an instance of the class from proto.
 
     It is the responsibility of the inheriting class to ensure that all required
@@ -539,7 +535,8 @@ class ProtoBackedMixin(object):
     """
     # ABSTRACT METHOD. Inheriting classes must implement!
     raise NotImplementedError(
-        f'{type(self).__name__}.FromProto() not implemented',)
+      f"{type(self).__name__}.FromProto() not implemented",
+    )
 
   def ToProto(self) -> ProtocolBuffer:
     """Serialize the instance to protocol buffer.
@@ -555,7 +552,7 @@ class ProtoBackedMixin(object):
     return proto
 
   @classmethod
-  def FromProtoFile(cls, path: pathlib.Path) -> 'ProtoBackedMixin':
+  def FromProtoFile(cls, path: pathlib.Path) -> "ProtoBackedMixin":
     """Return an instance of the class from serialized proto file.
 
     Args:

@@ -32,15 +32,15 @@ _TIMERS = {}
 
 
 def is_enabled():
-  return os.environ.get('PROFILE') is not None
+  return os.environ.get("PROFILE") is not None
 
 
 def enable():
-  os.environ['PROFILE'] = '1'
+  os.environ["PROFILE"] = "1"
 
 
 def disable():
-  os.environ.pop('PROFILE', None)
+  os.environ.pop("PROFILE", None)
 
 
 def isrunning(name):
@@ -98,16 +98,16 @@ def stop(name, file=sys.stderr):
       KeyError: If the named timer does not exist.
   """
   if is_enabled():
-    elapsed = (time.time() - _TIMERS[name])
+    elapsed = time.time() - _TIMERS[name]
     if elapsed > 60:
-      elapsed_str = '{:.1f} m'.format(elapsed / 60)
+      elapsed_str = "{:.1f} m".format(elapsed / 60)
     elif elapsed > 1:
-      elapsed_str = '{:.1f} s'.format(elapsed)
+      elapsed_str = "{:.1f} s".format(elapsed)
     else:
-      elapsed_str = '{:.1f} ms'.format(elapsed * 1000)
+      elapsed_str = "{:.1f} ms".format(elapsed * 1000)
 
     del _TIMERS[name]
-    print('[prof]', name, elapsed_str, file=file)
+    print("[prof]", name, elapsed_str, file=file)
   return is_enabled()
 
 
@@ -115,7 +115,7 @@ def profile(fun, *args, **kwargs):
   """
   Profile a function.
   """
-  timer_name = kwargs.pop('prof_name', None)
+  timer_name = kwargs.pop("prof_name", None)
 
   if not timer_name:
     module = inspect.getmodule(fun)
@@ -124,7 +124,7 @@ def profile(fun, *args, **kwargs):
     if parentclass:
       c.append(parentclass.__name__)
     c.append(fun.__name__)
-    timer_name = '.'.join(c)
+    timer_name = ".".join(c)
 
   start(timer_name)
   ret = fun(*args, **kwargs)
@@ -145,8 +145,8 @@ def timers():
 
 @contextlib.contextmanager
 def Profile(
-    name: typing.Union[str, typing.Callable[[int], str]] = '',
-    print_to: typing.Callable[[str], None] = lambda msg: app.Log(1, msg),
+  name: typing.Union[str, typing.Callable[[int], str]] = "",
+  print_to: typing.Callable[[str], None] = lambda msg: app.Log(1, msg),
 ):
   """A context manager which prints the elapsed time upon exit.
 
@@ -156,17 +156,17 @@ def Profile(
       argument.
     print_to: The function to print the result to.
   """
-  name = name or 'completed'
+  name = name or "completed"
   start_time = time.time()
   yield
   elapsed = time.time() - start_time
   if callable(name):
     name = name(elapsed)
-  print_to(f'{name} in {humanize.Duration(elapsed)}')
+  print_to(f"{name} in {humanize.Duration(elapsed)}")
 
 
 @contextlib.contextmanager
-def ProfileToFile(file_object, name: str = ''):
+def ProfileToFile(file_object, name: str = ""):
   """A context manager which prints profiling output to a file.
 
   Args:
@@ -176,20 +176,19 @@ def ProfileToFile(file_object, name: str = ''):
 
   def _WriteToFile(message: str):
     """Print message to file, appending a newline."""
-    file_object.write(f'{message}\n')
+    file_object.write(f"{message}\n")
 
   yield Profile(name=name, print_to=_WriteToFile)
 
 
 class ProfilingEvent(object):
-
   def __init__(self, start_time: int, name: str):
     self.start_time = start_time
     self.name = name
 
 
 @contextlib.contextmanager
-def ProfileToStdout(name: str = ''):
+def ProfileToStdout(name: str = ""):
   """A context manager which prints the elapsed time to stdout on exit.
 
   Args:
@@ -200,25 +199,25 @@ def ProfileToStdout(name: str = ''):
 
 
 class AutoCsvProfiler(object):
-
-  def __init__(self, directory: pathlib.Path, name: str = 'profile'):
+  def __init__(self, directory: pathlib.Path, name: str = "profile"):
     self._directory = pathlib.Path(directory)
     if not self._directory.is_dir():
-      raise ValueError(f'Directory not found: {directory}')
+      raise ValueError(f"Directory not found: {directory}")
     self._name = name
 
     # Create the name of the logfile now, so that is timestamped to the start of
     # execution.
     timestamp = labdate.MillisecondsTimestamp()
-    log_name = '.'.join([self._name, system.HOSTNAME, str(timestamp), 'csv'])
+    log_name = ".".join([self._name, system.HOSTNAME, str(timestamp), "csv"])
     self._path = self._directory / log_name
 
     with self._writer() as writer:
       writer.writerow(
-          ('Start Time (ms since UNIX epoch)', 'Elapsed Time (ms)', 'Event'),)
+        ("Start Time (ms since UNIX epoch)", "Elapsed Time (ms)", "Event"),
+      )
 
   @contextlib.contextmanager
-  def Profile(self, event_name: str = ''):
+  def Profile(self, event_name: str = ""):
     """A context manager which prints the elapsed time upon exit.
 
     Args:
@@ -232,7 +231,7 @@ class AutoCsvProfiler(object):
 
   @contextlib.contextmanager
   def _writer(self):
-    with open(self.path, 'a') as f:
+    with open(self.path, "a") as f:
       writer = csv.writer(f)
       yield writer
 

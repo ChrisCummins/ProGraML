@@ -31,7 +31,7 @@
 #pragma once
 
 #define GOOGLE_PROTOBUF_PLATFORM_ERROR \
-#error "Host platform was not detected as supported by protobuf"
+  #error "Host platform was not detected as supported by protobuf"
 
 // Processor architecture detection.  For more info on what's defined, see:
 //   http://msdn.microsoft.com/en-us/library/b0084kay.aspx

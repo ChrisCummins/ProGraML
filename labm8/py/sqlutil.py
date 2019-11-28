@@ -33,30 +33,31 @@ from labm8.py.internal import logging
 FLAGS = absl_flags.FLAGS
 
 absl_flags.DEFINE_boolean(
-    'sqlutil_echo',
-    False,
-    'If True, the Engine will log all statements as well as a repr() of their '
-    'parameter lists to the engines logger, which defaults to sys.stdout.',
+  "sqlutil_echo",
+  False,
+  "If True, the Engine will log all statements as well as a repr() of their "
+  "parameter lists to the engines logger, which defaults to sys.stdout.",
 )
 absl_flags.DEFINE_boolean(
-    'sqlutil_pool_pre_ping', True,
-    'Enable pessimistic pre-ping to check that database connections are '
-    'alive. This adds some overhead, but reduces the risk of '
-    '"server has gone away" errors. See:'
-    '<https://docs.sqlalchemy.org/en/13/core/pooling.html#disconnect-handling-pessimistic>'
+  "sqlutil_pool_pre_ping",
+  True,
+  "Enable pessimistic pre-ping to check that database connections are "
+  "alive. This adds some overhead, but reduces the risk of "
+  '"server has gone away" errors. See:'
+  "<https://docs.sqlalchemy.org/en/13/core/pooling.html#disconnect-handling-pessimistic>",
 )
 absl_flags.DEFINE_integer(
-    'mysql_engine_pool_size',
-    5,
-    'The number of connections to keep open inside the connection pool. A '
-    '--mysql_engine_pool_size of 0 indicates no limit',
+  "mysql_engine_pool_size",
+  5,
+  "The number of connections to keep open inside the connection pool. A "
+  "--mysql_engine_pool_size of 0 indicates no limit",
 )
 absl_flags.DEFINE_integer(
-    'mysql_engine_max_overflow',
-    10,
-    'The number of connections to allow in connection pool “overflow”, that '
-    'is connections that can be opened above and beyond the '
-    '--mysql_engine_pool_size setting',
+  "mysql_engine_max_overflow",
+  10,
+  "The number of connections to allow in connection pool “overflow”, that "
+  "is connections that can be opened above and beyond the "
+  "--mysql_engine_pool_size setting",
 )
 
 # The Query type is returned by Session.query(). This is a convenience for type
@@ -86,10 +87,12 @@ def Base(*args, **kwargs) -> sql.ext.declarative.DeclarativeMeta:
   return sql.ext.declarative.declarative_base(*args, **kwargs)
 
 
-def GetOrAdd(session: sql.orm.session.Session,
-             model,
-             defaults: typing.Dict[str, object] = None,
-             **kwargs):
+def GetOrAdd(
+  session: sql.orm.session.Session,
+  model,
+  defaults: typing.Dict[str, object] = None,
+  **kwargs,
+):
   """Instantiate a mapped database object.
 
   If the object is not in the database,
@@ -108,27 +111,29 @@ def GetOrAdd(session: sql.orm.session.Session,
   instance = session.query(model).filter_by(**kwargs).first()
   if not instance:
     params = {
-        k: v
-        for k, v in kwargs.items()
-        if not isinstance(v, sql.sql.expression.ClauseElement)
+      k: v
+      for k, v in kwargs.items()
+      if not isinstance(v, sql.sql.expression.ClauseElement)
     }
     params.update(defaults or {})
     instance = model(**params)
     session.add(instance)
     logging.Log(
-        logging.GetCallingModuleName(),
-        5,
-        'New record: %s(%s)',
-        model.__name__,
-        params,
+      logging.GetCallingModuleName(),
+      5,
+      "New record: %s(%s)",
+      model.__name__,
+      params,
     )
   return instance
 
 
-def Get(session: sql.orm.session.Session,
-        model,
-        defaults: typing.Dict[str, object] = None,
-        **kwargs):
+def Get(
+  session: sql.orm.session.Session,
+  model,
+  defaults: typing.Dict[str, object] = None,
+  **kwargs,
+):
   """Determine if a database object exists.
 
   Args:
@@ -203,24 +208,25 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
   # Read and expand a `file://` prefixed URL.
   url = ExpandFileUrl(url)
 
-  if url.startswith('mysql://'):
+  if url.startswith("mysql://"):
     # Support for MySQL dialect.
 
     # We create a throwaway engine that we use to check if the requested
     # database exists.
-    engine = sql.create_engine('/'.join(url.split('/')[:-1]))
-    database = url.split('/')[-1].split('?')[0]
+    engine = sql.create_engine("/".join(url.split("/")[:-1]))
+    database = url.split("/")[-1].split("?")[0]
     query = engine.execute(
-        sql.text(
-            'SELECT SCHEMA_NAME FROM '
-            'INFORMATION_SCHEMA.SCHEMATA WHERE '
-            'SCHEMA_NAME = :database',),
-        database=database,
+      sql.text(
+        "SELECT SCHEMA_NAME FROM "
+        "INFORMATION_SCHEMA.SCHEMATA WHERE "
+        "SCHEMA_NAME = :database",
+      ),
+      database=database,
     )
 
     # Engine-specific options.
-    engine_args['pool_size'] = FLAGS.mysql_engine_pool_size
-    engine_args['max_overflow'] = FLAGS.mysql_engine_max_overflow
+    engine_args["pool_size"] = FLAGS.mysql_engine_pool_size
+    engine_args["max_overflow"] = FLAGS.mysql_engine_max_overflow
 
     if not query.first():
       if must_exist:
@@ -229,22 +235,23 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
         # We can't use sql.text() escaping here because it uses single quotes
         # for escaping. MySQL only accepts backticks for quoting database
         # names.
-        engine.execute(f'CREATE DATABASE `{database}`')
+        engine.execute(f"CREATE DATABASE `{database}`")
     engine.dispose()
-  elif url.startswith('sqlite://'):
+  elif url.startswith("sqlite://"):
     # Support for SQLite dialect.
 
     # This project (phd) deliberately disallows relative paths due to Bazel
     # sandboxing.
-    if url != 'sqlite://' and not url.startswith('sqlite:////'):
-      raise ValueError('Relative path to SQLite database is not allowed')
+    if url != "sqlite://" and not url.startswith("sqlite:////"):
+      raise ValueError("Relative path to SQLite database is not allowed")
 
-    if url == 'sqlite://':
+    if url == "sqlite://":
       if must_exist:
         raise ValueError(
-            'must_exist=True not valid for in-memory SQLite database',)
+          "must_exist=True not valid for in-memory SQLite database",
+        )
     else:
-      path = pathlib.Path(url[len('sqlite:///'):])
+      path = pathlib.Path(url[len("sqlite:///") :])
       if must_exist:
         if not path.is_file():
           raise DatabaseNotFound(url)
@@ -252,15 +259,15 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
         # Make the parent directory for SQLite database if creating a new
         # database.
         path.parent.mkdir(parents=True, exist_ok=True)
-  elif url.startswith('postgresql://'):
+  elif url.startswith("postgresql://"):
     # Support for PostgreSQL dialect.
 
-    engine = sql.create_engine('/'.join(url.split('/')[:-1] + ['postgres']))
+    engine = sql.create_engine("/".join(url.split("/")[:-1] + ["postgres"]))
     conn = engine.connect()
-    database = url.split('/')[-1]
+    database = url.split("/")[-1]
     query = conn.execute(
-        sql.text('SELECT 1 FROM pg_database WHERE datname = :database'),
-        database=database,
+      sql.text("SELECT 1 FROM pg_database WHERE datname = :database"),
+      database=database,
     )
     if not query.first():
       if must_exist:
@@ -268,20 +275,22 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
       else:
         # PostgreSQL does not let you create databases within a transaction, so
         # manually complete the transaction before creating the database.
-        conn.execute(sql.text('COMMIT'))
+        conn.execute(sql.text("COMMIT"))
         # PostgreSQL does not allow single quoting of database names.
-        conn.execute(f'CREATE DATABASE {database}')
+        conn.execute(f"CREATE DATABASE {database}")
     conn.close()
     engine.dispose()
   else:
     raise ValueError(f"Unsupported database URL='{url}'")
 
   # Create the engine.
-  engine = sql.create_engine(url,
-                             encoding='utf-8',
-                             echo=FLAGS.sqlutil_echo,
-                             pool_pre_ping=FLAGS.sqlutil_pool_pre_ping,
-                             **engine_args)
+  engine = sql.create_engine(
+    url,
+    encoding="utf-8",
+    echo=FLAGS.sqlutil_echo,
+    pool_pre_ping=FLAGS.sqlutil_pool_pre_ping,
+    **engine_args,
+  )
 
   # Create and immediately close a connection. This is because SQLAlchemy engine
   # is lazily instantiated, so for connections such as SQLite, this line
@@ -306,26 +315,27 @@ def ExpandFileUrl(url: str):
     ValueError: If the file path is invalid.
     FileNotFoundError: IF the file path does not exist.
   """
-  if not url.startswith('file://'):
+  if not url.startswith("file://"):
     return url
 
   # Split the URL into the file path, and the optional suffix.
-  components = url.split('?')
-  path, suffix = components[0], '?'.join(components[1:])
+  components = url.split("?")
+  path, suffix = components[0], "?".join(components[1:])
 
   # Strip the file:// prefix from the path.
-  path = pathlib.Path(path[len('file://'):])
+  path = pathlib.Path(path[len("file://") :])
 
   if not path.is_absolute():
-    raise ValueError('Relative path to file:// is not allowed')
+    raise ValueError("Relative path to file:// is not allowed")
 
   if not path.is_file():
     raise FileNotFoundError(f"File '{path}' not found")
 
   # Read the contents of the file, ignoring lines starting with '#'.
   with open(path) as f:
-    file_url = '\n'.join(x for x in f.read().split('\n')
-                         if not x.lstrip().startswith('#')).strip()
+    file_url = "\n".join(
+      x for x in f.read().split("\n") if not x.lstrip().startswith("#")
+    ).strip()
 
   # Append the suffix.
   file_url += suffix
@@ -355,8 +365,9 @@ class Session(orm.session.Session):
   An instance of this class is returned by Database.Session().
   """
 
-  def GetOrAdd(self, model, defaults: typing.Dict[str, object] = None,
-               **kwargs):
+  def GetOrAdd(
+    self, model, defaults: typing.Dict[str, object] = None, **kwargs
+  ):
     """Instantiate a mapped database object.
 
     If the object is not in the database, add it. Note that no change is written
@@ -434,20 +445,20 @@ class Database(object):
     if not are_you_sure_about_this_flag:
       raise ValueError("Let's take a minute to think things over")
 
-    if self.url.startswith('mysql://'):
-      engine = sql.create_engine('/'.join(self.url.split('/')[:-1]))
-      database = self.url.split('/')[-1].split('?')[0]
+    if self.url.startswith("mysql://"):
+      engine = sql.create_engine("/".join(self.url.split("/")[:-1]))
+      database = self.url.split("/")[-1].split("?")[0]
       engine.execute(
-          sql.text('DROP DATABASE IF EXISTS :database'),
-          database=database,
+        sql.text("DROP DATABASE IF EXISTS :database"), database=database,
       )
-    elif self.url.startswith('sqlite://'):
-      path = pathlib.Path(self.url[len('sqlite:///'):])
+    elif self.url.startswith("sqlite://"):
+      path = pathlib.Path(self.url[len("sqlite:///") :])
       assert path.is_file()
       path.unlink()
     else:
       raise NotImplementedError(
-          "Unsupported operation DROP for database: '{self.url}'",)
+        "Unsupported operation DROP for database: '{self.url}'",
+      )
 
   @property
   def url(self) -> str:
@@ -482,7 +493,7 @@ class Database(object):
     This can be used to select a random row from a table, e.g.
         session.query(Table).order_by(db.Random()).first()
     """
-    if self.url.startswith('mysql'):
+    if self.url.startswith("mysql"):
       return func.rand
     else:
       return func.random  # for PostgreSQL, SQLite
@@ -531,7 +542,7 @@ class PluralTablenameFromCamelCapsClassNameMixin(object):
   @declarative.declared_attr
   def __tablename__(self):
     pluralised = humanize.Plural(2, self.__name__)
-    pluralised = ' '.join(pluralised.split()[1:])
+    pluralised = " ".join(pluralised.split()[1:])
     return text.CamelCapsToUnderscoreSeparated(pluralised)
 
 
@@ -544,6 +555,7 @@ class ProtoBackedMixin(object):
   This is only an interface - inheriting classes must still inherit from
   sqlalchemy.ext.declarative.declarative_base().
   """
+
   proto_t = None
 
   def SetProto(self, proto: pbutil.ProtocolBuffer) -> None:
@@ -553,7 +565,8 @@ class ProtoBackedMixin(object):
       proto: A protocol buffer.
     """
     raise NotImplementedError(
-        f'{type(self).__name__}.SetProto() not implemented',)
+      f"{type(self).__name__}.SetProto() not implemented",
+    )
 
   def ToProto(self) -> pbutil.ProtocolBuffer:
     """Serialize the instance to protocol buffer.
@@ -567,8 +580,7 @@ class ProtoBackedMixin(object):
 
   @classmethod
   def FromProto(
-      cls,
-      proto: pbutil.ProtocolBuffer,
+    cls, proto: pbutil.ProtocolBuffer,
   ) -> typing.Dict[str, typing.Any]:
     """Return a dictionary of instance constructor args from proto.
 
@@ -586,7 +598,8 @@ class ProtoBackedMixin(object):
       A dictionary of constructor arguments.
     """
     raise NotImplementedError(
-        f'{type(self).__name__}.FromProto() not implemented',)
+      f"{type(self).__name__}.FromProto() not implemented",
+    )
 
   @classmethod
   def FromFile(cls, path: pathlib.Path) -> typing.Dict[str, typing.Any]:
@@ -611,6 +624,7 @@ class ProtoBackedMixin(object):
 
 class OffsetLimitQueryResultsBatch(typing.NamedTuple):
   """The results of an offset-limit batched query."""
+
   # The current batch number.
   batch_num: int
   # Offset into the results set.
@@ -624,10 +638,10 @@ class OffsetLimitQueryResultsBatch(typing.NamedTuple):
 
 
 def OffsetLimitBatchedQuery(
-    query: Query,
-    batch_size: int = 1000,
-    start_at: int = 0,
-    compute_max_rows: bool = False,
+  query: Query,
+  batch_size: int = 1000,
+  start_at: int = 0,
+  compute_max_rows: bool = False,
 ) -> typing.Iterator[OffsetLimitQueryResultsBatch]:
   """Split and return the rows resulting from a query in to batches.
 
@@ -660,11 +674,11 @@ def OffsetLimitBatchedQuery(
     batch = query.offset(i).limit(batch_size).all()
     if batch:
       yield OffsetLimitQueryResultsBatch(
-          batch_num=batch_num,
-          offset=i,
-          limit=i + batch_size,
-          max_rows=max_rows,
-          rows=batch,
+        batch_num=batch_num,
+        offset=i,
+        limit=i + batch_size,
+        max_rows=max_rows,
+        rows=batch,
       )
       i += len(batch)
     else:
@@ -675,7 +689,7 @@ class ColumnTypes(object):
   """Abstract class containing methods for generating column types."""
 
   def __init__(self):
-    raise TypeError('abstract class')
+    raise TypeError("abstract class")
 
   @staticmethod
   def BinaryArray(length: int):
@@ -687,7 +701,7 @@ class ColumnTypes(object):
     Returns:
       A column type.
     """
-    return sql.Binary(length).with_variant(mysql.BINARY(length), 'mysql')
+    return sql.Binary(length).with_variant(mysql.BINARY(length), "mysql")
 
   @staticmethod
   def LargeBinary():
@@ -696,7 +710,7 @@ class ColumnTypes(object):
     Returns:
       A column type.
     """
-    return sql.LargeBinary().with_variant(sql.LargeBinary(2**31), 'mysql')
+    return sql.LargeBinary().with_variant(sql.LargeBinary(2 ** 31), "mysql")
 
   @staticmethod
   def UnboundedUnicodeText():
@@ -707,7 +721,7 @@ class ColumnTypes(object):
     Returns:
       A column type.
     """
-    return sql.UnicodeText().with_variant(sql.UnicodeText(2**31), 'mysql')
+    return sql.UnicodeText().with_variant(sql.UnicodeText(2 ** 31), "mysql")
 
   @staticmethod
   def IndexableString(length: int = None):
@@ -721,8 +735,9 @@ class ColumnTypes(object):
     MAX_LENGTH = 767
     if length and length > MAX_LENGTH:
       raise ValueError(
-          f'IndexableString requested length {length} is greater '
-          f'than maximum allowed {MAX_LENGTH}',)
+        f"IndexableString requested length {length} is greater "
+        f"than maximum allowed {MAX_LENGTH}",
+      )
     return sql.String(MAX_LENGTH)
 
   @staticmethod
@@ -732,7 +747,7 @@ class ColumnTypes(object):
     Returns:
       A column type.
     """
-    return sql.DateTime().with_variant(mysql.DATETIME(fsp=3), 'mysql')
+    return sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql")
 
 
 class ColumnFactory(object):
@@ -740,8 +755,7 @@ class ColumnFactory(object):
 
   @staticmethod
   def MillisecondDatetime(
-      nullable: bool = False,
-      default=labdate.GetUtcMillisecondsNow,
+    nullable: bool = False, default=labdate.GetUtcMillisecondsNow,
   ):
     """Return a datetime column with millisecond precision.
 
@@ -749,12 +763,9 @@ class ColumnFactory(object):
       A column which defaults to UTC now.
     """
     return sql.Column(
-        sql.DateTime().with_variant(
-            mysql.DATETIME(fsp=3),
-            'mysql',
-        ),
-        nullable=nullable,
-        default=default,
+      sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql",),
+      nullable=nullable,
+      default=default,
     )
 
 
@@ -784,11 +795,11 @@ def ResilientAddManyAndCommit(db: Database, mapped: typing.Iterable[Base]):
       session.add_all(mapped)
   except sql.exc.SQLAlchemyError as e:
     logging.Log(
-        logging.GetCallingModuleName(),
-        1,
-        'Caught error while committing %d mapped objects: %s',
-        len(mapped),
-        e,
+      logging.GetCallingModuleName(),
+      1,
+      "Caught error while committing %d mapped objects: %s",
+      len(mapped),
+      e,
     )
 
     # Divide and conquer. If we're committing only a single object, then a
@@ -847,7 +858,7 @@ class BufferedDatabaseWriter(object):
     self.Flush()
 
   @contextlib.contextmanager
-  def Session(self) -> 'BufferedDatabaseWriter':
+  def Session(self) -> "BufferedDatabaseWriter":
     """Yields a context manager which calls Flush() at the end of the scope.
 
     Returns:
@@ -870,8 +881,10 @@ class BufferedDatabaseWriter(object):
 
   def MaybeFlush(self) -> None:
     """Determine if the buffer should be flushed, and if so, flush it."""
-    if (len(self._to_commit) > self._max_queue or
-        (time.time() - self._last_commit) > self._flush_secs):
+    if (
+      len(self._to_commit) > self._max_queue
+      or (time.time() - self._last_commit) > self._flush_secs
+    ):
       self.Flush()
 
   def Flush(self) -> None:
@@ -879,10 +892,10 @@ class BufferedDatabaseWriter(object):
     failures = ResilientAddManyAndCommit(self._db, self._to_commit)
     if len(failures):
       logging.Log(
-          logging.GetCallingModuleName(),
-          1,
-          'BufferedDatabaseWriter failed to commit %d objects',
-          len(failures),
+        logging.GetCallingModuleName(),
+        1,
+        "BufferedDatabaseWriter failed to commit %d objects",
+        len(failures),
       )
     self._to_commit = []
     self._last_commit = time.time()

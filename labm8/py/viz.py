@@ -32,10 +32,12 @@ from labm8.py import fs
 FLAGS = app.FLAGS
 
 
-def Finalize(output: typing.Optional[typing.Union[str, pathlib.Path]] = None,
-             figsize=None,
-             tight=True,
-             **savefig_opts):
+def Finalize(
+  output: typing.Optional[typing.Union[str, pathlib.Path]] = None,
+  figsize=None,
+  tight=True,
+  **savefig_opts,
+):
   """Finalise a plot.
 
   Display or show the plot, then close it.
@@ -71,7 +73,7 @@ def ShowErrorBarCaps(ax: axes.Axes):
   object to make them visible again.
   """
   for child in ax.get_children():
-    if str(child).startswith('Line2D'):
+    if str(child).startswith("Line2D"):
       child.set_markeredgewidth(1)
       child.set_markersize(8)
 
@@ -99,9 +101,9 @@ def RotateYLabels(rotation: int = 90, ax: axes.Axes = None):
 
 
 def FormatXLabelsAsTimestamps(
-    format='%H:%M:%S',
-    convert_to_seconds=lambda t: t / 1000,
-    ax: axes.Axes = None,
+  format="%H:%M:%S",
+  convert_to_seconds=lambda t: t / 1000,
+  ax: axes.Axes = None,
 ) -> None:
   """Format the X labels
 
@@ -112,23 +114,23 @@ def FormatXLabelsAsTimestamps(
   """
   ax = ax or plt.gca()
   formatter = matplotlib.ticker.FuncFormatter(
-      lambda t, _: time.strftime(format, time.gmtime(convert_to_seconds(t))),
+    lambda t, _: time.strftime(format, time.gmtime(convert_to_seconds(t))),
   )
   ax.xaxis.set_major_formatter(formatter)
 
 
 def Distplot(
-    x=None,
-    hue=None,
-    data=None,
-    log_x: bool = False,
-    log1p_x: bool = False,
-    kde=False,
-    bins=None,
-    nbins: typing.Optional[int] = None,
-    norm_hist=False,
-    hue_order=None,
-    ax=None,
+  x=None,
+  hue=None,
+  data=None,
+  log_x: bool = False,
+  log1p_x: bool = False,
+  kde=False,
+  bins=None,
+  nbins: typing.Optional[int] = None,
+  norm_hist=False,
+  hue_order=None,
+  ax=None,
 ):
   """An extension of seaborn distribution plots for grouped data.
 
@@ -197,7 +199,7 @@ def Distplot(
     a = np.asarray(a)
     if len(a) < 2:
       return 1
-    h = 2 * iqr(a) / (len(a)**(1 / 3))
+    h = 2 * iqr(a) / (len(a) ** (1 / 3))
     # fall back to sqrt(a) bins if iqr is 0
     if h == 0:
       return int(np.sqrt(a.size))
@@ -222,23 +224,18 @@ def Distplot(
 
   if hue is None:
     sns.distplot(
-        values_to_plot,
-        kde=kde,
-        bins=bins,
-        label=x,
-        norm_hist=norm_hist,
-        ax=ax,
+      values_to_plot, kde=kde, bins=bins, label=x, norm_hist=norm_hist, ax=ax,
     )
   else:
     hue_order = hue_order or sorted(set(data[hue]))
     for h in hue_order:
       sns.distplot(
-          values_to_plot[data[hue] == h],
-          kde=kde,
-          bins=bins,
-          label=h,
-          norm_hist=norm_hist,
-          ax=ax,
+        values_to_plot[data[hue] == h],
+        kde=kde,
+        bins=bins,
+        label=h,
+        norm_hist=norm_hist,
+        ax=ax,
       )
     plt.legend()
 
@@ -248,34 +245,38 @@ def Distplot(
 def SummarizeFloats(floats: typing.Iterable[float], nplaces: int = 2) -> str:
   """Summarize a sequence of floats."""
   arr = np.array(list(floats), dtype=np.float32)
-  percs = ' '.join([
-      f'{p}%={np.percentile(arr, p):.{nplaces}f}' for p in [0, 50, 95, 99, 100]
-  ])
+  percs = " ".join(
+    [f"{p}%={np.percentile(arr, p):.{nplaces}f}" for p in [0, 50, 95, 99, 100]]
+  )
   return (
-      f'n={len(arr)}, mean={arr.mean():.{nplaces}f}, stdev={arr.std():.{nplaces}f}, '
-      f'percentiles=[{percs}]')
+    f"n={len(arr)}, mean={arr.mean():.{nplaces}f}, stdev={arr.std():.{nplaces}f}, "
+    f"percentiles=[{percs}]"
+  )
 
 
 def SummarizeInts(ints: typing.Iterable[int]) -> str:
   """Summarize a sequence of ints."""
   arr = np.array(list(ints), dtype=np.int32)
-  percs = ' '.join(
-      [f'{p}%={np.percentile(arr, p):.0f}' for p in [0, 50, 95, 99, 100]],)
-  return (f'n={len(arr)}, mean={arr.mean():.2f}, stdev={arr.std():.2f}, '
-          f'percentiles=[{percs}]')
+  percs = " ".join(
+    [f"{p}%={np.percentile(arr, p):.0f}" for p in [0, 50, 95, 99, 100]],
+  )
+  return (
+    f"n={len(arr)}, mean={arr.mean():.2f}, stdev={arr.std():.2f}, "
+    f"percentiles=[{percs}]"
+  )
 
 
 def PlotDot(dot: str) -> None:
   """Compile and display the given dot plot."""
   with tempfile.TemporaryDirectory() as d:
-    dot_path = pathlib.Path(d) / 'dot.dot'
-    png_path = pathlib.Path(d) / 'dot.png'
+    dot_path = pathlib.Path(d) / "dot.dot"
+    png_path = pathlib.Path(d) / "dot.png"
 
-    fs.Write(dot_path, dot.encode('utf-8'))
+    fs.Write(dot_path, dot.encode("utf-8"))
     try:
       subprocess.check_call(
-          ['dot', str(dot_path), '-Tpng', '-o',
-           str(png_path)])
+        ["dot", str(dot_path), "-Tpng", "-o", str(png_path)]
+      )
     except subprocess.CalledProcessError as e:
       raise ValueError(f"Failed to process dotgraph: {dot}")
-    display.display(display.Image(filename=f'{d}/dot.png'))
+    display.display(display.Image(filename=f"{d}/dot.png"))

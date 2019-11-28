@@ -23,7 +23,7 @@ import typing
 import pytz
 
 UTC = pytz.UTC
-US_PACIFIC = pytz.timezone('US/Pacific')
+US_PACIFIC = pytz.timezone("US/Pacific")
 
 
 def GetUtcMillisecondsNow() -> datetime.datetime:
@@ -41,8 +41,9 @@ def GetUtcMillisecondsNow() -> datetime.datetime:
   return d.replace(microsecond=int(d.microsecond / 1000) * 1000)
 
 
-def MillisecondsTimestamp(date: typing.Optional[datetime.datetime] = None,
-                         ) -> int:
+def MillisecondsTimestamp(
+  date: typing.Optional[datetime.datetime] = None,
+) -> int:
   """Get the millisecond timestamp of a date.
 
   Args:
@@ -56,12 +57,13 @@ def MillisecondsTimestamp(date: typing.Optional[datetime.datetime] = None,
   """
   date = date or GetUtcMillisecondsNow()
   if not isinstance(date, datetime.datetime):
-    raise TypeError('Date must be a datetime instance')
-  return int(date.strftime('%s%f')[:-3])
+    raise TypeError("Date must be a datetime instance")
+  return int(date.strftime("%s%f")[:-3])
 
 
-def DatetimeFromMillisecondsTimestamp(timestamp: int = None,
-                                     ) -> datetime.datetime:
+def DatetimeFromMillisecondsTimestamp(
+  timestamp: int = None,
+) -> datetime.datetime:
   """Get the date of a millisecond timestamp.
 
   Args:
@@ -76,9 +78,9 @@ def DatetimeFromMillisecondsTimestamp(timestamp: int = None,
     ValueError: If the argument is not a positive integer.
   """
   if not (isinstance(timestamp, int) or timestamp is None):
-    raise TypeError('Timestamp must be an integer')
+    raise TypeError("Timestamp must be an integer")
   if not timestamp:
     timestamp = MillisecondsTimestamp()
   if timestamp < 0:
-    raise ValueError('Negative timestamp not allowed')
+    raise ValueError("Negative timestamp not allowed")
   return datetime.datetime.fromtimestamp(timestamp / 1000)

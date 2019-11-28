@@ -403,10 +403,10 @@ int UnescapeCEscapeSequences(const char *source, char *dest,
           while (isxdigit(p[1]))  // arbitrarily many hex digits
             ch = (ch << 4) + hex_digit_to_int(*++p);
           if (ch > 0xFF)
-            LOG_STRING(ERROR, errors)
-                << "Value of "
-                << "\\" << string(hex_start, p + 1 - hex_start)
-                << " exceeds 8 bits";
+            LOG_STRING(ERROR, errors) << "Value of "
+                                      << "\\"
+                                      << string(hex_start, p + 1 - hex_start)
+                                      << " exceeds 8 bits";
           *d++ = ch;
           break;
         }

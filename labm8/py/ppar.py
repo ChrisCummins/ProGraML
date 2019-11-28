@@ -42,7 +42,7 @@ class MapWorkerError(EnvironmentError):
     self._returncode = returncode
 
   def __repr__(self) -> str:
-    return f'Command exited with code {self.returncode}'
+    return f"Command exited with code {self.returncode}"
 
   @property
   def returncode(self) -> int:
@@ -61,10 +61,7 @@ class _MapWorker(object):
   """
 
   def __init__(
-      self,
-      id: int,
-      cmd: typing.List[str],
-      input_proto: pbutil.ProtocolBuffer,
+    self, id: int, cmd: typing.List[str], input_proto: pbutil.ProtocolBuffer,
   ):
     """Create a map worker.
 
@@ -97,9 +94,7 @@ class _MapWorker(object):
 
     # Run the C++ worker process, capturing it's output.
     process = subprocess.Popen(
-        self._cmd,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
+      self._cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
     )
     # Send the input proto to the C++ worker process.
     # TODO: Add timeout.
@@ -112,9 +107,7 @@ class _MapWorker(object):
       self._output_proto_string = stdout
 
   def SetProtos(
-      self,
-      input_proto: pbutil.ProtocolBuffer,
-      output_proto_class: typing.Type,
+    self, input_proto: pbutil.ProtocolBuffer, output_proto_class: typing.Type,
   ) -> None:
     """Set the input protocol buffer, and decode the output protocol buffer.
 
@@ -135,7 +128,8 @@ class _MapWorker(object):
       # unrecognized fields, conflicting field type/tags) are silently ignored
       # here.
       self._output_proto = output_proto_class.FromString(
-          self._output_proto_string,)
+        self._output_proto_string,
+      )
     # No need to hand onto the string message any more.
     del self._output_proto_string
 
@@ -181,12 +175,12 @@ def _RunNativeProtoProcessingWorker(map_worker: _MapWorker) -> _MapWorker:
 
 
 def MapNativeProtoProcessingBinary(
-    binary_data_path: str,
-    input_protos: typing.List[pbutil.ProtocolBuffer],
-    output_proto_class: typing.Type,
-    binary_args: typing.Optional[typing.List[str]] = None,
-    pool: typing.Optional[multiprocessing.Pool] = None,
-    num_processes: typing.Optional[int] = None,
+  binary_data_path: str,
+  input_protos: typing.List[pbutil.ProtocolBuffer],
+  output_proto_class: typing.Type,
+  binary_args: typing.Optional[typing.List[str]] = None,
+  pool: typing.Optional[multiprocessing.Pool] = None,
+  num_processes: typing.Optional[int] = None,
 ) -> typing.Iterator[_MapWorker]:
   """Run a protocol buffer processing binary over a set of inputs.
 
@@ -213,23 +207,24 @@ def MapNativeProtoProcessingBinary(
   # Create the multiprocessing pool to use, if not provided.
   pool = pool or multiprocessing.Pool(processes=num_processes)
 
-  map_worker_iterator = (_MapWorker(i, cmd, input_proto)
-                         for i, input_proto in enumerate(input_protos))
+  map_worker_iterator = (
+    _MapWorker(i, cmd, input_proto)
+    for i, input_proto in enumerate(input_protos)
+  )
 
   for map_worker in pool.imap_unordered(
-      _RunNativeProtoProcessingWorker,
-      map_worker_iterator,
+    _RunNativeProtoProcessingWorker, map_worker_iterator,
   ):
     map_worker.SetProtos(input_protos[map_worker.id], output_proto_class)
     yield map_worker
 
 
 def MapNativeProcessingBinaries(
-    binaries: typing.List[str],
-    input_protos: typing.List[pbutil.ProtocolBuffer],
-    output_proto_classes: typing.List[typing.Type],
-    pool: typing.Optional[multiprocessing.Pool] = None,
-    num_processes: typing.Optional[int] = None,
+  binaries: typing.List[str],
+  input_protos: typing.List[pbutil.ProtocolBuffer],
+  output_proto_classes: typing.List[typing.Type],
+  pool: typing.Optional[multiprocessing.Pool] = None,
+  num_processes: typing.Optional[int] = None,
 ) -> typing.Iterator[_MapWorker]:
   """Run a protocol buffer processing binary over a set of inputs.
 
@@ -246,7 +241,7 @@ def MapNativeProcessingBinaries(
     A generator of _MapWorker instances. The order is random.
   """
   if not len(binaries) == len(input_protos):
-    raise ValueError('Number of binaries does not equal protos')
+    raise ValueError("Number of binaries does not equal protos")
 
   cmds = [[bazelutil.DataPath(b)] for b in binaries]
 
@@ -258,22 +253,16 @@ def MapNativeProcessingBinaries(
   # Create the multiprocessing pool to use, if not provided.
   pool = pool or multiprocessing.Pool(processes=num_processes)
 
-  map_worker_iterator = (_MapWorker(
-      id,
-      cmd,
-      input_proto,
-  ) for id, (
-      cmd,
-      input_proto,
-  ) in enumerate(zip(cmds, input_protos)))
+  map_worker_iterator = (
+    _MapWorker(id, cmd, input_proto,)
+    for id, (cmd, input_proto,) in enumerate(zip(cmds, input_protos))
+  )
 
   for map_worker in pool.imap_unordered(
-      _RunNativeProtoProcessingWorker,
-      map_worker_iterator,
+    _RunNativeProtoProcessingWorker, map_worker_iterator,
   ):
     map_worker.SetProtos(
-        input_protos[map_worker.id],
-        output_proto_classes[map_worker.id],
+      input_protos[map_worker.id], output_proto_classes[map_worker.id],
     )
     yield map_worker
 
@@ -286,16 +275,16 @@ BatchCallback = typing.Callable[[int], None]
 
 
 def MapDatabaseRowBatchProcessor(
-    work_unit: WorkUnitType,
-    query: sqlutil.Query,
-    generate_work_unit_args: WorkUnitArgGenerator = lambda rows: rows,
-    work_unit_result_callback: ResultCallback = lambda result: None,
-    start_of_batch_callback: BatchCallback = lambda i: None,
-    end_of_batch_callback: BatchCallback = lambda i: None,
-    batch_size: int = 256,
-    rows_per_work_unit: int = 5,
-    start_at: int = 0,
-    pool: typing.Optional[multiprocessing.Pool] = None,
+  work_unit: WorkUnitType,
+  query: sqlutil.Query,
+  generate_work_unit_args: WorkUnitArgGenerator = lambda rows: rows,
+  work_unit_result_callback: ResultCallback = lambda result: None,
+  start_of_batch_callback: BatchCallback = lambda i: None,
+  end_of_batch_callback: BatchCallback = lambda i: None,
+  batch_size: int = 256,
+  rows_per_work_unit: int = 5,
+  start_at: int = 0,
+  pool: typing.Optional[multiprocessing.Pool] = None,
 ) -> None:
   """Execute a database row-processesing function in parallel.
 
@@ -334,8 +323,8 @@ def MapDatabaseRowBatchProcessor(
     start_of_batch_callback(i)
 
     work_unit_args = [
-        generate_work_unit_args(rows_batch[i:i + rows_per_work_unit])
-        for i in range(0, len(rows_batch), rows_per_work_unit)
+      generate_work_unit_args(rows_batch[i : i + rows_per_work_unit])
+      for i in range(0, len(rows_batch), rows_per_work_unit)
     ]
 
     for result in pool.starmap(work_unit, work_unit_args):
@@ -353,9 +342,9 @@ class ThreadedIterator:
   Exceptions raised by the threaded iterator are propagated to consumer.
   """
 
-  def __init__(self,
-               iterator: typing.Iterable[typing.Any],
-               max_queue_size: int = 2):
+  def __init__(
+    self, iterator: typing.Iterable[typing.Any], max_queue_size: int = 2
+  ):
     self._queue = queue.Queue(maxsize=max_queue_size)
     self._thread = threading.Thread(target=lambda: self.worker(iterator))
     self._thread.start()
@@ -380,10 +369,12 @@ class ThreadedIterator:
 
   class _EndOfIterator(object):
     """Tombstone marker object for iterators."""
+
     pass
 
   class _ValueOrError(typing.NamedTuple):
     """A tuple which represents the union of either a value or an error."""
+
     value: typing.Any = None
     error: Exception = None
 

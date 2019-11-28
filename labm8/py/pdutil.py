@@ -23,8 +23,9 @@ from labm8.py import sqlutil
 FLAGS = absl_flags.FLAGS
 
 
-def QueryToDataFrame(session: sqlutil.Session,
-                     query: sqlutil.Query) -> pd.DataFrame:
+def QueryToDataFrame(
+  session: sqlutil.Session, query: sqlutil.Query
+) -> pd.DataFrame:
   """Read query results to a Pandas DataFrame.
 
   Args:
@@ -38,10 +39,10 @@ def QueryToDataFrame(session: sqlutil.Session,
 
 
 def ModelToDataFrame(
-    session: sqlutil.Session,
-    model,
-    columns: typing.Optional[typing.List[str]] = None,
-    query_identity=lambda q: q,
+  session: sqlutil.Session,
+  model,
+  columns: typing.Optional[typing.List[str]] = None,
+  query_identity=lambda q: q,
 ):
   """Construct and execute a query reads an object's fields to a dataframe.
 
@@ -63,16 +64,19 @@ def ModelToDataFrame(
   return df
 
 
-def RewriteColumn(df: pd.DataFrame, column: str,
-                  rewrite: typing.Callable[[typing.Any], typing.Any]):
+def RewriteColumn(
+  df: pd.DataFrame,
+  column: str,
+  rewrite: typing.Callable[[typing.Any], typing.Any],
+):
   """Rewrite the values in a column in-place."""
   df[column] = [rewrite(x) for x in df[column]]
 
 
 def FormatDataFrameAsAsciiTable(df: pd.DataFrame, **tabulate_args):
   default_args = {
-      'headers': 'keys',
-      'tablefmt': 'psql',
+    "headers": "keys",
+    "tablefmt": "psql",
   }
   default_args.update(tabulate_args)
   return tabulate.tabulate(df, **default_args)

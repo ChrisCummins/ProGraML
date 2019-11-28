@@ -21,14 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ==============================================================================
 """inst2vec utility functions"""
-
 import datetime
 import pickle
 import re
 import sys
 
 # Maximum number of bytes to pickle in one chunk
-max_bytes = 2**31 - 1
+max_bytes = 2 ** 31 - 1
 
 
 def safe_pickle(data, file):
@@ -40,10 +39,10 @@ def safe_pickle(data, file):
   """
   pickle_out = pickle.dumps(data)
   n_bytes = sys.getsizeof(pickle_out)
-  with open(file, 'wb') as f:
+  with open(file, "wb") as f:
     count = 0
     for i in range(0, n_bytes, max_bytes):
-      f.write(pickle_out[i:min(n_bytes, i + max_bytes)])
+      f.write(pickle_out[i : min(n_bytes, i + max_bytes)])
       count += 1
 
 
@@ -58,14 +57,24 @@ def set_file_signature(param, data_folder, set_from_date_time=False):
   if set_from_date_time:
     file_signature = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M")
   else:
-    file_signature = '_' + re.sub(r'/', '_', data_folder) + \
-                     '_d-' + str(param['embedding_size']) + \
-                     '_m-' + str(param['mini_batch_size']) + \
-                     '_s-' + str(param['num_sampled']) + \
-                     '_e-' + str(param['learning_rate']) + \
-                     '_r-' + str(param['beta']) + \
-                     '_cw-' + str(param['context_width']) + \
-                     '_N-' + str(param['num_epochs'])
+    file_signature = (
+      "_"
+      + re.sub(r"/", "_", data_folder)
+      + "_d-"
+      + str(param["embedding_size"])
+      + "_m-"
+      + str(param["mini_batch_size"])
+      + "_s-"
+      + str(param["num_sampled"])
+      + "_e-"
+      + str(param["learning_rate"])
+      + "_r-"
+      + str(param["beta"])
+      + "_cw-"
+      + str(param["context_width"])
+      + "_N-"
+      + str(param["num_epochs"])
+    )
 
   print("File signature: ", file_signature)
   return file_signature

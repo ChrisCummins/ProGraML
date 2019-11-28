@@ -25,6 +25,7 @@ class Error(Exception):
   """
   Module-level error.
   """
+
   pass
 
 
@@ -32,6 +33,7 @@ class TruncateError(Error):
   """
   Thrown in case of truncation error.
   """
+
   pass
 
 
@@ -71,12 +73,12 @@ def truncate(string, maxchar):
       TruncateError: In case of an error.
   """
   if maxchar < 4:
-    raise TruncateError('Maxchar must be > 3')
+    raise TruncateError("Maxchar must be > 3")
 
   if len(string) <= maxchar:
     return string
   else:
-    return string[:maxchar - 3] + '...'
+    return string[: maxchar - 3] + "..."
 
 
 def levenshtein(s1, s2):
@@ -175,7 +177,7 @@ def AddWordToPrefixTree(trie: nx.DiGraph, word: str) -> None:
   current_node = 0
   for char in word:
     for neighbour_id in trie[current_node]:
-      if trie.nodes[neighbour_id]['char'] == char:
+      if trie.nodes[neighbour_id]["char"] == char:
         current_node = neighbour_id
         break
     else:
@@ -184,7 +186,7 @@ def AddWordToPrefixTree(trie: nx.DiGraph, word: str) -> None:
       trie.add_edge(current_node, new_node_id)
       current_node = new_node_id
 
-  trie.nodes[current_node]['word'] = word
+  trie.nodes[current_node]["word"] = word
 
 
 def BuildPrefixTree(words: typing.Set[str]):
@@ -221,7 +223,7 @@ def PrefixTreeWords(trie: nx.DiGraph, root_node: int = 0) -> typing.List[str]:
     The set of words in the prefix tree.
   """
   ret = set()
-  word = trie.nodes[root_node].get('word')
+  word = trie.nodes[root_node].get("word")
   if word:
     ret.add(word)
   for neighbor_node in trie[root_node]:
@@ -244,16 +246,16 @@ def AutoCompletePrefix(prefix: str, trie: nx.DiGraph) -> typing.Set[str]:
     KeyError: If the prefix is not found.
   """
   if not prefix:
-    raise ValueError('Prefix cannot be empty')
+    raise ValueError("Prefix cannot be empty")
 
   ret = set()
 
   current_node = 0
   for char in prefix:
     for neighbour_id in trie[current_node]:
-      if trie.nodes[neighbour_id]['char'] == char:
+      if trie.nodes[neighbour_id]["char"] == char:
         current_node = neighbour_id
-        node_word = trie.nodes[current_node].get('word')
+        node_word = trie.nodes[current_node].get("word")
         if node_word:
           ret.add(node_word)
         break
@@ -264,14 +266,13 @@ def AutoCompletePrefix(prefix: str, trie: nx.DiGraph) -> typing.Set[str]:
 
 
 def CamelCapsToUnderscoreSeparated(camel_caps_str: str):
-  components = re.findall('[A-Z][^A-Z]*', camel_caps_str)
+  components = re.findall("[A-Z][^A-Z]*", camel_caps_str)
   assert components
-  return '_'.join(x.lower() for x in components)
+  return "_".join(x.lower() for x in components)
 
 
 def StripSingleLineComments(
-    string: str,
-    start_comment_re: str = '(#|//)',
+  string: str, start_comment_re: str = "(#|//)",
 ) -> str:
   """Strip line comments from a string.
 
@@ -284,6 +285,6 @@ def StripSingleLineComments(
   Returns:
     The string.
   """
-  comment_re = re.compile(f'{start_comment_re}.*')
-  lines = [comment_re.sub('', line) for line in string.split('\n')]
-  return '\n'.join(lines)
+  comment_re = re.compile(f"{start_comment_re}.*")
+  lines = [comment_re.sub("", line) for line in string.split("\n")]
+  return "\n".join(lines)

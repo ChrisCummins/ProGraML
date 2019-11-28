@@ -40,7 +40,7 @@ def memoized_property(func: AnyFunction) -> AnyFunction:
   """
   # Based on Danijar Hafner's implementation of a lazy property, available at:
   # https://danijar.com/structuring-your-tensorflow-models/
-  attribute_name = '_memoized_property_' + func.__name__
+  attribute_name = "_memoized_property_" + func.__name__
 
   @property
   @functools.wraps(func)
@@ -64,7 +64,7 @@ def timeout(seconds: int):
   """
 
   def _RaiseTimoutError(signum, frame):
-    raise TimeoutError(f'Function failed to complete within {seconds} seconds')
+    raise TimeoutError(f"Function failed to complete within {seconds} seconds")
 
   # Register a function to raise a TimeoutError on the signal.
   signal.signal(signal.SIGALRM, _RaiseTimoutError)

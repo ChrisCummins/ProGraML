@@ -54,17 +54,17 @@ from typing import Union
 
 import humanize as humanize_lib
 
-SIBILANT_ENDINGS = frozenset(['sh', 'ss', 'tch', 'ax', 'ix', 'ex'])
-DIGIT_SPLITTER = re.compile(r'\d+|\D+').findall
+SIBILANT_ENDINGS = frozenset(["sh", "ss", "tch", "ax", "ix", "ex"])
+DIGIT_SPLITTER = re.compile(r"\d+|\D+").findall
 
 # These are included because they are common technical terms.
 SPECIAL_PLURALS = {
-    'index': 'indices',
-    'matrix': 'matrices',
-    'vertex': 'vertices',
+  "index": "indices",
+  "matrix": "matrices",
+  "vertex": "vertices",
 }
 
-VOWELS = frozenset('AEIOUaeiou')
+VOWELS = frozenset("AEIOUaeiou")
 
 
 def Commas(value: Optional[int]):
@@ -77,18 +77,18 @@ def Commas(value: Optional[int]):
     A string.
   """
   if value is None:
-    return '0'
+    return "0"
   if value < 0:
-    sign = '-'
+    sign = "-"
     value = -value
   else:
-    sign = ''
+    sign = ""
   result = []
   while value >= 1000:
-    result.append('%03d' % (value % 1000))
+    result.append("%03d" % (value % 1000))
     value /= 1000
-  result.append('%d' % value)
-  return sign + ','.join(reversed(result))
+  result.append("%d" % value)
+  return sign + ",".join(reversed(result))
 
 
 def Plural(quantity, singular, plural=None, commas=False):
@@ -103,8 +103,10 @@ def Plural(quantity, singular, plural=None, commas=False):
   Returns:
     A string.
   """
-  return '%s %s' % (Commas(quantity) if quantity else quantity,
-                    PluralWord(quantity, singular, plural))
+  return "%s %s" % (
+    Commas(quantity) if quantity else quantity,
+    PluralWord(quantity, singular, plural),
+  )
 
 
 def PluralWord(quantity, singular, plural=None):
@@ -134,15 +136,15 @@ def PluralWord(quantity, singular, plural=None):
 
   for ending in SIBILANT_ENDINGS:
     if singular.endswith(ending):
-      return '%ses' % singular
-  if singular.endswith('o') and singular[-2:-1] not in VOWELS:
-    return '%ses' % singular
-  if singular.endswith('y') and singular[-2:-1] not in VOWELS:
-    return '%sies' % singular[:-1]
-  return '%ss' % singular
+      return "%ses" % singular
+  if singular.endswith("o") and singular[-2:-1] not in VOWELS:
+    return "%ses" % singular
+  if singular.endswith("y") and singular[-2:-1] not in VOWELS:
+    return "%sies" % singular[:-1]
+  return "%ss" % singular
 
 
-def WordSeries(words, conjunction='and'):
+def WordSeries(words, conjunction="and"):
   """Convert a list of words to an English-language word series.
 
   Args:
@@ -155,13 +157,13 @@ def WordSeries(words, conjunction='and'):
   """
   num_words = len(words)
   if num_words == 0:
-    return ''
+    return ""
   elif num_words == 1:
     return words[0]
   elif num_words == 2:
-    return (' %s ' % conjunction).join(words)
+    return (" %s " % conjunction).join(words)
   else:
-    return '%s, %s %s' % (', '.join(words[:-1]), conjunction, words[-1])
+    return "%s, %s %s" % (", ".join(words[:-1]), conjunction, words[-1])
 
 
 def AddIndefiniteArticle(noun):
@@ -175,19 +177,16 @@ def AddIndefiniteArticle(noun):
     "a thing" or "an object".
   """
   if not noun:
-    raise ValueError('argument must be a word: {!r}'.format(noun))
+    raise ValueError("argument must be a word: {!r}".format(noun))
   if noun[0] in VOWELS:
-    return 'an ' + noun
+    return "an " + noun
   else:
-    return 'a ' + noun
+    return "a " + noun
 
 
-def DecimalPrefix(quantity,
-                  unit,
-                  precision=1,
-                  min_scale=0,
-                  max_scale=None,
-                  separator=' '):
+def DecimalPrefix(
+  quantity, unit, precision=1, min_scale=0, max_scale=None, separator=" "
+):
   """Formats an integer and a unit into a string, using decimal prefixes.
 
   The unit will be prefixed with an appropriate multiplier such that
@@ -219,17 +218,17 @@ def DecimalPrefix(quantity,
     and the unit.
   """
   return _Prefix(
-      quantity,
-      unit,
-      precision,
-      separator,
-      DecimalScale,
-      min_scale=min_scale,
-      max_scale=max_scale,
+    quantity,
+    unit,
+    precision,
+    separator,
+    DecimalScale,
+    min_scale=min_scale,
+    max_scale=max_scale,
   )
 
 
-def BinaryPrefix(quantity, unit, precision=1, separator=' '):
+def BinaryPrefix(quantity, unit, precision=1, separator=" "):
   """Formats an integer and a unit into a string, using binary prefixes.
 
   The unit will be prefixed with an appropriate multiplier such that
@@ -272,19 +271,18 @@ def _Prefix(quantity, unit, precision, separator, scale_callable, **args):
     A string.
   """
   if not quantity:
-    return '0%s%s' % (separator, unit)
+    return "0%s%s" % (separator, unit)
 
-  if quantity in [float('inf'), float('-inf')] or math.isnan(quantity):
-    return '%f%s%s' % (quantity, separator, unit)
+  if quantity in [float("inf"), float("-inf")] or math.isnan(quantity):
+    return "%f%s%s" % (quantity, separator, unit)
 
   scaled_quantity, scaled_unit = scale_callable(quantity, unit, **args)
 
   if scaled_unit:
-    separator = ' '
+    separator = " "
 
-  print_pattern = '%%.%df%%s%%s' % max(
-      0,
-      (precision - int(math.log(abs(scaled_quantity), 10)) - 1),
+  print_pattern = "%%.%df%%s%%s" % max(
+    0, (precision - int(math.log(abs(scaled_quantity), 10)) - 1),
   )
 
   return print_pattern % (scaled_quantity, separator, scaled_unit)
@@ -292,23 +290,23 @@ def _Prefix(quantity, unit, precision, separator, scale_callable, **args):
 
 # Prefixes and corresponding min_scale and max_scale for decimal formating.
 DECIMAL_PREFIXES = (
-    'y',
-    'z',
-    'a',
-    'f',
-    'p',
-    'n',
-    u'µ',
-    'm',
-    '',
-    'k',
-    'M',
-    'G',
-    'T',
-    'P',
-    'E',
-    'Z',
-    'Y',
+  "y",
+  "z",
+  "a",
+  "f",
+  "p",
+  "n",
+  "µ",
+  "m",
+  "",
+  "k",
+  "M",
+  "G",
+  "T",
+  "P",
+  "E",
+  "Z",
+  "Y",
 )
 DECIMAL_MIN_SCALE = -8
 DECIMAL_MAX_SCALE = 8
@@ -334,8 +332,9 @@ def DecimalScale(quantity, unit, min_scale=0, max_scale=None):
     min_scale = DECIMAL_MIN_SCALE
   if max_scale is None or max_scale > DECIMAL_MAX_SCALE:
     max_scale = DECIMAL_MAX_SCALE
-  powers = DECIMAL_PREFIXES[min_scale - DECIMAL_MIN_SCALE:max_scale -
-                            DECIMAL_MIN_SCALE + 1]
+  powers = DECIMAL_PREFIXES[
+    min_scale - DECIMAL_MIN_SCALE : max_scale - DECIMAL_MIN_SCALE + 1
+  ]
   return _Scale(quantity, unit, 1000, powers, min_scale)
 
 
@@ -353,10 +352,7 @@ def BinaryScale(quantity, unit):
     units (string).
   """
   return _Scale(
-      quantity,
-      unit,
-      1024,
-      ('Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'),
+    quantity, unit, 1024, ("Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi", "Yi"),
   )
 
 
@@ -375,17 +371,21 @@ def _Scale(quantity, unit, multiplier, prefixes=None, min_scale=None):
   Returns:
     A tuple containing the raw scaled quantity (float) and the prefixed unit.
   """
-  if (not prefixes or not quantity or math.isnan(quantity) or
-      quantity in [float('inf'), float('-inf')]):
+  if (
+    not prefixes
+    or not quantity
+    or math.isnan(quantity)
+    or quantity in [float("inf"), float("-inf")]
+  ):
     return float(quantity), unit
 
   if min_scale is None:
     min_scale = 0
-    prefixes = ('',) + tuple(prefixes)
-  value, prefix = quantity, ''
+    prefixes = ("",) + tuple(prefixes)
+  value, prefix = quantity, ""
   for power, prefix in enumerate(prefixes, min_scale):
     # This is more numerically accurate than '/ multiplier ** power'.
-    value = float(quantity) * multiplier**-power
+    value = float(quantity) * multiplier ** -power
     if abs(value) < multiplier:
       break
   return value, prefix + unit
@@ -394,16 +394,16 @@ def _Scale(quantity, unit, multiplier, prefixes=None, min_scale=None):
 # Contains the fractions where the full range [1/n ... (n - 1) / n]
 # is defined in Unicode.
 FRACTIONS = {
-    3: ('', u'⅓', u'⅔', ''),
-    5: ('', u'⅕', u'⅖', u'⅗', u'⅘', ''),
-    8: ('', u'⅛', u'¼', u'⅜', u'½', u'⅝', u'¾', u'⅞', ''),
+  3: ("", "⅓", "⅔", ""),
+  5: ("", "⅕", "⅖", "⅗", "⅘", ""),
+  8: ("", "⅛", "¼", "⅜", "½", "⅝", "¾", "⅞", ""),
 }
 
 FRACTION_ROUND_DOWN = 1.0 / (max(FRACTIONS.keys()) * 2.0)
 FRACTION_ROUND_UP = 1.0 - FRACTION_ROUND_DOWN
 
 
-def PrettyFraction(number, spacer=''):
+def PrettyFraction(number, spacer=""):
   """Convert a number into a string that might include a unicode fraction.
 
   This method returns the integer representation followed by the closest
@@ -421,7 +421,7 @@ def PrettyFraction(number, spacer=''):
   """
   # We do not want small negative numbers to display as -0.
   if number < -FRACTION_ROUND_DOWN:
-    return u'-%s' % PrettyFraction(-number)
+    return "-%s" % PrettyFraction(-number)
   number = abs(number)
   rounded = int(number)
   fract = number - rounded
@@ -434,15 +434,15 @@ def PrettyFraction(number, spacer=''):
     errors_fractions.append((error, fraction_elements[numerator]))
   _, fraction_text = min(errors_fractions)
   if rounded and fraction_text:
-    return u'%d%s%s' % (rounded, spacer, fraction_text)
+    return "%d%s%s" % (rounded, spacer, fraction_text)
   if rounded:
     return str(rounded)
   if fraction_text:
     return fraction_text
-  return u'0'
+  return "0"
 
 
-def Duration(duration, separator=' '):
+def Duration(duration, separator=" "):
   """Formats a non-negative number of seconds into a human-readable string.
 
   Has nanosecond precision if passed a floating point number.
@@ -460,23 +460,23 @@ def Duration(duration, separator=' '):
     try:
       delta = datetime.timedelta(seconds=int(duration))
     except OverflowError:
-      return '>=' + TimeDelta(datetime.timedelta.max)
+      return ">=" + TimeDelta(datetime.timedelta.max)
   delta_str = TimeDelta(delta, separator=separator)
   if isinstance(duration, float):
-    value, unit = DecimalScale(duration % 1, 's', min_scale=-3)
-    if value < 1 and unit == 'ns':
+    value, unit = DecimalScale(duration % 1, "s", min_scale=-3)
+    if value < 1 and unit == "ns":
       # Special case for sub-nanosecond durations. If there's a second
       # component, discard the sub-nanosecond component. Else, report <1ns.
       if duration > 1:
         return delta_str
       else:
-        return '<1ns'
+        return "<1ns"
     elif duration > 1:
-      if unit != 's':
+      if unit != "s":
         # Append sub-second component to string.
-        delta_str += f' {int(value)}{unit}'
+        delta_str += f" {int(value)}{unit}"
     else:
-      return f'{int(value)}{unit}'
+      return f"{int(value)}{unit}"
   return delta_str
 
 
@@ -496,7 +496,7 @@ def LowPrecisionDuration(duration: Union[datetime.timedelta, int, float]):
   return humanize_lib.naturaldelta(duration)
 
 
-def TimeDelta(delta, separator=' '):
+def TimeDelta(delta, separator=" "):
   """Format a datetime.timedelta into a human-readable string.
 
   Args:
@@ -509,16 +509,16 @@ def TimeDelta(delta, separator=' '):
   parts = []
   seconds = delta.seconds
   if delta.days:
-    parts.append('%dd' % delta.days)
+    parts.append("%dd" % delta.days)
   if seconds >= 3600:
-    parts.append('%dh' % (seconds // 3600))
+    parts.append("%dh" % (seconds // 3600))
     seconds %= 3600
   if seconds >= 60:
-    parts.append('%dm' % (seconds // 60))
+    parts.append("%dm" % (seconds // 60))
     seconds %= 60
   seconds += delta.microseconds / 1e6
   if seconds or not parts:
-    parts.append('%gs' % seconds)
+    parts.append("%gs" % seconds)
   return separator.join(parts)
 
 
@@ -555,7 +555,7 @@ def NaturalSortKey(data):
     def __init__(self, value):
       self._value = value
 
-    def __lt__(self, rhs: '_StrComparableInt') -> bool:
+    def __lt__(self, rhs: "_StrComparableInt") -> bool:
       if isinstance(self._value, str) and isinstance(rhs._value, int):
         return False
       if isinstance(self._value, int) and isinstance(rhs._value, str):
@@ -572,7 +572,7 @@ def NaturalSortKey(data):
       segments[i] = _StrComparableInt(int(value))
     else:
       segments[i] = _StrComparableInt(value)
-  print('SEGMENTS', segments)
+  print("SEGMENTS", segments)
   return segments
 
 
@@ -590,7 +590,7 @@ def UnixTimestamp(unix_ts, tz):
     Formatted string like '2013-11-17 11:08:27.720000 PST'.
   """
   date_time = datetime.datetime.fromtimestamp(unix_ts, tz)
-  return date_time.strftime('%Y-%m-%d %H:%M:%S.%f %Z')
+  return date_time.strftime("%Y-%m-%d %H:%M:%S.%f %Z")
 
 
 def AddOrdinalSuffix(value):
@@ -603,19 +603,19 @@ def AddOrdinalSuffix(value):
     A string containing the integer with a two-letter ordinal suffix.
   """
   if value < 0 or value != int(value):
-    raise ValueError('argument must be a non-negative integer: %s' % value)
+    raise ValueError("argument must be a non-negative integer: %s" % value)
 
   if value % 100 in (11, 12, 13):
-    suffix = 'th'
+    suffix = "th"
   else:
     rem = value % 10
     if rem == 1:
-      suffix = 'st'
+      suffix = "st"
     elif rem == 2:
-      suffix = 'nd'
+      suffix = "nd"
     elif rem == 3:
-      suffix = 'rd'
+      suffix = "rd"
     else:
-      suffix = 'th'
+      suffix = "th"
 
   return str(value) + suffix

@@ -38,17 +38,19 @@ from labm8.py.internal import logging
 FLAGS = absl_flags.FLAGS
 
 absl_flags.DEFINE_boolean(
-    'version',
-    False,
-    'Print version information and exit.',
+  "version", False, "Print version information and exit.",
 )
-absl_flags.DEFINE_boolean('dump_flags', False,
-                          'Print the defined flags and their values and exit.')
 absl_flags.DEFINE_boolean(
-    'dump_flags_to_json', False,
-    'Print the defined flags and their values to JSON and exit.')
-absl_flags.DEFINE_boolean('log_colors', True,
-                          'Whether to colorize logging output.')
+  "dump_flags", False, "Print the defined flags and their values and exit."
+)
+absl_flags.DEFINE_boolean(
+  "dump_flags_to_json",
+  False,
+  "Print the defined flags and their values to JSON and exit.",
+)
+absl_flags.DEFINE_boolean(
+  "log_colors", True, "Whether to colorize logging output."
+)
 
 
 class UsageError(absl_app.UsageError):
@@ -64,8 +66,9 @@ class UsageError(absl_app.UsageError):
     self.exitcode = exitcode
 
 
-def AssertOrRaise(stmt: bool, exception: Exception, *exception_args,
-                  **exception_kwargs) -> None:
+def AssertOrRaise(
+  stmt: bool, exception: Exception, *exception_args, **exception_kwargs
+) -> None:
   """If the statement is false, raise the given exception class."""
   if not stmt:
     raise exception(*exception_args, **exception_kwargs)
@@ -79,25 +82,27 @@ def GetVersionInformationString() -> str:
   # version information.
   try:
     import build_info
-    version = '\n'.join([
-        build_info.FormatVersion(),
-        build_info.FormatShortBuildDescription(),
-    ])
+
+    version = "\n".join(
+      [build_info.FormatVersion(), build_info.FormatShortBuildDescription(),]
+    )
     url = build_info.GetGithubCommitUrl()
   except ModuleNotFoundError:
     import pkg_resources
+
     version = f'version: {pkg_resources.get_distribution("labm8").version}'
-    url = 'https://github.com/ChrisCummins/labm8'
-  return '\n'.join([
+    url = "https://github.com/ChrisCummins/labm8"
+  return "\n".join(
+    [
       version,
-      'Copyright (C) 2014-2019 Chris Cummins <chrisc.101@gmail.com>',
-      f'<{url}>',
-  ])
+      "Copyright (C) 2014-2019 Chris Cummins <chrisc.101@gmail.com>",
+      f"<{url}>",
+    ]
+  )
 
 
 def RunWithArgs(
-    main: Callable[[List[str]], None],
-    argv: Optional[List[str]] = None,
+  main: Callable[[List[str]], None], argv: Optional[List[str]] = None,
 ):
   """Begin executing the program.
 
@@ -119,10 +124,10 @@ def RunWithArgs(
       sys.exit(0)
     elif FLAGS.dump_flags_to_json:
       print(
-          json.dumps(FlagsToDict(),
-                     sort_keys=True,
-                     indent=2,
-                     separators=(',', ': ')))
+        json.dumps(
+          FlagsToDict(), sort_keys=True, indent=2, separators=(",", ": ")
+        )
+      )
       sys.exit(0)
     main(argv)
 
@@ -132,7 +137,7 @@ def RunWithArgs(
     FlushLogs()
     sys.stdout.flush()
     sys.stderr.flush()
-    print('keyboard interrupt')
+    print("keyboard interrupt")
     sys.exit(1)
 
 
@@ -148,7 +153,7 @@ def Run(main: Callable[[], None]):
   def RunWithoutArgs(argv: List[str]):
     """Run the given function without arguments."""
     if len(argv) > 1:
-      raise UsageError("Unknown arguments: '{}'.".format(' '.join(argv[1:])))
+      raise UsageError("Unknown arguments: '{}'.".format(" ".join(argv[1:])))
     main()
 
   RunWithArgs(RunWithoutArgs)
@@ -188,10 +193,17 @@ def Log(level: int, msg, *args, **kwargs):
   """
   calling_module = logging.GetCallingModuleName()
   logging.Log(
-      calling_module, level,
-      _MaybeColorizeLog(
-          shell.ShellEscapeCodes.YELLOW
-          if level > 1 else shell.ShellEscapeCodes.CYAN, msg, *args), **kwargs)
+    calling_module,
+    level,
+    _MaybeColorizeLog(
+      shell.ShellEscapeCodes.YELLOW
+      if level > 1
+      else shell.ShellEscapeCodes.CYAN,
+      msg,
+      *args,
+    ),
+    **kwargs,
+  )
 
 
 @absl_logging.skip_log_prefix
@@ -204,8 +216,9 @@ def LogIf(level: int, condition, msg, *args, **kwargs):
 @absl_logging.skip_log_prefix
 def Fatal(msg, *args, **kwargs):
   """Logs a fatal message."""
-  logging.Fatal(_MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args),
-                **kwargs)
+  logging.Fatal(
+    _MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args), **kwargs
+  )
 
 
 @absl_logging.skip_log_prefix
@@ -218,15 +231,17 @@ def FatalWithoutStackTrace(msg, *args, **kwargs):
 @absl_logging.skip_log_prefix
 def Error(msg, *args, **kwargs):
   """Logs an error message."""
-  logging.Error(_MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args),
-                **kwargs)
+  logging.Error(
+    _MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args), **kwargs
+  )
 
 
 @absl_logging.skip_log_prefix
 def Warning(msg, *args, **kwargs):
   """Logs a warning message."""
-  logging.Warning(_MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args),
-                  **kwargs)
+  logging.Warning(
+    _MaybeColorizeLog(shell.ShellEscapeCodes.RED, msg, *args), **kwargs
+  )
 
 
 def FlushLogs():
@@ -263,13 +278,13 @@ disclaim_module_ids = set([id(sys.modules[__name__])])
 @functools.lru_cache(maxsize=1)
 def get_main_module_name(abspath) -> str:
   # Strip everything until the runfiles directory.
-  name = re.sub(r'.*\.runfiles/[^/]+/', '', abspath)
+  name = re.sub(r".*\.runfiles/[^/]+/", "", abspath)
   # Strip file extension.
-  name = '.'.join(name.split('.')[:-1])
+  name = ".".join(name.split(".")[:-1])
   # Change path separator to python module separator.
-  name = '.'.join(name.split('/'))
+  name = ".".join(name.split("/"))
   # Prefix name with a space so that it come first in the list of modules.
-  return f' {name}'
+  return f" {name}"
 
 
 def get_module_object_and_name(globals_dict):
@@ -281,10 +296,10 @@ def get_module_object_and_name(globals_dict):
     _ModuleObjectAndName - pair of module object & module name.
     Returns (None, None) if the module could not be identified.
   """
-  name = globals_dict.get('__name__', None)
+  name = globals_dict.get("__name__", None)
   module = sys.modules.get(name, None)
   # Pick a more informative name for the main module.
-  return module, (sys.argv[0] if name == '__main__' else name)
+  return module, (sys.argv[0] if name == "__main__" else name)
 
 
 def get_calling_module_name():
@@ -299,11 +314,13 @@ def get_calling_module_name():
   for depth in range(1, sys.getrecursionlimit()):
     # sys._getframe is the right thing to use here, as it's the best
     # way to walk up the call stack.
-    globals_for_frame = sys._getframe(depth).f_globals  # pylint: disable=protected-access
+    globals_for_frame = sys._getframe(
+      depth
+    ).f_globals  # pylint: disable=protected-access
     module, module_name = get_module_object_and_name(globals_for_frame)
     if id(module) not in disclaim_module_ids and module_name is not None:
       return module_name
-  raise AssertionError('No module was found')
+  raise AssertionError("No module was found")
 
 
 # TODO(cec): Add flag_values argument to enable better testing.
@@ -324,7 +341,7 @@ def FlagsToDict(json_safe: bool = False) -> Dict[str, Any]:
   flattened_flags_dict = {}
   for module in flags_dict:
     for flag in flags_dict[module]:
-      flattened_flags_dict[f'{module}.{flag.name}'] = flag.value
+      flattened_flags_dict[f"{module}.{flag.name}"] = flag.value
 
   if json_safe:
     # Flags values can have non-serializable types, so try each one and
@@ -352,18 +369,15 @@ def FlagsToString() -> str:
 
 
 def DEFINE_string(
-    name: str,
-    default: Optional[str],
-    help: str,
-    required: bool = False,
-    validator: Callable[[str], bool] = None,
+  name: str,
+  default: Optional[str],
+  help: str,
+  required: bool = False,
+  validator: Callable[[str], bool] = None,
 ):
   """Registers a flag whose value can be any string."""
   absl_flags.DEFINE_string(
-      name,
-      default,
-      help,
-      module_name=get_calling_module_name(),
+    name, default, help, module_name=get_calling_module_name(),
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -372,22 +386,22 @@ def DEFINE_string(
 
 
 def DEFINE_integer(
-    name: str,
-    default: Optional[int],
-    help: str,
-    required: bool = False,
-    lower_bound: Optional[int] = None,
-    upper_bound: Optional[int] = None,
-    validator: Callable[[int], bool] = None,
+  name: str,
+  default: Optional[int],
+  help: str,
+  required: bool = False,
+  lower_bound: Optional[int] = None,
+  upper_bound: Optional[int] = None,
+  validator: Callable[[int], bool] = None,
 ):
   """Registers a flag whose value must be an integer."""
   absl_flags.DEFINE_integer(
-      name,
-      default,
-      help,
-      module_name=get_calling_module_name(),
-      lower_bound=lower_bound,
-      upper_bound=upper_bound,
+    name,
+    default,
+    help,
+    module_name=get_calling_module_name(),
+    lower_bound=lower_bound,
+    upper_bound=upper_bound,
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -396,22 +410,22 @@ def DEFINE_integer(
 
 
 def DEFINE_float(
-    name: str,
-    default: Optional[float],
-    help: str,
-    required: bool = False,
-    lower_bound: Optional[float] = None,
-    upper_bound: Optional[float] = None,
-    validator: Callable[[float], bool] = None,
+  name: str,
+  default: Optional[float],
+  help: str,
+  required: bool = False,
+  lower_bound: Optional[float] = None,
+  upper_bound: Optional[float] = None,
+  validator: Callable[[float], bool] = None,
 ):
   """Registers a flag whose value must be a float."""
   absl_flags.DEFINE_float(
-      name,
-      default,
-      help,
-      module_name=get_calling_module_name(),
-      lower_bound=lower_bound,
-      upper_bound=upper_bound,
+    name,
+    default,
+    help,
+    module_name=get_calling_module_name(),
+    lower_bound=lower_bound,
+    upper_bound=upper_bound,
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -420,18 +434,15 @@ def DEFINE_float(
 
 
 def DEFINE_boolean(
-    name: str,
-    default: Optional[bool],
-    help: str,
-    required: bool = False,
-    validator: Callable[[bool], bool] = None,
+  name: str,
+  default: Optional[bool],
+  help: str,
+  required: bool = False,
+  validator: Callable[[bool], bool] = None,
 ):
   """Registers a flag whose value must be a boolean."""
   absl_flags.DEFINE_boolean(
-      name,
-      default,
-      help,
-      module_name=get_calling_module_name(),
+    name, default, help, module_name=get_calling_module_name(),
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -440,18 +451,15 @@ def DEFINE_boolean(
 
 
 def DEFINE_list(
-    name: str,
-    default: Optional[List[Any]],
-    help: str,
-    required: bool = False,
-    validator: Callable[[List[Any]], bool] = None,
+  name: str,
+  default: Optional[List[Any]],
+  help: str,
+  required: bool = False,
+  validator: Callable[[List[Any]], bool] = None,
 ):
   """Registers a flag whose value must be a list."""
   absl_flags.DEFINE_list(
-      name,
-      default,
-      help,
-      module_name=get_calling_module_name(),
+    name, default, help, module_name=get_calling_module_name(),
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -463,12 +471,12 @@ def DEFINE_list(
 
 
 def DEFINE_input_path(
-    name: str,
-    default: Union[None, str, pathlib.Path],
-    help: str,
-    required: bool = False,
-    is_dir: bool = False,
-    validator: Callable[[pathlib.Path], bool] = None,
+  name: str,
+  default: Union[None, str, pathlib.Path],
+  help: str,
+  required: bool = False,
+  is_dir: bool = False,
+  validator: Callable[[pathlib.Path], bool] = None,
 ):
   """Registers a flag whose value is an input path.
 
@@ -487,13 +495,13 @@ def DEFINE_input_path(
   parser = flags_parsers.PathParser(must_exist=True, is_dir=is_dir)
   serializer = absl_flags.ArgumentSerializer()
   absl_flags.DEFINE(
-      parser,
-      name,
-      default,
-      help,
-      absl_flags.FLAGS,
-      serializer,
-      module_name=get_calling_module_name(),
+    parser,
+    name,
+    default,
+    help,
+    absl_flags.FLAGS,
+    serializer,
+    module_name=get_calling_module_name(),
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -502,14 +510,14 @@ def DEFINE_input_path(
 
 
 def DEFINE_output_path(
-    name: str,
-    default: Union[None, str, pathlib.Path],
-    help: str,
-    required: bool = False,
-    is_dir: bool = False,
-    exist_ok: bool = True,
-    must_exist: bool = False,
-    validator: Callable[[pathlib.Path], bool] = None,
+  name: str,
+  default: Union[None, str, pathlib.Path],
+  help: str,
+  required: bool = False,
+  is_dir: bool = False,
+  exist_ok: bool = True,
+  must_exist: bool = False,
+  validator: Callable[[pathlib.Path], bool] = None,
 ):
   """Registers a flag whose value is an output path.
 
@@ -531,19 +539,17 @@ def DEFINE_output_path(
     must_exist: If True, require that the path exists, else parsing will fail.
   """
   parser = flags_parsers.PathParser(
-      must_exist=must_exist,
-      exist_ok=exist_ok,
-      is_dir=is_dir,
+    must_exist=must_exist, exist_ok=exist_ok, is_dir=is_dir,
   )
   serializer = absl_flags.ArgumentSerializer()
   absl_flags.DEFINE(
-      parser,
-      name,
-      default,
-      help,
-      absl_flags.FLAGS,
-      serializer,
-      module_name=get_calling_module_name(),
+    parser,
+    name,
+    default,
+    help,
+    absl_flags.FLAGS,
+    serializer,
+    module_name=get_calling_module_name(),
   )
   if required:
     absl_flags.mark_flag_as_required(name)
@@ -552,12 +558,12 @@ def DEFINE_output_path(
 
 
 def DEFINE_database(
-    name: str,
-    database_class,
-    default: Optional[str],
-    help: str,
-    must_exist: bool = False,
-    validator: Callable[[Any], bool] = None,
+  name: str,
+  database_class,
+  default: Optional[str],
+  help: str,
+  must_exist: bool = False,
+  validator: Callable[[Any], bool] = None,
 ):
   """Registers a flag whose value is a sqlutil.Database class.
 
@@ -578,22 +584,22 @@ def DEFINE_database(
   parser = flags_parsers.DatabaseParser(database_class, must_exist=must_exist)
   serializer = absl_flags.ArgumentSerializer()
   absl_flags.DEFINE(
-      parser,
-      name,
-      default,
-      help,
-      absl_flags.FLAGS,
-      serializer,
-      module_name=get_calling_module_name(),
+    parser,
+    name,
+    default,
+    help,
+    absl_flags.FLAGS,
+    serializer,
+    module_name=get_calling_module_name(),
   )
   if validator:
     RegisterFlagValidator(name, validator)
 
 
 def RegisterFlagValidator(
-    flag_name: str,
-    checker: Callable[[Any], bool],
-    message: str = 'Flag validation failed',
+  flag_name: str,
+  checker: Callable[[Any], bool],
+  message: str = "Flag validation failed",
 ):
   """Adds a constraint, which will be enforced during program execution.
 
@@ -620,8 +626,9 @@ def RegisterFlagValidator(
   absl_flags.register_validator(flag_name, checker, message)
 
 
-def LogToDirectory(logdir: Union[str, pathlib.Path],
-                   name='info') -> pathlib.Path:
+def LogToDirectory(
+  logdir: Union[str, pathlib.Path], name="info"
+) -> pathlib.Path:
   """Write logs to a directory.
 
   This disables printing of logs to stderr, unless the --alsologtostderr flag

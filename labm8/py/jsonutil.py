@@ -33,7 +33,7 @@ def format_json(data):
   Returns:
       str: Formatted JSON
   """
-  return json.dumps(data, sort_keys=True, indent=2, separators=(',', ': '))
+  return json.dumps(data, sort_keys=True, indent=2, separators=(",", ": "))
 
 
 def read_file(*components, **kwargs):
@@ -52,7 +52,7 @@ def read_file(*components, **kwargs):
       File404: If path does not exist, and must_exist is True.
       InvalidFile: If JSON is malformed.
   """
-  must_exist = kwargs.get('must_exist', True)
+  must_exist = kwargs.get("must_exist", True)
 
   if must_exist:
     path = fs.must_exist(*components)
@@ -64,10 +64,10 @@ def read_file(*components, **kwargs):
       return loads(infile.read())
   except ValueError as e:
     raise ValueError(
-        "malformed JSON file '{path}'. Message from parser: {err}".format(
-            path=fs.basename(path),
-            err=str(e),
-        ),)
+      "malformed JSON file '{path}'. Message from parser: {err}".format(
+        path=fs.basename(path), err=str(e),
+      ),
+    )
   except IOError as e:
     if not must_exist:
       return {}
@@ -85,9 +85,9 @@ def write_file(path, data, format=True):
       format (bool, optional): Pretty-print JSON data.
   """
   if format:
-    fs.Write(path, format_json(data).encode('utf-8'))
+    fs.Write(path, format_json(data).encode("utf-8"))
   else:
-    fs.Write(path, json.dumps(data).encode('utf-8'))
+    fs.Write(path, json.dumps(data).encode("utf-8"))
 
 
 def loads(text, **kwargs):
@@ -111,18 +111,20 @@ def loads(text, **kwargs):
   Returns:
       `dict` or `list`: Decoded JSON.
   """
-  regex = r'\s*(#|\/{2}).*$'
-  regex_inline = r'(:?(?:\s)*([A-Za-z\d\.{}]*)|((?<=\").*\"),?)(?:\s)*(((#|(\/{2})).*)|)$'
-  lines = text.split('\n')
+  regex = r"\s*(#|\/{2}).*$"
+  regex_inline = (
+    r"(:?(?:\s)*([A-Za-z\d\.{}]*)|((?<=\").*\"),?)(?:\s)*(((#|(\/{2})).*)|)$"
+  )
+  lines = text.split("\n")
 
   for index, line in enumerate(lines):
     if re.search(regex, line):
-      if re.search(r'^' + regex, line, re.IGNORECASE):
-        lines[index] = ''
+      if re.search(r"^" + regex, line, re.IGNORECASE):
+        lines[index] = ""
       elif re.search(regex_inline, line):
-        lines[index] = re.sub(regex_inline, r'\1', line)
+        lines[index] = re.sub(regex_inline, r"\1", line)
 
-  return json.loads('\n'.join(lines), **kwargs)
+  return json.loads("\n".join(lines), **kwargs)
 
 
 def JsonSerializable(val):

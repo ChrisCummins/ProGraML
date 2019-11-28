@@ -209,7 +209,8 @@ class StringPiece {
   StringPiece() : ptr_(nullptr), length_(0) {}
 
   StringPiece(const char *str)  // NOLINT(runtime/explicit)
-      : ptr_(str), length_(0) {
+      : ptr_(str),
+        length_(0) {
     if (str != nullptr) {
       length_ = CheckedSsizeTFromSizeT(strlen(str));
     }

@@ -22,17 +22,17 @@ def _checksum(hash_fn, data):
   return hash_fn(data).hexdigest()
 
 
-def _checksum_str(hash_fn, string, encoding='utf-8'):
+def _checksum_str(hash_fn, string, encoding="utf-8"):
   return _checksum(hash_fn, string.encode(encoding))
 
 
 def _checksum_list(hash_fn, *elems):
-  string = ''.join(sorted(str(x) for x in elems))
+  string = "".join(sorted(str(x) for x in elems))
   return _checksum_str(hash_fn, string)
 
 
 def _checksum_file(hash_fn, path: typing.Union[str, pathlib.Path]):
-  with open(path, 'rb') as infile:
+  with open(path, "rb") as infile:
     ret = _checksum(hash_fn, infile.read())
   return ret
 
@@ -50,7 +50,7 @@ def sha1(data):
   return _checksum(hashlib.sha1, data)
 
 
-def sha1_str(string, encoding='utf-8'):
+def sha1_str(string, encoding="utf-8"):
   """
   Return the sha1 of string "data".
 
@@ -102,7 +102,7 @@ def md5(data):
   return _checksum(hashlib.md5, data)
 
 
-def md5_str(string, encoding='utf-8'):
+def md5_str(string, encoding="utf-8"):
   """
   Return the md5 of string "data".
 
@@ -154,7 +154,7 @@ def sha256(data):
   return _checksum(hashlib.sha256, data)
 
 
-def sha256_str(string, encoding='utf-8'):
+def sha256_str(string, encoding="utf-8"):
   """
   Return the sha256 of string "data".
 

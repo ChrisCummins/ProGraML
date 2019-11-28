@@ -17,7 +17,8 @@ from labm8.py import decorators
 FLAGS = app.FLAGS
 
 PUBLISHED_VOCABULARY = bazelutil.DataPath(
-    'phd/deeplearning/ncc/published_results/vocabulary.zip')
+  "phd/deeplearning/ncc/published_results/vocabulary.zip"
+)
 
 
 class VocabularyZipFile(object):
@@ -33,10 +34,10 @@ class VocabularyZipFile(object):
       raise ValueError("Path must be a string")
     self._compressed_path = pathlib.Path(compressed_path)
     if not self._compressed_path.is_file():
-      raise FileNotFoundError(f'File not found: {self._compressed_path}')
+      raise FileNotFoundError(f"File not found: {self._compressed_path}")
 
   @classmethod
-  def CreateFromPublishedResults(cls) -> 'VocabularyZipFile':
+  def CreateFromPublishedResults(cls) -> "VocabularyZipFile":
     """Construct from the NeurIPS'18 published vocabulary."""
     return VocabularyZipFile(PUBLISHED_VOCABULARY)
 
@@ -45,13 +46,13 @@ class VocabularyZipFile(object):
   @decorators.memoized_property
   def dictionary(self) -> typing.Dict[str, int]:
     """Return the vocabulary dictionary."""
-    with open(self._dictionary_pickle, 'rb') as f:
+    with open(self._dictionary_pickle, "rb") as f:
       return pickle.load(f)
 
   @decorators.memoized_property
   def cutoff_stmts(self) -> typing.Set[str]:
     """Return the vocabulary cut off statements."""
-    with open(self._cutoff_stmts_pickle, 'rb') as f:
+    with open(self._cutoff_stmts_pickle, "rb") as f:
       return set(pickle.load(f))
 
   @property
@@ -68,11 +69,11 @@ class VocabularyZipFile(object):
 
   @property
   def _dictionary_pickle(self) -> pathlib.Path:
-    return self._uncompressed_path / 'vocabulary' / 'dic_pickle'
+    return self._uncompressed_path / "vocabulary" / "dic_pickle"
 
   @property
   def _cutoff_stmts_pickle(self) -> pathlib.Path:
-    return self._uncompressed_path / 'vocabulary' / 'cutoff_stmts_pickle'
+    return self._uncompressed_path / "vocabulary" / "cutoff_stmts_pickle"
 
   @property
   def _uncompressed_path(self) -> pathlib.Path:
@@ -81,7 +82,7 @@ class VocabularyZipFile(object):
     return self._uncompressed_path_val
 
   def __enter__(self):
-    self._uncompressed_path_val = pathlib.Path(tempfile.mkdtemp(prefix='phd_'))
+    self._uncompressed_path_val = pathlib.Path(tempfile.mkdtemp(prefix="phd_"))
     with zipfile.ZipFile(str(self._compressed_path)) as f:
       f.extractall(path=str(self._uncompressed_path_val))
     return self
@@ -90,11 +91,10 @@ class VocabularyZipFile(object):
     shutil.rmtree(self._uncompressed_path_val)
 
   def EncodeLlvmBytecode(
-      self,
-      llvm_bytecode: str,
-      options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.
-      EncodeBytecodeOptions(),
-      struct_dict: typing.Dict[str, str] = None,
+    self,
+    llvm_bytecode: str,
+    options: inst2vec_pb2.EncodeBytecodeOptions = inst2vec_pb2.EncodeBytecodeOptions(),
+    struct_dict: typing.Dict[str, str] = None,
   ) -> inst2vec_pb2.EncodeBytecodeResult:
     """Encode an LLVM bytecode using the given vocabulary.
 
@@ -114,16 +114,17 @@ class VocabularyZipFile(object):
         result.unknown_statements.extend([stmt])
 
     def _MaybeSetBytecodeAfterPreprocessing(
-        preprocessed_lines: typing.List[str]) -> None:
+      preprocessed_lines: typing.List[str],
+    ) -> None:
       if options.set_bytecode_after_preprocessing:
-        result.bytecode_after_preprocessing = '\n'.join(preprocessed_lines)
+        result.bytecode_after_preprocessing = "\n".join(preprocessed_lines)
 
     def _MaybeSetStructDict() -> None:
       if options.set_struct_dict:
         for k, v in struct_dict.items():
           result.struct_dict[k] = v
 
-    llvm_bytecode_lines = llvm_bytecode.split('\n')
+    llvm_bytecode_lines = llvm_bytecode.split("\n")
 
     # Get the dictionary of structures defined the file.
     struct_dict = struct_dict or GetStructDict(llvm_bytecode_lines)
@@ -133,15 +134,16 @@ class VocabularyZipFile(object):
     # TODO(cec): Merge i2v_prep.preprocess() and PreprocessLlvmBytecode().
     preprocessed_data, _ = i2v_prep.preprocess([llvm_bytecode_lines])
     llvm_bytecode_lines = preprocessed_data[0]
-    llvm_bytecode_lines = PreprocessLlvmBytecode(llvm_bytecode_lines,
-                                                 struct_dict)
+    llvm_bytecode_lines = PreprocessLlvmBytecode(
+      llvm_bytecode_lines, struct_dict
+    )
     _MaybeSetBytecodeAfterPreprocessing(llvm_bytecode_lines)
 
     # Construct indexed sequence.
     encoded = []
     for i, line in enumerate(llvm_bytecode_lines):
       # check whether this is a label, in which case we ignore it
-      if re.match(r'((?:<label>:)?(<LABEL>):|; <label>:<LABEL>)', line):
+      if re.match(r"((?:<label>:)?(<LABEL>):|; <label>:<LABEL>)", line):
         continue
 
       # check whether this is an unknown
@@ -164,13 +166,15 @@ class VocabularyZipFile(object):
 def GetStructDict(bytecode_lines: typing.List[str]) -> typing.Dict[str, str]:
   # Construct a dictionary ["structure name", "corresponding literal structure"]
   _, struct_dict = i2v_prep.construct_struct_types_dictionary_for_file(
-      bytecode_lines)
+    bytecode_lines
+  )
 
   # If the dictionary is empty
   if not struct_dict:
     for line in bytecode_lines:
-      if re.match(rgx_utils.struct_name + ' = type (<?\{ .* \}|opaque|{})',
-                  line):
+      if re.match(
+        rgx_utils.struct_name + " = type (<?\{ .* \}|opaque|{})", line
+      ):
         # "Structures' dictionary is empty for file containing type definitions"
         # + data[0] + '\n' + data[1] + '\n' + data + '\n'
         assert False
@@ -178,26 +182,30 @@ def GetStructDict(bytecode_lines: typing.List[str]) -> typing.Dict[str, str]:
   return struct_dict
 
 
-def PreprocessLlvmBytecode(lines: typing.List[str],
-                           struct_dict: typing.Dict[str, str]):
+def PreprocessLlvmBytecode(
+  lines: typing.List[str], struct_dict: typing.Dict[str, str]
+):
   """Simplify lines of code by stripping them from their identifiers,
   unnamed values, etc. so that LLVM IR statements can be abstracted from them.
   """
   # Remove all "... = type {..." statements since we don't need them anymore
-  lines = [stmt for stmt in lines if not re.match('.* = type ', stmt)]
+  lines = [stmt for stmt in lines if not re.match(".* = type ", stmt)]
 
   for i in range(len(lines)):
 
     # Inline structure types in the src file.
-    possible_structs = re.findall('(' + rgx_utils.struct_name + ')', lines[i])
+    possible_structs = re.findall("(" + rgx_utils.struct_name + ")", lines[i])
     if possible_structs:
       for possible_struct in possible_structs:
-        if (possible_struct in struct_dict and
-            not re.match(possible_struct + r'\d* = ', lines[i])):
+        if possible_struct in struct_dict and not re.match(
+          possible_struct + r"\d* = ", lines[i]
+        ):
           # Replace them by their value in dictionary.
           lines[i] = re.sub(
-              re.escape(possible_struct) + rgx_utils.struct_lookahead,
-              struct_dict[possible_struct], lines[i])
+            re.escape(possible_struct) + rgx_utils.struct_lookahead,
+            struct_dict[possible_struct],
+            lines[i],
+          )
 
     # Replace all local identifiers (%## expressions) by "<%ID>".
     lines[i] = re.sub(rgx_utils.local_id, "<%ID>", lines[i])
@@ -205,19 +213,19 @@ def PreprocessLlvmBytecode(lines: typing.List[str],
     lines[i] = re.sub(rgx_utils.global_id, "<@ID>", lines[i])
 
     # Replace label declarations by token '<LABEL>'.
-    if re.match(r'; <label>:\d+:?(\s+; preds = )?', lines[i]):
+    if re.match(r"; <label>:\d+:?(\s+; preds = )?", lines[i]):
       lines[i] = re.sub(r":\d+", ":<LABEL>", lines[i])
       lines[i] = re.sub("<%ID>", "<LABEL>", lines[i])
-    elif re.match(rgx_utils.local_id_no_perc + r':(\s+; preds = )?', lines[i]):
-      lines[i] = re.sub(rgx_utils.local_id_no_perc + ':', "<LABEL>:", lines[i])
+    elif re.match(rgx_utils.local_id_no_perc + r":(\s+; preds = )?", lines[i]):
+      lines[i] = re.sub(rgx_utils.local_id_no_perc + ":", "<LABEL>:", lines[i])
       lines[i] = re.sub("<%ID>", "<LABEL>", lines[i])
 
-    if '; preds = ' in lines[i]:
-      s = lines[i].split('  ')
-      if s[-1][0] == ' ':
+    if "; preds = " in lines[i]:
+      s = lines[i].split("  ")
+      if s[-1][0] == " ":
         lines[i] = s[0] + s[-1]
       else:
-        lines[i] = s[0] + ' ' + s[-1]
+        lines[i] = s[0] + " " + s[-1]
 
     # Replace unnamed_values with abstract tokens. Abstract tokens map:
     #   integers: <INT>
@@ -225,24 +233,33 @@ def PreprocessLlvmBytecode(lines: typing.List[str],
     #   string: <STRING>
     #
     # Hexadecimal notation.
-    lines[i] = re.sub(r' ' + rgx_utils.immediate_value_float_hexa, " <FLOAT>",
-                      lines[i])
+    lines[i] = re.sub(
+      r" " + rgx_utils.immediate_value_float_hexa, " <FLOAT>", lines[i]
+    )
     # Decimal / scientific notation.
-    lines[i] = re.sub(r' ' + rgx_utils.immediate_value_float_sci, " <FLOAT>",
-                      lines[i])
-    if (re.match("<%ID> = extractelement", lines[i]) is None and
-        re.match("<%ID> = extractvalue", lines[i]) is None and
-        re.match("<%ID> = insertelement", lines[i]) is None and
-        re.match("<%ID> = insertvalue", lines[i]) is None):
-      lines[i] = re.sub(r'(?<!align)(?<!\[) ' + rgx_utils.immediate_value_int,
-                        " <INT>", lines[i])
+    lines[i] = re.sub(
+      r" " + rgx_utils.immediate_value_float_sci, " <FLOAT>", lines[i]
+    )
+    if (
+      re.match("<%ID> = extractelement", lines[i]) is None
+      and re.match("<%ID> = extractvalue", lines[i]) is None
+      and re.match("<%ID> = insertelement", lines[i]) is None
+      and re.match("<%ID> = insertvalue", lines[i]) is None
+    ):
+      lines[i] = re.sub(
+        r"(?<!align)(?<!\[) " + rgx_utils.immediate_value_int,
+        " <INT>",
+        lines[i],
+      )
 
     lines[i] = re.sub(rgx_utils.immediate_value_string, " <STRING>", lines[i])
 
     # Replace the index type in expressions containing "extractelement" or
     # "insertelement" by token <TYP>.
-    if (re.match("<%ID> = extractelement", lines[i]) is not None or
-        re.match("<%ID> = insertelement", lines[i]) is not None):
-      lines[i] = re.sub(r'i\d+ ', '<TYP> ', lines[i])
+    if (
+      re.match("<%ID> = extractelement", lines[i]) is not None
+      or re.match("<%ID> = insertelement", lines[i]) is not None
+    ):
+      lines[i] = re.sub(r"i\d+ ", "<TYP> ", lines[i])
 
   return lines
