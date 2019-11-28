@@ -91,7 +91,7 @@ def Commas(value: Optional[int]):
   return sign + ",".join(reversed(result))
 
 
-def Plural(quantity, singular, plural=None, commas=False):
+def Plural(quantity, singular, plural=None):
   """Formats an integer and a string into a single pluralized string.
 
   Args:
