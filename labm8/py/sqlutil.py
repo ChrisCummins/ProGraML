@@ -59,6 +59,11 @@ absl_flags.DEFINE_integer(
   "is connections that can be opened above and beyond the "
   "--mysql_engine_pool_size setting",
 )
+absl_flags.DEFINE_boolean(
+  "mysql_assume_utf8_charset",
+  True,
+  "Default to adding the '?charset=utf8' suffix to MySQL database URLs.",
+)
 
 # The Query type is returned by Session.query(). This is a convenience for type
 # annotations.
@@ -206,7 +211,7 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
   engine_args = {}
 
   # Read and expand a `file://` prefixed URL.
-  url = ExpandFileUrl(url)
+  url = ResolveUrl(url)
 
   if url.startswith("mysql://"):
     # Support for MySQL dialect.
@@ -300,10 +305,14 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
   return engine
 
 
-def ExpandFileUrl(url: str):
-  """Expand URLs which begin with 'file://' by reading the file contents.
+def ResolveUrl(url: str):
+  """Resolve the URL of a database.
 
-  If the URL does not begin with `file://`, it is returned unmodified.
+  The following modifications are supported:
+    * If the url begins with 'file://', the URL is substituted with the
+      contents of the file.
+    * If --mysql_assume_utf8_charset is set, then '?charset=utf8' suffix is
+      appended to URLs which begin with mysql://.
 
   Args:
     url: The URL to expand, e.g. `file://path/to/file.txt?arg'
@@ -315,32 +324,33 @@ def ExpandFileUrl(url: str):
     ValueError: If the file path is invalid.
     FileNotFoundError: IF the file path does not exist.
   """
-  if not url.startswith("file://"):
-    return url
+  if url.startswith("file://"):
+    # Split the URL into the file path, and the optional suffix.
+    components = url.split("?")
+    path, suffix = components[0], "?".join(components[1:])
 
-  # Split the URL into the file path, and the optional suffix.
-  components = url.split("?")
-  path, suffix = components[0], "?".join(components[1:])
+    # Strip the file:// prefix from the path.
+    path = pathlib.Path(path[len("file://") :])
 
-  # Strip the file:// prefix from the path.
-  path = pathlib.Path(path[len("file://") :])
+    if not path.is_absolute():
+      raise ValueError("Relative path to file:// is not allowed")
 
-  if not path.is_absolute():
-    raise ValueError("Relative path to file:// is not allowed")
+    if not path.is_file():
+      raise FileNotFoundError(f"File '{path}' not found")
 
-  if not path.is_file():
-    raise FileNotFoundError(f"File '{path}' not found")
+    # Read the contents of the file, ignoring lines starting with '#'.
+    with open(path) as f:
+      url = "\n".join(
+        x for x in f.read().split("\n") if not x.lstrip().startswith("#")
+      ).strip()
 
-  # Read the contents of the file, ignoring lines starting with '#'.
-  with open(path) as f:
-    file_url = "\n".join(
-      x for x in f.read().split("\n") if not x.lstrip().startswith("#")
-    ).strip()
+    # Append the suffix.
+    url += suffix
 
-  # Append the suffix.
-  file_url += suffix
+  if url.startswith("mysql://") and FLAGS.mysql_assume_utf8_charset:
+    url += "?charset=utf8"
 
-  return file_url
+  return url
 
 
 def ColumnNames(model) -> typing.List[str]:
