@@ -37,4 +37,3 @@ python_proto_library(
     visibility = ["//visibility:public"],
     deps = [":ml4pl_pb"],
 )
-
