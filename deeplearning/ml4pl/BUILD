@@ -38,7 +38,3 @@ python_proto_library(
     deps = [":ml4pl_pb"],
 )
 
-proto_library(
-    name = "programl_pb",
-    srcs = ["programl.proto"],
-)
