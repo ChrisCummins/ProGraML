@@ -228,6 +228,112 @@ def RunPytestOnFileAndExit(
   sys.exit(ret)
 
 
+def Fixture(scope: str = "", params: typing.Optional[typing.Any] = None):
+  """Construct a test fixture.
+
+  This is a wrapper around pytest's fixture which enforces various project-local
+  options such as requiring a `scope` argument.
+
+  See: https://docs.pytest.org/en/latest/fixture.html
+
+  Args:
+    scope: The scope of the fixture. One of {function, class, package, module}.
+    params: An optional list of parameters which will cause multiple invocations
+      of the fixture function and all of the tests using it.
+
+  Usage:
+
+      @test.Fixture
+      def foo() -> int:
+        return 5
+
+      def test_foo(foo: int):
+        assert foo == 5
+  """
+  if not scope:
+    raise TypeError(f"Test fixture must specify a scope")
+
+  return pytest.fixture(scope=scope, params=params)
+
+
+def Raises(expected_exception: typing.Callable):
+  """A context manager to wrap code that raises an exception.
+
+  Usage:
+
+      def test_foo():
+        with test.Raises(ValueError):
+          FunctionThatRaisesError()
+  """
+  return pytest.raises(expected_exception)
+
+
+def Flaky(max_runs: int = 5, min_passes: int = 1, expected_exception=None):
+  """Mark a test as flaky."""
+
+  def ReRunFilter(err, *args):
+    """A function that determines whether to re-run a failed flaky test."""
+    del args
+    if expected_exception:
+      error_class, exception, taceback = err
+      return issubclass(error_class, expected_exception)
+    else:
+      return True
+
+  return pytest.mark.flaky(
+    max_runs=max_runs, min_passes=min_passes, rerun_filter=ReRunFilter
+  )
+
+
+def SlowTest(reason: str = ""):
+  """Mark a test as slow. Slow tests may be skipped using --test_skip_slow."""
+  if not reason:
+    raise TypeError("Must provide a reason for slow test.")
+  return pytest.mark.slow
+
+
+def MacOsTest():
+  """Mark a test that runs only on macOS. This test will be skipped on linux."""
+  return pytest.mark.darwin
+
+
+def LinuxTest():
+  """Mark a test that runs only on linux. This test will be skipped on macOS."""
+  return pytest.mark.linux
+
+
+def XFail(reason: str = ""):
+  """Mark a test as expected to fail. An XFail test that *passes* is treated
+  as a failure."""
+  if not reason:
+    raise TypeError("Must provide a reason for XFail test.")
+  return pytest.mark.xfail(strict=True, reason=reason)
+
+
+def Parametrize(arg_name: str, arg_values: typing.Tuple[typing.Any]):
+  """Create a parametrized function."""
+  return pytest.mark.parametrize(arg_name, arg_values)
+
+
+def Skip(reason: str = ""):
+  """Mark a test as one to skip."""
+  if not reason:
+    raise TypeError("Must provide a reason to skip test.")
+  return pytest.mark.skip(reason=reason)
+
+
+def SkipIf(condition: bool, reason: str = ""):
+  """Skip the test if the condition is met."""
+  if not reason:
+    raise TypeError("Must provide a reason to conditionally skip a test.")
+  return pytest.mark.skipif(condition, reason)
+
+
+def Fail(reason: str):
+  """Mark a test as failed."""
+  return pytest.fail(reason)
+
+
 def Main(capture_output: typing.Optional[bool] = None):
   """Main entry point.
 
