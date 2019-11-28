@@ -1,0 +1,2 @@
+linux: # m4 is required to build CLSmith:
+linux: sudo apt install -y --no-install-recommends m4
