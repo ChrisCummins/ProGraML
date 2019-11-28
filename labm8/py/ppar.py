@@ -343,10 +343,17 @@ class ThreadedIterator:
   """
 
   def __init__(
-    self, iterator: typing.Iterable[typing.Any], max_queue_size: int = 2
+    self,
+    iterator: typing.Iterable[typing.Any],
+    max_queue_size: int = 2,
+    start: bool = True,
   ):
     self._queue = queue.Queue(maxsize=max_queue_size)
     self._thread = threading.Thread(target=lambda: self.worker(iterator))
+    if start:
+      self.Start()
+
+  def Start(self):
     self._thread.start()
 
   def worker(self, iterator):
