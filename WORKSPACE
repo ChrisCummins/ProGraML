@@ -644,7 +644,7 @@ container_pull(
 # Full build environment with all required toolchains.
 container_pull(
     name = "phd_build",
-    digest = "sha256:7c37c2a47758f442de65e93476d3b279c61b517cee1365df624a02665dd6f514",
+    digest = "sha256:360eaa5d9c3999856e5e360d5f037be4ee408bd228ee9180cd9a9f96a558499b",
     registry = "index.docker.io",
     repository = "chriscummins/phd_build",
 )
