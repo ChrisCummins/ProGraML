@@ -7,10 +7,9 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])  # BSD
 
 py_library(
-    name = "networkx",
+    name = "decorator",
     srcs = ["//third_party/py:empty.py"],
     deps = [
-        requirement("networkx"),
-        "//third_party/py/decorator",  # Implicit dependency.
+        requirement("decorator"),
     ],
 )
