@@ -17,7 +17,7 @@ py3_image(
     name = "image",
     srcs = [":foo"],
     main = ["foo.py"],
-    base = "@base_phd//image",
+    base = "@phd_build//image",
     deps = [":foo"],
 )
 ```

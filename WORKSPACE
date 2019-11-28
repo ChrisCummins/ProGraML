@@ -633,7 +633,7 @@ container_pull(
     repository = "chriscummins/phd_base",
 )
 
-# Same as base, but with a Java environment.
+# Same as phd_base, but with a Java environment.
 container_pull(
     name = "base_java",
     digest = "sha256:31719c1233ac4be59e7c546fd53f5d164c209fa374ca73b387104fc4d0919bc1",
