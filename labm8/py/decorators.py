@@ -15,9 +15,11 @@
 import contextlib
 import functools
 import signal
+import time
 import typing
 
 from labm8.py import app
+from labm8.py import humanize
 
 FLAGS = app.FLAGS
 
@@ -123,3 +125,32 @@ def run_once(f):
 
   wrapper.has_run = False
   return wrapper
+
+
+def loop_for(seconds: int = 5, min_iteration_count=1):
+  """Run the wrapped function until a given number of seconds have elapsed.
+
+  Args:
+    seconds: The minimum number of seconds to run the function for.
+    min_iteration_count: The minimum number of iterations to run the wrapped
+      function for.
+  """
+
+  def WrappedLoopFor(function):
+    @functools.wraps(function)
+    def InnerLoop(*args, **kwargs):
+      end = time.time() + seconds
+      iteration_count = 0
+      while time.time() < end or iteration_count < min_iteration_count:
+        iteration_count += 1
+        function(*args, **kwargs)
+      app.Log(
+        2,
+        "Ran %s of `%s`",
+        humanize.Plural(iteration_count, "iteration"),
+        function.__name__,
+      )
+
+    return InnerLoop
+
+  return WrappedLoopFor

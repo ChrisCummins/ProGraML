@@ -193,6 +193,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":app",
+        ":humanize",
     ],
 )
 
