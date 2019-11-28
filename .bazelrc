@@ -17,6 +17,9 @@ test --runs_per_test=1
 build --workspace_status_command=tools/workspace_status.sh
 test --workspace_status_command=tools/workspace_status.sh
 
+# Build options:
+build --keep_going
+
 # Test options:
 test --test_output=errors
 test --keep_going
