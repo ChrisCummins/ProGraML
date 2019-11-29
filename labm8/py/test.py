@@ -268,7 +268,12 @@ def Raises(expected_exception: typing.Callable):
   return pytest.raises(expected_exception)
 
 
-def Flaky(max_runs: int = 5, min_passes: int = 1, expected_exception=None):
+def Flaky(
+  max_runs: int = 5,
+  min_passes: int = 1,
+  expected_exception=None,
+  reason: str = "",
+):
   """Mark a test as flaky."""
 
   def ReRunFilter(err, *args):
@@ -279,6 +284,9 @@ def Flaky(max_runs: int = 5, min_passes: int = 1, expected_exception=None):
       return issubclass(error_class, expected_exception)
     else:
       return True
+
+  if not reason:
+    raise TypeError("Must provide a reason that a test is flaky.")
 
   return pytest.mark.flaky(
     max_runs=max_runs, min_passes=min_passes, rerun_filter=ReRunFilter
