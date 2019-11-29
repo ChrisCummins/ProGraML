@@ -41,6 +41,7 @@ python_proto_library(
 py_binary(
     name = "run_id",
     srcs = ["run_id.py"],
+    visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
         "//labm8/py:app",
         "//labm8/py:fs",
