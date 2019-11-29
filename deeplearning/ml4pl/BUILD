@@ -37,3 +37,25 @@ python_proto_library(
     visibility = ["//visibility:public"],
     deps = [":ml4pl_pb"],
 )
+
+py_binary(
+    name = "run_id",
+    srcs = ["run_id.py"],
+    deps = [
+        "//labm8/py:app",
+        "//labm8/py:fs",
+        "//labm8/py:system",
+        "//third_party/py/sqlalchemy",
+    ],
+)
+
+py_test(
+    name = "run_id_test",
+    srcs = ["run_id_test.py"],
+    deps = [
+        ":run_id",
+        "//labm8/py:sqlutil",
+        "//labm8/py:test",
+        "//third_party/py/sqlalchemy",
+    ],
+)
