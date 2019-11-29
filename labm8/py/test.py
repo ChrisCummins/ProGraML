@@ -200,7 +200,7 @@ def RunPytestOnFileAndExit(
   pytest_args = [
     file_path,
     # Run pytest verbosely.
-    "-vv",
+    "-v",
     "-p",
     "no:cacheprovider",
   ]
