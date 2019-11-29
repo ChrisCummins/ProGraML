@@ -2,18 +2,6 @@
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
-py_library(
-    name = "conftest",
-    testonly = 1,
-    srcs = ["conftest.py"],
-    deps = [
-        ":graph_database",
-        "//labm8/py:test",
-        "//third_party/py/numpy",
-        "//third_party/py/pytest",
-    ],
-)
-
 py_binary(
     name = "copy_database",
     srcs = ["copy_database.py"],
@@ -104,9 +92,9 @@ py_test(
     timeout = "long",
     srcs = ["graph_database_reader_test.py"],
     deps = [
-        ":conftest",
         ":graph_database",
         ":graph_database_reader",
+        "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:test",
         "//third_party/py/numpy",
     ],
@@ -117,9 +105,9 @@ py_test(
     timeout = "long",
     srcs = ["graph_database_reader_benchmark_test.py"],
     deps = [
-        ":conftest",
         ":graph_database",
         ":graph_database_reader",
+        "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:test",
     ],
 )
