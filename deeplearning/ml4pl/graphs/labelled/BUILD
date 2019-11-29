@@ -26,7 +26,7 @@ py_binary(
 py3_image(
     name = "make_data_flow_analysis_dataset_image",
     srcs = ["make_data_flow_analysis_dataset.py"],
-    base = "@base//image",
+    base = "@phd_base//image",
     main = "make_data_flow_analysis_dataset.py",
     deps = [":make_data_flow_analysis_dataset"],
 )
