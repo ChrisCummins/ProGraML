@@ -483,16 +483,18 @@ class Database(object):
     if self.url.startswith("mysql://"):
       engine = sql.create_engine("/".join(self.url.split("/")[:-1]))
       database = self.url.split("/")[-1].split("?")[0]
-      engine.execute(
-        sql.text("DROP DATABASE IF EXISTS :database"), database=database,
-      )
-    elif self.url.startswith("sqlite://"):
+      logging.Log(logging.GetCallingModuleName(), 1, "database %s", database)
+      engine.execute(f"DROP DATABASE IF EXISTS `{database}`")
+    elif self.url == "sqlite://":
+      # In-memory databases do not dropping.
+      pass
+    elif self.url.startswith("sqlite:///"):
       path = pathlib.Path(self.url[len("sqlite:///") :])
       assert path.is_file()
       path.unlink()
     else:
       raise NotImplementedError(
-        "Unsupported operation DROP for database: '{self.url}'",
+        f"Unsupported operation DROP for database: '{self.url}'",
       )
 
   @property
