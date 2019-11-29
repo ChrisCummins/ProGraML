@@ -223,3 +223,31 @@ python_proto_library(
     visibility = ["//visibility:public"],
     deps = [":programl_pb"],
 )
+
+py_library(
+    name = "programl",
+    srcs = ["programl.py"],
+    deps = [
+        ":programl_pb_py",
+        "//labm8/py:app",
+        "//third_party/py/networkx",
+        "//third_party/py/numpy",
+    ],
+)
+
+py_test(
+    name = "programl_test",
+    srcs = ["programl_test.py"],
+    data = [
+        "//deeplearning/ml4pl/testing/data:100_unlabelled_networkx_graphs",
+    ],
+    deps = [
+        ":programl",
+        ":programl_pb_py",
+        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//labm8/py:bazelutil",
+        "//labm8/py:decorators",
+        "//labm8/py:test",
+    ],
+)
