@@ -14,6 +14,7 @@
 """Utility code for working with sqlalchemy."""
 import contextlib
 import pathlib
+import sqlite3
 import time
 import typing
 
@@ -63,6 +64,13 @@ absl_flags.DEFINE_boolean(
   "mysql_assume_utf8_charset",
   True,
   "Default to adding the '?charset=utf8' suffix to MySQL database URLs.",
+)
+absl_flags.DEFINE_boolean(
+  "sqlite_enable_foreign_keys",
+  True,
+  "Enable foreign key support for SQLite. This enforces foreign key "
+  "constraints, and enables cascaded update/delete statements. See: "
+  "https://docs.sqlalchemy.org/en/13/dialects/sqlite.html#foreign-key-support",
 )
 
 # The Query type is returned by Session.query(). This is a convenience for type
@@ -303,6 +311,23 @@ def CreateEngine(url: str, must_exist: bool = False) -> sql.engine.Engine:
   engine.connect().close()
 
   return engine
+
+
+@sql.event.listens_for(sql.engine.Engine, "connect")
+def EnableSqliteForeignKeysCallback(dbapi_connection, connection_record):
+  """Enable foreign key constraints for SQLite databases.
+
+  See --sqlite_enable_foreign_keys for details.
+  """
+  del connection_record
+  # This callback listens for *all* database connections, not just SQLite. Check
+  # the type before trying to run an SQLite-specific pragma.
+  if FLAGS.sqlite_enable_foreign_keys and isinstance(
+    dbapi_connection, sqlite3.Connection
+  ):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 def ResolveUrl(url: str):
