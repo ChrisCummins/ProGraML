@@ -22,5 +22,6 @@ py_library(
         requirement("pytest-cov"),
         requirement("pytest-mock"),
         requirement("flaky"),
+        requirement("coverage"),  # Implicit dependency of pytest-cov.
     ],
 )
