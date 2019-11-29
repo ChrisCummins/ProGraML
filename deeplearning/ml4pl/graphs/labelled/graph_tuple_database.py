@@ -144,10 +144,8 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     node_encodeds = []
     for node in proto.node:
       node_types.add(node.type)
-      if node.HasField("text"):
-        node_texts.append(node.text)
-      if node.HasField("preprocessed_text"):
-        node_preprocessed_texts.append(node.preprocessed_text)
+      node_texts.append(node.text)
+      node_preprocessed_texts.append(node.preprocessed_text)
       if node.HasField("encoded"):
         node_encodeds.append(node.encoded)
 
