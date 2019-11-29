@@ -1,0 +1,71 @@
+// Protocol buffer for the ProGraML representation.
+
+syntax = "proto2";
+
+package phd.deeplearning.ml4pl;
+
+// A program graph.
+message ProgramGraph {
+  repeated Node node = 1;
+  repeated Edge edge = 2;
+  repeated Function function = 3;
+
+  // Optional vectors of graph-level features and labels.
+  repeated int32 discrete_x = 4;
+  repeated int32 discrete_y = 6;
+
+  repeated float real_x = 5;
+  repeated float real_y = 7;
+}
+
+message Function {
+  // The name of the function.
+  required string name = 1;
+}
+
+message Node {
+  // The node type.
+  enum Type {
+    STATEMENT = 1;
+    IDENTIFIER = 2;
+    IMMEDIATE = 3;
+  }
+  required Type type = 1;
+
+  // An index into the ProgramGraph.function list indicating the source function
+  // for this node. Omitting this fields means the node does not belong to a
+  // function, such as the case for global identifiers.
+  optional int32 function = 2;
+
+  // The text of a node. This is the raw representation of a node, such as the
+  // contents of a statement, or the name of an identifier.
+  optional string text = 3;
+
+  // The pre-processed text of a node. This is the
+  optional string preprocessed_text = 4;
+
+  // Optional vectors of node-level features and labels.
+  repeated int64 discrete_x = 5;
+  repeated float discrete_y = 7;
+
+  repeated int64 real_x = 6;
+  repeated float real_y = 8;
+}
+
+message Edge {
+  // The edge type.
+  enum Type {
+    CONTROL = 1;
+    DATA = 2;
+    CALL = 3;
+  }
+  required Type type = 1;
+
+  // The source and destination nodes of the edge, as andicies into a
+  // ProgramGraph.node list.
+  required int32 source_node = 2;
+  required int32 destination_node = 3;
+
+  // The position of an edge.
+  required int32 position = 4 [default=0];
+}

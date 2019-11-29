@@ -1,5 +1,7 @@
 # Databases of graphs.
 
+load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
+
 py_library(
     name = "conftest",
     testonly = 1,
@@ -209,4 +211,15 @@ py_library(
         "//labm8/py:labtypes",
         "//third_party/py/networkx",
     ],
+)
+
+proto_library(
+    name = "programl_pb",
+    srcs = ["programl.proto"],
+)
+
+python_proto_library(
+    name = "programl_pb_py",
+    visibility = ["//visibility:public"],
+    deps = [":programl_pb"],
 )

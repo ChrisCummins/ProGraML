@@ -7,8 +7,8 @@ import sqlalchemy as sql
 from sqlalchemy.dialects import mysql
 from sqlalchemy.ext import declarative
 
+from deeplearning.ml4pl.graphs import programl_pb2
 from deeplearning.ml4pl.graphs.labelled.graph_tuple import graph_tuple
-from deeplearning.ml4pl.graphs.unlabelled import programl_pb2
 from labm8.py import app
 from labm8.py import crypto
 from labm8.py import labdate
@@ -24,12 +24,12 @@ class Meta(Base, sqlutil.TablenameFromClassNameMixin):
 
   key: str = sql.Column(sql.String(64), primary_key=True)
   pickled_value: str = sql.Column(
-      sqlutil.ColumnTypes.LargeBinary(), nullable=False
+    sqlutil.ColumnTypes.LargeBinary(), nullable=False
   )
   date_added: datetime.datetime = sql.Column(
-      sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
-      nullable=False,
-      default=labdate.GetUtcMillisecondsNow,
+    sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
+    nullable=False,
+    default=labdate.GetUtcMillisecondsNow,
   )
 
   @property
@@ -50,6 +50,7 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   of graph metadata, without needing to churn through a table of pickled binary
   blobs.
   """
+
   id: int = sql.Column(sql.Integer, primary_key=True)
 
   # A reference to the 'id' column of a
@@ -72,18 +73,18 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
 
   # The dimensionality of node-level features and labels.
   node_features_dimensionality: int = sql.Column(
-      sql.Integer, default=0, nullable=False
+    sql.Integer, default=0, nullable=False
   )
   node_labels_dimensionality: int = sql.Column(
-      sql.Integer, default=0, nullable=False
+    sql.Integer, default=0, nullable=False
   )
 
   # The dimensionality of graph-level features and labels.
   graph_features_dimensionality: int = sql.Column(
-      sql.Integer, default=0, nullable=False
+    sql.Integer, default=0, nullable=False
   )
   graph_labels_dimensionality: int = sql.Column(
-      sql.Integer, default=0, nullable=False
+    sql.Integer, default=0, nullable=False
   )
 
   # The maximum value of the 'position' attribute of edges.
@@ -93,14 +94,14 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   graph_tuple_size: int = sql.Column(sql.Integer, nullable=False)
 
   date_added: datetime.datetime = sql.Column(
-      sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
-      nullable=False,
-      default=labdate.GetUtcMillisecondsNow,
+    sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
+    nullable=False,
+    default=labdate.GetUtcMillisecondsNow,
   )
 
   # Create the one-to-one relationship from GraphTuple to GraphTupleData.
   data: "GraphTupleData" = sql.orm.relationship(
-      "GraphTupleData", uselist=False, cascade="all, delete-orphan"
+    "GraphTupleData", uselist=False, cascade="all, delete-orphan"
   )
 
   # Joined table accessors:
@@ -153,36 +154,34 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     serialized_proto = proto.SerializeToString()
 
     return GraphTuple(
-        split=split,
-        ir_id=ir_id,
-        node_count=len(proto.node),
-        edge_count=len(proto.edge),
-        node_type_count=len(node_types),
-        edge_type_count=len(edge_types),
-        node_text_count=len(node_texts),
-        node_unique_text_count=len(set(node_texts)),
-        node_preprocessed_text_count=len(node_preprocessed_texts),
-        node_unique_preprocessed_text_count=len(set(node_preprocessed_texts)),
-        node_encoded_count=len(node_encodeds),
-        node_unique_encoded_count=len(set(node_encodeds)),
-        edge_position_max=edge_position_max,
-        serialized_proto_size=len(serialized_proto),
-        data=GraphTupleData(
-            sha1=crypto.sha1(serialized_proto), serialized_proto=serialized_proto,
-        ),
+      split=split,
+      ir_id=ir_id,
+      node_count=len(proto.node),
+      edge_count=len(proto.edge),
+      node_type_count=len(node_types),
+      edge_type_count=len(edge_types),
+      node_text_count=len(node_texts),
+      node_unique_text_count=len(set(node_texts)),
+      node_preprocessed_text_count=len(node_preprocessed_texts),
+      node_unique_preprocessed_text_count=len(set(node_preprocessed_texts)),
+      node_encoded_count=len(node_encodeds),
+      node_unique_encoded_count=len(set(node_encodeds)),
+      edge_position_max=edge_position_max,
+      serialized_proto_size=len(serialized_proto),
+      data=GraphTupleData(
+        sha1=crypto.sha1(serialized_proto), serialized_proto=serialized_proto,
+      ),
     )
 
 
-class GraphTupleData(
-    Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin
-):
+class GraphTupleData(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   """The protocol buffer of a program graph.
 
   See GraphTuple for the parent table.
   """
 
   id: int = sql.Column(
-      sql.Integer, sql.ForeignKey("program_graphs.id"), primary_key=True
+    sql.Integer, sql.ForeignKey("program_graphs.id"), primary_key=True
   )
 
   # The sha1sum of the 'serialized_proto' column. There is no requirement
@@ -192,7 +191,7 @@ class GraphTupleData(
 
   # A binary-serialized GraphTuple protocol buffer.
   serialized_proto: bytes = sql.Column(
-      sqlutil.ColumnTypes.LargeBinary(), nullable=False
+    sqlutil.ColumnTypes.LargeBinary(), nullable=False
   )
 
 
