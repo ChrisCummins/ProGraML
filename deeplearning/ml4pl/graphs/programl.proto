@@ -32,17 +32,17 @@ message Node {
   }
   required Type type = 1;
 
+  // The text of a node. This is the raw representation of a node, such as the
+  // contents of a statement, or the name of an identifier.
+  required string text = 2;
+
+  // The pre-processed text of a node. This is the
+  required string preprocessed_text = 3;
+
   // An index into the ProgramGraph.function list indicating the source function
   // for this node. Omitting this fields means the node does not belong to a
   // function, such as the case for global identifiers.
-  optional int32 function = 2;
-
-  // The text of a node. This is the raw representation of a node, such as the
-  // contents of a statement, or the name of an identifier.
-  optional string text = 3;
-
-  // The pre-processed text of a node. This is the
-  optional string preprocessed_text = 4;
+  optional int32 function = 4;
 
   // Optional vectors of node-level features and labels.
   repeated int64 discrete_x = 5;
@@ -53,13 +53,13 @@ message Node {
 }
 
 message Edge {
-  // The edge type.
-  enum Type {
+  // The edge flow type.
+  enum Flow {
     CONTROL = 1;
     DATA = 2;
     CALL = 3;
   }
-  required Type type = 1;
+  required Flow flow = 1;
 
   // The source and destination nodes of the edge, as andicies into a
   // ProgramGraph.node list.
