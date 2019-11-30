@@ -215,6 +215,7 @@ python_proto_library(
 py_library(
     name = "programl",
     srcs = ["programl.py"],
+    visibility = ["//deeplearning/ml4pl/graphs:__subpackages__"],
     deps = [
         ":programl_pb_py",
         "//labm8/py:app",
