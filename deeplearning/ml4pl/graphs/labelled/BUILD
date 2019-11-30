@@ -2,6 +2,28 @@
 
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
+py_library(
+    name = "data_flow_graphs",
+    srcs = ["data_flow_graphs.py"],
+    visibility = ["//deeplearning/ml4pl/graphs/labelled:__subpackages__"],
+    deps = [
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
+        "//labm8/py:app",
+        "//third_party/py/networkx",
+    ],
+)
+
+py_test(
+    name = "data_flow_graphs_test",
+    srcs = ["data_flow_graphs_test.py"],
+    deps = [
+        ":data_flow_graphs",
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
+        "//labm8/py:test",
+        "//third_party/py/networkx",
+    ],
+)
+
 py_binary(
     name = "make_data_flow_analysis_dataset",
     srcs = ["make_data_flow_analysis_dataset.py"],
