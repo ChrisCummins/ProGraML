@@ -11,11 +11,8 @@ message ProgramGraph {
   repeated Function function = 3;
 
   // Optional vectors of graph-level features and labels.
-  repeated int32 discrete_x = 4;
-  repeated int32 discrete_y = 6;
-
-  repeated float real_x = 5;
-  repeated float real_y = 7;
+  repeated int32 x = 5;
+  repeated int32 y = 6;
 }
 
 message Function {
@@ -45,11 +42,8 @@ message Node {
   optional int32 function = 4;
 
   // Optional vectors of node-level features and labels.
-  repeated int64 discrete_x = 5;
-  repeated float discrete_y = 7;
-
-  repeated int64 real_x = 6;
-  repeated float real_y = 8;
+  repeated int32 x = 5;
+  repeated int32 y = 6;
 }
 
 message Edge {

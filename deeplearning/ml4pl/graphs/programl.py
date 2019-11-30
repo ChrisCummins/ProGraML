@@ -19,20 +19,16 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
   The mapping from protocol buffer fields to networkx graph attributes is:
 
   Graph:
-      * discrete_x (List[int]): ProgramGraph.discrete_x
-      * discrete_y (List[int]): ProgramGraph.discrete_y
-      * real_x (List[float]): ProgramGraph.real_x
-      * real_y (List[float]): ProgramGraph.real_y
+      * x (List[int]): ProgramGraph.x
+      * y (List[int]): ProgramGraph.y
 
   Nodes:
       * type (Node.Type enum): Node.type
       * text (str): Node.text
       * preprocessed_text (str): Node.preprocessed_text
       * function (Union[str, None]): Function.name
-      * discrete_x (List[int]): Node.discrete_x
-      * discrete_y (List[int]): Node.discrete_y
-      * real_x (List[float]): Node.real_x
-      * real_y (List[float]): Node.real_y
+      * x (List[int]): Node.x
+      * y (List[int]): Node.y
 
   Edges:
       * flow (Edge.Flow enum): Edge.flow
@@ -41,10 +37,8 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
   g = nx.MultiDiGraph()
 
   # Add graph-level features and labels.
-  g.graph["discrete_x"] = list(proto.discrete_x)
-  g.graph["discrete_y"] = list(proto.discrete_y)
-  g.graph["real_x"] = list(proto.real_x)
-  g.graph["real_y"] = list(proto.real_y)
+  g.graph["x"] = list(proto.x)
+  g.graph["y"] = list(proto.y)
 
   # Build the nodes.
   for i, node in enumerate(proto.node):
@@ -58,10 +52,8 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
         if node.HasField("function")
         else None
       ),
-      discrete_x=list(node.discrete_x),
-      discrete_y=list(node.discrete_y),
-      real_x=list(node.real_x),
-      real_y=list(node.real_y),
+      x=list(node.x),
+      y=list(node.y),
     )
 
   # Build the edges.
@@ -103,10 +95,8 @@ def NetworkXToProgramGraph(
     function_proto.name = function_name
 
   # Set the graph-level features and labels.
-  proto.discrete_x[:] = np.array(g.graph["discrete_x"], dtype=np.int32).tolist()
-  proto.discrete_y[:] = np.array(g.graph["discrete_y"], dtype=np.int32).tolist()
-  proto.real_x[:] = np.array(g.graph["real_x"], dtype=np.float32).tolist()
-  proto.real_y[:] = np.array(g.graph["real_y"], dtype=np.float32).tolist()
+  proto.x[:] = np.array(g.graph["x"], dtype=np.int32).tolist()
+  proto.y[:] = np.array(g.graph["y"], dtype=np.int32).tolist()
 
   # Create the node list.
   for node, data in g.nodes(data=True):
@@ -116,14 +106,8 @@ def NetworkXToProgramGraph(
     node_proto.preprocessed_text = data["preprocessed_text"]
     if data["function"] is not None:
       node_proto.function = function_to_idx_map[data["function"]]
-    node_proto.discrete_x[:] = np.array(
-      data["discrete_x"], dtype=np.int32
-    ).tolist()
-    node_proto.discrete_y[:] = np.array(
-      data["discrete_y"], dtype=np.int32
-    ).tolist()
-    node_proto.real_x[:] = np.array(data["real_x"], dtype=np.float32).tolist()
-    node_proto.real_y[:] = np.array(data["real_y"], dtype=np.float32).tolist()
+    node_proto.x[:] = np.array(data["x"], dtype=np.int32).tolist()
+    node_proto.y[:] = np.array(data["y"], dtype=np.int32).tolist()
 
   # Create the edge list.
   for src, dst, data in g.edges(data=True):

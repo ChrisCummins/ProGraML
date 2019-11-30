@@ -146,39 +146,28 @@ class GraphTuple(NamedTuple):
       ]
     )
 
-    # Note(github.com/ChrisCummins/ProGraML/issues/22): Hardcoded to support
-    # only discrete node features, real-valued node labels, discrete graph
-    # features, and discrete graph labels.
-
-    # Set the node embedding indices.
+    # Set the node features.
     node_x = [None] * g.number_of_nodes()
-    for node, discrete_x in g.nodes(data="discrete_x"):
-      node_x[node] = np.array(discrete_x, dtype=np.int32)
-    # Shape (node_count, node_x_count):
+    for node, x in g.nodes(data="x"):
+      node_x[node] = np.array(x, dtype=np.int32)
+    # Shape (node_count, node_x_dimensionality):
     node_x = np.vstack(node_x)
 
     # Set the node labels.
     node_targets = [None] * g.number_of_nodes()
     node_y = None
-    for node, real_y in g.nodes(data="real_y"):
-      if not real_y:
+    for node, y in g.nodes(data="y"):
+      # Node labels are optional. If there are no labels, break.
+      if not y:
         break
-      node_targets[node] = real_y
+      node_targets[node] = y
     else:
-      # Shape (node_count, node_real_y_count):
-      node_y = np.vstack(node_targets).astype(np.float32)
+      # Shape (node_count, node_y_dimensionality):
+      node_y = np.vstack(node_targets).astype(np.int32)
 
     # Get the optional graph-level features and labels.
-    graph_x = (
-      np.array(g.graph["discrete_x"], dtype=np.int32)
-      if g.graph["discrete_x"]
-      else None
-    )
-    graph_y = (
-      np.array(g.graph["discrete_y"], dtype=np.int32)
-      if g.graph["discrete_y"]
-      else None
-    )
+    graph_x = np.array(g.graph["x"], dtype=np.int32) if g.graph["x"] else None
+    graph_y = np.array(g.graph["y"], dtype=np.int32) if g.graph["y"] else None
 
     # End of specialised tuple representation.
 
@@ -208,22 +197,18 @@ class GraphTuple(NamedTuple):
       for (src, dst), position in zip(adjacency_list, position_list):
         g.add_edge(src, dst, key=flow, flow=flow, position=position)
 
-    # Note(github.com/ChrisCummins/ProGraML/issues/22): Hardcoded to support
-    # only discrete node features, real-valued node labels, discrete graph
-    # features, and discrete graph labels.
-
     for i, x in enumerate(self.node_x):
-      g.nodes[i]["discrete_x"] = x.tolist()
+      g.nodes[i]["x"] = x.tolist()
 
     if self.has_node_y:
       for i, y in enumerate(self.node_y):
-        g.nodes[i]["real_y"] = y.tolist()
+        g.nodes[i]["y"] = y.tolist()
     else:
       for node, data in g.nodes(data=True):
-        data["real_y"] = []
+        data["y"] = []
 
-    g.graph["discrete_x"] = self.graph_x if self.has_graph_x else []
-    g.graph["discrete_y"] = self.graph_y if self.has_graph_y else []
+    g.graph["x"] = self.graph_x if self.has_graph_x else []
+    g.graph["y"] = self.graph_y if self.has_graph_y else []
 
     # End of specialised tuple representation.
 
