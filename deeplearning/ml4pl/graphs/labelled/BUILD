@@ -130,7 +130,6 @@ py_binary(
         "//deeplearning/ml4pl/graphs/unlabelled:unlabelled_graph_database",
         "//labm8/py:app",
         "//labm8/py:humanize",
-        "//labm8/py:labtypes",
         "//labm8/py:ppar",
         "//labm8/py:prof",
         "//third_party/py/networkx",
