@@ -97,12 +97,12 @@ class GraphTuple(NamedTuple):
   @property
   def graph_x_dimensionality(self) -> int:
     """Return the dimensionality of graph features."""
-    return self.graph_x.shape[1] if self.has_graph_x else 0
+    return self.graph_x.shape[0] if self.has_graph_x else 0
 
   @property
   def graph_y_dimensionality(self) -> int:
     """Return the dimensionality of graph labels."""
-    return self.graph_y.shape[1] if self.has_graph_y else 0
+    return self.graph_y.shape[0] if self.has_graph_y else 0
 
   @classmethod
   def CreateFromNetworkX(cls, g: nx.MultiDiGraph) -> "GraphTuple":
@@ -211,8 +211,8 @@ class GraphTuple(NamedTuple):
       for node, data in g.nodes(data=True):
         data["y"] = []
 
-    g.graph["x"] = self.graph_x if self.has_graph_x else []
-    g.graph["y"] = self.graph_y if self.has_graph_y else []
+    g.graph["x"] = self.graph_x.tolist() if self.has_graph_x else []
+    g.graph["y"] = self.graph_y.tolist() if self.has_graph_y else []
 
     # End of specialised tuple representation.
 
