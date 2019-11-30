@@ -50,7 +50,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ml4pl/graphs:graph_query",
-        "//deeplearning/ml4pl/graphs/labelled/graph_tuple",
+        "//deeplearning/ml4pl/graphs/labelled:graph_tuple",
         "//labm8/py:app",
         "//labm8/py:bazelutil",
         "//labm8/py:decorators",

@@ -24,6 +24,58 @@ py_test(
     ],
 )
 
+py_library(
+    name = "graph_batcher",
+    srcs = ["graph_batcher.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":graph_database",
+        ":graph_database_reader",
+        ":graph_database_stats",
+        ":graph_tuple",
+        "//deeplearning/ml4pl/models:log_database",
+        "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:prof",
+        "//third_party/py/numpy",
+        "//third_party/py/sqlalchemy",
+    ],
+)
+
+py_test(
+    name = "graph_batcher_test",
+    srcs = ["graph_batcher_test.py"],
+    deps = [
+        ":graph_batcher",
+        ":graph_database",
+        "//labm8/py:app",
+        "//labm8/py:test",
+    ],
+)
+
+py_library(
+    name = "graph_tuple",
+    srcs = ["graph_tuple.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//labm8/py:app",
+        "//third_party/py/networkx",
+        "//third_party/py/numpy",
+    ],
+)
+
+py_test(
+    name = "graph_tuple_test",
+    srcs = ["graph_tuple_test.py"],
+    deps = [
+        ":graph_tuple",
+        "//labm8/py:app",
+        "//labm8/py:test",
+        "//third_party/py/networkx",
+        "//third_party/py/pytest",
+    ],
+)
+
 py_binary(
     name = "make_data_flow_analysis_dataset",
     srcs = ["make_data_flow_analysis_dataset.py"],
