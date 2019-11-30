@@ -62,7 +62,12 @@ class GraphTuple(NamedTuple):
   @property
   def edge_position_max(self) -> int:
     """Return the maximum edge position."""
-    return max(self.edge_positions)
+    return max(
+      [
+        position_list.max() if position_list.size else 0
+        for position_list in self.edge_positions
+      ]
+    )
 
   @property
   def has_node_y(self) -> bool:
