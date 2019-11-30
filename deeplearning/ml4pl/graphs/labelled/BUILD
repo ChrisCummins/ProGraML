@@ -119,8 +119,8 @@ py_binary(
     srcs = ["make_data_flow_analysis_dataset.py"],
     visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
-        "//deeplearning/ml4pl/graphs:database_exporters",
-        "//deeplearning/ml4pl/graphs:graph_database",
+        "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
         "//deeplearning/ml4pl/graphs/labelled/alias_set",
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
         "//deeplearning/ml4pl/graphs/labelled/domtree:dominator_tree",
@@ -128,10 +128,15 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled/polyhedra",
         "//deeplearning/ml4pl/graphs/labelled/reachability",
         "//deeplearning/ml4pl/graphs/labelled/subexpressions",
+        "//deeplearning/ml4pl/graphs/unlabelled:unlabelled_graph_database",
         "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:labtypes",
+        "//labm8/py:ppar",
+        "//labm8/py:prof",
         "//third_party/py/networkx",
-        "//third_party/py/numpy",
         "//third_party/py/sqlalchemy",
+        "//third_party/py/tqdm",
     ],
 )
 
