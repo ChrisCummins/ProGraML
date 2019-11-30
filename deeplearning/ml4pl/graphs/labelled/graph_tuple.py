@@ -14,8 +14,7 @@ FLAGS = app.FLAGS
 
 
 class GraphTuple(NamedTuple):
-  """The graph tuple: a compact representation of a labelled graph for machine
-  learning.
+  """The graph tuple: a compact representation of a labelled graph.
 
   The transformation of ProgramGraph protocol buffer to GraphTuple is lossy
   (omitting attributes such as node text), and is partly specialized to the
@@ -160,10 +159,14 @@ class GraphTuple(NamedTuple):
 
     # Set the node labels.
     node_targets = [None] * g.number_of_nodes()
+    node_y = None
     for node, real_y in g.nodes(data="real_y"):
+      if not real_y:
+        break
       node_targets[node] = real_y
-    # Shape (node_count, node_real_y_count):
-    node_y = np.vstack(node_targets)
+    else:
+      # Shape (node_count, node_real_y_count):
+      node_y = np.vstack(node_targets).astype(np.float32)
 
     # Get the optional graph-level features and labels.
     graph_x = (
@@ -203,7 +206,7 @@ class GraphTuple(NamedTuple):
       zip(self.adjacency_lists, self.edge_positions)
     ):
       for (src, dst), position in zip(adjacency_list, position_list):
-        g.add_edge(src, dst, flow=programl_pb2.Edge(flow), position=position)
+        g.add_edge(src, dst, key=flow, flow=flow, position=position)
 
     # Note(github.com/ChrisCummins/ProGraML/issues/22): Hardcoded to support
     # only discrete node features, real-valued node labels, discrete graph
@@ -215,12 +218,12 @@ class GraphTuple(NamedTuple):
     if self.has_node_y:
       for i, y in enumerate(self.node_y):
         g.nodes[i]["real_y"] = y.tolist()
+    else:
+      for node, data in g.nodes(data=True):
+        data["real_y"] = []
 
-    if self.has_graph_x:
-      g.graph["discrete_x"] = self.graph_x
-
-    if self.has_graph_y:
-      g.graph["discrete_y"] = self.graph_y
+    g.graph["discrete_x"] = self.graph_x if self.has_graph_x else []
+    g.graph["discrete_y"] = self.graph_y if self.has_graph_y else []
 
     # End of specialised tuple representation.
 

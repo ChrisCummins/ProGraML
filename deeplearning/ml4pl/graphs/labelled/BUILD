@@ -58,6 +58,7 @@ py_library(
     srcs = ["graph_tuple.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//labm8/py:app",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
@@ -69,6 +70,10 @@ py_test(
     srcs = ["graph_tuple_test.py"],
     deps = [
         ":graph_tuple",
+        "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
+        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
         "//labm8/py:app",
         "//labm8/py:test",
         "//third_party/py/networkx",
