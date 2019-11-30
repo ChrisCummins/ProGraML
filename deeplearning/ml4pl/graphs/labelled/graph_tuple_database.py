@@ -67,7 +67,6 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
 
   # The size of the program graph.
   node_count: int = sql.Column(sql.Integer, nullable=False)
-  edge_count: int = sql.Column(sql.Integer, nullable=False)
   control_edge_count: int = sql.Column(sql.Integer, nullable=False)
   data_edge_count: int = sql.Column(sql.Integer, nullable=False)
   call_edge_count: int = sql.Column(sql.Integer, nullable=False)
@@ -109,6 +108,10 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     "GraphTupleData", uselist=False, cascade="all, delete-orphan"
   )
 
+  @property
+  def edge_count(self) -> int:
+    return self.control_edge_count + self.data_edge_count + self.call_edge_count
+
   # Joined table accessors:
 
   @property
@@ -142,7 +145,6 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     return GraphTuple(
       ir_id=ir_id,
       node_count=graph_tuple.node_count,
-      edge_count=graph_tuple.edge_count,
       control_edge_count=graph_tuple.control_edge_count,
       data_edge_count=graph_tuple.data_edge_count,
       call_edge_count=graph_tuple.call_edge_count,
@@ -169,7 +171,9 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     return GraphTuple(
       ir_id=ir_id,
       node_count=0,
-      edge_count=0,
+      control_edge_count=0,
+      data_edge_count=0,
+      call_edge_count=0,
       edge_position_max=0,
       pickled_graph_tuple_size=0,
     )
