@@ -68,6 +68,9 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   # The size of the program graph.
   node_count: int = sql.Column(sql.Integer, nullable=False)
   edge_count: int = sql.Column(sql.Integer, nullable=False)
+  control_edge_count: int = sql.Column(sql.Integer, nullable=False)
+  data_edge_count: int = sql.Column(sql.Integer, nullable=False)
+  call_edge_count: int = sql.Column(sql.Integer, nullable=False)
 
   # The maximum value of the 'position' attribute of edges.
   edge_position_max: int = sql.Column(sql.Integer, nullable=False)
@@ -140,6 +143,9 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
       ir_id=ir_id,
       node_count=graph_tuple.node_count,
       edge_count=graph_tuple.edge_count,
+      control_edge_count=graph_tuple.control_edge_count,
+      data_edge_count=graph_tuple.data_edge_count,
+      call_edge_count=graph_tuple.call_edge_count,
       edge_position_max=graph_tuple.edge_position_max,
       node_x_dimensionality=graph_tuple.node_x_dimensionality,
       node_y_dimensionality=graph_tuple.node_y_dimensionality,

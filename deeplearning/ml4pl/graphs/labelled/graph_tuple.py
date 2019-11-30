@@ -7,6 +7,7 @@ from typing import Tuple
 import networkx as nx
 import numpy as np
 
+from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
 
 FLAGS = app.FLAGS
@@ -56,8 +57,20 @@ class GraphTuple(NamedTuple):
 
   @property
   def edge_count(self) -> int:
-    """Return the number of edges."""
-    return self.adjacency_lists.shape[0]
+    """Return the total number of edges of all flow types."""
+    return sum(len(adjacency_list) for adjacency_list in self.adjacency_lists)
+
+  @property
+  def control_edge_count(self) -> int:
+    return self.adjacency_lists[programl_pb2.Edge.CONTROL].shape[0]
+
+  @property
+  def data_edge_count(self) -> int:
+    return self.adjacency_lists[programl_pb2.Edge.DATA].shape[0]
+
+  @property
+  def call_edge_count(self) -> int:
+    return self.adjacency_lists[programl_pb2.Edge.CALL].shape[0]
 
   @property
   def edge_position_max(self) -> int:
