@@ -26,9 +26,9 @@ message Function {
 message Node {
   // The node type.
   enum Type {
-    STATEMENT = 1;
-    IDENTIFIER = 2;
-    IMMEDIATE = 3;
+    STATEMENT = 0;
+    IDENTIFIER = 1;
+    IMMEDIATE = 2;
   }
   required Type type = 1;
 
@@ -55,9 +55,9 @@ message Node {
 message Edge {
   // The edge flow type.
   enum Flow {
-    CONTROL = 1;
-    DATA = 2;
-    CALL = 3;
+    CONTROL = 0;
+    DATA = 1;
+    CALL = 2;
   }
   required Flow flow = 1;
 
