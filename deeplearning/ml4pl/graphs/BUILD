@@ -109,6 +109,7 @@ py_test(
         ":graph_database_reader",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:test",
+        "//third_party/py/numpy",
     ],
 )
 
