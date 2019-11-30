@@ -1,43 +1,49 @@
-"""A database of labelled graph tuples."""
+"""This module defines a database for storing graph tuples."""
 import datetime
 import pickle
 import typing
 
 import sqlalchemy as sql
-from sqlalchemy.dialects import mysql
-from sqlalchemy.ext import declarative
 
-from deeplearning.ml4pl.graphs import programl_pb2
-from deeplearning.ml4pl.graphs.labelled.graph_tuple import graph_tuple
+from deeplearning.ml4pl import run_id
+from deeplearning.ml4pl.graphs.labelled import data_flow_graphs
+from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
 from labm8.py import app
 from labm8.py import crypto
-from labm8.py import labdate
 from labm8.py import sqlutil
+
 
 FLAGS = app.FLAGS
 
-Base = declarative.declarative_base()
+
+Base = sql.ext.declarative.declarative_base()
 
 
 class Meta(Base, sqlutil.TablenameFromClassNameMixin):
-  """Key-value database metadata store."""
+  """A key-value database metadata store, with additional run ID."""
 
-  key: str = sql.Column(sql.String(64), primary_key=True)
-  pickled_value: str = sql.Column(
+  # Unused integer ID for this row.
+  id: int = sql.Column(sql.Integer, primary_key=True)
+
+  # The run ID that generated this <key,value> pair.
+  run_id: str = run_id.RunId.SqlStringColumn()
+
+  timestamp: datetime.datetime = sqlutil.ColumnFactory.MillisecondDatetime()
+
+  # The <key,value> pair.
+  key: str = sql.Column(sql.String(128), index=True)
+  pickled_value: bytes = sql.Column(
     sqlutil.ColumnTypes.LargeBinary(), nullable=False
-  )
-  date_added: datetime.datetime = sql.Column(
-    sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
-    nullable=False,
-    default=labdate.GetUtcMillisecondsNow,
   )
 
   @property
   def value(self) -> typing.Any:
+    """De-pickle the column value."""
     return pickle.loads(self.pickled_value)
 
   @classmethod
   def Create(cls, key: str, value: typing.Any):
+    """Construct a table entry."""
     return Meta(key=key, pickled_value=pickle.dumps(value))
 
 
@@ -59,45 +65,41 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   # databases.
   ir_id: int = sql.Column(sql.Integer, nullable=False, index=True)
 
-  # A string name to split the graphs in a database into discrete buckets, e.g.
-  # "train", "val", "test"; or "1", "2", ... k for k-fold classification.
-  split: str = sql.Column(sql.String(8), nullable=False, index=True)
-
   # The size of the program graph.
   node_count: int = sql.Column(sql.Integer, nullable=False)
   edge_count: int = sql.Column(sql.Integer, nullable=False)
 
-  # The number of distinct node and edge types.
-  node_type_count: int = sql.Column(sql.Integer, nullable=False)
-  edge_type_count: int = sql.Column(sql.Integer, nullable=False)
+  # The maximum value of the 'position' attribute of edges.
+  edge_position_max: int = sql.Column(sql.Integer, nullable=False)
 
   # The dimensionality of node-level features and labels.
-  node_features_dimensionality: int = sql.Column(
+  node_x_dimensionality: int = sql.Column(
     sql.Integer, default=0, nullable=False
   )
-  node_labels_dimensionality: int = sql.Column(
+  node_y_dimensionality: int = sql.Column(
     sql.Integer, default=0, nullable=False
   )
 
   # The dimensionality of graph-level features and labels.
-  graph_features_dimensionality: int = sql.Column(
+  graph_x_dimensionality: int = sql.Column(
     sql.Integer, default=0, nullable=False
   )
-  graph_labels_dimensionality: int = sql.Column(
+  graph_y_dimensionality: int = sql.Column(
     sql.Integer, default=0, nullable=False
   )
-
-  # The maximum value of the 'position' attribute of edges.
-  edge_position_max: int = sql.Column(sql.Integer, nullable=False)
 
   # The size of the pickled graph tuple in bytes.
-  graph_tuple_size: int = sql.Column(sql.Integer, nullable=False)
+  pickled_graph_tuple_size: int = sql.Column(sql.Integer, nullable=False)
 
-  date_added: datetime.datetime = sql.Column(
-    sql.DateTime().with_variant(mysql.DATETIME(fsp=3), "mysql"),
-    nullable=False,
-    default=labdate.GetUtcMillisecondsNow,
-  )
+  # A copy of attributes from the
+  # deeplearning.ml4pl.graphs.labelled.data_flow_graphs.DataFlowAnnotatedGraph
+  # tuple for storing metadata of data flow analysis graphs. If not relevant ,
+  # these columns may be null.
+  data_flow_steps: int = sql.Column(sql.Integer, nullable=True)
+  data_flow_root_node: int = sql.Column(sql.Integer, nullable=True)
+  data_flow_positive_node_count: int = sql.Column(sql.Integer, nullable=True)
+
+  timestamp: datetime.datetime = sqlutil.ColumnFactory.MillisecondDatetime()
 
   # Create the one-to-one relationship from GraphTuple to GraphTupleData.
   data: "GraphTupleData" = sql.orm.relationship(
@@ -112,89 +114,109 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     return self.data.sha1
 
   @property
-  def tuple(self) -> graph_tuple.GraphTuple:
-    """Deserialize and load the protocol buffer."""
+  def tuple(self) -> graph_tuple_lib.GraphTuple:
+    """Un-pickle the graph tuple."""
     return pickle.loads(self.data.pickled_graph_tuple)
 
   @classmethod
-  def Create(cls, unlabelled_graph: unlabelled_graph_database.ProgramGraph):
-    """Create a GraphTuple from the given protocol buffer.
+  def CreateFromGraphTuple(
+    cls, graph_tuple: graph_tuple_lib.GraphTuple, ir_id: int
+  ) -> "GraphTuple":
+    """Create a mapped database instance from the given graph tuple.
 
-    This is the preferred method of populating databases of program graphs, as
+    This is the preferred method of populating databases of graph tuples, as
     it contains the boilerplate to extract and set the metadata columns, and
-    handles the join between the two proto/metadata invisibly.
+    handles the join between the two data/metadata tables invisibly.
 
     Args:
-      proto: The protocol buffer to instantiate a program graph from.
-      split: The name of the split that this graph belongs to.
+      graph_tuple: The graph tuple to map.
+      ir_id: The intermediate representation ID.
 
     Returns:
       A GraphTuple instance.
     """
-    # Gather the edge attributes in a single pass of the proto.
-    edge_attributes = [(edge.type, edge.position) for edge in proto.edge]
-    edge_types = set([x[0] for x in edge_attributes])
-    edge_position_max = max([x[1] for x in edge_attributes])
-    del edge_attributes
-
-    # Gather the node attributes in a single pass.
-    node_types = set()
-    node_texts = []
-    node_preprocessed_texts = []
-    node_encodeds = []
-    for node in proto.node:
-      node_types.add(node.type)
-      node_texts.append(node.text)
-      node_preprocessed_texts.append(node.preprocessed_text)
-      if node.HasField("encoded"):
-        node_encodeds.append(node.encoded)
-
-    serialized_proto = proto.SerializeToString()
-
+    pickled_graph_tuple = pickle.dumps(graph_tuple)
     return GraphTuple(
-      split=split,
       ir_id=ir_id,
-      node_count=len(proto.node),
-      edge_count=len(proto.edge),
-      node_type_count=len(node_types),
-      edge_type_count=len(edge_types),
-      node_text_count=len(node_texts),
-      node_unique_text_count=len(set(node_texts)),
-      node_preprocessed_text_count=len(node_preprocessed_texts),
-      node_unique_preprocessed_text_count=len(set(node_preprocessed_texts)),
-      node_encoded_count=len(node_encodeds),
-      node_unique_encoded_count=len(set(node_encodeds)),
-      edge_position_max=edge_position_max,
-      serialized_proto_size=len(serialized_proto),
+      node_count=graph_tuple.node_count,
+      edge_count=graph_tuple.edge_count,
+      edge_position_max=graph_tuple.edge_position_max,
+      node_x_dimensionality=graph_tuple.node_x_dimensionality,
+      node_y_dimensionality=graph_tuple.node_y_dimensionality,
+      graph_x_dimensionality=graph_tuple.graph_x_dimensionality,
+      graph_y_dimensionality=graph_tuple.graph_y_dimensionality,
+      pickled_graph_tuple_size=len(pickled_graph_tuple),
       data=GraphTupleData(
-        sha1=crypto.sha1(serialized_proto), serialized_proto=serialized_proto,
+        sha1=crypto.sha1(pickled_graph_tuple),
+        pickled_graph_tuple=pickled_graph_tuple,
       ),
     )
 
+  @classmethod
+  def CreateEmpty(cls, ir_id: int) -> "GraphTuple":
+    """Create an "empty" graph tuple.
+
+    An empty graph tuple can be used to signal that the conversion to GraphTuple
+    failed, and is signalled by a node_count of 0. An empty graph tuple has
+    no corresponding GraphTupleData row.
+    """
+    return GraphTuple(
+      ir_id=ir_id,
+      node_count=0,
+      edge_count=0,
+      edge_position_max=0,
+      pickled_graph_tuple_size=0,
+    )
+
+  @classmethod
+  def CreateFromDataFlowAnnotatedGraph(
+    cls, annotated_graph: data_flow_graphs.DataFlowAnnotatedGraph, ir_id: int
+  ) -> "GraphTuple":
+    """Create a mapped database instance from the given annotated graph.
+
+    This is the preferred method of populating databases of graph tuples, as
+    it contains the boilerplate to extract and set the metadata columns, and
+    handles the join between the two data/metadata tables invisibly.
+
+    Args:
+      annotated_graph: A DataFlowAnnotatedGraph instance.
+      ir_id: The intermediate representation ID.
+
+    Returns:
+      A GraphTuple instance.
+    """
+    graph_tuple = graph_tuple_lib.GraphTuple.CreateFromNetworkX(
+      annotated_graph.g
+    )
+    mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id)
+    mapped.data_flow_steps = annotated_graph.data_flow_steps
+    mapped.data_flow_root_node = annotated_graph.root_node
+    mapped.data_flow_positive_node_count = annotated_graph.positive_node_count
+    return mapped
+
 
 class GraphTupleData(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
-  """The protocol buffer of a program graph.
-
-  See GraphTuple for the parent table.
-  """
+  """The pickled graph tuple data. See GraphTuple for the parent table."""
 
   id: int = sql.Column(
-    sql.Integer, sql.ForeignKey("program_graphs.id"), primary_key=True
+    sql.Integer,
+    sql.ForeignKey("graph_tuples.id", onupdate="CASCADE", ondelete="CASCADE"),
+    primary_key=True,
   )
 
-  # The sha1sum of the 'serialized_proto' column. There is no requirement
-  # that unlabelled graphs be unique, but, should you wish to enforce this,
+  # The sha1sum of the 'pickled_graph_tuple' column. There is no requirement
+  # that graph tuples be unique, but, should you wish to enforce this,
   # you can group by this sha1 column and prune the duplicates.
   sha1: str = sql.Column(sql.String(40), nullable=False, index=True)
 
-  # A binary-serialized GraphTuple protocol buffer.
-  serialized_proto: bytes = sql.Column(
+  # The pickled GraphTuple data.
+  pickled_graph_tuple: bytes = sql.Column(
     sqlutil.ColumnTypes.LargeBinary(), nullable=False
   )
 
 
 class Database(sqlutil.Database):
-  """A database of GraphTuple protocol buffers."""
+  """A database of GraphTuples."""
 
   def __init__(self, url: str, must_exist: bool = False):
     super(Database, self).__init__(url, Base, must_exist=must_exist)

@@ -80,6 +80,40 @@ py_test(
     ],
 )
 
+py_library(
+    name = "graph_tuple_database",
+    srcs = ["graph_tuple_database.py"],
+    visibility = [
+        "//deeplearning/ml4pl/graphs:__subpackages__",
+        "//deeplearning/ml4pl/models:__subpackages__",
+    ],
+    deps = [
+        ":graph_tuple",
+        "//deeplearning/ml4pl:run_id",
+        "//deeplearning/ml4pl/graphs/labelled:data_flow_graphs",
+        "//labm8/py:app",
+        "//labm8/py:crypto",
+        "//labm8/py:sqlutil",
+        "//third_party/py/sqlalchemy",
+    ],
+)
+
+py_test(
+    name = "graph_tuple_database_test",
+    srcs = ["graph_tuple_database_test.py"],
+    deps = [
+        ":graph_tuple",
+        ":graph_tuple_database",
+        "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
+        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:testing_databases",
+        "//labm8/py:decorators",
+        "//labm8/py:test",
+    ],
+)
+
 py_binary(
     name = "make_data_flow_analysis_dataset",
     srcs = ["make_data_flow_analysis_dataset.py"],
