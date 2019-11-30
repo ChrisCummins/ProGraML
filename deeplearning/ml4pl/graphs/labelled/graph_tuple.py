@@ -7,7 +7,6 @@ from typing import Tuple
 import networkx as nx
 import numpy as np
 
-from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
 
 FLAGS = app.FLAGS
