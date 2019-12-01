@@ -7,25 +7,13 @@ import numpy as np
 import sqlalchemy as sql
 
 from deeplearning.ml4pl.graphs import graph_database
-from deeplearning.ml4pl.graphs import graph_database_reader as graph_readers
 from deeplearning.ml4pl.graphs import graph_database_stats as graph_stats
+from deeplearning.ml4pl.graphs.labelled import (
+  graph_database_reader as graph_readers,
+)
 from deeplearning.ml4pl.models import log_database
 from labm8.py import app
 from labm8.py import humanize
-
-app.DEFINE_integer(
-  "graph_reader_buffer_size",
-  1024,
-  "The number of graphs to read from the database per SQL "
-  "query. A larger number means fewer costly SQL queries, "
-  "but requires more memory.",
-)
-app.DEFINE_string(
-  "graph_reader_order",
-  "batch_random",
-  "The order to read graphs from. See BufferedGraphReaderOrder. One of"
-  "{in_order,global_random,batch_random}",
-)
 
 FLAGS = app.FLAGS
 

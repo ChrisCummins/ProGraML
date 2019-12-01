@@ -75,45 +75,6 @@ py_test(
 )
 
 py_library(
-    name = "graph_database_reader",
-    srcs = ["graph_database_reader.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":graph_database",
-        "//labm8/py:app",
-        "//labm8/py:humanize",
-        "//labm8/py:prof",
-        "//third_party/py/sqlalchemy",
-    ],
-)
-
-py_test(
-    name = "graph_database_reader_test",
-    timeout = "long",
-    srcs = ["graph_database_reader_test.py"],
-    deps = [
-        ":graph_database",
-        ":graph_database_reader",
-        "//deeplearning/ml4pl/testing:testing_databases",
-        "//labm8/py:test",
-        "//third_party/py/numpy",
-    ],
-)
-
-py_test(
-    name = "graph_database_reader_benchmark_test",
-    timeout = "long",
-    srcs = ["graph_database_reader_benchmark_test.py"],
-    deps = [
-        ":graph_database",
-        ":graph_database_reader",
-        "//deeplearning/ml4pl/testing:testing_databases",
-        "//labm8/py:test",
-        "//third_party/py/numpy",
-    ],
-)
-
-py_library(
     name = "graph_database_stats",
     srcs = ["graph_database_stats.py"],
     data = [

@@ -53,6 +53,49 @@ py_test(
     ],
 )
 
+py_binary(
+    name = "graph_database_reader",
+    srcs = ["graph_database_reader.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":graph_tuple_database",
+        "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:progress",
+        "//third_party/py/sqlalchemy",
+    ],
+)
+
+py_test(
+    name = "graph_database_reader_test",
+    timeout = "long",
+    srcs = ["graph_database_reader_test.py"],
+    deps = [
+        ":graph_database_reader",
+        ":graph_tuple_database",
+        "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:testing_databases",
+        "//labm8/py:test",
+    ],
+)
+
+py_test(
+    name = "graph_database_reader_benchmark_test",
+    timeout = "long",
+    srcs = ["graph_database_reader_benchmark_test.py"],
+    deps = [
+        ":graph_database_reader",
+        ":graph_tuple_database",
+        "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
+        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:testing_databases",
+        "//labm8/py:test",
+    ],
+)
+
 py_library(
     name = "graph_tuple",
     srcs = ["graph_tuple.py"],

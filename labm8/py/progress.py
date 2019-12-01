@@ -76,6 +76,9 @@ class ProgressContext(object):
     return prof.Profile(msg, print_to=lambda x: self.Log(level, x),)
 
 
+NullContext = ProgressContext(None)
+
+
 class ProgressBarContext(ProgressContext):
   """The context for logging and profiling with a progress bar."""
 

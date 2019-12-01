@@ -227,6 +227,4 @@ class GraphTuple(NamedTuple):
     g.graph["x"] = self.graph_x.tolist() if self.has_graph_x else []
     g.graph["y"] = self.graph_y.tolist() if self.has_graph_y else []
 
-    # End of specialised tuple representation.
-
     return g
