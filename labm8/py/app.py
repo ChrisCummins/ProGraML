@@ -52,6 +52,15 @@ absl_flags.DEFINE_boolean(
   "log_colors", True, "Whether to colorize logging output."
 )
 
+# A decorator to mark a function as ignored when computing the log prefix.
+#
+# Example usage:
+#
+#   @skip_log_prefix
+#   def LogFoo():
+#     app.Log(1, "Foo")
+skip_log_prefix = absl_logging.skip_log_prefix
+
 
 class UsageError(absl_app.UsageError):
   """Exception raised when the arguments supplied by the user are invalid.
@@ -181,7 +190,7 @@ def _MaybeColorizeLog(color: str, msg: str, *args) -> str:
 
 # Skip this function when determining the calling module and line number for
 # logging.
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def Log(level: int, msg, *args, **kwargs):
   """Logs a message at the given level.
 
@@ -191,9 +200,8 @@ def Log(level: int, msg, *args, **kwargs):
     "filename base (that is, name ignoring .py). <log level> overrides any "
     "value given by --v."
   """
-  calling_module = logging.GetCallingModuleName()
   logging.Log(
-    calling_module,
+    logging.GetCallingModuleName(),
     level,
     _MaybeColorizeLog(
       shell.ShellEscapeCodes.YELLOW
@@ -206,14 +214,14 @@ def Log(level: int, msg, *args, **kwargs):
   )
 
 
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def LogIf(level: int, condition, msg, *args, **kwargs):
   if condition:
     calling_module = logging.GetCallingModuleName()
     Log(level, msg, *args, **kwargs)
 
 
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def Fatal(msg, *args, **kwargs):
   """Logs a fatal message."""
   logging.Fatal(
@@ -221,14 +229,14 @@ def Fatal(msg, *args, **kwargs):
   )
 
 
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def FatalWithoutStackTrace(msg, *args, **kwargs):
   """Logs a fatal message without stacktrace."""
   Error(msg, *args, **kwargs)
   sys.exit(1)
 
 
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def Error(msg, *args, **kwargs):
   """Logs an error message."""
   logging.Error(
@@ -236,7 +244,7 @@ def Error(msg, *args, **kwargs):
   )
 
 
-@absl_logging.skip_log_prefix
+@skip_log_prefix
 def Warning(msg, *args, **kwargs):
   """Logs a warning message."""
   logging.Warning(
