@@ -578,6 +578,25 @@ py_test(
 )
 
 py_library(
+    name = "progress",
+    srcs = ["progress.py"],
+    deps = [
+        ":app",
+        ":prof",
+        "//third_party/py/tqdm",
+    ],
+)
+
+py_test(
+    name = "progress_test",
+    srcs = ["progress_test.py"],
+    deps = [
+        ":progress",
+        ":test",
+    ],
+)
+
+py_library(
     name = "shell",
     srcs = ["shell.py"],
     visibility = ["//visibility:public"],
