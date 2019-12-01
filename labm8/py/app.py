@@ -643,3 +643,7 @@ def LogToDirectory(
   logdir.mkdir(exist_ok=True, parents=True)
   absl_logging.get_absl_handler().use_absl_log_file(str(name), str(logdir))
   return logdir
+
+
+# Get the thread ID as an unsigned integer.
+UnsignedThreadId = logging.UnsignedThreadId
