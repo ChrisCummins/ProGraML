@@ -127,7 +127,7 @@ def run_once(f):
   return wrapper
 
 
-def loop_for(seconds: int = 5, min_iteration_count=1):
+def loop_for(seconds: int = 0, min_iteration_count=1):
   """Run the wrapped function until a given number of seconds have elapsed.
 
   Args:

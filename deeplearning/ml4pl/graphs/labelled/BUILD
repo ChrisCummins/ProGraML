@@ -117,6 +117,7 @@ py_test(
         "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
         "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
         "//labm8/py:app",
+        "//labm8/py:fs",
         "//labm8/py:test",
         "//third_party/py/networkx",
         "//third_party/py/pytest",
