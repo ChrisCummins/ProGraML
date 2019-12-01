@@ -143,7 +143,7 @@ def timers():
     yield name
 
 
-# @app.skip_log_prefix
+@app.skip_log_prefix
 @contextlib.contextmanager
 def Profile(
   name: typing.Union[str, typing.Callable[[int], str]] = "",
