@@ -580,6 +580,7 @@ py_test(
 py_library(
     name = "progress",
     srcs = ["progress.py"],
+    visibility = ["//visibility:public"],
     deps = [
         ":app",
         ":prof",

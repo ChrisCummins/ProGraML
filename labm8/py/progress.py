@@ -19,10 +19,10 @@ class Progress(threading.Thread):
     """Instantiate a long-running job.
 
     Args:
-      args: Arguments for ProgressContext().
-      kwargs: Keyword arguments for ProgressContext().
+      args: Arguments for ProgressBarContext().
+      kwargs: Keyword arguments for ProgressBarContext().
     """
-    self.ctx = ProgressContext(*args, **kwargs)
+    self.ctx = ProgressBarContext(*args, **kwargs)
     super(Progress, self).__init__()
 
     self.run = self.Run
@@ -45,6 +45,38 @@ def Run(progress: Progress, refresh_time: float = 0.2) -> Progress:
 
 
 class ProgressContext(object):
+  """A context for logging and profiling."""
+
+  def __init__(self, print_context):
+    """Constructor.
+
+    Args:
+      print_context: A context for printing.
+    """
+    self.print_context = print_context
+
+  @app.skip_log_prefix
+  def Log(self, *args, **kwargs):
+    """Log a message."""
+    app.Log(*args, **kwargs, print_context=self.print_context)
+
+  @app.skip_log_prefix
+  def Warning(self, *args, **kwargs):
+    """Log a warning."""
+    app.Warning(*args, **kwargs, print_context=self.print_context)
+
+  @app.skip_log_prefix
+  def Error(self, *args, **kwargs):
+    """Log an error."""
+    app.Error(*args, **kwargs, print_context=self.print_context)
+
+  @app.skip_log_prefix
+  def Profile(self, level: int, msg: Union[str, Callable[[int], str]] = ""):
+    """Return a profiling context."""
+    return prof.Profile(msg, print_to=lambda x: self.Log(level, x),)
+
+
+class ProgressBarContext(ProgressContext):
   """The context for logging and profiling with a progress bar."""
 
   def __init__(
@@ -86,24 +118,16 @@ class ProgressContext(object):
     )
     self.print_context = self.bar.external_write_mode
 
+  def ToProgressContext(self) -> ProgressContext:
+    """Construct a progress context from the given progress context with bar.
+
+    This method is useful for sending the progress context to worker processes
+    during multimprocessing. By removing self.bar attribute, we need only
+    serialize the logging context.
+    """
+    return ProgressContext(self.print_context)
+
   def Refresh(self):
     """Refresh the progress bar."""
     self.bar.n = self.i
     self.bar.refresh()
-
-  @app.skip_log_prefix
-  def Log(self, *args, **kwargs):
-    """Log a message."""
-    app.Log(*args, **kwargs, print_context=self.print_context)
-
-  def Warning(self, *args, **kwargs):
-    """Log a warning."""
-    app.Warning(*args, **kwargs, print_context=self.print_context)
-
-  def Error(self, *args, **kwargs):
-    """Log an error."""
-    app.Error(*args, **kwargs, print_context=self.print_context)
-
-  def Profile(self, level: int, msg: Union[str, Callable[[int], str]] = ""):
-    """Return a profiling context."""
-    return prof.Profile(msg, print_to=lambda x: self.Log(level, x),)

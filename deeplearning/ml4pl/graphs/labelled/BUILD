@@ -132,6 +132,7 @@ py_binary(
         "//labm8/py:humanize",
         "//labm8/py:ppar",
         "//labm8/py:prof",
+        "//labm8/py:progress",
         "//third_party/py/networkx",
         "//third_party/py/sqlalchemy",
         "//third_party/py/tqdm",
