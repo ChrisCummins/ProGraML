@@ -29,26 +29,20 @@ py_library(
     srcs = ["graph_batcher.py"],
     visibility = ["//visibility:public"],
     deps = [
-        ":graph_database",
-        ":graph_database_reader",
-        ":graph_database_stats",
         ":graph_tuple",
-        "//deeplearning/ml4pl/models:log_database",
         "//labm8/py:app",
-        "//labm8/py:humanize",
-        "//labm8/py:prof",
-        "//third_party/py/numpy",
-        "//third_party/py/sqlalchemy",
+        "//labm8/py:progress",
     ],
 )
 
 py_test(
     name = "graph_batcher_test",
+    timeout = "long",
     srcs = ["graph_batcher_test.py"],
     deps = [
         ":graph_batcher",
-        ":graph_database",
-        "//labm8/py:app",
+        ":graph_tuple",
+        "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
         "//labm8/py:test",
     ],
 )
@@ -113,10 +107,9 @@ py_test(
     srcs = ["graph_tuple_test.py"],
     deps = [
         ":graph_tuple",
-        "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
-        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
-        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
+        "//deeplearning/ml4pl/testing:random_networkx_generator",
         "//labm8/py:app",
         "//labm8/py:fs",
         "//labm8/py:test",
