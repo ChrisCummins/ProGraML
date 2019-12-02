@@ -109,6 +109,7 @@ py_library(
 
 py_test(
     name = "graph_tuple_test",
+    timeout = "long",
     srcs = ["graph_tuple_test.py"],
     deps = [
         ":graph_tuple",
