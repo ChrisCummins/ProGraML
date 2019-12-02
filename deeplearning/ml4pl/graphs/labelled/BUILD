@@ -24,11 +24,12 @@ py_test(
     ],
 )
 
-py_library(
+py_binary(
     name = "graph_batcher",
     srcs = ["graph_batcher.py"],
     visibility = ["//visibility:public"],
     deps = [
+        ":graph_database_reader",
         ":graph_tuple",
         "//labm8/py:app",
         "//labm8/py:progress",

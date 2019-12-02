@@ -1,13 +1,48 @@
-"""A module for batching graph tuples."""
+"""A module for batching graph tuples.
+
+This can be executed as a script to dump graph tuples to file, example:
+
+    $ bazel run //deeplearning/ml4pl/graphs/labelled:graph_batcher -- \
+          --graph_db='sqlite:////tmp/graphs.db' \
+          --graph_batch_outdir=/tmp/graphs \
+          --graph_batch_size=10 \
+          --graph_reader_limit=1000 \
+          --vmodule='*'=3
+"""
+import pathlib
 from typing import Iterable
 from typing import List
 from typing import Optional
 
+from deeplearning.ml4pl.graphs.labelled import graph_database_reader
 from deeplearning.ml4pl.graphs.labelled import graph_tuple
 from labm8.py import app
 from labm8.py import progress
 
 FLAGS = app.FLAGS
+
+
+app.DEFINE_integer(
+  "graph_batch_size",
+  0,
+  "The maximum number of graphs to include in a batch of graphs.",
+)
+app.DEFINE_integer(
+  "graph_batch_exact_size",
+  0,
+  "The number of graphs to include in a batch of graphs.",
+)
+app.DEFINE_integer(
+  "graph_batch_node_count",
+  0,
+  "The maximum number of nodes to include in a batch of graphs.",
+)
+app.DEFINE_output_path(
+  "graph_batch_outdir",
+  None,
+  "When //deeplearning/ml4pl/graphs/labelled:graph_batcher is executed as a "
+  "script, this determines the directory to write pickled graph tuples to.",
+)
 
 
 class GraphBatcher(object):
@@ -123,3 +158,58 @@ class GraphBatcher(object):
       return graph
     except StopIteration:  # We have run out of graphs.
       return None
+
+  @classmethod
+  def CreateFromFlags(
+    cls,
+    graphs: Iterable[graph_tuple.GraphTuple],
+    ctx: progress.ProgressContext = progress.NullContext,
+  ):
+    return cls(
+      graphs,
+      max_graph_count=FLAGS.graph_batch_size,
+      exact_graph_count=FLAGS.graph_batch_exact_size,
+      max_node_count=FLAGS.graph_batch_node_count,
+      ctx=ctx,
+    )
+
+
+class WriteGraphsToFile(progress.Progress):
+  """Write graphs in a graph database to pickled files.
+
+  This is for debugging.
+  """
+
+  def __init__(self, outdir: pathlib.Path):
+    reader = graph_database_reader.BufferedGraphReader.CreateFromFlags()
+
+    def GraphTupleIterator(graph_db_reader):
+      """Make an iterator over graph tuples from an iterator over graph tuples
+      in the database."""
+      for graph in graph_db_reader:
+        yield graph.tuple
+
+    self.batcher = GraphBatcher.CreateFromFlags(GraphTupleIterator(reader))
+    self.outdir = outdir
+    self.outdir.mkdir(parents=True, exist_ok=True)
+    super(WriteGraphsToFile, self).__init__("read_db", 0, reader.n)
+    reader.ctx = self.ctx
+    self.batcher.ctx = self.ctx
+
+  def Run(self):
+    """Read and write the graphs."""
+    for i, graph_tuple in enumerate(self.batcher):
+      self.ctx.i += graph_tuple.disjoint_graph_count
+      path = self.outdir / f"batched_graph_tuple_{i:08}.pickle"
+      graph_tuple.ToFile(path)
+
+
+def Main():
+  """Main entry point."""
+  if not FLAGS.graph_batch_outdir:
+    raise app.UsageError("--graph_batch_outdir must be set")
+  progress.Run(WriteGraphsToFile(FLAGS.graph_batch_outdir))
+
+
+if __name__ == "__main__":
+  app.Run(Main)
