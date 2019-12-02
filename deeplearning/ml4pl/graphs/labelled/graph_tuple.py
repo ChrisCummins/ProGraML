@@ -52,7 +52,9 @@ class GraphTuple(NamedTuple):
   # graph_count > 1, dtype float32:
   graph_y: Optional[np.array] = None
 
-  # Disjoint graph properties:
+  ##############################################################################
+  # Disjoint graph properties
+  ##############################################################################
 
   # The number of disconnected graphs in the tuple.
   disjoint_graph_count: int = 1
@@ -68,7 +70,9 @@ class GraphTuple(NamedTuple):
     """Return whether the graph tuple is disjoint."""
     return self.disjoint_graph_count > 1
 
-  # End disjoint graph properties.
+  ##############################################################################
+  # Properties
+  ##############################################################################
 
   @property
   def node_count(self) -> int:
@@ -130,6 +134,7 @@ class GraphTuple(NamedTuple):
   @property
   def graph_x_dimensionality(self) -> int:
     """Return the dimensionality of graph features."""
+    # Disjoint graphs have a list of feature vectors, one for each graph.
     if self.has_graph_x and self.is_disjoint_graph:
       return self.graph_x.shape[1]
     elif self.has_graph_x:
@@ -140,6 +145,7 @@ class GraphTuple(NamedTuple):
   @property
   def graph_y_dimensionality(self) -> int:
     """Return the dimensionality of graph labels."""
+    # Disjoint graphs have a list of label vectors, one for each graph.
     if self.has_graph_y and self.is_disjoint_graph:
       return self.graph_y.shape[1]
     elif self.has_graph_y:
@@ -147,7 +153,9 @@ class GraphTuple(NamedTuple):
     else:
       return 0
 
-  # Factory methods:
+  ##############################################################################
+  # Factory methods
+  ##############################################################################
 
   @classmethod
   def CreateFromNetworkX(cls, g: nx.MultiDiGraph) -> "GraphTuple":
@@ -182,14 +190,14 @@ class GraphTuple(NamedTuple):
       edge_positions[data["flow"]].append(data["position"])
 
     # Convert the edge lists to numpy arrays.
-    # Shape (edge_count, 2):
-    adjacencies = np.array(
-      [
-        np.array(adjacency_list, dtype=np.int32)
-        for adjacency_list in adjacencies
-      ]
-    )
-    # Shape (edge_count, 1):
+    # Shape (edge_flow_count, edge_count, 2):
+    for i in range(len(adjacencies)):
+      if len(adjacencies[i]):
+        adjacencies[i] = np.array(adjacencies[i], dtype=np.int32)
+      else:
+        adjacencies[i] = np.zeros((0, 2), dtype=np.int32)
+
+    # Shape (edge_flow_count, edge_count):
     edge_positions = np.array(
       [
         np.array(edge_position, dtype=np.int32)
@@ -220,10 +228,8 @@ class GraphTuple(NamedTuple):
     graph_x = np.array(g.graph["x"], dtype=np.int32) if g.graph["x"] else None
     graph_y = np.array(g.graph["y"], dtype=np.int32) if g.graph["y"] else None
 
-    # End of specialised tuple representation.
-
     return GraphTuple(
-      adjacencies=adjacencies,
+      adjacencies=np.array(adjacencies),
       edge_positions=edge_positions,
       node_x=node_x,
       node_y=node_y,
@@ -244,8 +250,6 @@ class GraphTuple(NamedTuple):
     Returns:
       A GraphTuple instance.
     """
-    disjoint_graph_count = 0
-
     adjacencies: List[List[Tuple[int, int]]] = [[], [], []]
     edge_positions: List[List[int]] = [[], [], []]
     disjoint_nodes_list: List[List[int]] = []
@@ -254,6 +258,9 @@ class GraphTuple(NamedTuple):
     node_y: List[List[int]] = []
     graph_x: List[List[int]] = []
     graph_y: List[List[int]] = []
+
+    disjoint_graph_count = 0
+    node_count = 0
 
     # Iterate over each graph, merging them.
     for graph in graph_tuples:
@@ -270,9 +277,7 @@ class GraphTuple(NamedTuple):
       ):
         if adjacency_list.size:
           # Offset the adjacency list node indices.
-          offset = np.array(
-            (disjoint_graph_count, disjoint_graph_count), dtype=np.int32
-          )
+          offset = np.array((node_count, node_count), dtype=np.int32)
           adjacencies[edge_flow].append(adjacency_list + offset)
           edge_positions[edge_flow].append(position_list)
 
@@ -291,7 +296,9 @@ class GraphTuple(NamedTuple):
       if graph.has_graph_y:
         graph_y.append(graph.graph_y)
 
+      # Update the counters.
       disjoint_graph_count += 1
+      node_count += graph.node_count
 
     # Concatenate and convert lists to numpy arrays.
     for i in range(len(adjacencies)):
@@ -306,8 +313,8 @@ class GraphTuple(NamedTuple):
         edge_positions[i] = np.array([], dtype=np.int32)
 
     return cls(
-      adjacencies=adjacencies,
-      edge_positions=edge_positions,
+      adjacencies=np.array(adjacencies),
+      edge_positions=np.array(edge_positions),
       node_x=np.array(node_x, dtype=np.int32),
       node_y=np.array(node_y, dtype=np.int32) if node_y else None,
       graph_x=np.array(graph_x, dtype=np.int32) if graph_x else None,
@@ -316,7 +323,9 @@ class GraphTuple(NamedTuple):
       disjoint_nodes_list=np.concatenate(disjoint_nodes_list),
     )
 
-  # Conversion methods:
+  ##############################################################################
+  # Convertor methods
+  ##############################################################################
 
   def ToNetworkx(self) -> nx.MultiDiGraph:
     """Construct a networkx graph from a graph tuple.
@@ -389,8 +398,8 @@ class GraphTuple(NamedTuple):
     ):
 
       # Per-flow edge attributes.
-      current_adjacencies = [None, None, None]
-      current_edge_positions = [None, None, None]
+      adjacencies = [None, None, None]
+      edge_positions = [None, None, None]
 
       for edge_flow, (adjacency_list, position_list) in enumerate(
         zip(self.adjacencies, self.edge_positions)
@@ -408,12 +417,13 @@ class GraphTuple(NamedTuple):
             srcs >= node_offset, srcs < node_offset + graph_node_count
           )
         )
-        current_adjacencies[edge_flow] = adjacency_list[edge_indicies]
-        current_edge_positions[edge_flow] = position_list[edge_indicies]
+
+        adjacencies[edge_flow] = adjacency_list[edge_indicies]
+        edge_positions[edge_flow] = position_list[edge_indicies]
 
         # Negate the positive offset into the adjacency lists.
         offset = np.array((node_offset, node_offset), dtype=np.int32)
-        current_adjacencies[edge_flow] -= offset
+        adjacencies[edge_flow] -= offset
 
       # Read node features.
       current_node_x = self.node_x[node_offset : node_offset + graph_node_count]
@@ -437,8 +447,8 @@ class GraphTuple(NamedTuple):
         current_node_y = None
 
       yield GraphTuple(
-        adjacencies=current_adjacencies,
-        edge_positions=current_edge_positions,
+        adjacencies=np.array(adjacencies),
+        edge_positions=np.array(edge_positions),
         node_x=current_node_x,
         node_y=current_node_y,
         graph_x=self.graph_x[current_graph] if self.has_graph_x else None,
