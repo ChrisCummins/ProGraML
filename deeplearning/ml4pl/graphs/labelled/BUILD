@@ -125,6 +125,7 @@ py_binary(
     visibility = [
         "//deeplearning/ml4pl/graphs:__subpackages__",
         "//deeplearning/ml4pl/models:__subpackages__",
+        "//deeplearning/ml4pl/testing:__subpackages__",
     ],
     deps = [
         ":graph_tuple",
