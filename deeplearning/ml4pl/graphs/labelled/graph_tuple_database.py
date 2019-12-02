@@ -503,9 +503,7 @@ class Database(sqlutil.Database):
           + GraphTuple.call_edge_count
         ).label("edge_count_max"),
         # Edge position max.
-        # FIXME:
-        sql.func.max(GraphTuple.call_edge_count).label("edge_position_max"),
-        # sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
+        sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
         # Feature and label dimensionality counts. Each of these columns
         # should be one, showing that there is a single value for all graph
         # tuples.
