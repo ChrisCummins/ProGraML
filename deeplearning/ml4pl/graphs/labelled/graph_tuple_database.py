@@ -1,8 +1,10 @@
 """This module defines a database for storing graph tuples."""
 import datetime
+import json
 import pathlib
 import pickle
-import typing
+from typing import Any
+from typing import Optional
 
 import sqlalchemy as sql
 
@@ -11,11 +13,14 @@ from deeplearning.ml4pl.graphs.labelled import data_flow_graphs
 from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
 from labm8.py import app
 from labm8.py import crypto
+from labm8.py import humanize
+from labm8.py import progress
 from labm8.py import sqlutil
 
 
 FLAGS = app.FLAGS
-
+# Note we declare a graph_db flag at the bottom of this file, after declaring
+# the Database class.
 
 Base = sql.ext.declarative.declarative_base()
 
@@ -38,12 +43,12 @@ class Meta(Base, sqlutil.TablenameFromClassNameMixin):
   )
 
   @property
-  def value(self) -> typing.Any:
+  def value(self) -> Any:
     """De-pickle the column value."""
     return pickle.loads(self.pickled_value)
 
   @classmethod
-  def Create(cls, key: str, value: typing.Any):
+  def Create(cls, key: str, value: Any):
     """Construct a table entry."""
     return Meta(key=key, pickled_value=pickle.dumps(value))
 
@@ -258,5 +263,352 @@ class GraphTupleData(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
 class Database(sqlutil.Database):
   """A database of GraphTuples."""
 
-  def __init__(self, url: str, must_exist: bool = False):
+  def __init__(
+    self,
+    url: str,
+    must_exist: bool = False,
+    ctx: progress.ProgressContext = progress.NullContext,
+  ):
     super(Database, self).__init__(url, Base, must_exist=must_exist)
+    self.ctx = ctx
+
+    # Lazily evaluated attributes.
+    self._graph_tuple_stats = None
+
+  ##############################################################################
+  # Database stats. These are evaluated lazily and the results cached. There is
+  # no cache invalidation strategy - after modifying the database, you must
+  # manually call RefreshStats() to ensure that stale stats are re-computed.
+  ##############################################################################
+
+  def RefreshStats(self):
+    """Compute the database stats for access via the instance properties.
+
+    Raises:
+      ValueError: If the database contains invalid entries, e.g. inconsistent
+        vector dimensionalities.
+    """
+    self._graph_tuple_stats = self._ComputeGraphTupleStats()
+
+  @property
+  def graph_count(self) -> int:
+    """The number of non-empty graphs in the database."""
+    return self.graph_tuple_stats.graph_count
+
+  @property
+  def ir_count(self) -> int:
+    """The number of distinct intermediate representations that the non-empty
+    graphs are constructed from.
+    """
+    return self.graph_tuple_stats.ir_count
+
+  @property
+  def node_count(self) -> int:
+    """The total node count in non-empty graphs."""
+    return self.graph_tuple_stats.node_count
+
+  @property
+  def edge_count(self) -> int:
+    """The total edge count in non-empty graphs."""
+    return self.graph_tuple_stats.edge_count
+
+  @property
+  def control_edge_count(self) -> int:
+    """The total control edge count in non-empty graphs."""
+    return self.graph_tuple_stats.control_edge_count
+
+  @property
+  def data_edge_count(self) -> int:
+    """The total data edge count in non-empty graphs."""
+    return self.graph_tuple_stats.data_edge_count
+
+  @property
+  def call_edge_count(self) -> int:
+    """The total call edge count in non-empty graphs."""
+    return self.graph_tuple_stats.call_edge_count
+
+  @property
+  def node_count_max(self) -> int:
+    """The maximum node count in non-empty graphs."""
+    return self.graph_tuple_stats.node_count_max
+
+  @property
+  def edge_count_max(self) -> int:
+    """The maximum edge count in non-empty graphs."""
+    return self.graph_tuple_stats.edge_count_max
+
+  @property
+  def control_edge_count_max(self) -> int:
+    """The maximum control edge count in non-empty graphs."""
+    return self.graph_tuple_stats.control_edge_count_max
+
+  @property
+  def data_edge_count_max(self) -> int:
+    """The maximum data edge count in non-empty graphs."""
+    return self.graph_tuple_stats.data_edge_count_max
+
+  @property
+  def call_edge_count_max(self) -> int:
+    """The maximum call edge count in non-empty graphs."""
+    return self.graph_tuple_stats.call_edge_count_max
+
+  @property
+  def edge_position_max(self) -> int:
+    """The maximum edge position in non-empty graphs."""
+    return self.graph_tuple_stats.edge_position_max
+
+  @property
+  def node_x_dimensionality(self) -> int:
+    """The node x dimensionality of all non-empty graphs."""
+    return self.graph_tuple_stats.node_x_dimensionality
+
+  @property
+  def node_y_dimensionality(self) -> int:
+    """The node y dimensionality of all non-empty graphs."""
+    return self.graph_tuple_stats.node_y_dimensionality
+
+  @property
+  def graph_x_dimensionality(self) -> int:
+    """The graph x dimensionality of all non-empty graphs."""
+    return self.graph_tuple_stats.graph_x_dimensionality
+
+  @property
+  def graph_y_dimensionality(self) -> int:
+    """The graph y dimensionality of all non-empty graphs."""
+    return self.graph_tuple_stats.graph_y_dimensionality
+
+  @property
+  def graph_data_size(self) -> int:
+    """The total size of the non-empty graph data, in bytes."""
+    return self.graph_tuple_stats.graph_data_size
+
+  @property
+  def graph_data_size_min(self) -> int:
+    """The minimum size of the non-empty graph tuple data, in bytes."""
+    return self.graph_tuple_stats.graph_data_size_min
+
+  @property
+  def graph_data_size_avg(self) -> int:
+    """The average size of the non-empty graph tuple data, in bytes."""
+    return self.graph_tuple_stats.graph_data_size_avg
+
+  @property
+  def graph_data_size_max(self) -> int:
+    """The maximum size of the non-empty graph tuple data, in bytes."""
+    return self.graph_tuple_stats.graph_data_size_max
+
+  @property
+  def data_flow_steps_min(self) -> Optional[int]:
+    """The minimum data flow steps for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_steps_min
+
+  @property
+  def data_flow_steps_avg(self) -> Optional[int]:
+    """The average data flow steps for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_steps_avg
+
+  @property
+  def data_flow_steps_max(self) -> Optional[int]:
+    """The maximum data flow steps for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_steps_max
+
+  @property
+  def data_flow_positive_node_count_min(self) -> Optional[int]:
+    """The minimum data flow positive node count for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_positive_node_count_min
+
+  @property
+  def data_flow_positive_node_count_avg(self) -> Optional[int]:
+    """The minimum data flow average node count for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_positive_node_count_avg
+
+  @property
+  def data_flow_positive_node_count_max(self) -> Optional[int]:
+    """The minimum data flow max node count for non-empty graphs."""
+    return self.graph_tuple_stats.data_flow_positive_node_count_max
+
+  @property
+  def graph_tuple_stats(self):
+    """Fetch aggregate graph tuple stats, or compute them if not set."""
+    if self._graph_tuple_stats is None:
+      self.RefreshStats()
+    return self._graph_tuple_stats
+
+  def _ComputeGraphTupleStats(self):
+    """Compute the stats over the graph tuple table in a single SQL query.
+
+    Raises:
+      ValueError: If the database contains an inconsistent number of
+        dimensionalities for {node, graph} {features, labels}.
+    """
+    with self.ctx.Profile(
+      2,
+      lambda t: (
+        "Computed stats over "
+        f"{humanize.BinaryPrefix(stats.graph_data_size, 'B')} database "
+        f"({humanize.Plural(stats.graph_count, 'graph')})"
+      ),
+    ), self.Session() as session:
+      query = session.query(
+        # Graph and IR counts.
+        sql.func.count(GraphTuple.id).label("graph_count"),
+        sql.func.count(sql.func.distinct(GraphTuple.ir_id)).label("ir_count"),
+        # Node and edge attribute sums.
+        sql.func.sum(GraphTuple.node_count).label("node_count"),
+        sql.func.sum(GraphTuple.control_edge_count).label("control_edge_count"),
+        sql.func.sum(GraphTuple.data_edge_count).label("data_edge_count"),
+        sql.func.sum(GraphTuple.call_edge_count).label("call_edge_count"),
+        sql.func.sum(
+          GraphTuple.control_edge_count
+          + GraphTuple.data_edge_count
+          + GraphTuple.call_edge_count
+        ).label("edge_count"),
+        # Node and edge attribute maximums.
+        sql.func.max(GraphTuple.node_count).label("node_count_max"),
+        sql.func.max(GraphTuple.control_edge_count).label(
+          "control_edge_count_max"
+        ),
+        sql.func.max(GraphTuple.data_edge_count).label("data_edge_count_max"),
+        sql.func.max(GraphTuple.call_edge_count).label("call_edge_count_max"),
+        sql.func.max(GraphTuple.call_edge_count).label("call_edge_count_max"),
+        sql.func.max(
+          GraphTuple.control_edge_count
+          + GraphTuple.data_edge_count
+          + GraphTuple.call_edge_count
+        ).label("edge_count_max"),
+        # Edge position max.
+        sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
+        # Feature and label dimensionality counts. Each of these columns
+        # should be one, showing that there is a single value for all graph
+        # tuples.
+        sql.func.count(
+          sql.func.distinct(GraphTuple.node_x_dimensionality)
+        ).label("node_x_dimensionality_count"),
+        sql.func.count(
+          sql.func.distinct(GraphTuple.node_y_dimensionality)
+        ).label("node_y_dimensionality_count"),
+        sql.func.count(
+          sql.func.distinct(GraphTuple.graph_x_dimensionality)
+        ).label("graph_x_dimensionality_count"),
+        sql.func.count(
+          sql.func.distinct(GraphTuple.graph_y_dimensionality)
+        ).label("graph_y_dimensionality_count"),
+        # Feature and label dimensionalities.
+        sql.func.max(GraphTuple.node_x_dimensionality).label(
+          "node_x_dimensionality"
+        ),
+        sql.func.max(GraphTuple.node_y_dimensionality).label(
+          "node_y_dimensionality"
+        ),
+        sql.func.max(GraphTuple.graph_x_dimensionality).label(
+          "graph_x_dimensionality"
+        ),
+        sql.func.max(GraphTuple.graph_y_dimensionality).label(
+          "graph_y_dimensionality"
+        ),
+        # Graph tuple sizes.
+        sql.func.sum(GraphTuple.pickled_graph_tuple_size).label(
+          "graph_data_size"
+        ),
+        sql.func.min(GraphTuple.pickled_graph_tuple_size).label(
+          "graph_data_size_min"
+        ),
+        sql.func.avg(GraphTuple.pickled_graph_tuple_size).label(
+          "graph_data_size_avg"
+        ),
+        sql.func.max(GraphTuple.pickled_graph_tuple_size).label(
+          "graph_data_size_max"
+        ),
+        # Data flow column null counts.
+        sql.func.count(GraphTuple.data_flow_steps == None).label(
+          "data_flow_steps_null_count"
+        ),
+        sql.func.count(GraphTuple.data_flow_steps == None).label(
+          "data_flow_positive_node_count_null_count"
+        ),
+        # Data flow step counts.
+        sql.func.min(GraphTuple.data_flow_steps).label("data_flow_steps_min"),
+        sql.func.avg(GraphTuple.data_flow_steps).label("data_flow_steps_avg"),
+        sql.func.max(GraphTuple.data_flow_steps).label("data_flow_steps_max"),
+        # Data flow positive node count.
+        sql.func.min(GraphTuple.data_flow_positive_node_count).label(
+          "data_flow_positive_node_count_min"
+        ),
+        sql.func.avg(GraphTuple.data_flow_positive_node_count).label(
+          "data_flow_positive_node_count_avg"
+        ),
+        sql.func.max(GraphTuple.data_flow_positive_node_count).label(
+          "data_flow_positive_node_count_max"
+        ),
+      )
+
+      # Ignore "empty" graph nodes.
+      query = query.filter(GraphTuple.node_count > 1)
+
+      # Compute the stats.
+      stats = query.one()
+
+    # Check that databases have a consistent value for dimensionalities.
+    if stats.node_x_dimensionality_count > 1:
+      raise ValueError(
+        f"Database contains {stats.node_x_dimensionality_count} "
+        "distinct node x dimensionalities"
+      )
+    if stats.node_y_dimensionality_count > 1:
+      raise ValueError(
+        f"Database contains {stats.node_y_dimensionality_count} "
+        "distinct node y dimensionalities"
+      )
+    if stats.graph_x_dimensionality_count > 1:
+      raise ValueError(
+        f"Database contains {stats.graph_x_dimensionality_count} "
+        "distinct graph x dimensionalities"
+      )
+    if stats.graph_y_dimensionality_count > 1:
+      raise ValueError(
+        f"Database contains {stats.graph_y_dimensionality_count} "
+        "distinct graph y dimensionalities"
+      )
+
+    # Check that every graph has data flow attributes, or none of them do.
+    if (
+      stats.data_flow_steps_null_count != 0
+      and stats.data_flow_steps_null_count != stats.graph_count
+    ):
+      raise ValueError(
+        f"{stats.data_flow_steps_null_count} of "
+        f"{stats.graph_count} graphs have no data_flow_steps "
+        "value"
+      )
+    if (
+      stats.data_flow_positive_node_count_null_count != 0
+      and stats.data_flow_positive_node_count_null_count != stats.graph_count
+    ):
+      raise ValueError(
+        f"{stats.data_flow_positive_node_count_null_count} of "
+        f"{stats.graph_count} graphs have no "
+        " data_flow_positive_node_count value"
+      )
+
+    return stats
+
+
+# Deferred declaration of flags because we need to reference Database class.
+app.DEFINE_database(
+  "graph_db",
+  Database,
+  None,
+  "The database to read graph tuples from.",
+  must_exist=True,
+)
+
+
+def Main():
+  """Main entry point."""
+  graph_db = FLAGS.graph_db()
+  print("FOO")
+  print(json.dumps(graph_db.graph_tuple_stats))
+
+
+if __name__ == "__main__":
+  app.Run(Main)

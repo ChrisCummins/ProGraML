@@ -119,7 +119,7 @@ py_test(
     ],
 )
 
-py_library(
+py_binary(
     name = "graph_tuple_database",
     srcs = ["graph_tuple_database.py"],
     visibility = [
@@ -132,6 +132,8 @@ py_library(
         "//deeplearning/ml4pl/graphs/labelled:data_flow_graphs",
         "//labm8/py:app",
         "//labm8/py:crypto",
+        "//labm8/py:humanize",
+        "//labm8/py:progress",
         "//labm8/py:sqlutil",
         "//third_party/py/sqlalchemy",
     ],
@@ -139,16 +141,15 @@ py_library(
 
 py_test(
     name = "graph_tuple_database_test",
+    timeout = "long",
     srcs = ["graph_tuple_database_test.py"],
     deps = [
-        ":graph_tuple",
         ":graph_tuple_database",
-        "//deeplearning/ml4pl/graphs:programl",
-        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
-        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:decorators",
         "//labm8/py:test",
+        "//third_party/py/pytest",
     ],
 )
 

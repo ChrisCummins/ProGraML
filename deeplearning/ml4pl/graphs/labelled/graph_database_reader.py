@@ -15,14 +15,6 @@ from labm8.py import progress
 
 FLAGS = app.FLAGS
 
-
-app.DEFINE_database(
-  "graph_db",
-  graph_tuple_database.Database,
-  None,
-  "The database to read graph tuples from.",
-  must_exist=True,
-)
 app.DEFINE_string(
   "graph_reader_order",
   "batch_random",
