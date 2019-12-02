@@ -4,10 +4,10 @@
 
 ### Requirements
 
-* Ubuntu >= 16.04
-* Python >= 3.6
-* Bazel >= 0.28.0
-* MySQL
+* Ubuntu >= 16.04 or macOS >= 10.14.
+* Python >= 3.6.
+* Bazel >= 0.28.0.
+* MySQL >= 5.7.
 
 ### Installation
 
@@ -117,6 +117,6 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled:graph_tuple_viz -- \
 
 ### Contributing
 
-Pull requests and bug reports welcome. If modifying or adding code, please add 
+Pull requests and bug reports welcome. If modifying or adding code, please add
 tests. The most helpful way to report a bug is to submit a pull request which
 adds a failing test case that reproduces the bug.
