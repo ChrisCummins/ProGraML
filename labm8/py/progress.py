@@ -15,14 +15,23 @@ FLAGS = app.FLAGS
 class Progress(threading.Thread):
   """A job with intermediate progress and a progress bar."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(
+    self,
+    name: str,
+    i: int,
+    n: Optional[int] = None,
+    unit: str = "",
+    vertical_position: int = 0,
+  ):
     """Instantiate a long-running job.
 
     Args:
       args: Arguments for ProgressBarContext().
       kwargs: Keyword arguments for ProgressBarContext().
     """
-    self.ctx = ProgressBarContext(*args, **kwargs)
+    self.ctx = ProgressBarContext(
+      name=name, i=i, n=n, unit=unit, vertical_position=vertical_position
+    )
     super(Progress, self).__init__()
 
     self.run = self.Run
