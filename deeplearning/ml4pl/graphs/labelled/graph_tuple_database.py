@@ -1,10 +1,13 @@
 """This module defines a database for storing graph tuples."""
 import datetime
-import json
 import pathlib
 import pickle
 from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
 from typing import Optional
+from typing import Tuple
 
 import sqlalchemy as sql
 
@@ -14,6 +17,7 @@ from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
 from labm8.py import app
 from labm8.py import crypto
 from labm8.py import humanize
+from labm8.py import jsonutil
 from labm8.py import progress
 from labm8.py import sqlutil
 
@@ -260,6 +264,21 @@ class GraphTupleData(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   )
 
 
+# A registry of database statics, where each entry is a <name, property> tuple.
+database_statistics_registry: List[Tuple[str, Callable[["Database"], Any]]] = []
+
+
+def database_statistic(func):
+  """A decorator to mark a method on a Database as a database static.
+
+  Database statistics can be accessed using Database.stats_json property to
+  retrieve a <name, vale> dictionary.
+  """
+  global database_statistics_registry
+  database_statistics_registry.append((func.__name__, func))
+  return property(func)
+
+
 class Database(sqlutil.Database):
   """A database of GraphTuples."""
 
@@ -290,139 +309,139 @@ class Database(sqlutil.Database):
     """
     self._graph_tuple_stats = self._ComputeGraphTupleStats()
 
-  @property
+  @database_statistic
   def graph_count(self) -> int:
     """The number of non-empty graphs in the database."""
     return self.graph_tuple_stats.graph_count
 
-  @property
+  @database_statistic
   def ir_count(self) -> int:
     """The number of distinct intermediate representations that the non-empty
     graphs are constructed from.
     """
     return self.graph_tuple_stats.ir_count
 
-  @property
+  @database_statistic
   def node_count(self) -> int:
     """The total node count in non-empty graphs."""
     return self.graph_tuple_stats.node_count
 
-  @property
+  @database_statistic
   def edge_count(self) -> int:
     """The total edge count in non-empty graphs."""
     return self.graph_tuple_stats.edge_count
 
-  @property
+  @database_statistic
   def control_edge_count(self) -> int:
     """The total control edge count in non-empty graphs."""
     return self.graph_tuple_stats.control_edge_count
 
-  @property
+  @database_statistic
   def data_edge_count(self) -> int:
     """The total data edge count in non-empty graphs."""
     return self.graph_tuple_stats.data_edge_count
 
-  @property
+  @database_statistic
   def call_edge_count(self) -> int:
     """The total call edge count in non-empty graphs."""
     return self.graph_tuple_stats.call_edge_count
 
-  @property
+  @database_statistic
   def node_count_max(self) -> int:
     """The maximum node count in non-empty graphs."""
     return self.graph_tuple_stats.node_count_max
 
-  @property
+  @database_statistic
   def edge_count_max(self) -> int:
     """The maximum edge count in non-empty graphs."""
     return self.graph_tuple_stats.edge_count_max
 
-  @property
+  @database_statistic
   def control_edge_count_max(self) -> int:
     """The maximum control edge count in non-empty graphs."""
     return self.graph_tuple_stats.control_edge_count_max
 
-  @property
+  @database_statistic
   def data_edge_count_max(self) -> int:
     """The maximum data edge count in non-empty graphs."""
     return self.graph_tuple_stats.data_edge_count_max
 
-  @property
+  @database_statistic
   def call_edge_count_max(self) -> int:
     """The maximum call edge count in non-empty graphs."""
     return self.graph_tuple_stats.call_edge_count_max
 
-  @property
+  @database_statistic
   def edge_position_max(self) -> int:
     """The maximum edge position in non-empty graphs."""
     return self.graph_tuple_stats.edge_position_max
 
-  @property
+  @database_statistic
   def node_x_dimensionality(self) -> int:
     """The node x dimensionality of all non-empty graphs."""
     return self.graph_tuple_stats.node_x_dimensionality
 
-  @property
+  @database_statistic
   def node_y_dimensionality(self) -> int:
     """The node y dimensionality of all non-empty graphs."""
     return self.graph_tuple_stats.node_y_dimensionality
 
-  @property
+  @database_statistic
   def graph_x_dimensionality(self) -> int:
     """The graph x dimensionality of all non-empty graphs."""
     return self.graph_tuple_stats.graph_x_dimensionality
 
-  @property
+  @database_statistic
   def graph_y_dimensionality(self) -> int:
     """The graph y dimensionality of all non-empty graphs."""
     return self.graph_tuple_stats.graph_y_dimensionality
 
-  @property
+  @database_statistic
   def graph_data_size(self) -> int:
     """The total size of the non-empty graph data, in bytes."""
     return self.graph_tuple_stats.graph_data_size
 
-  @property
+  @database_statistic
   def graph_data_size_min(self) -> int:
     """The minimum size of the non-empty graph tuple data, in bytes."""
     return self.graph_tuple_stats.graph_data_size_min
 
-  @property
+  @database_statistic
   def graph_data_size_avg(self) -> int:
     """The average size of the non-empty graph tuple data, in bytes."""
     return self.graph_tuple_stats.graph_data_size_avg
 
-  @property
+  @database_statistic
   def graph_data_size_max(self) -> int:
     """The maximum size of the non-empty graph tuple data, in bytes."""
     return self.graph_tuple_stats.graph_data_size_max
 
-  @property
+  @database_statistic
   def data_flow_steps_min(self) -> Optional[int]:
     """The minimum data flow steps for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_steps_min
 
-  @property
+  @database_statistic
   def data_flow_steps_avg(self) -> Optional[int]:
     """The average data flow steps for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_steps_avg
 
-  @property
+  @database_statistic
   def data_flow_steps_max(self) -> Optional[int]:
     """The maximum data flow steps for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_steps_max
 
-  @property
+  @database_statistic
   def data_flow_positive_node_count_min(self) -> Optional[int]:
     """The minimum data flow positive node count for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_positive_node_count_min
 
-  @property
+  @database_statistic
   def data_flow_positive_node_count_avg(self) -> Optional[int]:
     """The minimum data flow average node count for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_positive_node_count_avg
 
-  @property
+  @database_statistic
   def data_flow_positive_node_count_max(self) -> Optional[int]:
     """The minimum data flow max node count for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_positive_node_count_max
@@ -433,6 +452,13 @@ class Database(sqlutil.Database):
     if self._graph_tuple_stats is None:
       self.RefreshStats()
     return self._graph_tuple_stats
+
+  @property
+  def stats_json(self) -> Dict[str, Any]:
+    """Fetch the database statics as a JSON dictionary."""
+    return {
+      name: function(self) for name, function in database_statistics_registry
+    }
 
   def _ComputeGraphTupleStats(self):
     """Compute the stats over the graph tuple table in a single SQL query.
@@ -477,7 +503,9 @@ class Database(sqlutil.Database):
           + GraphTuple.call_edge_count
         ).label("edge_count_max"),
         # Edge position max.
-        sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
+        # FIXME:
+        sql.func.max(GraphTuple.call_edge_count).label("edge_position_max"),
+        # sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
         # Feature and label dimensionality counts. Each of these columns
         # should be one, showing that there is a single value for all graph
         # tuples.
@@ -595,19 +623,14 @@ class Database(sqlutil.Database):
 
 # Deferred declaration of flags because we need to reference Database class.
 app.DEFINE_database(
-  "graph_db",
-  Database,
-  None,
-  "The database to read graph tuples from.",
-  must_exist=True,
+  "graph_db", Database, None, "The database to read graph tuples from.",
 )
 
 
 def Main():
   """Main entry point."""
   graph_db = FLAGS.graph_db()
-  print("FOO")
-  print(json.dumps(graph_db.graph_tuple_stats))
+  print(jsonutil.format_json(graph_db.stats_json))
 
 
 if __name__ == "__main__":
