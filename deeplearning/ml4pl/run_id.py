@@ -126,11 +126,34 @@ class RunId(NamedTuple):
     if forced_run_id:
       return forced_run_id
 
+    script_name = pathlib.Path(sys.argv[0]).stem
+
+    return cls.GenerateUnique(script_name)
+
+  @classmethod
+  def GenerateUnique(cls, name: str) -> "RunId":
+    """Generate a unique run ID with the given name.
+
+    The uniqueness of run IDs is provided by storing the most-recently generated
+    run ID in /tmp/ml4pl_previous_run_id.txt. If run IDs are requested at the
+    same time, their timestamps will collide, and this method will block until
+    the run ID is unique. Note the implementation is not truly atomic - there is
+    still an incredibly slight possibility of generating duplicate run IDs if
+    enough concurrent jobs attempt to grab run IDs at the same time.
+
+    Args:
+      name: The name of the run ID to generate.
+
+    Returns:
+      A run ID instance.
+    """
+    # Truncate the name if required.
+    name = name[:16]
+
     # Compute a new run ID.
-    script_name = pathlib.Path(sys.argv[0]).stem[:16]
     timestamp = time.strftime("%y%m%d%H%M%S")
     hostname = system.HOSTNAME[:12]
-    run_id = f"{script_name}:{timestamp}:{hostname}"
+    run_id = f"{name}:{timestamp}:{hostname}"
 
     # Check if there is already a run with this ID and, if required, wait.
     previous_run_id = None
