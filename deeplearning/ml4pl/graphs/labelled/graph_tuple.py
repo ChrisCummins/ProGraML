@@ -68,7 +68,7 @@ class GraphTuple(NamedTuple):
   @property
   def is_disjoint_graph(self) -> bool:
     """Return whether the graph tuple is disjoint."""
-    return self.disjoint_graph_count > 1
+    return self.disjoint_nodes_list is not None
 
   ##############################################################################
   # Properties
@@ -370,10 +370,8 @@ class GraphTuple(NamedTuple):
       ValueError: If the graph tuple is not disjoint, or if the graph tuple
         is invalid.
     """
-    if self.disjoint_graph_count <= 1:
-      raise ValueError(
-        "ToGraphTuples() called on graph tuple of a single graph"
-      )
+    if not self.is_disjoint_graph:
+      raise ValueError("ToGraphTuples() called on non-disjoint graph tuple")
 
     # Split the list of node indices into individual lists for each graph.
     graph_split_indices = (
