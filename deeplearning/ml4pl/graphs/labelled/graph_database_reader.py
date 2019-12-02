@@ -179,76 +179,98 @@ class BufferedGraphReader(object):
         # argument.
         self.ids_and_sizes = self.ids_and_sizes[:limit]
 
+      self.i = 0
       self.n = len(self.ids_and_sizes)
 
+      # The local buffer of graphs, and an index into that buffer.
+      self.buffer = []
+      self.buffer_i = 0
+
   def __iter__(self):
+    return self
+
+  def __next__(self):
+    """Get the next graph."""
+    if self.buffer_i < len(self.buffer):
+      graph = self.buffer[self.buffer_i]
+      self.buffer_i += 1
+      return graph
+    else:
+      self.buffer = self.GetNextBuffer()
+      self.buffer_i = 1
+      return self.buffer[0]
+
+  def GetNextBuffer(self) -> List[graph_tuple_database.GraphTuple]:
+    """Fetch the next buffer of graphs from the database."""
+    if self.i >= self.n:
+      # We have run out of graphs to read.
+      raise StopIteration
+
+    # Select a batch of IDs to fetch from the database.
+    end_i = self.i
+    current_buffer_size = 0
+    # Build up our ID list until we have the requested buffer size.
+    while current_buffer_size < self.max_buffer_size:
+      current_buffer_size += self.ids_and_sizes[end_i][1]
+      end_i += 1
+      if end_i >= len(self.ids_and_sizes):
+        # We have reached the end of the graph list, fetch whatever remains
+        # into the local buffer.
+        break
+
     with self.db.Session() as session:
-      i = 0
-      while i < len(self.ids_and_sizes):
-        # Peel off a batch of IDs to query.
-        end_i = i
-        current_buffer_size = 0
+      # Build the query to fetch the graph data from the database.
+      query = session.query(graph_tuple_database.GraphTuple)
 
-        while current_buffer_size < self.max_buffer_size:
-          current_buffer_size += self.ids_and_sizes[end_i][1]
-          end_i += 1
-          if end_i >= len(self.ids_and_sizes):
-            # We have run out of graphs to read.
-            break
+      # Perform the joined eager load.
+      if self.eager_graph_loading:
+        query = query.options(
+          sql.orm.joinedload(graph_tuple_database.GraphTuple.data)
+        )
 
-        query = session.query(graph_tuple_database.GraphTuple)
+      # If we are reading the IDs in-order then we can use ID range checks to
+      # return graphs. Else, we must perform ID value lookups.
+      if self.ordered_ids:
+        start_id = self.ids_and_sizes[self.i][0]
+        end_id = self.ids_and_sizes[end_i - 1][0]
+        query = query.filter(
+          graph_tuple_database.GraphTuple.id >= start_id,
+          graph_tuple_database.GraphTuple.id <= end_id,
+        )
+        # For index range comparisons we must repeat the same filters as when
+        # initially reading the graph IDs.
+        for filter in self.filters:
+          query = query.filter(filter())
+      else:
+        batch_ids = [
+          id_and_size[0] for id_and_size in self.ids_and_sizes[self.i : end_i]
+        ]
+        query = query.filter(graph_tuple_database.GraphTuple.id.in_(batch_ids))
 
-        # Perform the joined eager load.
-        if self.eager_graph_loading:
-          query = query.options(
-            sql.orm.joinedload(graph_tuple_database.GraphTuple.data)
-          )
+      # Randomize the order of results for random orders.
+      if (
+        self.order == BufferedGraphReaderOrder.BATCH_RANDOM
+        or self.order == BufferedGraphReaderOrder.GLOBAL_RANDOM
+      ):
+        query = query.order_by(self.db.Random())
 
-        # If we are reading in ID order then we can use ID range checks to
-        # return graphs. Else, we must perform ID set lookups.
-        if self.ordered_ids:
-          start_id = self.ids_and_sizes[i][0]
-          end_id = self.ids_and_sizes[end_i - 1][0]
-          query = query.filter(
-            graph_tuple_database.GraphTuple.id >= start_id,
-            graph_tuple_database.GraphTuple.id <= end_id,
-          )
-          # For index range comparisons we must repeat the same filters as when
-          # initially reading the graph IDs.
-          for filter in self.filters:
-            query = query.filter(filter())
-        else:
-          batch_ids = [
-            id_and_size[0] for id_and_size in self.ids_and_sizes[i:end_i]
-          ]
-          query = query.filter(
-            graph_tuple_database.GraphTuple.id.in_(batch_ids)
-          )
+      # Fetch the buffer data.
+      with self.ctx.Profile(
+        3,
+        f"Read {humanize.BinaryPrefix(current_buffer_size, 'B')} "
+        f"buffer of {end_i - self.i} graph tuples",
+      ):
+        buffer = query.all()
+      if len(buffer) != end_i - self.i:
+        raise OSError(
+          f"Requested buffer of {end_i - self.i} graphs but received "
+          f"{len(buffer)} graphs"
+        )
 
-        # Randomize the order of results for random orders.
-        if (
-          self.order == BufferedGraphReaderOrder.BATCH_RANDOM
-          or self.order == BufferedGraphReaderOrder.GLOBAL_RANDOM
-        ):
-          query = query.order_by(self.db.Random())
+      # Update the index into the list of graph IDs.
+      self.i = end_i
 
-        # Read the buffer.
-        with self.ctx.Profile(
-          3,
-          f"Read {humanize.BinaryPrefix(current_buffer_size, 'B')} "
-          f"buffer of {end_i - i} graph tuples",
-        ):
-          buffer = query.all()
-        if len(buffer) != end_i - i:
-          raise OSError(
-            f"Requested buffer of {end_i - i} graphs but received {len(buffer)}"
-          )
-        yield from buffer
-
-        i = end_i
-
-  # def __next__(self):
-  #   pass
+      return buffer
 
   @classmethod
   def CreateFromFlags(
@@ -302,7 +324,7 @@ class BufferedGraphReader(object):
 class WriteGraphsToFile(progress.Progress):
   """Write graphs in a graph database to pickled files.
 
-  This is to aid in debugging.
+  This is for debugging.
   """
 
   def __init__(self, outdir: pathlib.Path):
@@ -315,7 +337,7 @@ class WriteGraphsToFile(progress.Progress):
   def Run(self):
     """Read and write the graphs."""
     for self.ctx.i, graph_tuple in enumerate(self.reader):
-      path = self.outdir / f"graph_tuple_{graph_tuple.id}.pickle"
+      path = self.outdir / f"graph_tuple_{graph_tuple.id:08}.pickle"
       graph_tuple.ToFile(path)
 
 
