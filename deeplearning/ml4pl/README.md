@@ -1,30 +1,28 @@
 # Graph-based Machine Learning for Programming Languages
 
-**[Travis CI build status](https://travis-ci.com/ChrisCummins/ml4pl)**
-
 ## Setup
 
 ### Requirements
 
 * Ubuntu >= 16.04
 * Python >= 3.6
-* Bazel == 0.26.0
+* Bazel >= 0.28.0
 * MySQL
 
 ### Installation
 
 ```sh
 $ ./configure
-# Answer yes/no questions.
+# Answer yes/no questions. The defaults should be fine.
 ```
 
-Run unit tests:
+Run the test suite:
 
 ```sh
 $ bazel test //deeplearning/ml4pl/...
 ```
 
-### Setup database
+#### Setup a database
 
 Create a file with the username, password, and hostname of your MySQL server in the form:
 
@@ -33,77 +31,92 @@ $ cat /tmp/mysql.txt
 mysql://user:pass@hostname/
 ```
 
-### Create a bytecode database
 
-Download the 
-[POJ-104 IR dataset](https://polybox.ethz.ch/index.php/s/JOBjrfmAjOeWCyl/download) 
-from:
+## Usage
 
-Create a database and import the bytecodes:
+### Step 1: Generate intermediate representations
 
-```sh
-$ bazel run //deeplearning/ml4pl/bytecode/create:import_from_poj104 -- \
-    --db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
-    --dataset=/path/to/root/of/dataset
-```
+Generate `sqlite:////tmp/ir.db`, TODO. This is currently being refactored, and the existing databases have been
+migrated from an old schema.
 
-## Running Experiments
 
-### Classifyapp
+### Step 2: Generate program graphs
 
-Create the dataset:
+Generate `sqlite:////tmp/program_graphs.db`, TODO. This is currently being refactored, and the existing databases have been
+migrated from an old schema.
 
-```sh
-$ bazel run //deeplearning/ml4pl/graphs/labelled/classifyapp:make_classifyapp_dataset -- \
-    --bytecode_db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
-    --graph_db='file:///tmp/mysql.txt?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
-    --database_exporter_batch_size=5000 \
-    --alsologtostderr
-```
 
-Train and evaluate a model:
+### Step 3: Annotate program graphs labels
+
+#### Data flow analyses
+
+Generate a database of graphs labelled with data flow analyses using:
 
 ```sh
-$ bazel run //deeplearning/ml4pl/models/ggnn:ggnn_graph_classifier -- \
-    --graph_db='file:///tmp/mysql.txt?ml4pl_classifyapp_xfg_poj104?charset=utf8' \
-    --working_dir='/var/ml4pl/models/classifyapp_xfg_poj104' \
-    --layer_timesteps=2,2,2 \
-    --alsologtostderr
+$ bazel run //deeplearning/ml4pl/graphs/labelled:make_data_flow_analysis_dataset -- \
+    --input_db='sqlite:////tmp/program_graphs.db' \
+    --graph_db='sqlite:////tmp/reachability_graphs.db' \
+    --analysis=reachability
 ```
 
-View logs
+### Step 4: Train a model
+
+TODO. The model scripts need refactoring.
+
+#### Zero-R
+
+Train a Zero-R model using:
 
 ```sh
-$ tensorboard --logdir /var/ml4pl/models/classifyapp_xfg_poj104/tensorboard
+$ bazel run //deeplearning/ml4pl/models/zero_r -- \
+    --graph_db='sqlite:////tmp/reachability_graphs.db' \
+    --log_db='sqlite:////tmp/logs.db'
 ```
 
-### Reachability
+### Debugging
 
-Create the dataset:
+Many of the utility libraries are executable as binaries to produce data useful
+for debugging.
+
+#### Print stats of a graph tuple database
 
 ```sh
-$ bazel run //deeplearning/ml4pl/graphs/labelled/reachability:make_reachability_dataset -- \
-    --bytecode_db='file:///tmp/mysql.txt?ml4pl_bytecode?charset=utf8' \
-    --graph_db='file:///tmp/mysql.txt?ml4pl_reachability_poj104?charset=utf8' \
-    --bytecode_split_type='poj104' \
-    --reachability_dataset_max_instances_per_graph=3 \
-    --alsologtostderr
+$ bazel run //deeplearning/ml4pl/graphs/labelled:graph_tuple_database -- \
+    --graph_db='sqlite:////tmp/graph_tuples.db'
 ```
 
-Train a model on graphs requiring <= 15 time steps:
+#### Dump pickled graph tuples from a database
+
+Read a database of graphs and dump to pickled graph tuples:
 
 ```sh
-$ bazel run //deeplearning/ml4pl/models/ggnn:ggnn -- \
-    --graph_db='file:///tmp/mysql.txt?ml4pl_reachability_cfg_poj104?charset=utf8' \
-    --working_dir='/var/ml4pl/models/reachability_poj104' \
-    --max_instance_count=10000 \
-    --layer_timesteps=15 \
-    --limit_data_flow_max_steps_required_to_message_passing_steps \
-    --alsologtostderr
+$ bazel run //deeplearning/ml4pl/graphs/labelled:graph_database_reader -- \
+    --graph_db='sqlite:////tmp/graph_tuples.db' \
+    --graph_reader_outdir='/tmp/graph_tuples'
 ```
 
-View logs:
+#### Dump pickled graph tuple batches from a database
+
+Assemble batches of disjoint graphs and dump to pickled graph tuples:
 
 ```sh
-$ tensorboard --logdir /var/ml4pl/models/reachability_poj104/tensorboard
+$ bazel run //deeplearning/ml4pl/graphs/labelled:graph_batcher -- \
+    --graph_db='sqlite:////tmp/graph_tuples.db' \
+    --graph_batch_outdir='/tmp/graph_batches'
 ```
+
+#### Visualizing graphs
+
+Create graphviz graph from a pickled graph tuple:
+
+```sh
+$ bazel run //deeplearning/ml4pl/graphs/labelled:graph_tuple_viz -- \
+    --graph_tuple='/tmp/graph_tuples/graph_tuple_00001.pickle' \
+    > /tmp/graph_tuple.dot
+```
+
+### Contributing
+
+Pull requests and bug reports welcome. If modifying or adding code, please add 
+tests. The most helpful way to report a bug is to submit a pull request which
+adds a failing test case that reproduces the bug.
