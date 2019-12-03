@@ -50,6 +50,7 @@ def Run(progress: Progress, refresh_time: float = 0.2) -> Progress:
     progress.ctx.Refresh()
     progress.join(refresh_time)
   progress.ctx.Refresh()
+  progress.ctx.bar.close()
   return progress
 
 
