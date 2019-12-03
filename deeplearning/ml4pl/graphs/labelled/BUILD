@@ -147,6 +147,7 @@ py_test(
     srcs = ["graph_tuple_database_test.py"],
     deps = [
         ":graph_tuple_database",
+        "//deeplearning/ml4pl/testing:random_graph_tuple_database_generator",
         "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:decorators",

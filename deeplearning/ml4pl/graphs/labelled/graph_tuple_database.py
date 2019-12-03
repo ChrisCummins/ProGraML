@@ -75,6 +75,10 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   # databases.
   ir_id: int = sql.Column(sql.Integer, nullable=False, index=True)
 
+  # An integer used to split databases of graphs into separate graphs, e.g.
+  # train/val/test split.
+  split: Optional[int] = sql.Column(sql.Integer, nullable=True, index=True)
+
   # The size of the program graph.
   node_count: int = sql.Column(sql.Integer, nullable=False)
   control_edge_count: int = sql.Column(sql.Integer, nullable=False)
@@ -165,7 +169,10 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
 
   @classmethod
   def CreateFromGraphTuple(
-    cls, graph_tuple: graph_tuple_lib.GraphTuple, ir_id: int
+    cls,
+    graph_tuple: graph_tuple_lib.GraphTuple,
+    ir_id: int,
+    split: Optional[int] = None,
   ) -> "GraphTuple":
     """Create a mapped database instance from the given graph tuple.
 
@@ -176,6 +183,7 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     Args:
       graph_tuple: The graph tuple to map.
       ir_id: The intermediate representation ID.
+      split: The split value of this graph.
 
     Returns:
       A GraphTuple instance.
@@ -183,6 +191,7 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     pickled_graph_tuple = pickle.dumps(graph_tuple)
     return GraphTuple(
       ir_id=ir_id,
+      split=split,
       node_count=graph_tuple.node_count,
       control_edge_count=graph_tuple.control_edge_count,
       data_edge_count=graph_tuple.data_edge_count,
@@ -219,7 +228,10 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
 
   @classmethod
   def CreateFromDataFlowAnnotatedGraph(
-    cls, annotated_graph: data_flow_graphs.DataFlowAnnotatedGraph, ir_id: int
+    cls,
+    annotated_graph: data_flow_graphs.DataFlowAnnotatedGraph,
+    ir_id: int,
+    split: Optional[int] = None,
   ) -> "GraphTuple":
     """Create a mapped database instance from the given annotated graph.
 
@@ -230,6 +242,7 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     Args:
       annotated_graph: A DataFlowAnnotatedGraph instance.
       ir_id: The intermediate representation ID.
+      split: The split value of this graph.
 
     Returns:
       A GraphTuple instance.
@@ -237,7 +250,7 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     graph_tuple = graph_tuple_lib.GraphTuple.CreateFromNetworkX(
       annotated_graph.g
     )
-    mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id)
+    mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id, split)
     mapped.data_flow_steps = annotated_graph.data_flow_steps
     mapped.data_flow_root_node = annotated_graph.root_node
     mapped.data_flow_positive_node_count = annotated_graph.positive_node_count
@@ -300,15 +313,6 @@ class Database(sqlutil.Database):
   # manually call RefreshStats() to ensure that stale stats are re-computed.
   ##############################################################################
 
-  def RefreshStats(self):
-    """Compute the database stats for access via the instance properties.
-
-    Raises:
-      ValueError: If the database contains invalid entries, e.g. inconsistent
-        vector dimensionalities.
-    """
-    self._graph_tuple_stats = self._ComputeGraphTupleStats()
-
   @database_statistic
   def graph_count(self) -> int:
     """The number of non-empty graphs in the database."""
@@ -320,6 +324,11 @@ class Database(sqlutil.Database):
     graphs are constructed from.
     """
     return self.graph_tuple_stats.ir_count
+
+  @database_statistic
+  def split_count(self) -> int:
+    """The number of distinct splits in the database."""
+    return self.graph_tuple_stats.split_count
 
   @database_statistic
   def node_count(self) -> int:
@@ -446,26 +455,18 @@ class Database(sqlutil.Database):
     """The minimum data flow max node count for non-empty graphs."""
     return self.graph_tuple_stats.data_flow_positive_node_count_max
 
-  @property
-  def graph_tuple_stats(self):
-    """Fetch aggregate graph tuple stats, or compute them if not set."""
-    if self._graph_tuple_stats is None:
+  @database_statistic
+  def splits(self) -> List[int]:
+    if self._splits is None:
       self.RefreshStats()
-    return self._graph_tuple_stats
+    return self._splits
 
-  @property
-  def stats_json(self) -> Dict[str, Any]:
-    """Fetch the database statics as a JSON dictionary."""
-    return {
-      name: function(self) for name, function in database_statistics_registry
-    }
-
-  def _ComputeGraphTupleStats(self):
-    """Compute the stats over the graph tuple table in a single SQL query.
+  def RefreshStats(self):
+    """Compute the database stats for access via the instance properties.
 
     Raises:
-      ValueError: If the database contains an inconsistent number of
-        dimensionalities for {node, graph} {features, labels}.
+      ValueError: If the database contains invalid entries, e.g. inconsistent
+        vector dimensionalities.
     """
     with self.ctx.Profile(
       2,
@@ -479,6 +480,9 @@ class Database(sqlutil.Database):
         # Graph and IR counts.
         sql.func.count(GraphTuple.id).label("graph_count"),
         sql.func.count(sql.func.distinct(GraphTuple.ir_id)).label("ir_count"),
+        sql.func.count(sql.func.distinct(GraphTuple.split)).label(
+          "split_count"
+        ),
         # Node and edge attribute sums.
         sql.func.sum(GraphTuple.node_count).label("node_count"),
         sql.func.sum(GraphTuple.control_edge_count).label("control_edge_count"),
@@ -503,7 +507,12 @@ class Database(sqlutil.Database):
           + GraphTuple.call_edge_count
         ).label("edge_count_max"),
         # Edge position max.
-        sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
+        # NOTE: For some strange reason, sqlalchemy likes to interpret the
+        # value sql.func.max(GraphTuple.edge_position_max) as a bytes array.
+        # Forcing a cast to integer fixes this.
+        sql.cast(sql.func.max(GraphTuple.edge_position_max), sql.Integer).label(
+          "edge_position_max"
+        ),
         # Feature and label dimensionality counts. Each of these columns
         # should be one, showing that there is a single value for all graph
         # tuples.
@@ -574,49 +583,75 @@ class Database(sqlutil.Database):
       # Compute the stats.
       stats = query.one()
 
-    # Check that databases have a consistent value for dimensionalities.
-    if stats.node_x_dimensionality_count > 1:
-      raise ValueError(
-        f"Database contains {stats.node_x_dimensionality_count} "
-        "distinct node x dimensionalities"
-      )
-    if stats.node_y_dimensionality_count > 1:
-      raise ValueError(
-        f"Database contains {stats.node_y_dimensionality_count} "
-        "distinct node y dimensionalities"
-      )
-    if stats.graph_x_dimensionality_count > 1:
-      raise ValueError(
-        f"Database contains {stats.graph_x_dimensionality_count} "
-        "distinct graph x dimensionalities"
-      )
-    if stats.graph_y_dimensionality_count > 1:
-      raise ValueError(
-        f"Database contains {stats.graph_y_dimensionality_count} "
-        "distinct graph y dimensionalities"
-      )
+      # Check that databases have a consistent value for dimensionalities.
+      if stats.node_x_dimensionality_count > 1:
+        raise ValueError(
+          f"Database contains {stats.node_x_dimensionality_count} "
+          "distinct node x dimensionalities"
+        )
+      if stats.node_y_dimensionality_count > 1:
+        raise ValueError(
+          f"Database contains {stats.node_y_dimensionality_count} "
+          "distinct node y dimensionalities"
+        )
+      if stats.graph_x_dimensionality_count > 1:
+        raise ValueError(
+          f"Database contains {stats.graph_x_dimensionality_count} "
+          "distinct graph x dimensionalities"
+        )
+      if stats.graph_y_dimensionality_count > 1:
+        raise ValueError(
+          f"Database contains {stats.graph_y_dimensionality_count} "
+          "distinct graph y dimensionalities"
+        )
 
-    # Check that every graph has data flow attributes, or none of them do.
-    if (
-      stats.data_flow_steps_null_count != 0
-      and stats.data_flow_steps_null_count != stats.graph_count
-    ):
-      raise ValueError(
-        f"{stats.data_flow_steps_null_count} of "
-        f"{stats.graph_count} graphs have no data_flow_steps "
-        "value"
-      )
-    if (
-      stats.data_flow_positive_node_count_null_count != 0
-      and stats.data_flow_positive_node_count_null_count != stats.graph_count
-    ):
-      raise ValueError(
-        f"{stats.data_flow_positive_node_count_null_count} of "
-        f"{stats.graph_count} graphs have no "
-        " data_flow_positive_node_count value"
-      )
+      # Check that every graph has data flow attributes, or none of them do.
+      if (
+        stats.data_flow_steps_null_count != 0
+        and stats.data_flow_steps_null_count != stats.graph_count
+      ):
+        raise ValueError(
+          f"{stats.data_flow_steps_null_count} of "
+          f"{stats.graph_count} graphs have no data_flow_steps "
+          "value"
+        )
+      if (
+        stats.data_flow_positive_node_count_null_count != 0
+        and stats.data_flow_positive_node_count_null_count != stats.graph_count
+      ):
+        raise ValueError(
+          f"{stats.data_flow_positive_node_count_null_count} of "
+          f"{stats.graph_count} graphs have no "
+          " data_flow_positive_node_count value"
+        )
 
-    return stats
+      self._graph_tuple_stats = stats
+
+      with self.Session() as session:
+        self._splits = sorted(
+          set(
+            [
+              row.split
+              for row in session.query(GraphTuple.split).group_by(
+                GraphTuple.split
+              )
+            ]
+          )
+        )
+
+  @property
+  def graph_tuple_stats(self):
+    """Fetch aggregate graph tuple stats, or compute them if not set."""
+    if self._graph_tuple_stats is None:
+      self.RefreshStats()
+    return self._graph_tuple_stats
+
+  @property
+  def stats_json(self) -> Dict[str, Any]:
+    """Fetch the database statics as a JSON dictionary."""
+    return {
+      name: function(self) for name, function in database_statistics_registry
+    }
 
 
 # Deferred declaration of flags because we need to reference Database class.
