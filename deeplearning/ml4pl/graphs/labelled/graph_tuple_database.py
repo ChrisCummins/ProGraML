@@ -306,6 +306,7 @@ class Database(sqlutil.Database):
 
     # Lazily evaluated attributes.
     self._graph_tuple_stats = None
+    self._splits = None
 
   ##############################################################################
   # Database stats. These are evaluated lazily and the results cached. There is
