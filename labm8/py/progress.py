@@ -22,6 +22,7 @@ class Progress(threading.Thread):
     n: Optional[int] = None,
     unit: str = "",
     vertical_position: int = 0,
+    leave: Optional[bool] = None,
   ):
     """Instantiate a long-running job.
 
@@ -30,7 +31,12 @@ class Progress(threading.Thread):
       kwargs: Keyword arguments for ProgressBarContext().
     """
     self.ctx = ProgressBarContext(
-      name=name, i=i, n=n, unit=unit, vertical_position=vertical_position
+      name=name,
+      i=i,
+      n=n,
+      unit=unit,
+      vertical_position=vertical_position,
+      leave=leave,
     )
     super(Progress, self).__init__()
 
@@ -85,6 +91,10 @@ class ProgressContext(object):
     """Return a profiling context."""
     return prof.Profile(msg, print_to=lambda x: self.Log(level, x),)
 
+  def print(self, *args, **kwargs):
+    with self.print_context():
+      print(*args, **kwargs)
+
 
 NullContext = ProgressContext(None)
 
@@ -99,6 +109,7 @@ class ProgressBarContext(ProgressContext):
     n: Optional[int] = None,
     unit: str = "",
     vertical_position: int = 0,
+    leave: Optional[bool] = None,
   ):
     """Construct a new progress.
 
@@ -128,6 +139,7 @@ class ProgressBarContext(ProgressContext):
       total=self.n,
       unit=unit,
       position=self.vertical_position,
+      leave=leave,
     )
     self.print_context = self.bar.external_write_mode
 
