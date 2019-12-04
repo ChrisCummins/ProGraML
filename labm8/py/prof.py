@@ -15,12 +15,14 @@
 """
 import contextlib
 import csv
+import datetime
 import inspect
 import os
 import pathlib
 import sys
 import time
 import typing
+from typing import Optional
 
 from labm8.py import app
 from labm8.py import humanize
@@ -143,12 +145,39 @@ def timers():
     yield name
 
 
+class ProfileTimer(object):
+  """A profiling timer."""
+
+  def __init__(self):
+    self.start: datetime.datetime = datetime.datetime.utcnow()
+    self.end: Optional[datetime.datetime] = None
+
+  def Stop(self):
+    if self.end:
+      return
+    self.end = datetime.datetime.utcnow()
+
+  @property
+  def elapsed(self) -> float:
+    if self.end:
+      return (self.end - self.start).total_seconds()
+    else:
+      return (datetime.datetime.utcnow() - self.start).total_seconds()
+
+  @property
+  def elapsed_ms(self) -> int:
+    return int(round(self.elapsed * 1000))
+
+  def __repr__(self):
+    return humanize.Duration(self.elapsed)
+
+
 @app.skip_log_prefix
 @contextlib.contextmanager
 def Profile(
   name: typing.Union[str, typing.Callable[[int], str]] = "",
   print_to: typing.Callable[[str], None] = lambda msg: app.Log(1, msg),
-):
+) -> ProfileTimer:
   """A context manager which prints the elapsed time upon exit.
 
   Args:
@@ -158,12 +187,12 @@ def Profile(
     print_to: The function to print the result to.
   """
   name = name or "completed"
-  start_time = time.time()
-  yield
-  elapsed = time.time() - start_time
+  timer = ProfileTimer()
+  yield timer
+  timer.Stop()
   if callable(name):
-    name = name(elapsed)
-  print_to(f"{name} in {humanize.Duration(elapsed)}")
+    name = name(timer.elapsed)
+  print_to(f"{name} in {timer}")
 
 
 @contextlib.contextmanager
