@@ -111,7 +111,7 @@ class BufferedGraphReader(object):
       2,
       lambda _: (
         f"Selected {humanize.Commas(self.n)} of "
-        f"{humanize.Commas(self.total_graph_count)} graphs in database"
+        f"{humanize.Commas(self.total_graph_count)} graphs from database"
       ),
     ):
       with db.Session() as session:
