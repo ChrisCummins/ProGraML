@@ -620,6 +620,7 @@ py_library(
         ":humanize",
         ":labdate",
         ":pbutil",
+        ":progress",
         ":text",
         "//third_party/py/absl",
         "//third_party/py/sqlalchemy",

@@ -14,7 +14,10 @@
 """Utility code for working with sqlalchemy."""
 import contextlib
 import pathlib
+import queue
 import sqlite3
+import sys
+import threading
 import time
 import typing
 
@@ -28,6 +31,7 @@ from sqlalchemy.ext import declarative
 from labm8.py import humanize
 from labm8.py import labdate
 from labm8.py import pbutil
+from labm8.py import progress
 from labm8.py import text
 from labm8.py.internal import logging
 
@@ -855,8 +859,8 @@ def ResilientAddManyAndCommit(db: Database, mapped: typing.Iterable[Base]):
   return failures
 
 
-class BufferedDatabaseWriter(object):
-  """A buffer for adding objects to a session with frequent commits.
+class BufferedDatabaseWriter(threading.Thread):
+  """A buffered writer for adding objects to a database.
 
   Use this class for cases when you are producing lots of mapped objects that
   you would like to commit to a database, but don't require them to be committed
@@ -864,75 +868,169 @@ class BufferedDatabaseWriter(object):
   minimises the number of SQL statements that are executed, and is faster than
   creating and committing a session for every object.
 
-  The Flush() method commits the contents of the buffer. The user is responsible
-  for calling Flush() once the object reaches the end of its use. Alternatively,
-  the Session() method creates a context which automatically calls Flush() at
-  the end of its scope.
+  This object spawns a separate thread for asynchronously performing database
+  writes. Use AddOne() and AddMany() methods to add objects to the write buffer.
+  Note that because this is a multithreaded implementation, in-memory SQLite
+  databases are not supported.
 
-  Example usage:
+  The user is responsible for calling Close() to flush the contents of the
+  buffer and terminate the thread. Alternatively, use this class as a context
+  manager to automatically flush the buffer and terminate the thread:
 
-    with BufferedDatabaseWriter(db).Session() as writer:
+    with BufferedDatabaseWriter(db, max_buffer_length=128) as writer:
       for chunk in chunks_to_process:
         objs = ProcessChunk(chunk)
         writer.AddMany(objs)
   """
 
-  def __init__(self, db: Database, flush_secs: int = 30, max_queue: int = 1024):
-    """Create a BufferedDatabaseWriter.
+  def __init__(
+    self,
+    db: Database,
+    max_buffer_size: int = 32 * 1024 * 1024,
+    max_buffer_length: int = 1024,
+    max_seconds_since_flush: float = 10,
+    log_level: int = 2,
+    ctx: progress.ProgressContext = progress.NullContext,
+  ):
+    """Constructor.
 
     Args:
-      db: The Database instance that this writer will add to.
-      flush_secs: The number of seconds between commits.
-      max_queue: The maximum size of the buffer between commits.
+      db: The database to write to.
+      max_buffer_size: The maximum size of the buffer before flushing, in bytes.
+        The buffer size is the sum of the elements in the write buffer. The size
+        of elements is determined using sys.getsizeof(), and has all the caveats
+        of this method.
+      max_buffer_length: The maximum number of items in the write buffer before
+        flushing.
+      max_seconds_since_flush: The maximum number of elapsed seconds between
+        flushes.
+      ctx: progress.ProgressContext = progress.NullContext,
+      log_level: The logging level for logging output.
     """
-    self._db = db
-    self._last_commit = time.time()
-    self._to_commit = []
-    self._flush_secs = flush_secs
-    self._max_queue = max_queue
+    super(BufferedDatabaseWriter, self).__init__()
+    self.db = db
+    self.ctx = ctx
+    self.log_level = log_level
 
-  def __del__(self):
-    self.Flush()
+    self.max_seconds_since_flush = max_seconds_since_flush
+    self.max_buffer_size = max_buffer_size
+    self.max_buffer_length = max_buffer_length
 
-  @contextlib.contextmanager
-  def Session(self) -> "BufferedDatabaseWriter":
-    """Yields a context manager which calls Flush() at the end of the scope.
+    self._buffer = []
+    self.buffer_size = 0
+    self._last_flush = time.time()
 
-    Returns:
-      The `self` instance.
-    """
-    try:
-      yield self
-    finally:
-      self.Flush()
+    self._queue = queue.Queue(maxsize=self.max_buffer_length)
 
-  def AddOne(self, mapped: Base) -> None:
-    """Record a mapped object."""
-    self._to_commit.append(mapped)
-    self.MaybeFlush()
+    self.start()
 
-  def AddMany(self, objects: typing.List[Base]) -> None:
-    """Record multiple mapped objects."""
-    self._to_commit += objects
-    self.MaybeFlush()
+  def __enter__(self) -> "Buff":
+    """Enter a scoped writer context closes at the end."""
+    return self
 
-  def MaybeFlush(self) -> None:
-    """Determine if the buffer should be flushed, and if so, flush it."""
-    if (
-      len(self._to_commit) > self._max_queue
-      or (time.time() - self._last_commit) > self._flush_secs
-    ):
-      self.Flush()
+  def __exit__(self, exc_type, exc_val, exc_tb):
+    """Exit a scoped writer context closes at the end."""
+    del exc_type
+    del exc_val
+    del exc_tb
+    self.Close()
+
+  def AddOne(self, mapped) -> None:
+    """Add a mapped object."""
+    self._queue.put(mapped)
+
+  def AddMany(self, mappeds) -> None:
+    """Add many mapped objects."""
+    for mapped in mappeds:
+      self._queue.put(mapped)
 
   def Flush(self) -> None:
-    """Commit all buffered mapped objects to database."""
-    failures = ResilientAddManyAndCommit(self._db, self._to_commit)
-    if len(failures):
-      logging.Log(
-        logging.GetCallingModuleName(),
-        1,
-        "BufferedDatabaseWriter failed to commit %d objects",
-        len(failures),
-      )
-    self._to_commit = []
-    self._last_commit = time.time()
+    """Flush the buffer.
+
+    In normal use, you can rely on the automated flushing mechanisms to flush
+    the write buffer, rather than calling this by hand.
+    """
+    self._queue.put(BufferedDatabaseWriter.FlushMarker())
+
+  def Close(self):
+    """Close the writer thread.
+
+    This method blocks until the buffer has been flushed and the thread
+    terminates.
+    """
+    self._queue.put(BufferedDatabaseWriter.CloseMarker())
+    self.join()
+
+  @property
+  def buffer_length(self) -> int:
+    """Get the current length of the buffer, in range [0, max_buffer_length]."""
+    return len(self._buffer)
+
+  @property
+  def seconds_since_last_flush(self) -> float:
+    """Get the number of seconds since the buffer was last flushed."""
+    return time.time() - self._last_flush
+
+  ##############################################################################
+  # Private methods.
+  ##############################################################################
+
+  class CloseMarker(object):
+    """An object to append to _queue to close the thread."""
+
+    pass
+
+  class FlushMarker(object):
+    """An object to append to _queue to flush the buffer."""
+
+    pass
+
+  def run(self):
+    """The thread loop."""
+    while True:
+      # Block until there is something on the queue. Use max_seconds_since_flush
+      # as a timeout to ensure that flushes still occur when the writer is not
+      # being used.
+      try:
+        item = self._queue.get(timeout=self.max_seconds_since_flush)
+      except queue.Empty:
+        self._Flush()
+        continue
+
+      if isinstance(item, BufferedDatabaseWriter.CloseMarker):
+        # End of queue. Break out of the loop.
+        break
+      elif isinstance(item, BufferedDatabaseWriter.FlushMarker):
+        # Force a flush.
+        self._Flush()
+      else:
+        # Add the object to the buffer.
+        self._buffer.append(item)
+        self.buffer_size += sys.getsizeof(item)
+        # Determine if the buffer should be flushed, and if so, flush it.
+        if (
+          self.buffer_size >= self.max_buffer_size
+          or self.buffer_length >= self.max_buffer_length
+          or self.seconds_since_last_flush >= self.max_seconds_since_flush
+        ):
+          self._Flush()
+    self._Flush()
+
+  def _Flush(self):
+    """Flush the buffer."""
+    if not self.buffer_length:
+      return
+
+    with self.ctx.Profile(
+      self.log_level,
+      f"Committed database buffer of {self.buffer_length} rows "
+      f"({humanize.BinaryPrefix(self.buffer_size, 'B')})",
+    ):
+      failures = ResilientAddManyAndCommit(self.db, self._buffer)
+      if len(failures):
+        self.ctx.Error(
+          "Logger failed to commit %d objects", len(failures),
+        )
+      self._buffer = []
+      self._last_flush = time.time()
+      self.buffer_size = 0
