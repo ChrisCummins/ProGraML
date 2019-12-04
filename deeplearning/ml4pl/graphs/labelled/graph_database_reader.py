@@ -108,7 +108,7 @@ class BufferedGraphReader(object):
     self.filters.append(lambda: graph_tuple_database.GraphTuple.node_count > 1)
 
     with ctx.Profile(
-      2,
+      3,
       lambda _: (
         f"Selected {humanize.Commas(self.n)} of "
         f"{humanize.Commas(self.total_graph_count)} graphs from database"
@@ -248,9 +248,9 @@ class BufferedGraphReader(object):
 
       # Fetch the buffer data.
       with self.ctx.Profile(
-        3,
+        2,
         f"Read {humanize.BinaryPrefix(current_buffer_size, 'B')} "
-        f"buffer of {end_i - self.i} graph tuples",
+        f"buffer of {end_i - self.i} graphs from {self.db.url}",
       ):
         buffer = query.all()
       if len(buffer) != end_i - self.i:
