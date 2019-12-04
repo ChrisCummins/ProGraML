@@ -88,7 +88,9 @@ class RunId(NamedTuple):
     )
 
   @staticmethod
-  def SqlStringColumn(default=lambda: str(RUN_ID)) -> sql.Column:
+  def SqlStringColumn(
+    default=lambda: str(RUN_ID), index: bool = True
+  ) -> sql.Column:
     """Generate an SQLAlchemy column which stores run IDs as strings.
 
     Args:
@@ -97,7 +99,7 @@ class RunId(NamedTuple):
         table CREATE statement.
     """
     return sql.Column(
-      sql.String(RUN_ID_MAX_LEN), nullable=False, default=default
+      sql.String(RUN_ID_MAX_LEN), nullable=False, default=default, index=index
     )
 
   @classmethod
