@@ -1023,8 +1023,8 @@ class BufferedDatabaseWriter(threading.Thread):
 
     with self.ctx.Profile(
       self.log_level,
-      f"Committed database buffer of {self.buffer_length} rows "
-      f"({humanize.BinaryPrefix(self.buffer_size, 'B')})",
+      f"Committed {self.buffer_length} rows "
+      f"({humanize.BinaryPrefix(self.buffer_size, 'B')}) to {self.db.url}",
     ):
       failures = ResilientAddManyAndCommit(self.db, self._buffer)
       if len(failures):
