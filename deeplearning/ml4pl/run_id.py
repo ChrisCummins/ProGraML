@@ -181,9 +181,9 @@ class RunId(NamedTuple):
 RUN_ID_MAX_LEN: int = 40
 RUN_ID: RunId = RunId.GenerateGlobalUnique()
 RUN_ID_REGEX = re.compile(
-  r"(?P<script_name>[a-z0-9]+):"
+  r"(?P<script_name>[A-Za-z0-9]+):"
   r"(?P<timestamp>[0-9]{12}):"
-  r"(?P<hostname>[a-z0-9]+)"
+  r"(?P<hostname>[A-Za-z0-9]+)"
 )
 
 
