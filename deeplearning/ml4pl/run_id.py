@@ -87,9 +87,9 @@ class RunId(NamedTuple):
       match.group("hostname"),
     )
 
-  @staticmethod
+  @classmethod
   def SqlStringColumn(
-    default=lambda: str(RUN_ID), index: bool = True
+    cls, default=lambda: str(RUN_ID), index: bool = True
   ) -> sql.Column:
     """Generate an SQLAlchemy column which stores run IDs as strings.
 
@@ -99,8 +99,13 @@ class RunId(NamedTuple):
         table CREATE statement.
     """
     return sql.Column(
-      sql.String(RUN_ID_MAX_LEN), nullable=False, default=default, index=index
+      cls.SqlStringColumnType(), nullable=False, default=default, index=index
     )
+
+  @staticmethod
+  def SqlStringColumnType() -> sql.String:
+    """Generate a SQL column type to store run IDs as strings."""
+    return sql.String(RUN_ID_MAX_LEN)
 
   @classmethod
   def GenerateGlobalUnique(cls) -> "RunId":
