@@ -1039,18 +1039,17 @@ class BufferedDatabaseWriter(threading.Thread):
     if not mapped:
       return
 
+    failures = ResilientAddManyAndCommit(self.db, mapped)
+    if failures:
+      self.ctx.Error("Logger failed to commit %d objects", len(failures))
+
+  def _Flush(self):
+    """Flush the buffer."""
     with self.ctx.Profile(
       self.log_level,
       f"Committed {self.buffer_length} rows "
       f"({humanize.BinaryPrefix(self.buffer_size, 'B')}) to {self.db.url}",
-    ):
-      failures = ResilientAddManyAndCommit(self.db, mapped)
-      if failures:
-        self.ctx.Error("Logger failed to commit %d objects", len(failures))
-
-  def _Flush(self):
-    """Flush the buffer."""
-    with self.db.Session() as session:
+    ), self.db.Session() as session:
       start_i, end_i = 0, 0
       for end_i, item in enumerate(self._buffer):
         if isinstance(item, BufferedDatabaseWriter.LambdaOp):
@@ -1061,6 +1060,6 @@ class BufferedDatabaseWriter(threading.Thread):
           start_i = end_i + 1
       self._AddMapped(self._buffer[start_i:end_i])
 
-    self._buffer = []
-    self._last_flush = time.time()
-    self.buffer_size = 0
+      self._buffer = []
+      self._last_flush = time.time()
+      self.buffer_size = 0
