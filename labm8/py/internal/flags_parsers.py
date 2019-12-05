@@ -97,3 +97,54 @@ class DatabaseParser(absl_flags.ArgumentParser):
     if not argument:
       raise absl_app.UsageError("Database flag must be set")
     return DatabaseFlag(self.database_class, argument, self.must_exist)
+
+
+class EnumFlag:
+  """A parsed enum. This is instantiated by EnumParser.convert() and
+  used to provide a repr()-friendly method for instantiating databases.
+
+  E.g. repr(FLAGS.enum) will yield "foo" rather than an
+  anonymous lambda.
+  """
+
+  def __init__(self, enum_class, name: str):
+    self.name = name
+    self.enum_class = enum_class
+
+  def __call__(self):
+    # Value is already an enum, e.g. the default value.
+    if isinstance(self.name, self.enum_class):
+      return self.name
+
+    try:
+      return self.enum_class[self.name.upper()]
+    except KeyError as e:
+      valid_options = [value.name.lower() for value in self.enum_class]
+      raise absl_app.UsageError(
+        f"Invalid {self.enum_class.__name__}={e}. "
+        f"Valid values={valid_options}"
+      )
+
+  def __repr__(self):
+    return str(self.name)
+
+  def __str__(self):
+    return self.__repr__()
+
+
+class EnumParser(absl_flags.ArgumentParser):
+  """Parser of enums."""
+
+  def __init__(self, enum_class):
+    """Create a enum parser."""
+    self.enum_class = enum_class
+
+  def parse(self, argument) -> enum.Enum:
+    """See base class."""
+    return self.convert(argument)
+
+  def convert(self, argument: str) -> EnumFlag:
+    """Returns the value of this argument."""
+    if not argument:
+      raise TypeError("Enum flag must be set")
+    return EnumFlag(self.enum_class, argument)

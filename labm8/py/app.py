@@ -604,6 +604,45 @@ def DEFINE_database(
     RegisterFlagValidator(name, validator)
 
 
+def DEFINE_enum(
+  name: str,
+  enum_class,
+  default,
+  help: str,
+  validator: Callable[[Any], bool] = None,
+):
+  """Registers a flag whose value is an enum.Enum class.
+
+  Unlike other DEFINE_* functions, the value produced by this flag is not an
+  instance of the value, but a lambda that will instantiate a database of the
+  requested type. This flag value must be called (with no arguments) in order
+  to instantiate an enum.
+
+  Args:
+    name: The name of the flag.
+    enum_class: The subclass of enum.Enum which is to be instantiated when this
+      value is called.
+    default: The default value of the enum. Either the string name or an enum
+      value.
+    help: The help string.
+    must_exist: If True, require that the database exists. Else, the database is
+      created if it does not exist.
+  """
+  parser = flags_parsers.EnumParser(enum_class)
+  serializer = absl_flags.ArgumentSerializer()
+  absl_flags.DEFINE(
+    parser,
+    name,
+    default,
+    help,
+    absl_flags.FLAGS,
+    serializer,
+    module_name=get_calling_module_name(),
+  )
+  if validator:
+    RegisterFlagValidator(name, validator)
+
+
 def RegisterFlagValidator(
   flag_name: str,
   checker: Callable[[Any], bool],
