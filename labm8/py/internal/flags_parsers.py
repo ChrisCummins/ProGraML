@@ -1,7 +1,9 @@
 """Implementations of custom flag types for absl.flags."""
+import enum
 import pathlib
 from typing import Callable
 
+from absl import app as absl_app
 from absl import flags as absl_flags
 
 
@@ -40,11 +42,11 @@ class PathParser(absl_flags.ArgumentParser):
   def convert(self, argument: str) -> pathlib.Path:
     """Returns the value of this argument."""
     if not argument:
-      raise TypeError("Path flag must be set")
+      raise absl_app.UsageError("Path flag must be set")
     return pathlib.Path(argument)
 
 
-class _Database:
+class DatabaseFlag:
   """A parsed database. This is instantiated by DatabaseParser.convert() and
   used to provide a repr()-friendly method for instantiating databases.
 
@@ -61,7 +63,7 @@ class _Database:
     try:
       return self.database_class(url=self.url, must_exist=self.must_exist)
     except Exception as e:
-      raise TypeError(
+      raise absl_app.UsageError(
         f"Failed to construct database {self.database_class.__name__}({self.url}): {e}"
       )
 
@@ -90,8 +92,8 @@ class DatabaseParser(absl_flags.ArgumentParser):
     """See base class."""
     return self.convert(argument)
 
-  def convert(self, argument: str) -> Callable[[], "sqlutil.Database"]:
+  def convert(self, argument: str) -> DatabaseFlag:
     """Returns the value of this argument."""
     if not argument:
-      raise TypeError("Path flag must be set")
-    return _Database(self.database_class, argument, self.must_exist)
+      raise absl_app.UsageError("Database flag must be set")
+    return DatabaseFlag(self.database_class, argument, self.must_exist)
