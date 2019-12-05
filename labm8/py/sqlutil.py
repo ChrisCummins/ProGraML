@@ -21,6 +21,7 @@ import threading
 import time
 import typing
 from typing import Callable
+from typing import Optional
 
 import sqlalchemy as sql
 from absl import flags as absl_flags
@@ -508,16 +509,28 @@ class Database(object):
     return self._url
 
   @contextlib.contextmanager
-  def Session(self, commit: bool = False) -> Session:
+  def Session(
+    self, commit: bool = False, session: Optional[Session] = None
+  ) -> Session:
     """Provide a transactional scope around a session.
+
+    The optional session argument may be used for cases where you want to
+    optionally re-use an existing session, rather than always creating a new
+    session, e.g.:
+
+      class MyDatabase(sqlutil.Database):
+        def DoAThing(self, session=None):
+          with self.Session(session=session, commit=True):
+            # go nuts ...
 
     Args:
       commit: If true, commit session at the end of scope.
+      session: An existing session object to re-use.
 
     Returns:
       A database session.
     """
-    session = self.MakeSession()
+    session = session or self.MakeSession()
     try:
       yield session
       if commit:
