@@ -1049,6 +1049,7 @@ class BufferedDatabaseWriter(threading.Thread):
       self._Flush()
 
   def _AddMapped(self, mapped) -> None:
+    """Add and commit a list of mapped objects."""
     if not mapped:
       return
 
@@ -1063,15 +1064,18 @@ class BufferedDatabaseWriter(threading.Thread):
       f"Committed {self.buffer_length} rows "
       f"({humanize.BinaryPrefix(self.buffer_size, 'B')}) to {self.db.url}",
     ), self.db.Session() as session:
+      # Iterate through the buffer and handle any lambda ops.
       start_i, end_i = 0, 0
       for end_i, item in enumerate(self._buffer):
         if isinstance(item, BufferedDatabaseWriter.LambdaOp):
-          # Handle lambda op.
+          # If we have a lambda op, we flush the contents of the current buffer,
+          # then execute the op and continue.
           self._AddMapped(self._buffer[start_i:end_i])
           self._buffer[end_i](session)
           session.commit()
           start_i = end_i + 1
-      self._AddMapped(self._buffer[start_i:end_i])
+      # Add any remaining mapped objects from the buffer.
+      self._AddMapped(self._buffer[start_i:])
 
       self._buffer = []
       self._last_flush = time.time()
