@@ -20,6 +20,7 @@ import sys
 import threading
 import time
 import typing
+from typing import Callable
 
 import sqlalchemy as sql
 from absl import flags as absl_flags
@@ -944,6 +945,9 @@ class BufferedDatabaseWriter(threading.Thread):
     for mapped in mappeds:
       self._queue.put(mapped)
 
+  def AddLambdaOp(self, callback: Callable[[Database.SessionType], None]):
+    self._queue.put(BufferedDatabaseWriter.LambdaOp(callback))
+
   def Flush(self) -> None:
     """Flush the buffer.
 
@@ -958,6 +962,8 @@ class BufferedDatabaseWriter(threading.Thread):
     This method blocks until the buffer has been flushed and the thread
     terminates.
     """
+    if not self.is_alive():
+      raise TypeError("Close() called on dead BufferedDatabaseWriter")
     self._queue.put(BufferedDatabaseWriter.CloseMarker())
     self.join()
 
@@ -985,6 +991,13 @@ class BufferedDatabaseWriter(threading.Thread):
 
     pass
 
+  class LambdaOp(object):
+    def __init__(self, callback):
+      self.callback = callback
+
+    def __call__(self, session: Database.SessionType):
+      self.callback(session)
+
   def run(self):
     """The thread loop."""
     while True:
@@ -1003,22 +1016,27 @@ class BufferedDatabaseWriter(threading.Thread):
       elif isinstance(item, BufferedDatabaseWriter.FlushMarker):
         # Force a flush.
         self._Flush()
+      elif isinstance(item, BufferedDatabaseWriter.LambdaOp):
+        # Handle delete op.
+        self._buffer.append(item)
+        self._MaybeFlush()
       else:
         # Add the object to the buffer.
         self._buffer.append(item)
         self.buffer_size += sys.getsizeof(item)
-        # Determine if the buffer should be flushed, and if so, flush it.
-        if (
-          self.buffer_size >= self.max_buffer_size
-          or self.buffer_length >= self.max_buffer_length
-          or self.seconds_since_last_flush >= self.max_seconds_since_flush
-        ):
-          self._Flush()
+        self._MaybeFlush()
     self._Flush()
 
-  def _Flush(self):
-    """Flush the buffer."""
-    if not self.buffer_length:
+  def _MaybeFlush(self) -> None:
+    if (
+      self.buffer_size >= self.max_buffer_size
+      or self.buffer_length >= self.max_buffer_length
+      or self.seconds_since_last_flush >= self.max_seconds_since_flush
+    ):
+      self._Flush()
+
+  def _AddMapped(self, mapped) -> None:
+    if not mapped:
       return
 
     with self.ctx.Profile(
@@ -1026,11 +1044,23 @@ class BufferedDatabaseWriter(threading.Thread):
       f"Committed {self.buffer_length} rows "
       f"({humanize.BinaryPrefix(self.buffer_size, 'B')}) to {self.db.url}",
     ):
-      failures = ResilientAddManyAndCommit(self.db, self._buffer)
-      if len(failures):
-        self.ctx.Error(
-          "Logger failed to commit %d objects", len(failures),
-        )
-      self._buffer = []
-      self._last_flush = time.time()
-      self.buffer_size = 0
+      failures = ResilientAddManyAndCommit(self.db, mapped)
+      if failures:
+        self.ctx.Error("Logger failed to commit %d objects", len(failures))
+
+  def _Flush(self):
+    """Flush the buffer."""
+    with self.db.Session() as session:
+      start_i, end_i = 0, 0
+      for end_i, item in enumerate(self._buffer):
+        if isinstance(item, BufferedDatabaseWriter.LambdaOp):
+          # Handle lambda op.
+          self._AddMapped(self._buffer[start_i:end_i])
+          self._buffer[end_i](session)
+          session.commit()
+          start_i = end_i + 1
+      self._AddMapped(self._buffer[start_i:end_i])
+
+    self._buffer = []
+    self._last_flush = time.time()
+    self.buffer_size = 0
