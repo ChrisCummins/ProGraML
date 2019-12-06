@@ -287,6 +287,17 @@ py_test(
 )
 
 py_library(
+    name = "google_sheets",
+    srcs = ["google_sheets.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":app",
+        "//third_party/py/gspread",
+        "//third_party/py/oauth2client",
+    ],
+)
+
+py_library(
     name = "io",
     srcs = ["io.py"],
     visibility = ["//visibility:public"],
