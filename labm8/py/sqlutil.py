@@ -900,9 +900,9 @@ class BufferedDatabaseWriter(threading.Thread):
   def __init__(
     self,
     db: Database,
-    max_buffer_size: int = 32 * 1024 * 1024,
-    max_buffer_length: int = 1024,
-    max_seconds_since_flush: float = 10,
+    max_buffer_size: Optional[int] = None,
+    max_buffer_length: Optional[int] = None,
+    max_seconds_since_flush: Optional[float] = None,
     log_level: int = 2,
     ctx: progress.ProgressContext = progress.NullContext,
   ):
@@ -1042,9 +1042,14 @@ class BufferedDatabaseWriter(threading.Thread):
 
   def _MaybeFlush(self) -> None:
     if (
-      self.buffer_size >= self.max_buffer_size
-      or self.buffer_length >= self.max_buffer_length
-      or self.seconds_since_last_flush >= self.max_seconds_since_flush
+      (self.max_buffer_size and self.buffer_size >= self.max_buffer_size)
+      or (
+        self.max_buffer_length and self.buffer_length >= self.max_buffer_length
+      )
+      or (
+        self.max_seconds_since_flush
+        and self.seconds_since_last_flush >= self.max_seconds_since_flush
+      )
     ):
       self._Flush()
 
