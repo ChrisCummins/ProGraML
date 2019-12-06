@@ -70,7 +70,14 @@ def RewriteColumn(
   rewrite: typing.Callable[[typing.Any], typing.Any],
 ):
   """Rewrite the values in a column in-place."""
-  df[column] = [rewrite(x) for x in df[column]]
+  rewrites = []
+  for x in df[column]:
+    try:
+      rewrites.append(rewrite(x))
+    except Exception as e:
+      raise ValueError(f"Error while rewriting '{x}': {e}")
+
+  df[column] = rewrites
 
 
 def FormatDataFrameAsAsciiTable(df: pd.DataFrame, **tabulate_args):
