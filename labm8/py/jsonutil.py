@@ -23,7 +23,7 @@ from labm8.py import fs
 JSON = typing.Union[typing.List[typing.Any], typing.Dict[str, typing.Any]]
 
 
-def format_json(data):
+def format_json(data, default=None):
   """
   Pretty print JSON.
 
@@ -33,7 +33,9 @@ def format_json(data):
   Returns:
       str: Formatted JSON
   """
-  return json.dumps(data, sort_keys=True, indent=2, separators=(",", ": "))
+  return json.dumps(
+    data, sort_keys=True, indent=2, separators=(",", ": "), default=default
+  )
 
 
 def read_file(*components, **kwargs):
