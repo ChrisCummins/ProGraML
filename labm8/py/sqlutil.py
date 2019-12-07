@@ -21,6 +21,7 @@ import threading
 import time
 import typing
 from typing import Callable
+from typing import List
 from typing import Optional
 
 import sqlalchemy as sql
@@ -949,14 +950,29 @@ class BufferedDatabaseWriter(threading.Thread):
     del exc_tb
     self.Close()
 
-  def AddOne(self, mapped) -> None:
-    """Add a mapped object."""
-    self._queue.put(mapped)
+  def AddOne(self, mapped, size: Optional[int] = None) -> None:
+    """Add a mapped object.
 
-  def AddMany(self, mappeds) -> None:
-    """Add many mapped objects."""
-    for mapped in mappeds:
-      self._queue.put(mapped)
+    Args:
+      mapped: The mapped object to write to the database.
+      size: The object sizes to use to update the total buffer size. If not
+        provided, sys.getsizeof() is used to determine the size.
+    """
+    size = size or sys.getsizeof(mapped)
+    self._queue.put((mapped, size))
+
+  def AddMany(self, mappeds, sizes: Optional[List[int]] = None) -> None:
+    """Add many mapped objects.
+
+    Args:
+      mappeds: The mapped objects to write to the database.
+      sizes: A list of mapped object sizes to use to calculate the buffer size.
+        If not provided, sys.getsizeof() is used to determine the size.
+    """
+    sizes = sizes or [sys.getsizeof(item) for item in mappeds]
+
+    for mapped, size in zip(mappeds, sizes):
+      self._queue.put((mapped, size))
 
   def AddLambdaOp(self, callback: Callable[[Database.SessionType], None]):
     self._queue.put(BufferedDatabaseWriter.LambdaOp(callback))
@@ -1035,8 +1051,9 @@ class BufferedDatabaseWriter(threading.Thread):
         self._MaybeFlush()
       else:
         # Add the object to the buffer.
-        self._buffer.append(item)
-        self.buffer_size += sys.getsizeof(item)
+        mapped, size = item
+        self._buffer.append(mapped)
+        self.buffer_size += size
         self._MaybeFlush()
     self._Flush()
 
