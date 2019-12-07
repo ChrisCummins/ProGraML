@@ -96,6 +96,7 @@ py_library(
     srcs = ["graph_tuple.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//labm8/py:app",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
