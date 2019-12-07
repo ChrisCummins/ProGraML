@@ -72,7 +72,7 @@ class BufferedGraphReader(object):
   def __init__(
     self,
     db: graph_tuple_database.Database,
-    buffer_size_mb: int,
+    buffer_size_mb: int = 16,
     filters: Optional[List[Callable[[], bool]]] = None,
     order: BufferedGraphReaderOrder = BufferedGraphReaderOrder.IN_ORDER,
     eager_graph_loading: bool = True,
