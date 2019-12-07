@@ -2,34 +2,36 @@
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
-py_binary(
-    name = "copy_database",
-    srcs = ["copy_database.py"],
-    deps = [
-        ":graph_database",
-        "//labm8/py:app",
-        "//labm8/py:humanize",
-        "//labm8/py:prof",
-    ],
-)
+# TODO(github.com/ChrisCummins/ProGraML/issues/28): Fix me.
+#py_binary(
+#    name = "copy_database",
+#    srcs = ["copy_database.py"],
+#    deps = [
+#        ":graph_database",
+#        "//labm8/py:app",
+#        "//labm8/py:humanize",
+#        "//labm8/py:prof",
+#    ],
+#)
 
-py_library(
-    name = "database_exporters",
-    srcs = ["database_exporters.py"],
-    visibility = ["//deeplearning/ml4pl:__subpackages__"],
-    deps = [
-        ":graph_database",
-        "//deeplearning/ml4pl/bytecode:bytecode_database",
-        "//deeplearning/ml4pl/bytecode:splitters",
-        "//labm8/py:app",
-        "//labm8/py:fs",
-        "//labm8/py:humanize",
-        "//labm8/py:labtypes",
-        "//labm8/py:prof",
-        "//labm8/py:sqlutil",
-        "//labm8/py:system",
-    ],
-)
+# TODO(github.com/ChrisCummins/ProGraML/issues/28): Fix me.
+#py_library(
+#    name = "database_exporters",
+#    srcs = ["database_exporters.py"],
+#    visibility = ["//deeplearning/ml4pl:__subpackages__"],
+#    deps = [
+#        ":graph_database",
+#        "//deeplearning/ml4pl/bytecode:bytecode_database",
+#        "//deeplearning/ml4pl/bytecode:splitters",
+#        "//labm8/py:app",
+#        "//labm8/py:fs",
+#        "//labm8/py:humanize",
+#        "//labm8/py:labtypes",
+#        "//labm8/py:prof",
+#        "//labm8/py:sqlutil",
+#        "//labm8/py:system",
+#    ],
+#)
 
 py_test(
     name = "database_exporters_test",
@@ -40,67 +42,6 @@ py_test(
         "//labm8/py:sqlutil",
         "//labm8/py:test",
         "//third_party/py/networkx",
-    ],
-)
-
-py_library(
-    name = "graph_database",
-    srcs = ["graph_database.py"],
-    data = ["//deeplearning/ml4pl/graphs/unlabelled/cdfg/node_embeddings:embeddings"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//deeplearning/ml4pl/graphs:graph_query",
-        "//deeplearning/ml4pl/graphs/labelled:graph_tuple",
-        "//labm8/py:app",
-        "//labm8/py:bazelutil",
-        "//labm8/py:decorators",
-        "//labm8/py:humanize",
-        "//labm8/py:labdate",
-        "//labm8/py:sqlutil",
-        "//third_party/py/networkx",
-        "//third_party/py/numpy",
-        "//third_party/py/sqlalchemy",
-    ],
-)
-
-py_test(
-    name = "graph_database_test",
-    srcs = ["graph_database_test.py"],
-    deps = [
-        ":graph_database",
-        "//labm8/py:app",
-        "//labm8/py:test",
-        "//third_party/py/networkx",
-    ],
-)
-
-py_library(
-    name = "graph_database_stats",
-    srcs = ["graph_database_stats.py"],
-    data = [
-        "//deeplearning/ml4pl/graphs/unlabelled/cdfg/node_embeddings:embeddings",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":graph_database",
-        "//labm8/py:app",
-        "//labm8/py:decorators",
-        "//labm8/py:humanize",
-        "//labm8/py:prof",
-        "//third_party/py/numpy",
-        "//third_party/py/sqlalchemy",
-    ],
-)
-
-py_test(
-    name = "graph_database_stats_test",
-    srcs = ["graph_database_stats_test.py"],
-    deps = [
-        ":graph_database",
-        ":graph_database_stats",
-        "//labm8/py:app",
-        "//labm8/py:test",
-        "//third_party/py/numpy",
     ],
 )
 
