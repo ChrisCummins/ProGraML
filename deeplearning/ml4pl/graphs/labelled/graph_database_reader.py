@@ -175,13 +175,13 @@ class BufferedGraphReader(object):
       self.n = len(self.ids_and_sizes)
 
       # The local buffer of graphs, and an index into that buffer.
-      self.buffer = []
+      self.buffer: List[graph_tuple_database.GraphTuple] = []
       self.buffer_i = 0
 
   def __iter__(self):
     return self
 
-  def __next__(self):
+  def __next__(self) -> graph_tuple_database.GraphTuple:
     """Get the next graph."""
     if self.buffer_i < len(self.buffer):
       graph = self.buffer[self.buffer_i]
