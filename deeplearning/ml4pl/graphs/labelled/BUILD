@@ -113,6 +113,7 @@ py_test(
         "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
         "//deeplearning/ml4pl/testing:random_networkx_generator",
         "//labm8/py:app",
+        "//labm8/py:decorators",
         "//labm8/py:fs",
         "//labm8/py:test",
         "//third_party/py/networkx",

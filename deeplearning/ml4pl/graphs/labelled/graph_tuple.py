@@ -153,6 +153,50 @@ class GraphTuple(NamedTuple):
     else:
       return 0
 
+  def SetLabels(
+    self, node_y=None, graph_y=None, copy: bool = True
+  ) -> "GraphTuple":
+    """Create a graph tuple with new labels.
+
+    Args:
+      node_y: New node labels.
+      graph_y: New graph labels.
+      copy: If true, copy the underlying numpy arrays from the existing graph
+        tuple. Else, the new graph tuple references the old one, meaning that
+        modifications to either will be reflected on both.
+
+    Returns:
+      A graph tuple instance.
+    """
+    # Check that the user provided new labels.
+    if node_y is None and graph_y is None:
+      raise ValueError("Must set node_y or graph_y")
+
+    # Check that the new labels have the correct sizes.
+    if node_y is not None and node_y.shape != self.node_y.shape:
+      raise TypeError(
+        f"New node_y shape {node_y.shape} does not match "
+        f"existing shape {self.node_y.shape}"
+      )
+    if graph_y is not None and graph_y.shape != self.graph_y.shape:
+      raise TypeError(
+        f"New graph_y shape {graph_y.shape} does not match "
+        f"existing shape {self.graph_y.shape}"
+      )
+
+    # Determine whether to copy the underlying numpy arrays or creat new
+    # references to them.
+    new = np.copy if copy else lambda x: x
+
+    return GraphTuple(
+      adjacencies=new(self.adjacencies),
+      edge_positions=new(self.edge_positions),
+      node_x=new(self.node_x),
+      node_y=node_y,
+      graph_x=new(self.graph_x),
+      graph_y=graph_y,
+    )
+
   ##############################################################################
   # Factory methods
   ##############################################################################
