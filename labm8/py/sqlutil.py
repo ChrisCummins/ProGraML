@@ -931,6 +931,10 @@ class BufferedDatabaseWriter(threading.Thread):
     self.max_buffer_size = max_buffer_size
     self.max_buffer_length = max_buffer_length
 
+    # Counters.
+    self.flush_count = 0
+    self.error_count = 0
+
     self._buffer = []
     self.buffer_size = 0
     self._last_flush = time.time()
@@ -1078,6 +1082,7 @@ class BufferedDatabaseWriter(threading.Thread):
     failures = ResilientAddManyAndCommit(self.db, mapped)
     if failures:
       self.ctx.Error("Logger failed to commit %d objects", len(failures))
+    self.error_count += len(failures)
 
   def _Flush(self):
     """Flush the buffer."""
@@ -1102,3 +1107,4 @@ class BufferedDatabaseWriter(threading.Thread):
       self._buffer = []
       self._last_flush = time.time()
       self.buffer_size = 0
+      self.flush_count += 1
