@@ -137,14 +137,19 @@ def loop_for(seconds: int = 0, min_iteration_count=1):
   """
 
   def WrappedLoopFor(function):
+    """A decorator which runs a function for a given number of seconds."""
+
     @functools.wraps(function)
     def InnerLoop(*args, **kwargs):
+      """The decorator inner loop."""
       end = time.time() + seconds
       iteration_count = 0
       while time.time() < end or iteration_count < min_iteration_count:
         iteration_count += 1
         function(*args, **kwargs)
-      app.Log(
+      # Print the number of iterations if we were limited by time.
+      app.LogIf(
+        seconds,
         2,
         "Ran %s of `%s`",
         humanize.Plural(iteration_count, "iteration"),
