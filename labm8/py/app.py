@@ -217,7 +217,6 @@ def Log(level: int, msg, *args, **kwargs):
 @skip_log_prefix
 def LogIf(level: int, condition, msg, *args, **kwargs):
   if condition:
-    calling_module = logging.GetCallingModuleName()
     Log(level, msg, *args, **kwargs)
 
 
