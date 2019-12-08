@@ -94,7 +94,7 @@ py_library(
 
 py_test(
     name = "programl_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["programl_test.py"],
     deps = [
         ":programl",

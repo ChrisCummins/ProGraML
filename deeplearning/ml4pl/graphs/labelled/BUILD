@@ -38,7 +38,7 @@ py_binary(
 
 py_test(
     name = "graph_batcher_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["graph_batcher_test.py"],
     deps = [
         ":graph_batcher",
@@ -63,7 +63,7 @@ py_binary(
 
 py_test(
     name = "graph_database_reader_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["graph_database_reader_test.py"],
     deps = [
         ":graph_database_reader",
@@ -78,7 +78,7 @@ py_test(
 
 py_test(
     name = "graph_database_reader_benchmark_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["graph_database_reader_benchmark_test.py"],
     deps = [
         ":graph_database_reader",
@@ -105,7 +105,7 @@ py_library(
 
 py_test(
     name = "graph_tuple_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["graph_tuple_test.py"],
     deps = [
         ":graph_tuple",
@@ -147,7 +147,7 @@ py_binary(
 
 py_test(
     name = "graph_tuple_database_test",
-    timeout = "long",
+    size = "enormous",
     srcs = ["graph_tuple_database_test.py"],
     deps = [
         ":graph_tuple_database",
