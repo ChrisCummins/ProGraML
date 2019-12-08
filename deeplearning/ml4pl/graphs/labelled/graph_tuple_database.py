@@ -308,6 +308,7 @@ class Database(sqlutil.Database):
     # Lazily evaluated attributes.
     self._graph_tuple_stats = None
     self._splits = None
+    self._split_counts = None
 
   ##############################################################################
   # Database stats. These are evaluated lazily and the results cached. There is
@@ -473,9 +474,17 @@ class Database(sqlutil.Database):
 
   @database_statistic
   def splits(self) -> List[int]:
+    """Return a list of unique split values."""
     if self._splits is None:
       self.RefreshStats()
     return self._splits
+
+  @database_statistic
+  def split_counts(self) -> Dict[int, int]:
+    """Return a dictionary mapping split to the number of graphs."""
+    if self._split_counts is None:
+      self.RefreshStats()
+    return self._split_counts
 
   def RefreshStats(self):
     """Compute the database stats for access via the instance properties.
@@ -655,6 +664,11 @@ class Database(sqlutil.Database):
             ]
           )
         )
+
+        self._split_counts = {
+          split: session.query(sql.func.count(GraphTuple.id)).sclar()
+          for split in self._splits
+        }
 
   @property
   def graph_tuple_stats(self):
