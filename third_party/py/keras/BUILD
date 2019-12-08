@@ -11,6 +11,7 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("keras"),
+        requirement("PyYAML"),  # Implicit dependency.
         "//third_party/py/tensorflow",
     ],
 )
