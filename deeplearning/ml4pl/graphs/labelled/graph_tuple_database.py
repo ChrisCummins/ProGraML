@@ -318,144 +318,158 @@ class Database(sqlutil.Database):
   @database_statistic
   def graph_count(self) -> int:
     """The number of non-empty graphs in the database."""
-    return self.graph_tuple_stats.graph_count
+    return int(self.graph_tuple_stats.graph_count)
 
   @database_statistic
   def ir_count(self) -> int:
     """The number of distinct intermediate representations that the non-empty
     graphs are constructed from.
     """
-    return self.graph_tuple_stats.ir_count
+    return int(self.graph_tuple_stats.ir_count or 0)
 
   @database_statistic
   def split_count(self) -> int:
     """The number of distinct splits in the database."""
-    return self.graph_tuple_stats.split_count
+    return int(self.graph_tuple_stats.split_count or 0)
 
   @database_statistic
   def node_count(self) -> int:
     """The total node count in non-empty graphs."""
-    return self.graph_tuple_stats.node_count
+    return int(self.graph_tuple_stats.node_count or 0)
 
   @database_statistic
   def edge_count(self) -> int:
     """The total edge count in non-empty graphs."""
-    return self.graph_tuple_stats.edge_count
+    return int(self.graph_tuple_stats.edge_count or 0)
 
   @database_statistic
   def control_edge_count(self) -> int:
     """The total control edge count in non-empty graphs."""
-    return self.graph_tuple_stats.control_edge_count
+    return int(self.graph_tuple_stats.control_edge_count or 0)
 
   @database_statistic
   def data_edge_count(self) -> int:
     """The total data edge count in non-empty graphs."""
-    return self.graph_tuple_stats.data_edge_count
+    return int(self.graph_tuple_stats.data_edge_count or 0)
 
   @database_statistic
   def call_edge_count(self) -> int:
     """The total call edge count in non-empty graphs."""
-    return self.graph_tuple_stats.call_edge_count
+    return int(self.graph_tuple_stats.call_edge_count or 0)
 
   @database_statistic
   def node_count_max(self) -> int:
     """The maximum node count in non-empty graphs."""
-    return self.graph_tuple_stats.node_count_max
+    return int(self.graph_tuple_stats.node_count_max or 0)
 
   @database_statistic
   def edge_count_max(self) -> int:
     """The maximum edge count in non-empty graphs."""
-    return self.graph_tuple_stats.edge_count_max
+    return int(self.graph_tuple_stats.edge_count_max or 0)
 
   @database_statistic
   def control_edge_count_max(self) -> int:
     """The maximum control edge count in non-empty graphs."""
-    return self.graph_tuple_stats.control_edge_count_max
+    return int(self.graph_tuple_stats.control_edge_count_max or 0)
 
   @database_statistic
   def data_edge_count_max(self) -> int:
     """The maximum data edge count in non-empty graphs."""
-    return self.graph_tuple_stats.data_edge_count_max
+    return int(self.graph_tuple_stats.data_edge_count_max or 0)
 
   @database_statistic
   def call_edge_count_max(self) -> int:
     """The maximum call edge count in non-empty graphs."""
-    return self.graph_tuple_stats.call_edge_count_max
+    return int(self.graph_tuple_stats.call_edge_count_max or 0)
 
   @database_statistic
   def edge_position_max(self) -> int:
     """The maximum edge position in non-empty graphs."""
-    return self.graph_tuple_stats.edge_position_max
+    return int(self.graph_tuple_stats.edge_position_max or 0)
 
   @database_statistic
   def node_x_dimensionality(self) -> int:
     """The node x dimensionality of all non-empty graphs."""
-    return self.graph_tuple_stats.node_x_dimensionality
+    return int(self.graph_tuple_stats.node_x_dimensionality or 0)
 
   @database_statistic
   def node_y_dimensionality(self) -> int:
     """The node y dimensionality of all non-empty graphs."""
-    return self.graph_tuple_stats.node_y_dimensionality
+    return int(self.graph_tuple_stats.node_y_dimensionality or 0)
 
   @database_statistic
   def graph_x_dimensionality(self) -> int:
     """The graph x dimensionality of all non-empty graphs."""
-    return self.graph_tuple_stats.graph_x_dimensionality
+    return int(self.graph_tuple_stats.graph_x_dimensionality or 0)
 
   @database_statistic
   def graph_y_dimensionality(self) -> int:
     """The graph y dimensionality of all non-empty graphs."""
-    return self.graph_tuple_stats.graph_y_dimensionality
+    return int(self.graph_tuple_stats.graph_y_dimensionality or 0)
 
   @database_statistic
   def graph_data_size(self) -> int:
     """The total size of the non-empty graph data, in bytes."""
-    return self.graph_tuple_stats.graph_data_size
+    return int(self.graph_tuple_stats.graph_data_size or 0)
 
   @database_statistic
   def graph_data_size_min(self) -> int:
     """The minimum size of the non-empty graph tuple data, in bytes."""
-    return self.graph_tuple_stats.graph_data_size_min
+    return int(self.graph_tuple_stats.graph_data_size_min or 0)
 
   @database_statistic
-  def graph_data_size_avg(self) -> int:
+  def graph_data_size_avg(self) -> float:
     """The average size of the non-empty graph tuple data, in bytes."""
-    return self.graph_tuple_stats.graph_data_size_avg
+    return float(self.graph_tuple_stats.graph_data_size_avg or 0)
 
   @database_statistic
   def graph_data_size_max(self) -> int:
     """The maximum size of the non-empty graph tuple data, in bytes."""
-    return self.graph_tuple_stats.graph_data_size_max
+    return int(self.graph_tuple_stats.graph_data_size_max or 0)
+
+  @database_statistic
+  def has_data_flow(self) -> bool:
+    """Return whether the graph database has data flow annotations."""
+    return (
+      self.graph_count
+      and self.graph_tuple_stats.data_flow_steps_null_count == 0
+    )
 
   @database_statistic
   def data_flow_steps_min(self) -> Optional[int]:
     """The minimum data flow steps for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_steps_min
+    if self.has_data_flow:
+      return int(self.graph_tuple_stats.data_flow_steps_min or 0)
 
   @database_statistic
-  def data_flow_steps_avg(self) -> Optional[int]:
+  def data_flow_steps_avg(self) -> Optional[float]:
     """The average data flow steps for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_steps_avg
+    if self.has_data_flow:
+      return float(self.graph_tuple_stats.data_flow_steps_avg)
 
   @database_statistic
   def data_flow_steps_max(self) -> Optional[int]:
     """The maximum data flow steps for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_steps_max
+    if self.has_data_flow:
+      return int(self.graph_tuple_stats.data_flow_steps_max or 0)
 
   @database_statistic
   def data_flow_positive_node_count_min(self) -> Optional[int]:
     """The minimum data flow positive node count for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_positive_node_count_min
+    if self.has_data_flow:
+      return int(self.graph_tuple_stats.data_flow_positive_node_count_min or 0)
 
   @database_statistic
   def data_flow_positive_node_count_avg(self) -> Optional[int]:
     """The minimum data flow average node count for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_positive_node_count_avg
+    if self.has_data_flow:
+      return int(self.graph_tuple_stats.data_flow_positive_node_count_avg or 0)
 
   @database_statistic
   def data_flow_positive_node_count_max(self) -> Optional[int]:
     """The minimum data flow max node count for non-empty graphs."""
-    return self.graph_tuple_stats.data_flow_positive_node_count_max
+    if self.has_data_flow:
+      return int(self.graph_tuple_stats.data_flow_positive_node_count_max or 0)
 
   @database_statistic
   def splits(self) -> List[int]:
@@ -617,6 +631,7 @@ class Database(sqlutil.Database):
           f"{stats.graph_count} graphs have no data_flow_steps "
           "value"
         )
+
       if (
         stats.data_flow_positive_node_count_null_count != 0
         and stats.data_flow_positive_node_count_null_count != stats.graph_count
