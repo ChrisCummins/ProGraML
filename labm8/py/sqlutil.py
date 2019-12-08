@@ -988,6 +988,12 @@ class BufferedDatabaseWriter(threading.Thread):
     the write buffer, rather than calling this by hand.
     """
     self._queue.put(BufferedDatabaseWriter.FlushMarker())
+    # Block until the queue is empty, i.e. the flush has been registered.
+    # This still does not guarantee that the flush has occurred, merely that it
+    # is soon-to-be done. To provide guarantee that the flush has completed,
+    # this class would need to have another queue that the thread can write to
+    # to signal that a task has completed.
+    self._queue.join()
 
   def Close(self):
     """Close the writer thread.
@@ -998,6 +1004,7 @@ class BufferedDatabaseWriter(threading.Thread):
     if not self.is_alive():
       raise TypeError("Close() called on dead BufferedDatabaseWriter")
     self._queue.put(BufferedDatabaseWriter.CloseMarker())
+    self._queue.join()
     self.join()
 
   @property
