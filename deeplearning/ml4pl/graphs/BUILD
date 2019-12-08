@@ -94,16 +94,12 @@ py_library(
 
 py_test(
     name = "programl_test",
+    timeout = "long",
     srcs = ["programl_test.py"],
-    data = [
-        "//deeplearning/ml4pl/testing/data:100_unlabelled_networkx_graphs",
-    ],
     deps = [
         ":programl",
         ":programl_pb_py",
-        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
-        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
-        "//labm8/py:bazelutil",
+        "//deeplearning/ml4pl/testing:random_programl_generator",
         "//labm8/py:decorators",
         "//labm8/py:test",
     ],
