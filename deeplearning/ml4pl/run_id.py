@@ -28,6 +28,14 @@ FLAGS = app.FLAGS
 _PREVIOUS_RUN_ID_PATH = pathlib.Path("/tmp/ml4pl_previous_run_id.txt")
 
 
+RUN_ID_MAX_LEN: int = 40
+RUN_ID_REGEX = re.compile(
+  r"(?P<script_name>[A-Za-z0-9_]+):"
+  r"(?P<timestamp>[0-9]{12}):"
+  r"(?P<hostname>[A-Za-z0-9]+)"
+)
+
+
 class RunId(NamedTuple):
   """A run ID.
 
@@ -174,17 +182,11 @@ class RunId(NamedTuple):
 
     fs.Write(_PREVIOUS_RUN_ID_PATH, run_id.encode("utf-8"))
 
-    return run_id
+    return RunId.FromString(run_id)
 
 
 # The public variables:
-RUN_ID_MAX_LEN: int = 40
 RUN_ID: RunId = RunId.GenerateGlobalUnique()
-RUN_ID_REGEX = re.compile(
-  r"(?P<script_name>[A-Za-z0-9]+):"
-  r"(?P<timestamp>[0-9]{12}):"
-  r"(?P<hostname>[A-Za-z0-9]+)"
-)
 
 
 def Main():
