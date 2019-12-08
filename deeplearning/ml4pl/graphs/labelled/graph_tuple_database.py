@@ -670,6 +670,15 @@ class Database(sqlutil.Database):
       name: function(self) for name, function in database_statistics_registry
     }
 
+  def __repr__(self) -> str:
+    return (
+      f"Database of {humanize.DecimalPrefix(self.graph_count, 'graph')} with "
+      f"dimensionalities: node_x={self.node_x_dimensionality}, "
+      f"node_y={self.node_y_dimensionality}, "
+      f"graph_x={self.graph_x_dimensionality}, "
+      f"graph_y={self.graph_y_dimensionality}."
+    )
+
 
 # Deferred declaration of flags because we need to reference Database class.
 app.DEFINE_database(
