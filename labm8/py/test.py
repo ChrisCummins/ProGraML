@@ -342,6 +342,12 @@ def Fail(reason: str):
   return pytest.fail(reason)
 
 
+@app.skip_log_prefix
+def Log(msg, *args):
+  """Write a logging message."""
+  app.Log(1, f"[TEST] {msg}", *args)
+
+
 def Main(capture_output: typing.Optional[bool] = None):
   """Main entry point.
 
