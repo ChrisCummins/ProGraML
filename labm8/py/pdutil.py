@@ -80,10 +80,36 @@ def RewriteColumn(
   df[column] = rewrites
 
 
-def FormatDataFrameAsAsciiTable(df: pd.DataFrame, **tabulate_args):
+def FormatDataFrameAsAsciiTable(
+  df: pd.DataFrame, index: bool = True, **tabulate_args
+) -> str:
+  """Format a data frame as an ascii table.
+
+  Example usage:
+
+    >>> pdutil.FormatDataFrameAsAsciiTable(
+            pd.DataFrame(['1', '2'], columns=['foo'])
+        )
+    +----+-------+
+    |    |   foo |
+    |----+-------|
+    |  0 |     1 |
+    |  1 |     2 |
+    +----+-------+
+
+  Args:
+    df: The dataframe to format.
+    index: Whether to include a column for the index.
+    tabulate_args: Additional arguments passed to tabulate. See:
+      <https://pypi.org/project/tabulate/>.
+
+  Returns:
+    The data frame formatted as a string.
+  """
   default_args = {
     "headers": "keys",
     "tablefmt": "psql",
+    "showindex": "always" if index else "never",
   }
   default_args.update(tabulate_args)
   return tabulate.tabulate(df, **default_args)
