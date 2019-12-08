@@ -984,15 +984,12 @@ class BufferedDatabaseWriter(threading.Thread):
   def Flush(self) -> None:
     """Flush the buffer.
 
+    This method blocks until the flush has completed.
+
     In normal use, you can rely on the automated flushing mechanisms to flush
     the write buffer, rather than calling this by hand.
     """
     self._queue.put(BufferedDatabaseWriter.FlushMarker())
-    # Block until the queue is empty, i.e. the flush has been registered.
-    # This still does not guarantee that the flush has occurred, merely that it
-    # is soon-to-be done. To provide guarantee that the flush has completed,
-    # this class would need to have another queue that the thread can write to
-    # to signal that a task has completed.
     self._queue.join()
 
   def Close(self):
@@ -1066,7 +1063,14 @@ class BufferedDatabaseWriter(threading.Thread):
         self._buffer.append(mapped)
         self.buffer_size += size
         self._MaybeFlush()
+
+      # Register that the item has been processed. This is used by join() to
+      # signal to stop blocking.
+      self._queue.task_done()
+
+    # Register that the end-of-queue marker has been processed.
     self._Flush()
+    self._queue.task_done()
 
   def _MaybeFlush(self) -> None:
     if (
