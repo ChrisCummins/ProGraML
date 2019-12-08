@@ -54,7 +54,7 @@ Generate a database of graphs labelled with data flow analyses using:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/graphs/labelled:make_data_flow_analysis_dataset -- \
-    --input_db='sqlite:////tmp/program_graphs.db' \
+    --proto_db='sqlite:////tmp/program_graphs.db' \
     --graph_db='sqlite:////tmp/reachability_graphs.db' \
     --analysis=reachability
 ```
