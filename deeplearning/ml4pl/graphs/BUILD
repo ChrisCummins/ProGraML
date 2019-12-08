@@ -2,49 +2,6 @@
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
-# TODO(github.com/ChrisCummins/ProGraML/issues/28): Fix me.
-#py_binary(
-#    name = "copy_database",
-#    srcs = ["copy_database.py"],
-#    deps = [
-#        ":graph_database",
-#        "//labm8/py:app",
-#        "//labm8/py:humanize",
-#        "//labm8/py:prof",
-#    ],
-#)
-
-# TODO(github.com/ChrisCummins/ProGraML/issues/28): Fix me.
-#py_library(
-#    name = "database_exporters",
-#    srcs = ["database_exporters.py"],
-#    visibility = ["//deeplearning/ml4pl:__subpackages__"],
-#    deps = [
-#        ":graph_database",
-#        "//deeplearning/ml4pl/bytecode:bytecode_database",
-#        "//deeplearning/ml4pl/bytecode:splitters",
-#        "//labm8/py:app",
-#        "//labm8/py:fs",
-#        "//labm8/py:humanize",
-#        "//labm8/py:labtypes",
-#        "//labm8/py:prof",
-#        "//labm8/py:sqlutil",
-#        "//labm8/py:system",
-#    ],
-#)
-
-py_test(
-    name = "database_exporters_test",
-    srcs = ["database_exporters_test.py"],
-    deps = [
-        ":database_exporters",
-        "//labm8/py:app",
-        "//labm8/py:sqlutil",
-        "//labm8/py:test",
-        "//third_party/py/networkx",
-    ],
-)
-
 py_library(
     name = "graph_iterators",
     srcs = ["graph_iterators.py"],

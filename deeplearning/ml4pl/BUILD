@@ -27,17 +27,6 @@ exports_repo(
     ],
 )
 
-proto_library(
-    name = "ml4pl_pb",
-    srcs = ["ml4pl.proto"],
-)
-
-python_proto_library(
-    name = "ml4pl_pb_py",
-    visibility = ["//visibility:public"],
-    deps = [":ml4pl_pb"],
-)
-
 py_binary(
     name = "run_id",
     srcs = ["run_id.py"],
