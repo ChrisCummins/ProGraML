@@ -136,6 +136,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs/labelled:data_flow_graphs",
         "//labm8/py:app",
         "//labm8/py:crypto",
+        "//labm8/py:decorators",
         "//labm8/py:humanize",
         "//labm8/py:jsonutil",
         "//labm8/py:progress",

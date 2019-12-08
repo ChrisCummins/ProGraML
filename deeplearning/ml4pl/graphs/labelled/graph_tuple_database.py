@@ -16,6 +16,7 @@ from deeplearning.ml4pl.graphs.labelled import data_flow_graphs
 from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
 from labm8.py import app
 from labm8.py import crypto
+from labm8.py import decorators
 from labm8.py import humanize
 from labm8.py import jsonutil
 from labm8.py import progress
@@ -133,9 +134,9 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     """Return the sha1 of the graph tuple."""
     return self.data.sha1
 
-  @property
+  @decorators.memoized_property
   def tuple(self) -> graph_tuple_lib.GraphTuple:
-    """Un-pickle the graph tuple."""
+    """Un-pickle the graph tuple and cache the binary results."""
     return pickle.loads(self.data.pickled_graph_tuple)
 
   def ToFile(self, path: pathlib.Path) -> None:
