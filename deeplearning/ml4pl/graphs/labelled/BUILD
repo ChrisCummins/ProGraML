@@ -166,6 +166,7 @@ py_binary(
     visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
         "//deeplearning/ml4pl/graphs:programl",
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
         "//deeplearning/ml4pl/graphs/labelled/alias_set",
         "//deeplearning/ml4pl/graphs/labelled/datadep:data_dependence",
