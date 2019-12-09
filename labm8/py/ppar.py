@@ -335,6 +335,48 @@ def MapDatabaseRowBatchProcessor(
     end_of_batch_callback(i)
 
 
+class _ForcedNonDaemonProcess(multiprocessing.Process):
+  """A process which is never a daemon."""
+
+  # make 'daemon' attribute always return False
+  def _get_daemon(self):
+    return False
+
+  def _set_daemon(self, value):
+    pass
+
+  daemon = property(_get_daemon, _set_daemon)
+
+
+# We sub-class multiprocessing.pool.Pool instead of multiprocessing.Pool
+# because the latter is only a wrapper function, not a proper class.
+class UnsafeNonDaemonPool(multiprocessing.pool.Pool):
+  """A multiprocessing.Pool where the processes are not daemons.
+
+  Python's multiprocessing Pool creates daemonic processes. Deamonic processes
+  are killed automatically when the parent process terminates. This is nice
+  behaviour as it prevents orphaned processes lying around. However, a downside
+  of daemonic processes is that they cannot create child processes. E.g. a
+  worker in an parallel map cannot create child processes. This is occasionally
+  desirable. For cases where you need non-daemonic processes, use this class.
+
+  Disclaimer: USING THIS CLASS CAN RESULT IN ORPHAN PROCESSES IF YOU DO NOT
+  EXPLICITLY CLOSE THE POOL!
+
+  Example usage:
+
+    pool = ppar.UnsafeNonDaemonPool(5)
+
+    try:
+      # go nuts ...
+    finally:
+      pool.close()
+      pool.join()
+  """
+
+  Process = _ForcedNonDaemonProcess
+
+
 class ThreadedIterator:
   """An iterator that computes its elements in a parallel thread to be ready to
   be consumed.
