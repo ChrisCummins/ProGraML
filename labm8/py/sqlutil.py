@@ -1097,6 +1097,9 @@ class BufferedDatabaseWriter(threading.Thread):
 
   def _Flush(self):
     """Flush the buffer."""
+    if not self._buffer:
+      return
+
     with self.ctx.Profile(
       self.log_level,
       f"Committed {self.buffer_length} rows "
