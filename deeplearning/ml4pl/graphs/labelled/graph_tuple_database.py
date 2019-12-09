@@ -666,7 +666,9 @@ class Database(sqlutil.Database):
         )
 
         self._split_counts = {
-          split: session.query(sql.func.count(GraphTuple.id)).scalar()
+          split: session.query(sql.func.count(GraphTuple.id))
+          .filter(GraphTuple.split == split)
+          .scalar()
           for split in self._splits
         }
 
