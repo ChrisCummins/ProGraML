@@ -74,7 +74,7 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
     ]
 
     # Impose the limit on the maximum number of graphs to generate.
-    if n and n < len(root_nodes):
+    if n and n > len(root_nodes):
       random.shuffle(root_nodes)
       root_nodes = root_nodes[:n]
 
