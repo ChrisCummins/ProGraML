@@ -74,3 +74,8 @@ message Edge {
   // The position of an edge.
   required int32 position = 4 [default=0];
 }
+
+// A collection of program graphs.
+message ProgramGraphs {
+  repeated ProgramGraph program_graph = 1;
+}
