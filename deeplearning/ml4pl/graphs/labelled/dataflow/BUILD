@@ -5,6 +5,7 @@ py_library(
     srcs = ["data_flow_graphs.py"],
     visibility = ["//deeplearning/ml4pl/graphs/labelled:__subpackages__"],
     deps = [
+        "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//labm8/py:app",
         "//third_party/py/networkx",
@@ -16,7 +17,9 @@ py_test(
     srcs = ["data_flow_graphs_test.py"],
     deps = [
         ":data_flow_graphs",
+        "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
+        "//deeplearning/ml4pl/testing:random_networkx_generator",
         "//labm8/py:test",
         "//third_party/py/networkx",
     ],

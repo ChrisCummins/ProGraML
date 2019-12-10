@@ -3,6 +3,7 @@ import collections
 
 import networkx as nx
 
+from deeplearning.ml4pl.graphs import programl
 from deeplearning.ml4pl.graphs import programl_pb2
 from deeplearning.ml4pl.graphs.labelled.dataflow import data_flow_graphs
 from labm8.py import app
@@ -15,7 +16,7 @@ REACHABLE_NO = [1, 0]
 REACHABLE_YES = [0, 1]
 
 
-class ReachabilityAnnotator(data_flow_graphs.DataFlowGraphAnnotator):
+class ReachabilityAnnotator(data_flow_graphs.NetworkXDataFlowGraphAnnotator):
   """Annotate graphs with reachability anlaysis.
 
   Statement node A is reachable from statement node B iff there exists some
@@ -28,7 +29,7 @@ class ReachabilityAnnotator(data_flow_graphs.DataFlowGraphAnnotator):
 
   def Annotate(
     self, g: nx.MultiDiGraph, root_node: int
-  ) -> data_flow_graphs.DataFlowAnnotatedGraph:
+  ) -> programl_pb2.ProgramGraph:
     """Annotate nodes in the graph with their reachability.
 
     The 'root node' annotation is a [0,1] value appended to node x vectors.
@@ -68,8 +69,8 @@ class ReachabilityAnnotator(data_flow_graphs.DataFlowGraphAnnotator):
         if flow == programl_pb2.Edge.CONTROL and next not in visited:
           q.append((next, data_flow_steps + 1))
 
-    return data_flow_graphs.DataFlowAnnotatedGraph(
-      g=g,
+    return programl.NetworkXToProgramGraph(
+      g,
       root_node=root_node,
       data_flow_steps=data_flow_steps,
       positive_node_count=reachable_node_count,
