@@ -229,10 +229,10 @@ def Fatal(msg, *args, **kwargs):
 
 
 @skip_log_prefix
-def FatalWithoutStackTrace(msg, *args, **kwargs):
+def FatalWithoutStackTrace(msg, *args, returncode: int = 1, **kwargs):
   """Logs a fatal message without stacktrace."""
   Error(msg, *args, **kwargs)
-  sys.exit(1)
+  sys.exit(returncode)
 
 
 @skip_log_prefix
