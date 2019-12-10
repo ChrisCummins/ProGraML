@@ -253,8 +253,10 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     )
     mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id, split)
     mapped.data_flow_steps = program_graph.data_flow_steps
-    mapped.data_flow_root_node = program_graph.root_node
-    mapped.data_flow_positive_node_count = program_graph.positive_node_count
+    mapped.data_flow_root_node = program_graph.data_flow_root_node
+    mapped.data_flow_positive_node_count = (
+      program_graph.data_flow_positive_node_count
+    )
     return mapped
 
 

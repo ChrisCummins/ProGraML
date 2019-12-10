@@ -112,7 +112,7 @@ py_binary(
     deps = [
         ":graph_tuple",
         "//deeplearning/ml4pl:run_id",
-        "//deeplearning/ml4pl/graphs:programl_pb",
+        "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//labm8/py:app",
         "//labm8/py:crypto",
         "//labm8/py:decorators",

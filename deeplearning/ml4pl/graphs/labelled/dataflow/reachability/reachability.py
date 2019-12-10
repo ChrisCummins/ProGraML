@@ -71,7 +71,7 @@ class ReachabilityAnnotator(data_flow_graphs.NetworkXDataFlowGraphAnnotator):
 
     return programl.NetworkXToProgramGraph(
       g,
-      root_node=root_node,
+      data_flow_root_node=root_node,
       data_flow_steps=data_flow_steps,
-      positive_node_count=reachable_node_count,
+      data_flow_positive_node_count=reachable_node_count,
     )
