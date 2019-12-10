@@ -939,7 +939,10 @@ class BufferedDatabaseWriter(threading.Thread):
     self.buffer_size = 0
     self._last_flush = time.time()
 
-    self._queue = queue.Queue(maxsize=self.max_buffer_length)
+    # Limit the size of the queue so that calls to AddOne() or AddMany() will
+    # block if the calling code is too far ahead of the writer.
+    queue_size = self.max_buffer_length * 2 if self.max_buffer_length else 1000
+    self._queue = queue.Queue(maxsize=queue_size)
 
     self.start()
 
