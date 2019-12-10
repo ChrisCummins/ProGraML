@@ -1,4 +1,20 @@
-"""Utility functions for working with program graph protos."""
+"""Utility functions for working with program graphs.
+
+When executed as a binary, this program reads a single program graph from
+stdin, and writes a the same graph to stdout. Use --stdin_fmt and --stdout_fmt
+to convert between different graph types.
+
+Example usage:
+
+  Convert a binary protocol buffer to a text version:
+
+    $ bazel run //deeplearning/ml4pl/graphs:programl -- \
+        --stdin_fmt=pb \
+        --stdout_fmt=pbtxt \
+        < /tmp/proto.pb > /tmp/proto.pbtxt
+"""
+import enum
+import sys
 from typing import List
 from typing import Optional
 
@@ -7,8 +23,32 @@ import numpy as np
 
 from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
+from labm8.py import pbutil
 
 FLAGS = app.FLAGS
+
+
+class InputOutputFormat(enum.Enum):
+  """The input/output format for converting protocol buffer to byte strings."""
+
+  # A binary protocol buffer.
+  PB = 1
+  # A text protocol buffer.
+  PBTXT = 2
+
+
+app.DEFINE_enum(
+  "stdin_fmt",
+  InputOutputFormat,
+  InputOutputFormat.PBTXT,
+  "The format for input program graph.",
+)
+app.DEFINE_enum(
+  "stdout_fmt",
+  InputOutputFormat,
+  InputOutputFormat.PBTXT,
+  "The format for output program graphs.",
+)
 
 
 class GraphBuilder(object):
@@ -215,3 +255,62 @@ def NetworkXToProgramGraph(
     edge_proto.position = data["position"]
 
   return proto
+
+
+def FromBytes(data: bytes, fmt: InputOutputFormat) -> programl_pb2.ProgramGraph:
+  """Decode a byte array to a program graph proto.
+
+  Args:
+    data: The binary data to decode.
+    fmt: The format of the binary data.
+
+  Returns:
+    A program graph protocol buffer.
+  """
+  program_graph: programl_pb2.ProgramGraph = programl_pb2.ProgramGraph()
+  if fmt == InputOutputFormat.PB:
+    program_graph.ParseFromString(data)
+  elif fmt == InputOutputFormat.PBTXT:
+    pbutil.FromString(data.decode("utf-8"), program_graph)
+  else:
+    raise ValueError("Unknown program graph format: {fmt}")
+  return program_graph
+
+
+def ToBytes(
+  program_graph: programl_pb2.ProgramGraph, fmt: InputOutputFormat
+) -> bytes:
+  """Convert a program graph to a byte array.
+
+  Args:
+    program_graph: A program graph.
+    fmt: The desired binary format.
+
+  Returns:
+    A byte array.
+  """
+  if fmt == InputOutputFormat.PB:
+    return program_graph.SerializeToString()
+  elif fmt == InputOutputFormat.PBTXT:
+    return str(program_graph).encode("utf-8")
+  else:
+    raise ValueError("Unknown program graph format: {fmt}")
+
+
+def ReadStdin() -> programl_pb2.ProgramGraph:
+  """Read a program graph from stdin using --stdin_fmt."""
+  return FromBytes(sys.stdin.buffer.read(), FLAGS.stdin_fmt())
+
+
+def WriteStdout(proto: pbutil.ProtocolBuffer) -> None:
+  """Write a graph to stdout using --stdout_fmt."""
+  sys.stdout.buffer.write(ToBytes(proto, FLAGS.stdout_fmt()))
+
+
+def Main():
+  """Main entry point."""
+  WriteStdout(ReadStdin())
+
+
+if __name__ == "__main__":
+  app.Run(Main)

@@ -76,7 +76,7 @@ python_proto_library(
     deps = [":programl_pb"],
 )
 
-py_library(
+py_binary(
     name = "programl",
     srcs = ["programl.py"],
     visibility = [
@@ -87,6 +87,7 @@ py_library(
     deps = [
         ":programl_pb_py",
         "//labm8/py:app",
+        "//labm8/py:pbutil",
         "//third_party/py/networkx",
         "//third_party/py/numpy",
     ],
