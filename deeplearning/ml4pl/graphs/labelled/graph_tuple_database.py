@@ -12,8 +12,8 @@ from typing import Tuple
 import sqlalchemy as sql
 
 from deeplearning.ml4pl import run_id
+from deeplearning.ml4pl.graphs import programl_pb2
 from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
-from deeplearning.ml4pl.graphs.labelled.dataflow import data_flow_graphs
 from labm8.py import app
 from labm8.py import crypto
 from labm8.py import decorators
@@ -228,9 +228,9 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     )
 
   @classmethod
-  def CreateFromDataFlowAnnotatedGraph(
+  def CreateFromProgramGraph(
     cls,
-    annotated_graph: data_flow_graphs.DataFlowAnnotatedGraph,
+    program_graph: programl_pb2.ProgramGraph,
     ir_id: int,
     split: Optional[int] = None,
   ) -> "GraphTuple":
@@ -248,13 +248,13 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
     Returns:
       A GraphTuple instance.
     """
-    graph_tuple = graph_tuple_lib.GraphTuple.CreateFromNetworkX(
-      annotated_graph.g
+    graph_tuple = graph_tuple_lib.GraphTuple.CreateFromProgramGraph(
+      program_graph
     )
     mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id, split)
-    mapped.data_flow_steps = annotated_graph.data_flow_steps
-    mapped.data_flow_root_node = annotated_graph.root_node
-    mapped.data_flow_positive_node_count = annotated_graph.positive_node_count
+    mapped.data_flow_steps = program_graph.data_flow_steps
+    mapped.data_flow_root_node = program_graph.root_node
+    mapped.data_flow_positive_node_count = program_graph.positive_node_count
     return mapped
 
 
