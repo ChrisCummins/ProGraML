@@ -10,6 +10,7 @@ from typing import Tuple
 import networkx as nx
 import numpy as np
 
+from deeplearning.ml4pl.graphs import programl
 from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
 
@@ -292,6 +293,14 @@ class GraphTuple(NamedTuple):
       node_y=node_y,
       graph_x=graph_x,
       graph_y=graph_y,
+    )
+
+  @classmethod
+  def CreateFromProgramGraph(cls, program_graph: programl_pb2.ProgramGraph):
+    # TODO(github.com/ChrisCummins/ProGraML/issues/31): Perform the conversion
+    # directly.
+    return cls.CreateFromNetworkX(
+      programl.ProgramGraphToNetworkX(program_graph)
     )
 
   @classmethod
