@@ -16,7 +16,7 @@
 The goal of the module is to provide easy to use implementations of typical
 parallel workloads, such as data parallel map operations.
 """
-import multiprocessing
+import multiprocessing.pool
 import queue
 import subprocess
 import threading
