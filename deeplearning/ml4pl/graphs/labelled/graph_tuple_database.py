@@ -12,8 +12,8 @@ from typing import Tuple
 import sqlalchemy as sql
 
 from deeplearning.ml4pl import run_id
-from deeplearning.ml4pl.graphs.labelled import data_flow_graphs
 from deeplearning.ml4pl.graphs.labelled import graph_tuple as graph_tuple_lib
+from deeplearning.ml4pl.graphs.labelled.dataflow import data_flow_graphs
 from labm8.py import app
 from labm8.py import crypto
 from labm8.py import decorators
