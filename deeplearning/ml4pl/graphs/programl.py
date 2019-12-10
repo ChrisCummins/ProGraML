@@ -1,4 +1,5 @@
 """Utility functions for working with program graph protos."""
+from typing import List
 from typing import Optional
 
 import networkx as nx
@@ -8,6 +9,96 @@ from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
 
 FLAGS = app.FLAGS
+
+
+class GraphBuilder(object):
+  """A helper object for constructing a well-formed program graph."""
+
+  def __init__(
+    self, x: Optional[List[int]] = None, y: Optional[List[int]] = None
+  ):
+    """Create a new graph.
+
+    Args:
+      x: A list of graph features.
+      y: A list of graph labels.
+    """
+    self.g = nx.MultiDiGraph()
+    self.g.graph["x"] = x or []
+    self.g.graph["y"] = y or []
+
+    self.last_node_index = -1
+    self.last_function_counter = 0
+    self.functions: List[str] = []
+
+  @property
+  def proto(self) -> programl_pb2.ProgramGraph:
+    """Access the program graph as a protocol buffer."""
+    return NetworkXToProgramGraph(self.g)
+
+  def AddFunction(self, name: Optional[str] = None) -> str:
+    """Create a new function and return its name.
+
+    Args:
+      name: The function name. If not given, one is generated.
+
+    Returns:
+      The function name.
+    """
+    if name is None:
+      self.last_function_counter += 1
+      name = f"fn_{self.last_function_counter:06d}"
+    self.functions.append(name)
+    return name
+
+  def AddNode(
+    self,
+    type: programl_pb2.Node.Type = programl_pb2.Node.STATEMENT,
+    text: str = "",
+    preprocessed_text: str = "",
+    function: Optional[str] = None,
+    x: Optional[List[int]] = None,
+    y: Optional[List[int]] = None,
+  ) -> int:
+    """Construct a new node.
+
+    Args:
+      type: The node type.
+      text: The node text.
+      preprocessed_text: The preprocessed node text.
+      function: The name of a function created using AddFunction().
+      x: A list of node features.
+      y: A list of node labels.
+
+    Returns:
+      The integer index of the node.
+    """
+    self.last_node_index += 1
+    self.g.add_node(
+      self.last_node_index,
+      type=type,
+      x=x or [],
+      y=y or [],
+      text=text,
+      function=function,
+      preprocessed_text=preprocessed_text,
+    )
+    return self.last_node_index
+
+  def AddEdge(
+    self,
+    source_node_index: int,
+    destination_node_index: int,
+    flow: programl_pb2.Edge.Flow = programl_pb2.Edge.CONTROL,
+    position: int = 0,
+  ):
+    self.g.add_edge(
+      source_node_index,
+      destination_node_index,
+      flow=flow,
+      position=position,
+      key=flow,
+    )
 
 
 def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
@@ -69,7 +160,9 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
 
 
 def NetworkXToProgramGraph(
-  g: nx.MultiDiGraph, proto: Optional[programl_pb2.ProgramGraph] = None
+  g: nx.MultiDiGraph,
+  proto: Optional[programl_pb2.ProgramGraph] = None,
+  **proto_fields,
 ) -> programl_pb2.ProgramGraph:
   """Perform the inverse transformation from networkx graph -> protobuf.
 
@@ -77,11 +170,15 @@ def NetworkXToProgramGraph(
 
   Arguments:
     g: A networkx graph.
+    proto: An optional protocol buffer instance to use. Else a new one is
+      created. Calling code is reponsible for clearning the protocol buffer.
+    **proto_fields: Optional keyword arguments to use when constructing a proto.
+      Has no effect if proto argument is set.
 
   Returns:
     A ProgramGraph proto instance.
   """
-  proto = proto or programl_pb2.ProgramGraph()
+  proto = proto or programl_pb2.ProgramGraph(**proto_fields)
 
   # Create a map from function name to function ID.
   function_names = list(
