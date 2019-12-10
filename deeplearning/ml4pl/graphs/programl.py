@@ -257,24 +257,38 @@ def NetworkXToProgramGraph(
   return proto
 
 
-def FromBytes(data: bytes, fmt: InputOutputFormat) -> programl_pb2.ProgramGraph:
+def FromBytes(
+  data: bytes,
+  fmt: InputOutputFormat,
+  proto: Optional[programl_pb2.ProgramGraph] = None,
+  empty_okay: bool = False,
+) -> programl_pb2.ProgramGraph:
   """Decode a byte array to a program graph proto.
 
   Args:
     data: The binary data to decode.
     fmt: The format of the binary data.
+    empty_okay: If False, raise an error if the protocol buffer is not
+      initialized, or contains no nodes.
 
   Returns:
     A program graph protocol buffer.
   """
-  program_graph: programl_pb2.ProgramGraph = programl_pb2.ProgramGraph()
+  proto = proto or programl_pb2.ProgramGraph()
   if fmt == InputOutputFormat.PB:
-    program_graph.ParseFromString(data)
+    proto.ParseFromString(data)
   elif fmt == InputOutputFormat.PBTXT:
-    pbutil.FromString(data.decode("utf-8"), program_graph)
+    pbutil.FromString(data.decode("utf-8"), proto)
   else:
-    raise ValueError("Unknown program graph format: {fmt}")
-  return program_graph
+    raise ValueError(f"Unknown program graph format: {fmt}")
+
+  if not empty_okay:
+    if not proto.IsInitialized():
+      raise ValueError("Program graph is uninitialized")
+    if not proto.node:
+      raise ValueError("Program graph contains no nodes")
+
+  return proto
 
 
 def ToBytes(
@@ -294,7 +308,7 @@ def ToBytes(
   elif fmt == InputOutputFormat.PBTXT:
     return str(program_graph).encode("utf-8")
   else:
-    raise ValueError("Unknown program graph format: {fmt}")
+    raise ValueError(f"Unknown program graph format: {fmt}")
 
 
 def ReadStdin() -> programl_pb2.ProgramGraph:
