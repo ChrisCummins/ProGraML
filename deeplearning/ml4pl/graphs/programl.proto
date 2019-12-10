@@ -13,6 +13,17 @@ message ProgramGraph {
   // Optional vectors of graph-level features and labels.
   repeated int64 x = 5;
   repeated int64 y = 6;
+
+  // Optional fields for encoding data flow annotations.
+  //
+  // For iterative data flow analyses which have a defined "starting point",
+  // this is the index into the node list of that starting point.
+  optional int32 root_node = 7;
+  // For iterative data flow analyses, this is the number of steps that the data
+  // flow analysis required to compute the annotations.
+  optional int32 data_flow_steps = 8;
+  // The number of nodes with "positive" analysis results.
+  optional int32 positive_node_count = 9;
 }
 
 message Function {
