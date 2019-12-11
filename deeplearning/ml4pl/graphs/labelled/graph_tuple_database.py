@@ -483,7 +483,9 @@ class Database(sqlutil.Database):
 
     If > 0, then has_data_flow is False.
     """
-    return int(self.graph_tuple_stats.data_flow_steps_null_count or 0)
+    return self.graph_count - int(
+      self.graph_tuple_stats.data_flow_steps_count or 0
+    )
 
   @database_statistic
   def data_flow_steps_min(self) -> Optional[int]:
@@ -623,11 +625,8 @@ class Database(sqlutil.Database):
           "graph_data_size_max"
         ),
         # Data flow column null counts.
-        sql.func.count(GraphTuple.data_flow_steps == None).label(
-          "data_flow_steps_null_count"
-        ),
-        sql.func.count(GraphTuple.data_flow_steps == None).label(
-          "data_flow_positive_node_count_null_count"
+        sql.func.count(GraphTuple.data_flow_steps).label(
+          "data_flow_steps_count"
         ),
         # Data flow step counts.
         sql.func.min(GraphTuple.data_flow_steps).label("data_flow_steps_min"),
@@ -674,24 +673,14 @@ class Database(sqlutil.Database):
         )
 
       # Check that every graph has data flow attributes, or none of them do.
-      if (
-        stats.data_flow_steps_null_count != 0
-        and stats.data_flow_steps_null_count != stats.graph_count
+      if not (
+        stats.data_flow_steps_count == 0
+        or stats.data_flow_steps_count == stats.graph_count
       ):
         raise ValueError(
-          f"{stats.data_flow_steps_null_count} of "
+          f"{stats.graph_count - stats.data_flow_steps_count} of "
           f"{stats.graph_count} graphs have no data_flow_steps "
           "value"
-        )
-
-      if (
-        stats.data_flow_positive_node_count_null_count != 0
-        and stats.data_flow_positive_node_count_null_count != stats.graph_count
-      ):
-        raise ValueError(
-          f"{stats.data_flow_positive_node_count_null_count} of "
-          f"{stats.graph_count} graphs have no "
-          " data_flow_positive_node_count value"
         )
 
       self._graph_tuple_stats = stats
