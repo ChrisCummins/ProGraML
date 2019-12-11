@@ -16,7 +16,7 @@ REACHABLE_YES = [0, 1]
 
 
 class ReachabilityAnnotator(data_flow_graphs.NetworkXDataFlowGraphAnnotator):
-  """Annotate graphs with reachability anlaysis.
+  """Annotate graphs with reachability analysis.
 
   Statement node A is reachable from statement node B iff there exists some
   control flow path from B >> A. Non-statement nodes are never reachable.
