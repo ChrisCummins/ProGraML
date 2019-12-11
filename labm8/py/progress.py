@@ -1,5 +1,6 @@
 """This module aims to help evaluate the progress of long-running jobs."""
 import threading
+import time
 from typing import Callable
 from typing import Optional
 from typing import Union
@@ -49,10 +50,35 @@ class Progress(threading.Thread):
     raise NotImplementedError("abstract class")
 
 
-def Run(progress: Progress, refresh_time: float = 0.2) -> Progress:
-  """Run the given progress job until completion, updating the progress bar."""
+def Run(
+  progress: Progress, refresh_time: float = 0.2, patience: int = 0
+) -> Progress:
+  """Run the given progress job until completion, updating the progress bar.
+
+  Args:
+    progress: The job to run.
+    refresh_time: The number of seconds between updates to the progress bar.
+    patience: If a positive value, this is the maximum allowed seconds to run
+      without a change to the progress before raising an error.
+
+  Raises:
+    OSError: If patience is set, and no progress has been made within the given
+      number of seconds.
+  """
   progress.Start()
+  last_i = progress.ctx.i
+  last_progress = time.time()
+
   while progress.is_alive():
+    current_time = time.time()
+    if progress.ctx.i != last_i:
+      last_i = progress.ctx.i
+      last_progress = current_time
+    elif patience and (current_time - last_progress) > patience:
+      raise OSError(
+        f"Failed to make progress after "
+        f"{current_time - last_progress:.0f} seconds"
+      )
     progress.ctx.Refresh()
     progress.join(refresh_time)
   progress.ctx.Refresh()
