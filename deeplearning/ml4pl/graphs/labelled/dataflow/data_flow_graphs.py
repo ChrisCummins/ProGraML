@@ -99,8 +99,13 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
     """
     g = programl.ProgramGraphToNetworkX(unlabelled_graph)
 
+    # Create a pool of candidate root nodes. A root node must be of the expected
+    # type (e.g. statement/identifier/immediate) and belong to a function, i.e.
+    # not be a "magic" node like the entry node.
     root_nodes: List[int] = [
-      n for n, type_ in g.nodes(data="type") if type_ == self.RootNodeType()
+      n
+      for n, data in g.nodes(data=True)
+      if data["type"] == self.RootNodeType() and data["function"] is not None
     ]
 
     # Impose the limit on the maximum number of graphs to generate.
@@ -112,7 +117,10 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
     for root_node in root_nodes:
       # Note that a deep copy is required to ensure that lists in x/y attributes
       # are duplicated.
-      annotated_graphs.append(self.Annotate(copy.deepcopy(g), root_node))
+      annotated_graph = self.Annotate(copy.deepcopy(g), root_node)
+      # Ignore graphs that require no data flow steps.
+      if annotated_graph.graph["data_flow_steps"]:
+        annotated_graphs.append(annotated_graph)
 
     return NetworkxDataFlowGraphs(annotated_graphs)
 
