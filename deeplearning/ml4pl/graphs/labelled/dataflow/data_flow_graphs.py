@@ -3,7 +3,6 @@ networkx graphs.
 """
 import copy
 import random
-from typing import Iterable
 from typing import List
 from typing import Optional
 
@@ -16,12 +15,45 @@ from labm8.py import app
 FLAGS = app.FLAGS
 
 
+class DataFlowGraphs(object):
+  """A set of data-flow annotated graphs that abstract the the difference
+  between proto and networkx representations.
+  """
+
+  @property
+  def graphs(self) -> List[nx.MultiDiGraph]:
+    """Access the data flow graphs as networkx."""
+    raise NotImplementedError("abstract class")
+
+  @property
+  def protos(self) -> List[programl_pb2.ProgramGraph]:
+    """Access the data flow graphs as protos."""
+    raise NotImplementedError("abstract class")
+
+
+class NetworkxDataFlowGraphs(DataFlowGraphs):
+  """A set of data-flow annotated graphs."""
+
+  def __init__(self, graphs: List[nx.MultiDiGraph]):
+    self._graphs = graphs
+
+  @property
+  def graphs(self) -> List[nx.MultiDiGraph]:
+    """Access the underlying networkx graphs."""
+    return self._graphs
+
+  @property
+  def protos(self) -> List[programl_pb2.ProgramGraph]:
+    """Convert the networkx graphs to program graph protos."""
+    return [programl.NetworkXToProgramGraph(g) for g in self.graphs]
+
+
 class DataFlowGraphAnnotator(object):
   """Abstract base class for implement data flow analysis graph annotators."""
 
   def MakeAnnotated(
     self, unlabelled_graph: programl_pb2.ProgramGraph, n: Optional[int] = None
-  ) -> Iterable[programl_pb2.ProgramGraph]:
+  ) -> DataFlowGraphs:
     """Produce up to "n" annotated graphs.
 
     Args:
@@ -43,15 +75,13 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
     """Return the Node.Type enum for root nodes."""
     raise NotImplementedError("abstract class")
 
-  def Annotate(
-    self, g: nx.MultiDiGraph, root_node: int
-  ) -> programl_pb2.ProgramGraph:
+  def Annotate(self, g: nx.MultiDiGraph, root_node: int) -> nx.MultiDiGraph:
     """Annotate a networkx graph in-place."""
     raise NotImplementedError("abstract class")
 
   def MakeAnnotated(
     self, unlabelled_graph: programl_pb2.ProgramGraph, n: Optional[int] = None
-  ) -> Iterable[programl_pb2.ProgramGraph]:
+  ) -> DataFlowGraphs:
     """Produce up to "n" annotated graphs.
 
     Args:
@@ -65,7 +95,7 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
         the input graph).
 
     Returns:
-      An iterator of annotated program graphs.
+      An AnnotatedGraph instance..
     """
     g = programl.ProgramGraphToNetworkX(unlabelled_graph)
 
@@ -78,10 +108,13 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
       random.shuffle(root_nodes)
       root_nodes = root_nodes[:n]
 
+    annotated_graphs = []
     for root_node in root_nodes:
       # Note that a deep copy is required to ensure that lists in x/y attributes
       # are duplicated.
-      yield self.Annotate(copy.deepcopy(g), root_node)
+      annotated_graphs.append(self.Annotate(copy.deepcopy(g), root_node))
+
+    return NetworkxDataFlowGraphs(annotated_graphs)
 
 
 # The x value for specifying the root node for iterative data flow analyses

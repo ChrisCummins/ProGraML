@@ -54,7 +54,6 @@ py_test(
         ":data_flow_graphs",
         "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
-        "//deeplearning/ml4pl/testing:random_networkx_generator",
         "//labm8/py:test",
         "//third_party/py/networkx",
     ],

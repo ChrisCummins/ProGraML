@@ -120,6 +120,7 @@ py_binary(
         "//labm8/py:jsonutil",
         "//labm8/py:progress",
         "//labm8/py:sqlutil",
+        "//third_party/py/networkx",
         "//third_party/py/sqlalchemy",
     ],
 )
@@ -132,6 +133,7 @@ py_test(
         ":graph_tuple_database",
         "//deeplearning/ml4pl/testing:random_graph_tuple_database_generator",
         "//deeplearning/ml4pl/testing:random_graph_tuple_generator",
+        "//deeplearning/ml4pl/testing:random_networkx_generator",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:decorators",
         "//labm8/py:test",

@@ -5,7 +5,6 @@ py_library(
     srcs = ["reachability.py"],
     visibility = ["//deeplearning/ml4pl/graphs/labelled/dataflow:__subpackages__"],
     deps = [
-        "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//deeplearning/ml4pl/graphs/labelled/dataflow:data_flow_graphs",
         "//labm8/py:app",
@@ -15,7 +14,7 @@ py_library(
 
 py_test(
     name = "reachability_test",
-    size = "enormous",
+    size = "large",
     srcs = ["reachability_test.py"],
     data = [
         "//deeplearning/ml4pl/testing/data:100_unlabelled_networkx_graphs",

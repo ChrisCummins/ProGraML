@@ -9,6 +9,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+import networkx as nx
 import sqlalchemy as sql
 
 from deeplearning.ml4pl import run_id
@@ -208,6 +209,33 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
         pickled_graph_tuple=pickled_graph_tuple,
       ),
     )
+
+  @classmethod
+  def CreateFromNetworkX(
+    cls, g: nx.MultiDiGraph, ir_id: int, split: Optional[int] = None,
+  ) -> "GraphTuple":
+    """Create a mapped database instance from the given networkx graph.
+
+    This is the preferred method of populating databases of graph tuples, as
+    it contains the boilerplate to extract and set the metadata columns, and
+    handles the join between the two data/metadata tables invisibly.
+
+    Args:
+      g: The networkx graph.
+      ir_id: The intermediate representation ID.
+      split: The split value of this graph.
+
+    Returns:
+      A GraphTuple instance.
+    """
+    graph_tuple = graph_tuple_lib.GraphTuple.CreateFromNetworkX(g)
+    mapped = cls.CreateFromGraphTuple(graph_tuple, ir_id=ir_id, split=split)
+    mapped.data_flow_steps = g.graph.get("data_flow_steps")
+    mapped.data_flow_root_node = g.graph.get("data_flow_root_node")
+    mapped.data_flow_positive_node_count = g.graph.get(
+      "data_flow_positive_node_count"
+    )
+    return mapped
 
   @classmethod
   def CreateEmpty(cls, ir_id: int) -> "GraphTuple":
