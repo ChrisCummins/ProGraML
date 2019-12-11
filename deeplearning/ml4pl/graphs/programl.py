@@ -152,6 +152,9 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
   Graph:
       * x (List[int]): ProgramGraph.x
       * y (List[int]): ProgramGraph.y
+      * data_flow_root_node: ProgramGraph.data_flow_root_node
+      * data_flow_steps: ProgramGraph.data_flow_steps
+      * data_flow_positive_node_count: ProgramGraph.data_flow_positive_node_count
 
   Nodes:
       * type (Node.Type enum): Node.type
@@ -170,6 +173,14 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
   # Add graph-level features and labels.
   g.graph["x"] = list(proto.x)
   g.graph["y"] = list(proto.y)
+  if proto.HasField("data_flow_root_node"):
+    g.graph["data_flow_root_node"] = proto.data_flow_root_node
+  if proto.HasField("data_flow_steps"):
+    g.graph["data_flow_steps"] = proto.data_flow_steps
+  if proto.HasField("data_flow_positive_node_count"):
+    g.graph[
+      "data_flow_positive_node_count"
+    ] = proto.data_flow_positive_node_count
 
   # Build the nodes.
   for i, node in enumerate(proto.node):
@@ -234,6 +245,14 @@ def NetworkXToProgramGraph(
   # Set the graph-level features and labels.
   proto.x[:] = np.array(g.graph["x"], dtype=np.int32).tolist()
   proto.y[:] = np.array(g.graph["y"], dtype=np.int32).tolist()
+  if "data_flow_root_node" in g.graph:
+    proto.data_flow_root_node = g.graph["data_flow_root_node"]
+  if "data_flow_steps" in g.graph:
+    proto.data_flow_steps = g.graph["data_flow_steps"]
+  if "data_flow_positive_node_count" in g.graph:
+    proto.data_flow_positive_node_count = g.graph[
+      "data_flow_positive_node_count"
+    ]
 
   # Create the node list.
   for node, data in g.nodes(data=True):
