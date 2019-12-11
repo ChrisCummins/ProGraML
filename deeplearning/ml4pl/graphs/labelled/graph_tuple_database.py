@@ -11,6 +11,7 @@ from typing import Tuple
 
 import networkx as nx
 import sqlalchemy as sql
+from sqlalchemy.dialects import sqlite
 
 from deeplearning.ml4pl import run_id
 from deeplearning.ml4pl.graphs import programl_pb2
@@ -88,7 +89,12 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   call_edge_count: int = sql.Column(sql.Integer, nullable=False)
 
   # The maximum value of the 'position' attribute of edges.
-  edge_position_max: int = sql.Column(sql.Integer, nullable=False)
+  # Although this is an integral value, we store it as a float when using sqlite
+  # backend because for an unknown reason, sql.func.max(edge_position_max)
+  # returns a byte array when aggregating over sqlite backend.
+  edge_position_max: int = sql.Column(
+    sql.Integer().with_variant(sqlite.FLOAT(), "sqlite"), nullable=False
+  )
 
   # The dimensionality of node-level features and labels.
   node_x_dimensionality: int = sql.Column(
@@ -632,7 +638,7 @@ class Database(sqlutil.Database):
         ),
       )
 
-      # Ignore "empty" graph nodes.
+      # Ignore "empty" graphs.
       query = query.filter(GraphTuple.node_count > 1)
 
       # Compute the stats.
