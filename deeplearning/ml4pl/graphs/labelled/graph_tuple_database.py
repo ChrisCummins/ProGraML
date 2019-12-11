@@ -131,6 +131,11 @@ class GraphTuple(Base, sqlutil.PluralTablenameFromCamelCapsClassNameMixin):
   )
 
   @property
+  def has_data_flow(self) -> bool:
+    """Returns whether graph tuple has data flow columns."""
+    return self.data_flow_steps is not None
+
+  @property
   def edge_count(self) -> int:
     return self.control_edge_count + self.data_edge_count + self.call_edge_count
 
@@ -466,11 +471,19 @@ class Database(sqlutil.Database):
 
   @database_statistic
   def has_data_flow(self) -> bool:
-    """Return whether the graph database has data flow annotations."""
-    return (
-      self.graph_count
-      and self.graph_tuple_stats.data_flow_steps_null_count == 0
-    )
+    """Return whether the graph database has data flow annotations.
+
+    This is only true if *all* columns have data flow values.
+    """
+    return self.graph_count and not self.data_flow_null_count
+
+  @database_statistic
+  def data_flow_null_count(self) -> int:
+    """The number of database rows without data flow information.
+
+    If > 0, then has_data_flow is False.
+    """
+    return int(self.graph_tuple_stats.data_flow_steps_null_count or 0)
 
   @database_statistic
   def data_flow_steps_min(self) -> Optional[int]:
@@ -567,13 +580,7 @@ class Database(sqlutil.Database):
           + GraphTuple.data_edge_count
           + GraphTuple.call_edge_count
         ).label("edge_count_max"),
-        # Edge position max.
-        # NOTE: For some strange reason, sqlalchemy likes to interpret the
-        # value sql.func.max(GraphTuple.edge_position_max) as a bytes array.
-        # Forcing a cast to integer fixes this.
-        sql.cast(sql.func.max(GraphTuple.edge_position_max), sql.Integer).label(
-          "edge_position_max"
-        ),
+        sql.func.max(GraphTuple.edge_position_max).label("edge_position_max"),
         # Feature and label dimensionality counts. Each of these columns
         # should be one, showing that there is a single value for all graph
         # tuples.
