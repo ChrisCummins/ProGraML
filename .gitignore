@@ -126,3 +126,5 @@ __pycache__
 /deeplearning/ml4pl/scripts/**/run*.sh
 /deeplearning/ml4pl/scripts/**/slurm-*.out
 /deeplearning/ml4pl/scripts/**/README*.txt
+/data/
+/.vscode/
