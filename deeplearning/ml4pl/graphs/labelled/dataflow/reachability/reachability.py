@@ -22,11 +22,11 @@ class ReachabilityAnnotator(data_flow_graphs.NetworkXDataFlowGraphAnnotator):
   control flow path from B >> A. Non-statement nodes are never reachable.
   """
 
-  def RootNodeType(self) -> programl_pb2.Node.Type:
+  def IsValidRootNode(self, node: int, data) -> bool:
     """Reachability is a statement-based analysis."""
-    return programl_pb2.Node.STATEMENT
+    return data["type"] == programl_pb2.Node.STATEMENT
 
-  def Annotate(self, g: nx.MultiDiGraph, root_node: int) -> nx.MultiDiGraph:
+  def Annotate(self, g: nx.MultiDiGraph, root_node: int) -> None:
     """Annotate nodes in the graph with their reachability.
 
     The 'root node' annotation is a [0,1] value appended to node x vectors.
@@ -69,5 +69,3 @@ class ReachabilityAnnotator(data_flow_graphs.NetworkXDataFlowGraphAnnotator):
     g.graph["data_flow_root_node"] = root_node
     g.graph["data_flow_steps"] = data_flow_steps
     g.graph["data_flow_positive_node_count"] = reachable_node_count
-
-    return g

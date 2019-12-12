@@ -51,42 +51,18 @@ class NetworkxDataFlowGraphs(DataFlowGraphs):
 class DataFlowGraphAnnotator(object):
   """Abstract base class for implement data flow analysis graph annotators."""
 
-  def MakeAnnotated(
-    self, unlabelled_graph: programl_pb2.ProgramGraph, n: Optional[int] = None
-  ) -> DataFlowGraphs:
-    """Produce up to "n" annotated graphs.
+  def __init__(self, unlabelled_graph: programl_pb2.ProgramGraph):
+    """Constructor.
 
-    Args:
-      unlabelled_graph: The unlabelled program graph used to produce annotated
+    unlabelled_graph: The unlabelled program graph used to produce annotated
         graphs.
-      n: The maximum number of annotated graphs to produce. For analyses that
-        produce only a single graph, this parameter has no effect.
-
-    Returns:
-      An iterator of annotated program graphs.
     """
-    raise NotImplementedError("abstract class")
+    self.unlabelled_graph = unlabelled_graph
 
-
-class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
-  """A data flow annotator takes as input a networkx graph."""
-
-  def RootNodeType(self) -> programl_pb2.Node.Type:
-    """Return the Node.Type enum for root nodes."""
-    raise NotImplementedError("abstract class")
-
-  def Annotate(self, g: nx.MultiDiGraph, root_node: int) -> nx.MultiDiGraph:
-    """Annotate a networkx graph in-place."""
-    raise NotImplementedError("abstract class")
-
-  def MakeAnnotated(
-    self, unlabelled_graph: programl_pb2.ProgramGraph, n: Optional[int] = None
-  ) -> DataFlowGraphs:
+  def MakeAnnotated(self, n: int = 0) -> DataFlowGraphs:
     """Produce up to "n" annotated graphs.
 
     Args:
-      unlabelled_graph: The unlabelled program graph used to produce annotated
-        graphs.
       n: The maximum number of annotated graphs to produce. Multiple graphs are
         produced by selecting different root nodes for creating annotations.
         If `n` is provided, the number of annotated graphs generated will be in
@@ -95,29 +71,59 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
         the input graph).
 
     Returns:
-      An AnnotatedGraph instance..
+      An AnnotatedGraph instance.
     """
-    g = programl.ProgramGraphToNetworkX(unlabelled_graph)
+    raise NotImplementedError("abstract classes")
 
-    # Create a pool of candidate root nodes. A root node must be of the expected
-    # type (e.g. statement/identifier/immediate) and belong to a function, i.e.
-    # not be a "magic" node like the entry node.
-    root_nodes: List[int] = [
-      n
-      for n, data in g.nodes(data=True)
-      if data["type"] == self.RootNodeType() and data["function"] is not None
+
+class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
+  """A data flow annotator takes as input a networkx graph."""
+
+  def __init__(self, *args, **kwargs):
+    super(NetworkXDataFlowGraphAnnotator, self).__init__(*args, **kwargs)
+    self.g = programl.ProgramGraphToNetworkX(self.unlabelled_graph)
+
+    self.root_nodes = [
+      node
+      for node, data in self.g.nodes(data=True)
+      if self.IsValidRootNode(node, data)
     ]
+    self.i = -1
 
-    # Impose the limit on the maximum number of graphs to generate.
-    if n and n < len(root_nodes):
-      random.shuffle(root_nodes)
-      root_nodes = root_nodes[:n]
+  def IsValidRootNode(self, node: int, data) -> bool:
+    """Determine if the given node can be used as a root node."""
+    raise NotImplementedError("abstract class")
+
+  def Annotate(self, g: nx.MultiDiGraph, root_node: int) -> None:
+    """Annotate a networkx graph in-place."""
+    raise NotImplementedError("abstract class")
+
+  def MakeAnnotated(self, n: int = 0) -> DataFlowGraphs:
+    """Produce up to "n" annotated graphs.
+
+    Args:
+      n: The maximum number of annotated graphs to produce. Multiple graphs are
+        produced by selecting different root nodes for creating annotations.
+        If `n` is provided, the number of annotated graphs generated will be in
+        the range 1 <= x <= min(root_node_count, n). Else, the number of graphs
+        will be equal to root_node_count (i.e. one graph for each root node in
+        the input graph).
+
+    Returns:
+      An AnnotatedGraph instance.
+    """
+    if n and n < len(self.root_nodes):
+      random.shuffle(self.root_nodes)
+      root_nodes = self.root_nodes[:n]
+    else:
+      root_nodes = self.root_nodes
 
     annotated_graphs = []
     for root_node in root_nodes:
       # Note that a deep copy is required to ensure that lists in x/y attributes
       # are duplicated.
-      annotated_graph = self.Annotate(copy.deepcopy(g), root_node)
+      annotated_graph = copy.deepcopy(self.g)
+      self.Annotate(annotated_graph, root_node)
       # Ignore graphs that require no data flow steps.
       if annotated_graph.graph["data_flow_steps"]:
         annotated_graphs.append(annotated_graph)
