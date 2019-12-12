@@ -59,6 +59,12 @@ py_test(
     ],
 )
 
+sh_binary(
+    name = "flaky_make_data_flow_analysis_dataset",
+    srcs = ["flaky_make_data_flow_analysis_dataset.sh"],
+    data = [":make_data_flow_analysis_dataset"],
+)
+
 py_binary(
     name = "make_data_flow_analysis_dataset",
     srcs = ["make_data_flow_analysis_dataset.py"],
