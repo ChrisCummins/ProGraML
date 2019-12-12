@@ -32,6 +32,20 @@ py_test(
     ],
 )
 
+py_test(
+    name = "annotators_benchmark_test",
+    size = "enormous",
+    timeout = "eternal",
+    srcs = ["annotators_benchmark_test.py"],
+    deps = [
+        ":annotate",
+        ":data_flow_graphs",
+        "//deeplearning/ml4pl/testing:random_networkx_generator",
+        "//labm8/py:test",
+        "//third_party/py/networkx",
+    ],
+)
+
 py_library(
     name = "data_flow_graphs",
     srcs = ["data_flow_graphs.py"],
