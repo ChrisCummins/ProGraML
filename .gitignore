@@ -128,3 +128,6 @@ __pycache__
 /deeplearning/ml4pl/scripts/**/README*.txt
 /data/
 /.vscode/
+/deeplearning/ml4pl/.env
+/deeplearning/ml4pl/.vscode/
+
