@@ -100,6 +100,7 @@ py_test(
         ":make_data_flow_analysis_dataset",
         "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
         "//deeplearning/ml4pl/graphs/unlabelled:unlabelled_graph_database",
+        "//deeplearning/ml4pl/testing:random_programl_generator",
         "//deeplearning/ml4pl/testing:random_unlabelled_graph_database_generator",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:app",
