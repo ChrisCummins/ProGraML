@@ -85,14 +85,11 @@ def AbsolutePathToModule(file_path: str) -> str:
     raise OSError(f"Could not determine runfiles directory: {file_path}")
 
 
-def GuessModuleUnderTest(file_path: str) -> typing.Optional[str]:
+def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
   """Determine the module under test. Returns None if no module under test."""
-  # Load the test module and check for a MODULE_UNDER_TEST attribute. If
-  # present, this is the name of the module under test. Valid values for
-  # MODULE_UNDER_TEST are a string, e.g. 'labm8.py.app', or None.
-  spec = importutil.spec_from_file_location("module", file_path)
-  test_module = importutil.module_from_spec(spec)
-  spec.loader.exec_module(test_module)
+  # Check for a MODULE_UNDER_TEST attribute in the test module. If present, this
+  # is the name of the module under test. Valid values for MODULE_UNDER_TEST are
+  # a string, e.g. 'labm8.py.app', or None.
   if hasattr(test_module, "MODULE_UNDER_TEST"):
     return test_module.MODULE_UNDER_TEST
 
@@ -103,11 +100,10 @@ def GuessModuleUnderTest(file_path: str) -> typing.Optional[str]:
 
 @contextlib.contextmanager
 def CoverageContext(
-  file_path: str, pytest_args: typing.List[str],
+  test_module, file_path: str, pytest_args: typing.List[str],
 ) -> typing.List[str]:
-
   # Record coverage of module under test.
-  module = GuessModuleUnderTest(file_path)
+  module = GuessModuleUnderTest(test_module, file_path)
   if not module:
     app.Log(1, "Coverage disabled - no module under test")
     yield pytest_args
@@ -222,13 +218,27 @@ def RunPytestOnFileAndExit(
   if not FLAGS.test_capture_output:
     pytest_args.append("-s")
 
-  with CoverageContext(file_path, pytest_args) as pytest_args:
+  # Load the test module so that we can inspect it for attributes.
+  spec = importutil.spec_from_file_location("module", file_path)
+  test_module = importutil.module_from_spec(spec)
+  spec.loader.exec_module(test_module)
+
+  # Allow the user to add a PYTEST_ARGS = ['--foo'] list of additional
+  # arguments.
+  if hasattr(test_module, "PYTEST_ARGS"):
+    pytest_args += test_module.PYTEST_ARGS
+
+  with CoverageContext(test_module, file_path, pytest_args) as pytest_args:
     app.Log(1, "Running pytest with arguments: %s", pytest_args)
     ret = pytest.main(pytest_args)
   sys.exit(ret)
 
 
-def Fixture(scope: str = "", params: typing.Optional[typing.Any] = None):
+def Fixture(
+  scope: str = "",
+  params: typing.Optional[typing.Any] = None,
+  param_names: typing.Optional[typing.List[str]] = None,
+):
   """Construct a test fixture.
 
   This is a wrapper around pytest's fixture which enforces various project-local
@@ -253,7 +263,7 @@ def Fixture(scope: str = "", params: typing.Optional[typing.Any] = None):
   if not scope:
     raise TypeError(f"Test fixture must specify a scope")
 
-  return pytest.fixture(scope=scope, params=params)
+  return pytest.fixture(scope=scope, params=params, ids=param_names)
 
 
 def Raises(expected_exception: typing.Callable):
@@ -318,9 +328,13 @@ def XFail(reason: str = ""):
   return pytest.mark.xfail(strict=True, reason=reason)
 
 
-def Parametrize(arg_name: str, arg_values: typing.Tuple[typing.Any]):
+def Parametrize(
+  arg_name: str,
+  arg_values: typing.Tuple[typing.Any],
+  names: typing.List[str] = None,
+):
   """Create a parametrized function."""
-  return pytest.mark.parametrize(arg_name, arg_values)
+  return pytest.mark.parametrize(arg_name, arg_values, ids=names)
 
 
 def Skip(reason: str = ""):
