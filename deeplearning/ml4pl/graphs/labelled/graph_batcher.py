@@ -174,7 +174,7 @@ class GraphBatcher(object):
           f"than max_node_count={self.max_node_count}"
         )
         if self.max_node_count_limit_handler == "skip":
-          app.Warning("%s, skipping it", msg)
+          self.ctx.Warning("%s, skipping it", msg)
           return None
         if self.max_node_count_limit_handler == "error":
           raise ValueError(msg)
