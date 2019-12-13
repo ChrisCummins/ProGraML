@@ -20,9 +20,8 @@ py_binary(
 )
 
 py_test(
-    name = "annotate_binary_test",
-    size = "enormous",
-    srcs = ["annotate_binary_test.py"],
+    name = "annotate_test",
+    srcs = ["annotate_test.py"],
     data = [":annotate"],
     deps = [
         "//deeplearning/ml4pl/graphs:programl",
