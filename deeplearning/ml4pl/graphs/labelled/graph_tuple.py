@@ -173,13 +173,21 @@ class GraphTuple(NamedTuple):
     if node_y is None and graph_y is None:
       raise ValueError("Must set node_y or graph_y")
 
-    # Check that the new labels have the correct sizes.
-    if node_y is not None and node_y.shape != self.node_y.shape:
+    # If replacing existing labels, check that they have the same size.
+    if (
+      self.node_y is not None
+      and node_y is not None
+      and node_y.shape != self.node_y.shape
+    ):
       raise TypeError(
         f"New node_y shape {node_y.shape} does not match "
         f"existing shape {self.node_y.shape}"
       )
-    if graph_y is not None and graph_y.shape != self.graph_y.shape:
+    if (
+      self.graph_y is not None
+      and graph_y is not None
+      and graph_y.shape != self.graph_y.shape
+    ):
       raise TypeError(
         f"New graph_y shape {graph_y.shape} does not match "
         f"existing shape {self.graph_y.shape}"
