@@ -332,6 +332,9 @@ load(
 
 protobuf_pip_install()
 
+# Load and build all requirements.
+# TODO(github.com/ChrisCummins/phd/issues/58): Break apart requirements.txt,
+# using one pip_import per package.
 pip_import(
     name = "requirements",
     timeout = 3600,
