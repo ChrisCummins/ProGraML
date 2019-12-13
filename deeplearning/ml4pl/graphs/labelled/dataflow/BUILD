@@ -123,3 +123,20 @@ py_test(
         "//third_party/py/sqlalchemy",
     ],
 )
+
+py_binary(
+    name = "split",
+    srcs = ["split.py"],
+    deps = [
+        "//deeplearning/ml4pl/graphs/labelled:graph_database_reader",
+        "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
+        "//deeplearning/ml4pl/ir:ir_database",
+        "//deeplearning/ml4pl/ir:split",
+        "//labm8/py:app",
+        "//labm8/py:humanize",
+        "//labm8/py:prof",
+        "//third_party/py/numpy",
+        "//third_party/py/scikit_learn",
+        "//third_party/py/sqlalchemy",
+    ],
+)

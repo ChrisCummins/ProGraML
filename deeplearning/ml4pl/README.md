@@ -75,6 +75,22 @@ Where `$ANALYSIS` is one of:
  * `alias_set` Pointer alias sets.
  * `polyhedra` Polyhedral SScoP regions.
 
+Split the database using:
+
+```sh
+$ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
+    --graph_db="file:///var/phd/db/cc1.mysql?programl_reachability" \
+    --ir_db="file:///var/phd/db/cc1.mysql?programl_ir"
+
+$ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
+    --graph_db="file:///var/phd/db/cc1.mysql?programl_reachability" \
+    --copy_splits_to="file:///var/phd/db/cc1.mysql?programl_domtree"
+
+$ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
+    --graph_db="file:///var/phd/db/cc1.mysql?programl_reachability" \
+    --copy_splits_to="file:///var/phd/db/cc1.mysql?programl_liveness"
+```
+
 #### Heterogeneous Device Mapping
 
 We provide a dataset of heterogeneous device mapping benchmarks for two devices:
