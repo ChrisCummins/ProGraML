@@ -114,8 +114,7 @@ using `--helpfull`. Some of the relevant options are:
 
 * `--test_on=improvement`: One of `{improvement,every}`
 * `--keep_checkpoints=all`: One of `{all,last}`
-* TODO (not yet implemented, all detailed batches are stored): 
-`--detailed_batch_types=val,test`: A list of epoch types to make detailed batch 
+* `--detailed_batch_types=val,test`: A list of epoch types to make detailed batch 
 logs for, where the epoch type is one of `{train,val,test}`. Detailed batch logs
 store more information about the model behavior, but are not required for 
 computing aggregate model performance and can
