@@ -193,16 +193,16 @@ class GraphTuple(NamedTuple):
         f"existing shape {self.graph_y.shape}"
       )
 
-    # Determine whether to copy the underlying numpy arrays or creat new
+    # Determine whether to copy the underlying numpy arrays or create new
     # references to them.
-    new = np.copy if copy else lambda x: x
+    by_value_or_by_ref = np.copy if copy else lambda x: x
 
     return GraphTuple(
-      adjacencies=new(self.adjacencies),
-      edge_positions=new(self.edge_positions),
-      node_x=new(self.node_x),
+      adjacencies=by_value_or_by_ref(self.adjacencies),
+      edge_positions=by_value_or_by_ref(self.edge_positions),
+      node_x=by_value_or_by_ref(self.node_x),
       node_y=node_y,
-      graph_x=new(self.graph_x),
+      graph_x=by_value_or_by_ref(self.graph_x),
       graph_y=graph_y,
     )
 
