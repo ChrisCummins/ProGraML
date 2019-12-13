@@ -37,6 +37,15 @@ app.DEFINE_integer(
   0,
   "The maximum number of nodes to include in a batch of graphs.",
 )
+app.DEFINE_string(
+  "max_node_count_limit_handler",
+  "error",
+  "This determines what happens when we try to batch a graph which exceeds "
+  "--graph_batch_node_count. Possible values are: skip (skip the graph but "
+  "print a warning), error (raise an error), or include (include the graph in "
+  "the batch anyway). This flag has no effect when --graph_batch_node_count "
+  "is not set.",
+)
 app.DEFINE_output_path(
   "graph_batch_outdir",
   None,
@@ -56,6 +65,7 @@ class GraphBatcher(object):
     max_graph_count: int = 0,
     exact_graph_count: int = 0,
     max_node_count: int = 0,
+    max_node_count_limit_handler: str = "error",
     ctx: progress.ProgressContext = progress.NullContext,
   ):
     """Constructor.
@@ -69,12 +79,18 @@ class GraphBatcher(object):
         exact size. If zero, no exact graph count is used.
       max_node_count: The maximum number of graphs to include in a batch, across
         all graphs. If zero, the number of nodes is not limited.
+      max_node_count_limit_handler: Determines what happens when we try to
+        batch a graph which exceeds max_node_count. Possible values are: skip
+        (skip the graph but print a warning), error (raise an error), or
+        include (include the graph in the batch anyway). Has no effect when
+        max_node_count is not set.
       ctx: A progress context.
     """
     self.graphs = graphs
     self.max_graph_count = max_graph_count
     self.exact_graph_count = exact_graph_count
     self.max_node_count = max_node_count
+    self.max_node_count_limit_handler = max_node_count_limit_handler
     self.ctx = ctx
 
     # Hold onto the last read graph so that if we don't decide to include it in
@@ -151,10 +167,24 @@ class GraphBatcher(object):
     try:
       graph = next(self.graphs)
       if self.max_node_count and graph.node_count > self.max_node_count:
-        raise ValueError(
+        # Determine the behaviour when we find a graph that is larger than
+        # the graph node limit.
+        msg = (
           f"Graph with node_count={graph.node_count} is larger "
           f"than max_node_count={self.max_node_count}"
         )
+        if self.max_node_count_limit_handler == "skip":
+          app.Warning("%s, skipping it", msg)
+          return None
+        if self.max_node_count_limit_handler == "error":
+          raise ValueError(msg)
+        elif self.max_node_count_limit_handler == "include":
+          return graph
+        else:
+          raise app.UsageError(
+            "Unknown max_node_count_limit_handler: "
+            f"{self.max_node_count_limit_handler}"
+          )
       return graph
     except StopIteration:  # We have run out of graphs.
       return None
@@ -170,6 +200,7 @@ class GraphBatcher(object):
       max_graph_count=FLAGS.graph_batch_size,
       exact_graph_count=FLAGS.graph_batch_exact_size,
       max_node_count=FLAGS.graph_batch_node_count,
+      max_node_count_limit_handler=FLAGS.max_node_count_limit_handler,
       ctx=ctx,
     )
 
