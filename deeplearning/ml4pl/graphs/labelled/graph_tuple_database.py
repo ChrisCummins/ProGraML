@@ -690,9 +690,9 @@ class Database(sqlutil.Database):
           set(
             [
               row.split
-              for row in session.query(GraphTuple.split).group_by(
-                GraphTuple.split
-              )
+              for row in session.query(GraphTuple.split)
+              .filter(GraphTuple.split != None)
+              .group_by(GraphTuple.split)
             ]
           )
         )
