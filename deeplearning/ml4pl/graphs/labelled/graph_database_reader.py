@@ -107,18 +107,17 @@ class BufferedGraphReader(object):
     # entries. Ignore those.
     self.filters.append(lambda: graph_tuple_database.GraphTuple.node_count > 1)
 
+    if not self.db.graph_count:
+      raise ValueError(f"Database contains no graphs: {self.db.url}")
+
     with ctx.Profile(
       3,
       lambda _: (
         f"Selected {humanize.Commas(self.n)} of "
-        f"{humanize.Commas(self.total_graph_count)} graphs from database"
+        f"{humanize.Commas(self.db.graph_count)} graphs from database"
       ),
     ):
       with db.Session() as session:
-        self.total_graph_count = session.query(
-          sql.func.count(graph_tuple_database.GraphTuple.id)
-        ).scalar()
-
         # Random ordering means that we can't use
         # labm8.py.sqlutil.OffsetLimitBatchedQuery() to read results as each
         # query will produce a different random order. Instead, first run a
