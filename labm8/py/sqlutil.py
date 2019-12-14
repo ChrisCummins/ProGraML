@@ -337,7 +337,7 @@ def EnableSqliteForeignKeysCallback(dbapi_connection, connection_record):
     cursor.close()
 
 
-def ResolveUrl(url: str):
+def ResolveUrl(url: str, use_flags: bool = True):
   """Resolve the URL of a database.
 
   The following modifications are supported:
@@ -348,6 +348,9 @@ def ResolveUrl(url: str):
 
   Args:
     url: The URL to expand, e.g. `file://path/to/file.txt?arg'
+    use_flags: Determine whether behaviour is dictated by the FLAGS variables.
+      Set this to False only when resolving database URLs before flags parsing,
+      e.g. in enumerating test fixtures.
 
   Returns:
     The URL as interpreted by reading any URL file.
@@ -379,7 +382,9 @@ def ResolveUrl(url: str):
     # Append the suffix.
     url += suffix
 
-  if url.startswith("mysql://") and FLAGS.mysql_assume_utf8_charset:
+  if (
+    use_flags and url.startswith("mysql://") and FLAGS.mysql_assume_utf8_charset
+  ):
     url += "?charset=utf8"
 
   return url
