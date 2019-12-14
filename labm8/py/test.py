@@ -237,7 +237,8 @@ def RunPytestOnFileAndExit(
 def Fixture(
   scope: str = "",
   params: typing.Optional[typing.Any] = None,
-  param_names: typing.Optional[typing.List[str]] = None,
+  names: typing.Optional[typing.List[str]] = None,
+  namer: typing.Optional[typing.Callable[[typing.Any], str]] = None,
 ):
   """Construct a test fixture.
 
@@ -250,20 +251,35 @@ def Fixture(
     scope: The scope of the fixture. One of {function, class, package, module}.
     params: An optional list of parameters which will cause multiple invocations
       of the fixture function and all of the tests using it.
+    names: A list of names for the params. These will be printed during test
+      execution. If not provided, pytest will try to guess a good name.
+    namer: A callback that receives items from `params` lists and produces
+      param names. Overrides the `names` argument.
 
-  Usage:
+  For example, to create a session-level fixture with a constant value:
 
-      @test.Fixture
+      @test.Fixture(scope="session")
       def foo() -> int:
         return 5
 
       def test_foo(foo: int):
         assert foo == 5
+
+  To produce a function-level fixture with parameterized values:
+
+    @test.Fixture(scope="function",
+                  params=(False, True),
+                  names=("no_log_to_file", "log_to_file")
+    def logger(request) -> MyLogger:
+      return MyLogger(log_to_file=request.param)
   """
   if not scope:
     raise TypeError(f"Test fixture must specify a scope")
 
-  return pytest.fixture(scope=scope, params=params, ids=param_names)
+  if namer:
+    names = [namer(param) for param in params]
+
+  return pytest.fixture(scope=scope, params=params, ids=names)
 
 
 def Raises(expected_exception: typing.Callable):
