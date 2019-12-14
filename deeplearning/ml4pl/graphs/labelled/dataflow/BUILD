@@ -22,8 +22,9 @@ py_binary(
 py_test(
     name = "annotate_test",
     srcs = ["annotate_test.py"],
-    data = [":annotate"],
     deps = [
+        ":annotate",
+        ":data_flow_graphs",
         "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//deeplearning/ml4pl/testing:random_programl_generator",

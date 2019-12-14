@@ -14,6 +14,10 @@ from labm8.py import app
 
 FLAGS = app.FLAGS
 
+###############################################################################
+# Graph collections.
+###############################################################################
+
 
 class DataFlowGraphs(object):
   """A set of data-flow annotated graphs that abstract the the difference
@@ -48,6 +52,33 @@ class NetworkxDataFlowGraphs(DataFlowGraphs):
     return [programl.NetworkXToProgramGraph(g) for g in self.graphs]
 
 
+###############################################################################
+# Analysis errors.
+###############################################################################
+
+
+class AnalysisFailed(ValueError):
+  """An error raised if the analysis failed."""
+
+  pass
+
+
+class AnalysisTimeout(AnalysisFailed):
+  def __init__(self, timeout: int):
+    self.timeout = timeout
+
+  def __repr__(self) -> str:
+    return f"Analysis failed to complete within {self.timeout} seconds"
+
+  def __str__(self) -> str:
+    return repr(self)
+
+
+###############################################################################
+# Analysis interfaces.
+###############################################################################
+
+
 class DataFlowGraphAnnotator(object):
   """Abstract base class for implement data flow analysis graph annotators."""
 
@@ -72,6 +103,10 @@ class DataFlowGraphAnnotator(object):
 
     Returns:
       An AnnotatedGraph instance.
+
+    Raises:
+      AnalysisFailed: If the analysis fails.
+      AnalysisTimeout: If the analysis times out.
     """
     raise NotImplementedError("abstract classes")
 
@@ -111,6 +146,10 @@ class NetworkXDataFlowGraphAnnotator(DataFlowGraphAnnotator):
 
     Returns:
       An AnnotatedGraph instance.
+
+    Raises:
+      AnalysisFailed: If the analysis fails.
+      AnalysisTimeout: If the analysis times out.
     """
     if n and n < len(self.root_nodes):
       random.shuffle(self.root_nodes)
