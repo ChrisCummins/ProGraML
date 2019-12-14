@@ -68,6 +68,16 @@ app.DEFINE_string(
   "Run tests with statement coverage and write coverage.py data files to "
   "this directory. The directory is created. Existing files are untouched.",
 )
+app.DEFINE_boolean(
+  "pdb_on_error",
+  False,
+  "Drop into an interactive PDB debugger session on every test failure.",
+)
+app.DEFINE_list(
+  "pytest_args",
+  [],
+  "A list of additional arguments to pass to the pytest invocation.",
+)
 
 
 def AbsolutePathToModule(file_path: str) -> str:
@@ -218,10 +228,17 @@ def RunPytestOnFileAndExit(
   if not FLAGS.test_capture_output:
     pytest_args.append("-s")
 
+  # Drop into interactive PDB debugger session if a test fails.
+  if FLAGS.pdb_on_error:
+    pytest_args.append("--pdb")
+
   # Load the test module so that we can inspect it for attributes.
   spec = importutil.spec_from_file_location("module", file_path)
   test_module = importutil.module_from_spec(spec)
   spec.loader.exec_module(test_module)
+
+  # Add the --pytest_args requested by the user.
+  pytest_args += FLAGS.pytest_args
 
   # Allow the user to add a PYTEST_ARGS = ['--foo'] list of additional
   # arguments.
