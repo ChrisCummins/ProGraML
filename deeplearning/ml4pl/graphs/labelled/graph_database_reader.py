@@ -266,6 +266,7 @@ class BufferedGraphReader(object):
   @classmethod
   def CreateFromFlags(
     cls,
+    graph_db: Optional[graph_tuple_database.Database] = None,
     filters: Optional[List[Callable[[], bool]]] = None,
     eager_graph_loading: bool = True,
     limit: int = None,
@@ -279,6 +280,8 @@ class BufferedGraphReader(object):
         --graph_reader_buffer_size_mb: The size of the buffer.
 
     Ars:
+      graph_db: A graph database instance. If not given, one is created from
+        --graph_db.
       filters: A list of filter callbacks.
       eager_graph_loading: Whether to load eagerly load the graph data.
       limit: The maximum number of graphs read.
@@ -286,7 +289,7 @@ class BufferedGraphReader(object):
     Returns:
       A BufferedGraphReader instance.
     """
-    graph_db = FLAGS.graph_db()
+    graph_db = graph_db or FLAGS.graph_db()
 
     if FLAGS.graph_reader_order == "in_order":
       order = BufferedGraphReaderOrder.IN_ORDER
