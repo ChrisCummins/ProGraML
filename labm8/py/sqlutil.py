@@ -13,6 +13,7 @@
 # limitations under the License.
 """Utility code for working with sqlalchemy."""
 import contextlib
+import os
 import pathlib
 import queue
 import sqlite3
@@ -345,6 +346,7 @@ def ResolveUrl(url: str, use_flags: bool = True):
       contents of the file.
     * If --mysql_assume_utf8_charset is set, then '?charset=utf8' suffix is
       appended to URLs which begin with mysql://.
+    * Shell variables are expanded.
 
   Args:
     url: The URL to expand, e.g. `file://path/to/file.txt?arg'
@@ -359,6 +361,9 @@ def ResolveUrl(url: str, use_flags: bool = True):
     ValueError: If the file path is invalid.
     FileNotFoundError: IF the file path does not exist.
   """
+  # Substitute shell variables.
+  url = os.path.expandvars(url)
+
   if url.startswith("file://"):
     # Split the URL into the file path, and the optional suffix.
     components = url.split("?")
