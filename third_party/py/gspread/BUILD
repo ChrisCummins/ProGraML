@@ -12,5 +12,6 @@ py_library(
     deps = [
         requirement("gspread"),
         requirement("gspread-dataframe"),
+        "//third_party/py/requests",
     ],
 )
