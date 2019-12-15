@@ -21,6 +21,7 @@ py_binary(
 
 py_test(
     name = "annotate_test",
+    size = "enormous",
     srcs = ["annotate_test.py"],
     deps = [
         ":annotate",
