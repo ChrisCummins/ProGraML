@@ -154,13 +154,22 @@ class GraphTuple(NamedTuple):
     else:
       return 0
 
-  def SetLabels(
-    self, node_y=None, graph_y=None, copy: bool = True
+  def SetFeaturesAndLabels(
+    self,
+    node_x=None,
+    node_y=None,
+    graph_x=None,
+    graph_y=None,
+    copy: bool = True,
   ) -> "GraphTuple":
-    """Create a graph tuple with new labels.
+    """Create a graph tuple with new features and labels.
 
     Args:
+      node_x: New node features. If not provided, the original features are
+        preserved.
       node_y: New node labels.
+      node_x: New graph features. If not provided, the original features are
+        preserved.
       graph_y: New graph labels.
       copy: If true, copy the underlying numpy arrays from the existing graph
         tuple. Else, the new graph tuple references the old one, meaning that
@@ -170,8 +179,10 @@ class GraphTuple(NamedTuple):
       A graph tuple instance.
     """
     # Check that the user provided new labels.
-    if node_y is None and graph_y is None:
-      raise ValueError("Must set node_y or graph_y")
+    if (
+      node_x is None and node_y is None and graph_x is None and graph_y is None
+    ):
+      raise ValueError("Must set new features or labels")
 
     # If replacing existing labels, check that they have the same size.
     if (
@@ -193,17 +204,22 @@ class GraphTuple(NamedTuple):
         f"existing shape {self.graph_y.shape}"
       )
 
-    # Determine whether to copy the underlying numpy arrays or create new
-    # references to them.
-    by_value_or_by_ref = np.copy if copy else lambda x: x
+    def ByValueOrByRef(x: Optional[np.array]) -> Optional[np.array]:
+      """Determine whether to copy the underlying numpy arrays or create new
+      references to them.
+      """
+      if copy and x is not None:
+        return np.copy(x)
+      else:
+        return x
 
     return GraphTuple(
-      adjacencies=by_value_or_by_ref(self.adjacencies),
-      edge_positions=by_value_or_by_ref(self.edge_positions),
-      node_x=by_value_or_by_ref(self.node_x),
-      node_y=node_y,
-      graph_x=by_value_or_by_ref(self.graph_x),
-      graph_y=graph_y,
+      adjacencies=ByValueOrByRef(self.adjacencies),
+      edge_positions=ByValueOrByRef(self.edge_positions),
+      node_x=ByValueOrByRef(self.node_x if node_x is None else node_x),
+      node_y=ByValueOrByRef(node_y),
+      graph_x=ByValueOrByRef(self.graph_x if graph_x is None else graph_x),
+      graph_y=ByValueOrByRef(graph_y),
     )
 
   ##############################################################################
