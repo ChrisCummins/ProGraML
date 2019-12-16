@@ -243,8 +243,8 @@ def NetworkXToProgramGraph(
     function_proto.name = function_name
 
   # Set the graph-level features and labels.
-  proto.x[:] = np.array(g.graph["x"], dtype=np.int32).tolist()
-  proto.y[:] = np.array(g.graph["y"], dtype=np.int32).tolist()
+  proto.x[:] = np.array(g.graph["x"], dtype=np.int64).tolist()
+  proto.y[:] = np.array(g.graph["y"], dtype=np.int64).tolist()
   if "data_flow_root_node" in g.graph:
     proto.data_flow_root_node = g.graph["data_flow_root_node"]
   if "data_flow_steps" in g.graph:
@@ -262,8 +262,8 @@ def NetworkXToProgramGraph(
     node_proto.preprocessed_text = data["preprocessed_text"]
     if data["function"] is not None:
       node_proto.function = function_to_idx_map[data["function"]]
-    node_proto.x[:] = np.array(data["x"], dtype=np.int32).tolist()
-    node_proto.y[:] = np.array(data["y"], dtype=np.int32).tolist()
+    node_proto.x[:] = np.array(data["x"], dtype=np.int64).tolist()
+    node_proto.y[:] = np.array(data["y"], dtype=np.int64).tolist()
 
   # Create the edge list.
   for src, dst, data in g.edges(data=True):

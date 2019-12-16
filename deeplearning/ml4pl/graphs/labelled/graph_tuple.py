@@ -290,7 +290,7 @@ class GraphTuple(NamedTuple):
     # Set the node features.
     node_x = [None] * g.number_of_nodes()
     for node, x in g.nodes(data="x"):
-      node_x[node] = np.array(x, dtype=np.int32)
+      node_x[node] = np.array(x, dtype=np.int64)
     # Shape (node_count, node_x_dimensionality):
     node_x = np.vstack(node_x)
 
@@ -304,11 +304,11 @@ class GraphTuple(NamedTuple):
       node_targets[node] = y
     else:
       # Shape (node_count, node_y_dimensionality):
-      node_y = np.vstack(node_targets).astype(np.int32)
+      node_y = np.vstack(node_targets).astype(np.int64)
 
     # Get the optional graph-level features and labels.
-    graph_x = np.array(g.graph["x"], dtype=np.int32) if g.graph["x"] else None
-    graph_y = np.array(g.graph["y"], dtype=np.int32) if g.graph["y"] else None
+    graph_x = np.array(g.graph["x"], dtype=np.int64) if g.graph["x"] else None
+    graph_y = np.array(g.graph["y"], dtype=np.int64) if g.graph["y"] else None
 
     return GraphTuple(
       adjacencies=np.array(adjacencies),
@@ -405,10 +405,10 @@ class GraphTuple(NamedTuple):
     return cls(
       adjacencies=np.array(adjacencies),
       edge_positions=np.array(edge_positions),
-      node_x=np.array(node_x, dtype=np.int32),
-      node_y=np.array(node_y, dtype=np.int32) if node_y else None,
-      graph_x=np.array(graph_x, dtype=np.int32) if graph_x else None,
-      graph_y=np.array(graph_y, dtype=np.int32) if graph_y else None,
+      node_x=np.array(node_x, dtype=np.int64),
+      node_y=np.array(node_y, dtype=np.int64) if node_y else None,
+      graph_x=np.array(graph_x, dtype=np.int64) if graph_x else None,
+      graph_y=np.array(graph_y, dtype=np.int64) if graph_y else None,
       disjoint_graph_count=disjoint_graph_count,
       disjoint_nodes_list=np.concatenate(disjoint_nodes_list),
     )
