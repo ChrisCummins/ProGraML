@@ -2,7 +2,7 @@
 
 syntax = "proto2";
 
-package phd.deeplearning.ml4pl;
+package ml4pl;
 
 // A program graph.
 message ProgramGraph {

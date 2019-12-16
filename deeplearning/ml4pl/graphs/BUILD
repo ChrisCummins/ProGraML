@@ -64,6 +64,9 @@ py_library(
 proto_library(
     name = "programl_pb",
     srcs = ["programl.proto"],
+    visibility = [
+        "//deeplearning/ml4pl/seq:__subpackages__",
+    ],
 )
 
 python_proto_library(
@@ -72,6 +75,14 @@ python_proto_library(
         "//deeplearning/ml4pl/graphs:__subpackages__",
         "//deeplearning/ml4pl/seq:__subpackages__",
         "//deeplearning/ml4pl/testing:__subpackages__",
+    ],
+    deps = [":programl_pb"],
+)
+
+cc_proto_library(
+    name = "programl_pb_cc",
+    visibility = [
+        "//deeplearning/ml4pl/seq:__subpackages__",
     ],
     deps = [":programl_pb"],
 )
