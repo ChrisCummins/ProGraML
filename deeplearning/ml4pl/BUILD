@@ -27,11 +27,21 @@ exports_repo(
     ],
 )
 
+py_library(
+    name = "filesystem_paths",
+    srcs = ["filesystem_paths.py"],
+    visibility = ["//deeplearning/ml4pl:__subpackages__"],
+    deps = [
+        "//labm8/py:app",
+    ],
+)
+
 py_binary(
     name = "run_id",
     srcs = ["run_id.py"],
     visibility = ["//deeplearning/ml4pl:__subpackages__"],
     deps = [
+        ":filesystem_paths",
         "//labm8/py:app",
         "//labm8/py:fs",
         "//labm8/py:system",

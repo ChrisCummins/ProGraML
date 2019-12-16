@@ -19,13 +19,16 @@ from typing import Union
 
 import sqlalchemy as sql
 
+from deeplearning.ml4pl import filesystem_paths
 from labm8.py import app
 from labm8.py import fs
 from labm8.py import system
 
 FLAGS = app.FLAGS
 
-_PREVIOUS_RUN_ID_PATH = pathlib.Path("/tmp/ml4pl_previous_run_id.txt")
+_PREVIOUS_RUN_ID_PATH = filesystem_paths.TemporaryFilePath(
+  "previous_run_id.txt"
+)
 
 
 RUN_ID_MAX_LEN: int = 40
@@ -180,6 +183,7 @@ class RunId(NamedTuple):
       time.sleep(1)
       return cls.GenerateGlobalUnique()
 
+    _PREVIOUS_RUN_ID_PATH.parent.mkdir(exist_ok=True, parents=True)
     fs.Write(_PREVIOUS_RUN_ID_PATH, run_id.encode("utf-8"))
 
     return RunId.FromString(run_id)
