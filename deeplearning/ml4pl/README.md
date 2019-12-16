@@ -104,7 +104,7 @@ We provide a dataset of heterogeneous device mapping benchmarks for two devices:
 $ bazel run //deeplearning/ml4pl/graphs/labelled/devmap:make_devmap_dataset -- \
     --ir_db="$DB?programl_ir" \
     --proto_db="$DB?programl_graph_protos" \
-    --graph_db="$DB?programl_devmap_nvidia" \
+    --graph_db="$DB?programl_devmap_amd" \
     --gpu='amd_tahiti_7970'
 
 $ bazel run //deeplearning/ml4pl/graphs/labelled/devmap:make_devmap_dataset -- \
