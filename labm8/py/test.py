@@ -363,10 +363,28 @@ def XFail(reason: str = ""):
 
 def Parametrize(
   arg_name: str,
-  arg_values: typing.Tuple[typing.Any],
+  arg_values: typing.Iterable[typing.Any],
   names: typing.List[str] = None,
+  namer: typing.Optional[typing.Callable[[typing.Any], str]] = None,
 ):
-  """Create a parametrized function."""
+  """Construct a parameterized test.
+
+  This is a wrapper around pytest's parameter which enforces various
+  project-local extensions such as automatic naming of parameters through a
+  `namer` callback.
+
+  Args:
+    arg_name: The name of the parameter. This must match one of the arguments
+      to the test function.
+    arg_values: A iterator over values for this parameter.
+    names: A list of names for the arg_values. These will be printed during test
+      execution. If not provided, pytest will try to guess a good name.
+    namer: A callback that receives items from `arg_values` list and produces
+      names. Overrides the `names` argument.
+  """
+  if namer:
+    names = [namer(arg) for arg in arg_values]
+
   return pytest.mark.parametrize(arg_name, arg_values, ids=names)
 
 
