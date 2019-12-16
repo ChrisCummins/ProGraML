@@ -142,7 +142,8 @@ def loop_for(seconds: int = 0, min_iteration_count=1):
     @functools.wraps(function)
     def InnerLoop(*args, **kwargs):
       """The decorator inner loop."""
-      end = time.time() + seconds
+      start = time.time()
+      end = start + seconds
       iteration_count = 0
       while time.time() < end or iteration_count < min_iteration_count:
         iteration_count += 1
@@ -151,9 +152,10 @@ def loop_for(seconds: int = 0, min_iteration_count=1):
       app.LogIf(
         seconds,
         2,
-        "Ran %s of `%s`",
+        "Ran %s of `%s` (%s /iteration)",
         humanize.Plural(iteration_count, "iteration"),
         function.__name__,
+        humanize.Duration(max(time.time() - start, 1e-7) / iteration_count),
       )
 
     return InnerLoop
