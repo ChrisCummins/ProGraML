@@ -884,6 +884,14 @@ def ResilientAddManyAndCommit(db: Database, mapped: typing.Iterable[Base]):
   return failures
 
 
+def QueryToString(query) -> str:
+  """Compile the query to inline literals in place of '?' placeholders.
+
+  See: https://stackoverflow.com/a/23835766
+  """
+  return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
+
+
 class BufferedDatabaseWriter(threading.Thread):
   """A buffered writer for adding objects to a database.
 
