@@ -35,6 +35,7 @@ py_binary(
         "//labm8/py:app",
         "//labm8/py:humanize",
         "//labm8/py:progress",
+        "//labm8/py:sqlutil",
         "//third_party/py/sqlalchemy",
     ],
 )

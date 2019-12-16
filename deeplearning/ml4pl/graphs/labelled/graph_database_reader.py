@@ -12,6 +12,7 @@ from deeplearning.ml4pl.graphs.labelled import graph_tuple_database
 from labm8.py import app
 from labm8.py import humanize
 from labm8.py import progress
+from labm8.py import sqlutil
 
 FLAGS = app.FLAGS
 
@@ -153,7 +154,8 @@ class BufferedGraphReader(object):
 
       if not self.ids_and_sizes:
         raise ValueError(
-          f"Query on database `{db.url}` returned no results: `{query}`"
+          f"Query on database `{db.url}` returned no results: "
+          f"`{sqlutil.QueryToString(query)}`"
         )
 
       # When we are limiting the number of rows and not reading the table in
