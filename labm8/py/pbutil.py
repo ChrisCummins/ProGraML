@@ -440,6 +440,24 @@ def RunProcessMessage(
   timeout_seconds: int = 360,
   env: typing.Dict[str, str] = None,
 ) -> str:
+  """Run the given command, feeding a serialized input proto to stdin.
+
+  Args:
+    cmd: The command to execute.
+    input_proto: The input message for the command.
+    timeout_seconds: The maximum number of seconds to allow the command to run
+      for.
+    env: A map of environment variables to set, overriding the default
+      environment.
+
+  Returns:
+    The raw stdout of the command as a byte array.
+
+  Raises;
+    ProtoWorkerTimeoutError: If timeout_seconds elapses without the command
+      terminating.
+    CalledProcessError: If the command terminates with a non-zero returncode.
+  """
   # Run the C++ worker process, capturing it's output.
   process = subprocess.Popen(
     ["timeout", "-s9", str(timeout_seconds)] + cmd,
@@ -448,10 +466,9 @@ def RunProcessMessage(
     env=env,
   )
   # Send the input proto to the C++ worker process.
-  # TODO: Add timeout.
   stdout, _ = process.communicate(input_proto.SerializeToString())
 
-  # TODO: Check signal value, not hardcoded int.
+  # TODO: Check signal value, not hardcoded a hardcoded kill signal.
   if process.returncode == -9 or process.returncode == 9:
     raise ProtoWorkerTimeoutError(
       cmd=cmd, timeout_seconds=timeout_seconds, returncode=process.returncode,
@@ -468,7 +485,30 @@ def RunProcessMessageToProto(
   output_proto: ProtocolBuffer,
   timeout_seconds: int = 360,
   env: typing.Dict[str, str] = None,
-):
+) -> ProtocolBuffer:
+  """Run a command that accepts a protocol buffer as input and produces a
+  protocol buffer output.
+
+  Args:
+    cmd: The command to execute.
+    input_proto: The input message for the command. This is fed to the command's
+      stdin as a serialized string.
+    output_proto: The output message for the command. The values of this proto
+      are set by the stdout of the command.
+    timeout_seconds: The maximum number of seconds to allow the command to run
+      for.
+    env: A map of environment variables to set, overriding the default
+      environment.
+
+  Returns:
+    The same protocol buffer as output_proto, with the values produced by the
+    stdout of the command.
+
+  Raises;
+    ProtoWorkerTimeoutError: If timeout_seconds elapses without the command
+      terminating.
+    CalledProcessError: If the command terminates with a non-zero returncode.
+  """
   stdout = RunProcessMessage(
     cmd, input_proto, timeout_seconds=timeout_seconds, env=env,
   )
@@ -481,7 +521,27 @@ def RunProcessMessageInPlace(
   input_proto: ProtocolBuffer,
   timeout_seconds: int = 360,
   env: typing.Dict[str, str] = None,
-):
+) -> ProtocolBuffer:
+  """Run the given command, modifying a protocol buffer inplace.
+
+  Args:
+    cmd: The command to execute.
+    input_proto: The input message for the command. This is fed to the command's
+      stdin as a serialized string.
+    timeout_seconds: The maximum number of seconds to allow the command to run
+      for.
+    env: A map of environment variables to set, overriding the default
+      environment.
+
+  Returns:
+    The same protocol buffer as input_proto, with the values produced by the
+    stdout of the command.
+
+  Raises;
+    ProtoWorkerTimeoutError: If timeout_seconds elapses without the command
+      terminating.
+    CalledProcessError: If the command terminates with a non-zero returncode.
+  """
   input_proto.ParseFromString(
     RunProcessMessage(
       cmd, input_proto, timeout_seconds=timeout_seconds, env=env,
