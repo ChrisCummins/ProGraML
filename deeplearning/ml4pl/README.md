@@ -149,6 +149,7 @@ is unique, else raise an error.
 
 #### Data Flow Analyses
 
+
 ##### Zero-R
 
 Train and evaluate a Zero-R model using:
@@ -156,25 +157,37 @@ Train and evaluate a Zero-R model using:
 ```sh
 $ bazel run //deeplearning/ml4pl/models/zero_r -- \
     --graph_db="$DB?programl_reachability_graphs" \
-    --log_db="$DB?programl_logs"
+    --log_db="$DB?programl_logs" \
+    --batch_scores_averaging_method=binary
 ```
+
 
 ##### LSTM
 
-Train and evaluate a Zero-R model using:
+Train and evaluate a LSTM node-classifier model using:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/lstm -- \
     --graph_db="$DB?programl_reachability_graphs" \
+    --proto_db="$DB?programl_graph_protos" \
     --ir_db="$DB?programl_ir" \
     --log_db="$DB?programl_logs" \
-    --nodes=statement
+    --padded_sequence_length=5000 \
+    --batch_size=64 \
+    --max_train_per_epoch=10000 \
+    --max_val_per_epoch=2000 \
+    --padded_sequence_length=5000 \
+    --test_on=improvement \
+    --batch_scores_averaging_method=binary
 ```
 
 Useful configuration options are:
 
-* `--padded_sequence_length=25000` The number of tokens to pad/truncate 
-  sequences to.
+* `--padded_sequence_length=5000` The number of tokens to pad/truncate 
+  encoded text sequences to.
+* `--padded_nodes_sequence_length=5000` The number of nodes to pad/truncate
+  segmented encoded text sequences to.
+
 
 ##### GGNN
 
