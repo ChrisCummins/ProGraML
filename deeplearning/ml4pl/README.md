@@ -93,6 +93,14 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
 $ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
     --graph_db="$DB?programl_reachability" \
     --copy_splits_to="$DB?programl_liveness"
+
+$ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
+    --graph_db="$DB?programl_reachability" \
+    --copy_splits_to="$DB?programl_datadep"
+
+$ bazel run //deeplearning/ml4pl/graphs/labelled/dataflow:split -- \
+    --graph_db="$DB?programl_reachability" \
+    --copy_splits_to="$DB?programl_subexpressions"
 ```
 
 #### Heterogeneous Device Mapping
