@@ -107,53 +107,50 @@ class GraphBatcher(object):
       A batch of graphs as a disjointed graph tuple. If there are no graphs to
       batch then None is returned.
     """
-    with self.ctx.Profile(
-      2, lambda t: f"Constructed a batch of {len(graphs)} graphs"
-    ):
-      graphs: List[graph_tuple.GraphTuple] = []
-      node_count = 0
+    graphs: List[graph_tuple.GraphTuple] = []
+    node_count = 0
 
-      while True:
-        if self.last_graph:
-          # Pop the last visited graph.
-          graph = self.last_graph
-        else:
-          # Read a new graph.
-          graph = self._ReadNextGraph()
-          if graph is None:
-            break
-
-        self.last_graph = graph
-
-        # Check if the node count fits in the batch.
-        if (
-          self.max_node_count
-          and node_count + graph.node_count > self.max_node_count
-        ):
-          break
-
-        # Check if we have enough graphs.
-        if self.max_graph_count and len(graphs) >= self.max_graph_count:
-          break
-
-        # Check if we have the exact number of graphs.
-        if self.exact_graph_count and len(graphs) == self.exact_graph_count:
-          break
-
-        graphs.append(graph)
-        node_count += graph.node_count
+    while True:
+      if self.last_graph:
         # Pop the last visited graph.
-        self.last_graph = None
-
-      if self.exact_graph_count and len(graphs) != self.exact_graph_count:
-        # We require batches of an exact size, but we don't have that many
-        # graphs to return.
-        raise StopIteration
-      if graphs:
-        # We have graphs to batch.
-        return graph_tuple.GraphTuple.FromGraphTuples(graphs)
+        graph = self.last_graph
       else:
-        raise StopIteration
+        # Read a new graph.
+        graph = self._ReadNextGraph()
+        if graph is None:
+          break
+
+      self.last_graph = graph
+
+      # Check if the node count fits in the batch.
+      if (
+        self.max_node_count
+        and node_count + graph.node_count > self.max_node_count
+      ):
+        break
+
+      # Check if we have enough graphs.
+      if self.max_graph_count and len(graphs) >= self.max_graph_count:
+        break
+
+      # Check if we have the exact number of graphs.
+      if self.exact_graph_count and len(graphs) == self.exact_graph_count:
+        break
+
+      graphs.append(graph)
+      node_count += graph.node_count
+      # Pop the last visited graph.
+      self.last_graph = None
+
+    if self.exact_graph_count and len(graphs) != self.exact_graph_count:
+      # We require batches of an exact size, but we don't have that many
+      # graphs to return.
+      raise StopIteration
+    if graphs:
+      # We have graphs to batch.
+      return graph_tuple.GraphTuple.FromGraphTuples(graphs)
+    else:
+      raise StopIteration
 
   def _ReadNextGraph(self,) -> Optional[graph_tuple.GraphTuple]:
     """Read the next graph from graph iterable, or None if no more graphs.
