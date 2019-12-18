@@ -14,6 +14,28 @@ py_library(
     ],
 )
 
+py_library(
+    name = "nx_utils",
+    srcs = ["nx_utils.py"],
+    visibility = ["//deeplearning/ml4pl/graphs:__subpackages__"],
+    deps = [
+        ":programl_pb_py",
+        "//labm8/py:app",
+        "//third_party/py/networkx",
+    ],
+)
+
+py_test(
+    name = "nx_utils_test",
+    srcs = ["nx_utils_test.py"],
+    deps = [
+        ":nx_utils",
+        ":programl",
+        ":programl_pb_py",
+        "//labm8/py:test",
+    ],
+)
+
 proto_library(
     name = "programl_pb",
     srcs = ["programl.proto"],
