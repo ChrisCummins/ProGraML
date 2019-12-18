@@ -115,7 +115,7 @@ class ProgressContext(object):
   @app.skip_log_prefix
   def Profile(self, level: int, msg: Union[str, Callable[[int], str]] = ""):
     """Return a profiling context."""
-    return prof.Profile(msg, print_to=lambda x: self.Log(level, x),)
+    return prof.Profile(msg, print_to=lambda x: self.Log(level, "%s", x),)
 
   def print(self, *args, **kwargs):
     with self.print_context():
