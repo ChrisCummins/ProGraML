@@ -177,7 +177,7 @@ $ bazel run //deeplearning/ml4pl/models/lstm -- \
     --max_train_per_epoch=10000 \
     --max_val_per_epoch=2000 \
     --padded_sequence_length=5000 \
-    --test_on=improvement \
+    --test_on=best \
     --batch_scores_averaging_method=binary
 ```
 
@@ -198,7 +198,9 @@ $ bazel run //deeplearning/ml4pl/models/ggnn -- \
     --graph_db="$DB?programl_reachability_graphs" \
     --log_db="$DB?programl_logs" \
     --graph_batch_node_count=15000 \
-    --layer_timesteps=30
+    --layer_timesteps=30 \
+    --test_on=best \
+    --batch_scores_averaging_method=binary
 ```
 
 #### Heterogeneous Device Mapping
