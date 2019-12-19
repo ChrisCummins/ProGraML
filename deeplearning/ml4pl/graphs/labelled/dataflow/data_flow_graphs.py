@@ -4,7 +4,6 @@ networkx graphs.
 import copy
 import random
 from typing import List
-from typing import Optional
 
 import networkx as nx
 
