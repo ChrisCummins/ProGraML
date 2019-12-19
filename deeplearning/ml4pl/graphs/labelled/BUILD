@@ -60,9 +60,7 @@ py_test(
     deps = [
         ":graph_database_reader",
         ":graph_tuple_database",
-        "//deeplearning/ml4pl/graphs:programl",
-        "//deeplearning/ml4pl/graphs/migrate:networkx_to_protos",
-        "//deeplearning/ml4pl/graphs/unlabelled/cdfg:random_cdfg_generator",
+        "//deeplearning/ml4pl/testing:random_graph_tuple_database_generator",
         "//deeplearning/ml4pl/testing:testing_databases",
         "//labm8/py:test",
     ],
