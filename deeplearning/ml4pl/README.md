@@ -34,22 +34,21 @@ mysql://user:pass@hostname/
 Then export the path of this file with a `file://` prefix:
 
 ```sh
-$ export DB="$HOME/mysql.txt"
-$ test -f "$DB" || echo "wrong path"
+$ export DB="file://$HOME/mysql.txt"
 ```
 
 ## Usage
 
 ### Step 1: Gather Intermediate Representations
 
-Generate `sqlite:////tmp/ir.db`, TODO. This is currently being refactored, and the existing databases have been
-migrated from an old schema.
+TODO(github.com/ChrisCummins/ProGraML/issues/7). This is currently being 
+refactored, and the existing databases have been migrated from an old schema.
 
 
 ### Step 2: Generate Program Graphs
 
-Generate `sqlite:////tmp/graph_protos.db`, TODO. This is currently being refactored, and the existing databases have been
-migrated from an old schema.
+TODO(github.com/ChrisCummins/ProGraML/issues/2): This is currently being 
+refactored, and the existing databases have been migrated from an old  schema.
 
 
 ### Step 3: Create Labelled Graphs
@@ -67,14 +66,12 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled:flaky_make_data_flow_analysis_d
 
 Where `$ANALYSIS` is one of:
  
- * `reachability` Control flow reachability.
- * `domtree` Dominator trees.
- * `liveness` Live-out variables.
- * `datadep` Data dependencies.
- * `subexpressions` Global common subexpressions.
- * `alias_set` Pointer alias sets.
- * `polyhedra` Polyhedral SScoP regions.
-
+ 1. `reachability` Control flow reachability.
+ 2. `domtree` Dominator trees.
+ 3. `liveness` Live-out variables.
+ 4. `datadep` Data dependencies.
+ 5. `subexpressions` Global common subexpressions.
+ 
 Split one of the datasets intro {train,val,test} data using:
 
 ```sh
@@ -140,7 +137,22 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled/devmap:split -- \
 Each of the models accept a common set of configuration flags, which you can see
 using `--helpfull`. Some of the relevant options are:
 
-* `--test_on=improvement`: One of `{improvement,every}`
+* `--epoch_count`: The number of epochs to run the train/val loop for.
+* `--test_on`: Determine when to run the test set. Possible values: none (never 
+  run the test set), every (test at the end of every epoch), improvement (test 
+  only when validation accuracy improves), improvent_and_last (test when 
+  validation accuracy improves, and on the last epoch), or best (restore the 
+  model with the best validation accuracy after training and test that).
+* `--stop_at`: Permit the train/val/test loop to terminate before `epoch_count`
+  iterations have completed. Valid options are: `val_acc=<float>` (stop if 
+  validation accuracy reaches the given value in the range [0,1]), 
+  `elapsed=<int>` (stop if the given number of seconds have elapsed, excluding 
+  the final test epoch if `--test_on=best` is set), or `patience=<int>` (stop if
+  <int> epochs have been performed without an improvement in validation 
+  accuracy. Multiple options can be combined in a comma-separated list, e.g.
+  `--stop_at=val_acc=.9999,elapsed=21600,patience=10` meaning stop if validation
+  accuracy meets 99.99% or if 6 hours have elapsed or if 10 epochs have been
+  performed without an improvement in validation accuracy.
 * `--keep_checkpoints=all`: One of `{all,last}`
 * `--detailed_batch_types=val,test`: A list of epoch types to make detailed batch 
 logs for, where the epoch type is one of `{train,val,test}`. Detailed batch logs
@@ -164,29 +176,36 @@ Train and evaluate a Zero-R model using:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/zero_r -- \
-    --graph_db="$DB?programl_reachability_graphs" \
-    --log_db="$DB?programl_logs" \
-    --batch_scores_averaging_method=binary
+    --graph_db="$DB?programl_${analysis}_graphs" \
+    --log_db="$DB?programl_dataflow_logs" \
+    --batch_scores_averaging_method=binary \
+    --max_train_per_epoch=10000 \
+    --max_val_per_epoch=1000 \
+    --epoch_count=1 \
+    --tag=dataflow_${analysis}_zero_r
 ```
 
 
 ##### LSTM
 
-Train and evaluate a LSTM node-classifier model using:
+Train and evaluate an statement-level LLVM IR LSTM classifier using:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/lstm -- \
-    --graph_db="$DB?programl_reachability_graphs" \
+    --graph_db="$DB?programl_${analysis}_graphs" \
     --proto_db="$DB?programl_graph_protos" \
     --ir_db="$DB?programl_ir" \
-    --log_db="$DB?programl_logs" \
-    --padded_sequence_length=5000 \
+    --log_db="$DB?programl_dataflow_logs" \
+    --epoch_count=300 \
+    --stop_at=val_acc=.9999,time=21600 \
+    --padded_sequence_length=10000 \
+    --padded_node_sequence_length=5000 \
     --batch_size=64 \
     --max_train_per_epoch=10000 \
-    --max_val_per_epoch=2000 \
-    --padded_sequence_length=5000 \
+    --max_val_per_epoch=10000 \
     --test_on=best \
-    --batch_scores_averaging_method=binary
+    --batch_scores_averaging_method=binary \
+    --tag=dataflow_${analysis}_lstm_ir
 ```
 
 Useful configuration options are:
@@ -203,13 +222,25 @@ Train and evaluate a GGNN using:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/models/ggnn -- \
-    --graph_db="$DB?programl_reachability_graphs" \
-    --log_db="$DB?programl_logs" \
+    --graph_db="$DB?programl_${analysis}_graphs" \
+    --log_db="$DB?programl_dataflow_logs" \
+    --epoch_count=300 \
+    --stop_at=val_acc=.9999,time=21600 \
     --graph_batch_node_count=15000 \
+    --max_node_count_limit_handler="skip" \
+    --max_train_per_epoch=10000 \
+    --max_val_per_epoch=10000 \
+    --batch_scores_averaging_method=binary \
+    --detailed_batch_types=test \
     --layer_timesteps=30 \
     --test_on=best \
-    --batch_scores_averaging_method=binary
+    --tag=dataflow_${analysis}_ggnn
 ```
+
+Useful configuration options are:
+
+* `--graph_batch_node_count=15000` The maximum number of nodes to include in a
+  disjoint batch of graphs.
 
 #### Heterogeneous Device Mapping
 
@@ -253,7 +284,7 @@ $ bazel run //deeplearning/ml4pl/models/lstm -- \
     --test_on=improvement_and_last \
     --k_fold \
     --epoch_count=1 \
-    --tag=devmap_amd_lstm_llvm
+    --tag=devmap_amd_lstm_ir
 ```
 
 ```sh
@@ -340,7 +371,7 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled:graph_batcher -- \
 
 #### Visualizing graphs
 
-Create graphviz graph from a pickled graph tuple:
+Create graphviz graphs from a pickled graph tuple:
 
 ```sh
 $ bazel run //deeplearning/ml4pl/graphs/labelled:graph_tuple_viz -- \
@@ -348,8 +379,13 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled:graph_tuple_viz -- \
     > $HOME/programl/graph_tuples/graph_tuple_00001.dot
 ```
 
-### Contributing
+## Contributing
 
 Pull requests and bug reports welcome. If modifying or adding code, please add
 tests. The most helpful way to report a bug is to submit a pull request which
 adds a failing test case that reproduces the bug.
+
+## License
+
+Copyright 2019 the ProGraML authors and released under the terms of the Apache
+Version 2.0 license. See LICENSE.
