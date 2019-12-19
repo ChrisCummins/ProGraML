@@ -19,25 +19,14 @@ load("//tools/bzl:exports.bzl", "exports_repo")
 
 exports_repo(
     name = "export",
-    extra_files = [
-        "docs/wip_graph/notebooks/01_deeptune_adversary.ipynb",
-        "docs/wip_graph/notebooks/02_learning_reachability.ipynb",
-        "docs/wip_graph/notebooks/03_opencl_graph_representations.ipynb",
-        "docs/wip_graph/notebooks/04_evaluating_graphnet.ipynb",
-        "docs/wip_graph/notebooks/05_evaluating_lstm_reachability.ipynb",
-        "docs/wip_graph/notebooks/06_neural_network_reachability.ipynb",
-        "docs/wip_graph/notebooks/run_notebook.sh",
-    ],
-    github_repo = "ml4pl",
+    github_repo = "ProGraML",
     move_file_mapping = {
         "deeplearning/ml4pl/README.md": "README.md",
+        "deeplearning/ml4pl/LICENSE": "LICENSE",
         "deeplearning/ml4pl/travis.yml": ".travis.yml",
     },
     targets = [
         "//deeplearning/ml4pl/...",
-        "//deeplearning/clgen/corpuses/lexer/...",
-        "//deeplearning/clgen/proto/...",
-        "//docs/wip_graph/notebooks/...",
     ],
 )
 
