@@ -11,6 +11,7 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("pytest"),
+        requirement("attrs"),  # Implicit dependency of pytest.
         requirement("pluggy"),  # Implicit dependency of pytest.
         requirement("importlib-metadata"),  # Implicit dependency of pytest.
         requirement("zipp"),  # Implicit dependency of pytest.
