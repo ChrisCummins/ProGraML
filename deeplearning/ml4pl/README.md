@@ -1,5 +1,26 @@
 # Graph-based Machine Learning for Programming Languages
 
+<!-- license -->
+<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
+  <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
+</a>
+<!-- Better code -->
+<a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
+  <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=master">
+</a>
+<!-- Travis CI -->
+<a href="https://github.com/ChrisCummins/ProGraML">
+  <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/master.svg">
+</a>
+<!-- commit counter -->
+<a href="https://github.com/ChrisCummins/ProGraML">
+  <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
+</a>
+<!-- repo size -->
+<a href="https://github.com/ChrisCummins/ProGraML">
+  <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
+</a>
+
 ## Setup
 
 ### Requirements
@@ -41,13 +62,13 @@ $ export DB="file://$HOME/mysql.txt"
 
 ### Step 1: Gather Intermediate Representations
 
-TODO(github.com/ChrisCummins/ProGraML/issues/7). This is currently being 
+TODO(github.com/ChrisCummins/ProGraML/issues/7). This is currently being
 refactored, and the existing databases have been migrated from an old schema.
 
 
 ### Step 2: Generate Program Graphs
 
-TODO(github.com/ChrisCummins/ProGraML/issues/2): This is currently being 
+TODO(github.com/ChrisCummins/ProGraML/issues/2): This is currently being
 refactored, and the existing databases have been migrated from an old  schema.
 
 
@@ -65,13 +86,13 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled:flaky_make_data_flow_analysis_d
 ```
 
 Where `$ANALYSIS` is one of:
- 
+
  1. `reachability` Control flow reachability.
  2. `domtree` Dominator trees.
  3. `liveness` Live-out variables.
  4. `datadep` Data dependencies.
  5. `subexpressions` Global common subexpressions.
- 
+
 Split one of the datasets intro {train,val,test} data using:
 
 ```sh
@@ -119,7 +140,7 @@ $ bazel run //deeplearning/ml4pl/graphs/labelled/devmap:make_devmap_dataset -- \
     --gpu='nvidia_gtx_960'
 ```
 
-We use stratified 10-fold cross-validation to evaluate models on these datasets 
+We use stratified 10-fold cross-validation to evaluate models on these datasets
 due to their small size. Create random 10-fold splits of the datasets using:
 
 ```sh
@@ -138,34 +159,34 @@ Each of the models accept a common set of configuration flags, which you can see
 using `--helpfull`. Some of the relevant options are:
 
 * `--epoch_count`: The number of epochs to run the train/val loop for.
-* `--test_on`: Determine when to run the test set. Possible values: none (never 
-  run the test set), every (test at the end of every epoch), improvement (test 
-  only when validation accuracy improves), improvent_and_last (test when 
-  validation accuracy improves, and on the last epoch), or best (restore the 
+* `--test_on`: Determine when to run the test set. Possible values: none (never
+  run the test set), every (test at the end of every epoch), improvement (test
+  only when validation accuracy improves), improvent_and_last (test when
+  validation accuracy improves, and on the last epoch), or best (restore the
   model with the best validation accuracy after training and test that).
 * `--stop_at`: Permit the train/val/test loop to terminate before `epoch_count`
-  iterations have completed. Valid options are: `val_acc=<float>` (stop if 
-  validation accuracy reaches the given value in the range [0,1]), 
-  `elapsed=<int>` (stop if the given number of seconds have elapsed, excluding 
+  iterations have completed. Valid options are: `val_acc=<float>` (stop if
+  validation accuracy reaches the given value in the range [0,1]),
+  `elapsed=<int>` (stop if the given number of seconds have elapsed, excluding
   the final test epoch if `--test_on=best` is set), or `patience=<int>` (stop if
-  <int> epochs have been performed without an improvement in validation 
+  <int> epochs have been performed without an improvement in validation
   accuracy. Multiple options can be combined in a comma-separated list, e.g.
   `--stop_at=val_acc=.9999,elapsed=21600,patience=10` meaning stop if validation
   accuracy meets 99.99% or if 6 hours have elapsed or if 10 epochs have been
   performed without an improvement in validation accuracy.
 * `--keep_checkpoints=all`: One of `{all,last}`
-* `--detailed_batch_types=val,test`: A list of epoch types to make detailed batch 
+* `--detailed_batch_types=val,test`: A list of epoch types to make detailed batch
 logs for, where the epoch type is one of `{train,val,test}`. Detailed batch logs
-store more information about the model behavior, but are not required for 
+store more information about the model behavior, but are not required for
 computing aggregate model performance and can
 grow large.
-* `--keep_detailed_batches=all`: Determines whether to remove old detailed 
+* `--keep_detailed_batches=all`: Determines whether to remove old detailed
 batches over the lifetime of a model. Valid options are `all`: keep all detailed
 batches, or `last_epoch`: delete old detailed batches at the end of every epoch.
-* `--tag=<string>`: An arbitrary string which can be used for grouping the 
+* `--tag=<string>`: An arbitrary string which can be used for grouping the
 results of multiple models when aggregating results.
 * `--noreuse_tag`: When setting a `--tag` for a run, check to see that the tag
-is unique, else raise an error. 
+is unique, else raise an error.
 
 #### Data Flow Analyses
 
@@ -210,7 +231,7 @@ $ bazel run //deeplearning/ml4pl/models/lstm -- \
 
 Useful configuration options are:
 
-* `--padded_sequence_length=5000` The number of tokens to pad/truncate 
+* `--padded_sequence_length=5000` The number of tokens to pad/truncate
   encoded text sequences to.
 * `--padded_nodes_sequence_length=5000` The number of nodes to pad/truncate
   segmented encoded text sequences to.
