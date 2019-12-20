@@ -9,11 +9,11 @@
   <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=master">
 </a>
 <!-- Travis CI -->
-<a href="https://github.com/ChrisCummins/ProGraML">
+<a href="https://travis-ci.org/ChrisCummins/ProGraML">
   <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/master.svg">
 </a>
 <!-- commit counter -->
-<a href="https://github.com/ChrisCummins/ProGraML">
+<a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
   <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
 </a>
 <!-- repo size -->

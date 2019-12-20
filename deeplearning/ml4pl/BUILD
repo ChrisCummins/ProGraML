@@ -21,6 +21,7 @@ exports_repo(
     name = "export",
     github_repo = "ProGraML",
     move_file_mapping = {
+        "deeplearning/ml4pl/bettercodehub.yml": ".bettercodehub.yml",
         "deeplearning/ml4pl/README.md": "README.md",
         "deeplearning/ml4pl/LICENSE": "LICENSE",
         "deeplearning/ml4pl/travis.yml": ".travis.yml",
