@@ -349,6 +349,13 @@ for debugging.
 
 #### Print Stats of a database
 
+A database of intermediate representations:
+
+```sh
+$ bazel run //deeplearning/ml4pl/ir:ir_database -- \
+    --ir_db="$DB?programl_ir"
+```
+
 A database of unlabelled program graphs:
 
 ```sh
