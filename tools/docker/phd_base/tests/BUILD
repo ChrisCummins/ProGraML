@@ -12,7 +12,7 @@ py3_image(
     name = "basic_app_test_image",
     testonly = 1,
     srcs = ["basic_app_test.py"],
-    base = "@base//image",
+    base = "@phd_base//image",
     main = "basic_app_test.py",
     deps = [":basic_app_test"],
 )
@@ -38,7 +38,7 @@ py3_image(
     name = "mysql_test_image",
     testonly = 1,
     srcs = ["mysql_test.py"],
-    base = "@base//image",
+    base = "@phd_base//image",
     main = "mysql_test.py",
     deps = [":mysql_test"],
 )
