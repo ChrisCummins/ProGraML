@@ -81,6 +81,7 @@ __pycache__
 # User specific settings for IntelliJ.
 /.idea/workspace.xml
 /.idea/tasks.xml
+/.ijwb
 /.project/.idea/misc.xml
 /.project/.idea/tasks.xml
 /.project/.idea/workspace.xml
