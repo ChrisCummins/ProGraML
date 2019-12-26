@@ -68,8 +68,21 @@ refactored, and the existing databases have been migrated from an old schema.
 
 ### Step 2: Generate Program Graphs
 
-TODO(github.com/ChrisCummins/ProGraML/issues/2): This is currently being
-refactored, and the existing databases have been migrated from an old  schema.
+Generate a program graph protocol buffer from an IR file using:
+
+```
+$ bazel run //deeplearning/ml4pl/graphs/unlabelled/llvm2graph -- < /tmp/foo.ll
+```
+
+The above tool is also available as a docker image:
+
+```
+$ docker pull chriscummins/llvm2graph:latest
+$ docker run -i chriscummins/llvm2graph < /tmp/foo.ll
+```
+
+TODO(github.com/ChrisCummins/ProGraML/issues/2): The scripts for generating 
+graph protos from databases of IRs are currently being refactored.
 
 
 ### Step 3: Create Labelled Graphs
