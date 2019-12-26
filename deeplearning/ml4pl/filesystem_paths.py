@@ -28,11 +28,7 @@ from labm8.py import app
 FLAGS = app.FLAGS
 
 # The root directory for storing temporary files.
-TMP_ROOT = pathlib.Path(
-  os.environ.get(
-    "ML4PL_TMP_ROOT", f"/tmp/ml4pl/{os.environ.get('USER', 'anon')}"
-  )
-).absolute()
+TMP_ROOT = pathlib.Path("~/.cache/phd/ml4pl").expanduser()
 os.environ["ML4PL_TMP_ROOT"] = str(TMP_ROOT)
 
 
