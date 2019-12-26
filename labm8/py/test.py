@@ -19,6 +19,7 @@ with the proper arguments.
 """
 import contextlib
 import inspect
+import os
 import pathlib
 import re
 import sys
@@ -231,6 +232,14 @@ def RunPytestOnFileAndExit(
   # Drop into interactive PDB debugger session if a test fails.
   if FLAGS.pdb_on_error:
     pytest_args.append("--pdb")
+
+  # Support for sharding. If a py_test target has the shard_count attribute
+  # set (in the range [1,50]), then the pytest-shard module is used to divide
+  # the tests among the shards. See https://pypi.org/project/pytest-shard/
+  if os.environ.get("TEST_TOTAL_SHARDS"):
+    num_shards = int(os.environ["TEST_TOTAL_SHARDS"])
+    shard_index = int(os.environ["TEST_SHARD_INDEX"])
+    pytest_args += [f"--shard-id={shard_index}", f"--num-shards={num_shards}"]
 
   # Load the test module so that we can inspect it for attributes.
   spec = importutil.spec_from_file_location("module", file_path)
