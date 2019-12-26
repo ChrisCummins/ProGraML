@@ -33,6 +33,7 @@ from labm8.py import app
 
 FLAGS = app.FLAGS
 
+app.DEFINE_boolean("test_coverage", False, "Run tests with coverage reporting.")
 app.DEFINE_boolean("test_color", True, "Colorize pytest output.")
 app.DEFINE_boolean(
   "test_skip_slow", False, "Skip tests that have been marked slow.",
