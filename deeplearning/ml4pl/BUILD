@@ -49,6 +49,7 @@ py_binary(
         "//labm8/py:app",
         "//labm8/py:fs",
         "//labm8/py:system",
+        "//third_party/py/fasteners",
         "//third_party/py/sqlalchemy",
     ],
 )

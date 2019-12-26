@@ -32,6 +32,7 @@ import time
 from typing import NamedTuple
 from typing import Union
 
+import fasteners
 import sqlalchemy as sql
 
 from deeplearning.ml4pl import filesystem_paths
@@ -45,6 +46,7 @@ FLAGS = app.FLAGS
 _PREVIOUS_RUN_ID_PATH = filesystem_paths.TemporaryFilePath(
   "previous_run_id.txt"
 )
+_RUN_ID_LOCK_PATH = filesystem_paths.TemporaryFilePath("run_id.lock")
 
 
 RUN_ID_MAX_LEN: int = 40
@@ -189,19 +191,23 @@ class RunId(NamedTuple):
     hostname = system.HOSTNAME[:12]
     run_id = f"{name}:{timestamp}:{hostname}"
 
-    # Check if there is already a run with this ID and, if required, wait.
-    previous_run_id = None
-    if _PREVIOUS_RUN_ID_PATH.is_file():
-      previous_run_id = fs.Read(_PREVIOUS_RUN_ID_PATH)
+    # Begin inter-process locked region.
+    with fasteners.InterProcessLock(_RUN_ID_LOCK_PATH):
+      # Check if there is already a run with this ID.
+      previous_run_id = None
+      if _PREVIOUS_RUN_ID_PATH.is_file():
+        previous_run_id = fs.Read(_PREVIOUS_RUN_ID_PATH)
 
-    if run_id == previous_run_id:
-      time.sleep(0.5)
-      return cls.GenerateGlobalUnique()
+      # The run ID is unique, so write it and return it.
+      if run_id != previous_run_id:
+        _PREVIOUS_RUN_ID_PATH.parent.mkdir(exist_ok=True, parents=True)
+        fs.Write(_PREVIOUS_RUN_ID_PATH, run_id.encode("utf-8"))
+        return RunId.FromString(run_id)
+    # End of inter-process locked region.
 
-    _PREVIOUS_RUN_ID_PATH.parent.mkdir(exist_ok=True, parents=True)
-    fs.Write(_PREVIOUS_RUN_ID_PATH, run_id.encode("utf-8"))
-
-    return RunId.FromString(run_id)
+    # We didn't get a unique run ID, so try again.
+    time.sleep(0.2)
+    return cls.GenerateGlobalUnique()
 
 
 # The public variables:
