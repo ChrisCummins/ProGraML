@@ -195,8 +195,7 @@ class RunId(NamedTuple):
       previous_run_id = fs.Read(_PREVIOUS_RUN_ID_PATH)
 
     if run_id == previous_run_id:
-      app.Log(2, "Awaiting a unique run ID")
-      time.sleep(1)
+      time.sleep(0.5)
       return cls.GenerateGlobalUnique()
 
     _PREVIOUS_RUN_ID_PATH.parent.mkdir(exist_ok=True, parents=True)
