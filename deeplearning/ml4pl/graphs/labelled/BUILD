@@ -34,6 +34,7 @@ py_test(
     name = "graph_batcher_test",
     size = "enormous",
     srcs = ["graph_batcher_test.py"],
+    shard_count = 8,
     deps = [
         ":graph_batcher",
         ":graph_tuple",
@@ -60,6 +61,7 @@ py_test(
     name = "graph_database_reader_test",
     size = "enormous",
     srcs = ["graph_database_reader_test.py"],
+    shard_count = 8,
     deps = [
         ":graph_database_reader",
         ":graph_tuple_database",
@@ -73,6 +75,7 @@ py_test(
     name = "graph_database_reader_benchmark_test",
     size = "enormous",
     srcs = ["graph_database_reader_benchmark_test.py"],
+    shard_count = 8,
     deps = [
         ":graph_database_reader",
         ":graph_tuple_database",
@@ -99,6 +102,7 @@ py_test(
     name = "graph_tuple_test",
     size = "enormous",
     srcs = ["graph_tuple_test.py"],
+    shard_count = 8,
     deps = [
         ":graph_tuple",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
@@ -139,6 +143,7 @@ py_test(
     name = "graph_tuple_database_test",
     size = "enormous",
     srcs = ["graph_tuple_database_test.py"],
+    shard_count = 8,
     deps = [
         ":graph_tuple_database",
         "//deeplearning/ml4pl/testing:random_graph_tuple_database_generator",

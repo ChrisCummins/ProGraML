@@ -57,6 +57,7 @@ py_binary(
 py_test(
     name = "run_id_test",
     srcs = ["run_id_test.py"],
+    shard_count = 3,
     deps = [
         ":run_id",
         "//labm8/py:sqlutil",

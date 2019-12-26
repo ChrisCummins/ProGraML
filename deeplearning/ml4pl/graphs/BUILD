@@ -99,6 +99,7 @@ py_test(
     name = "programl_test",
     size = "enormous",
     srcs = ["programl_test.py"],
+    shard_count = 8,
     deps = [
         ":programl",
         ":programl_pb_py",

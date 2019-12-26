@@ -35,6 +35,7 @@ py_test(
     data = [
         "//deeplearning/ml4pl/testing/data:100_unlabelled_networkx_graphs",
     ],
+    shard_count = 8,
     deps = [
         ":reachability",
         "//deeplearning/ml4pl/graphs:programl",

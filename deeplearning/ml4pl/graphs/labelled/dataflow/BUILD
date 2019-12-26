@@ -39,6 +39,7 @@ py_test(
     name = "annotate_test",
     size = "enormous",
     srcs = ["annotate_test.py"],
+    shard_count = 8,
     deps = [
         ":annotate",
         ":data_flow_graphs",
@@ -54,6 +55,7 @@ py_test(
     size = "enormous",
     timeout = "eternal",
     srcs = ["annotators_benchmark_test.py"],
+    shard_count = 8,
     deps = [
         ":annotate",
         ":data_flow_graphs",
@@ -126,8 +128,8 @@ py_binary(
 
 py_test(
     name = "make_data_flow_analysis_dataset_test",
-    size = "enormous",
     srcs = ["make_data_flow_analysis_dataset_test.py"],
+    shard_count = 8,
     deps = [
         ":make_data_flow_analysis_dataset",
         "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
