@@ -11,5 +11,7 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("urllib3"),
+        requirement("ipaddress"),  # Implicit dependency.
+        requirement("pyOpenSSL"),  # Implicit dependency.
     ],
 )
