@@ -3,7 +3,7 @@ FROM python:3.6-slim
 LABEL maintainer="Chris Cummins <chrisc.101@gmail.com>"
 
 # Put Python into /bin, needed by bazel py_binary script entrypoints.
-RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
+RUN ln -s /usr/local/bin/python3.6 /usr/bin/python && ln -s /usr/local/bin/python3.6 /usr/bin/python3
 
 # Install a few necessary bits and pieces:
 #   * a standard compiler toolchain which is needed for cldrive harnesses
@@ -18,10 +18,12 @@ RUN ln -s /usr/local/bin/python3.6 /usr/bin/python
 #   * ping is needed by //system/machines.
 #   * rsync is needed by //system/machines.
 #   * libmariadb3 is needed by //third_party/py/mysql
+#   * python3-numpy because pip-installed build is broken, see:
+#     https://github.com/numpy/numpy/issues/12977
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     binutils libgcc-7-dev libc6-dev libreadline6-dev lbzip2 git rsync \
-    libexempi-dev iputils-ping rsync libmariadb3 \
+    libexempi-dev iputils-ping rsync libmariadb3 python3-numpy \
     && rm -rf /var/lib/apt/lists/*
 
 # Dirty hack to workaround the fact that oclgrind demands libreadline.so.6, but

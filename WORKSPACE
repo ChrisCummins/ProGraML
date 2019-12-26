@@ -631,7 +631,7 @@ container_repositories()
 # Minimal python base image.
 container_pull(
     name = "phd_base",
-    digest = "sha256:ced0127e8ed4032cdd581f4c5c4a1f781e10a7ffed083ebca402f96a258b76f8",
+    digest = "sha256:d7a855d33458ac5164dced6568579e4d413a57ee502e2b2412af753842228e76",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
