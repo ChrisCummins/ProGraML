@@ -43,9 +43,6 @@ from labm8.py import system
 
 FLAGS = app.FLAGS
 
-_PREVIOUS_RUN_ID_PATH = filesystem_paths.TemporaryFilePath(
-  "previous_run_id.txt"
-)
 _RUN_ID_LOCK_PATH = filesystem_paths.TemporaryFilePath("run_id.lock")
 
 
@@ -194,14 +191,17 @@ class RunId(NamedTuple):
     # Begin inter-process locked region.
     with fasteners.InterProcessLock(_RUN_ID_LOCK_PATH):
       # Check if there is already a run with this ID.
+      previous_run_id_path = filesystem_paths.TemporaryFilePath(
+        f"previous_run_id_{name}.txt"
+      )
       previous_run_id = None
-      if _PREVIOUS_RUN_ID_PATH.is_file():
-        previous_run_id = fs.Read(_PREVIOUS_RUN_ID_PATH)
+      if previous_run_id_path.is_file():
+        previous_run_id = fs.Read(previous_run_id_path)
 
       # The run ID is unique, so write it and return it.
       if run_id != previous_run_id:
-        _PREVIOUS_RUN_ID_PATH.parent.mkdir(exist_ok=True, parents=True)
-        fs.Write(_PREVIOUS_RUN_ID_PATH, run_id.encode("utf-8"))
+        previous_run_id_path.parent.mkdir(exist_ok=True, parents=True)
+        fs.Write(previous_run_id_path, run_id.encode("utf-8"))
         return RunId.FromString(run_id)
     # End of inter-process locked region.
 
