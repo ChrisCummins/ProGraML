@@ -1,4 +1,6 @@
 # An Ubuntu environment configured for building the phd repo.
+# TODO(github.com/ChrisCummins/phd/issues/63): Clone phd repo, run configure, 
+# run bootstrap, remove phd clone.
 FROM chriscummins/phd_base_java:2019.08.06
 LABEL maintainer="Chris Cummins <chrisc.101@gmail.com>"
 
