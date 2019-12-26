@@ -79,6 +79,11 @@ app.DEFINE_list(
   [],
   "A list of additional arguments to pass to the pytest invocation.",
 )
+app.DEFINE_boolean(
+  "error_if_no_tests",
+  False,
+  "Make the test script fail if no tests are collected.",
+)
 
 
 def AbsolutePathToModule(file_path: str) -> str:
@@ -113,6 +118,11 @@ def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
 def CoverageContext(
   test_module, file_path: str, pytest_args: typing.List[str],
 ) -> typing.List[str]:
+  # No test coverage requested.
+  if not FLAGS.test_coverage:
+    yield pytest_args
+    return
+
   # Record coverage of module under test.
   module = GuessModuleUnderTest(test_module, file_path)
   if not module:
@@ -257,6 +267,16 @@ def RunPytestOnFileAndExit(
   with CoverageContext(test_module, file_path, pytest_args) as pytest_args:
     app.Log(1, "Running pytest with arguments: %s", pytest_args)
     ret = pytest.main(pytest_args)
+    # Enable pytest to silently pass if there were no tests collected.
+    # See http://doc.pytest.org/en/latest/usage.html
+    if (
+      ret == pytest.ExitCode.NO_TESTS_COLLECTED.value
+      and not FLAGS.error_if_no_tests
+    ):
+      app.Warning(
+        "The test suite was empty. Use --error_if_no_tests to make this test fail."
+      )
+      ret = 0
   sys.exit(ret)
 
 
