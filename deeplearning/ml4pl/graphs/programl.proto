@@ -62,7 +62,7 @@ message Node {
   // contents of a statement, or the name of an identifier.
   required string text = 2;
   // The pre-processed text of a node. This is the
-  required string preprocessed_text = 3;
+  optional string preprocessed_text = 3;
   // An index into the ProgramGraph.function list indicating the source function
   // for this node. Omitting this fields means the node does not belong to a
   // function, such as the case for global identifiers.

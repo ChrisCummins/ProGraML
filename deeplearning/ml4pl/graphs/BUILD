@@ -18,15 +18,50 @@
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
-py_library(
-    name = "graph_viz",
-    srcs = ["graph_viz.py"],
-    visibility = ["//visibility:public"],
+cc_library(
+    name = "graph_builder",
+    srcs = ["graph_builder.cc"],
+    hdrs = ["graph_builder.h"],
+    visibility = ["//deeplearning/ml4pl/graphs:__subpackages__"],
     deps = [
-        "//labm8/py:app",
-        "//labm8/py:fs",
-        "//labm8/py:labtypes",
-        "//third_party/py/networkx",
+        ":programl_pb_cc",
+        "//labm8/cpp:logging",
+        "//labm8/cpp:string",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+    ],
+)
+
+cc_test(
+    name = "graph_builder_test",
+    srcs = ["graph_builder_test.cc"],
+    deps = [
+        ":graph_builder",
+        "//labm8/cpp:test",
+    ],
+)
+
+cc_library(
+    name = "graphviz_converter",
+    srcs = ["graphviz_converter.cc"],
+    hdrs = ["graphviz_converter.h"],
+    visibility = ["//deeplearning/ml4pl/graphs:__subpackages__"],
+    deps = [
+        ":programl_pb_cc",
+        "//labm8/cpp:logging",
+        "//labm8/cpp:string",
+        "@boost//:graph",
+        "@com_google_absl//absl/container:flat_hash_map",
+    ],
+)
+
+cc_test(
+    name = "graphviz_converter_test",
+    srcs = ["graphviz_converter_test.cc"],
+    deps = [
+        ":graphviz_converter",
+        ":programl_pb_cc",
+        "//labm8/cpp:test",
     ],
 )
 
@@ -73,6 +108,7 @@ python_proto_library(
 cc_proto_library(
     name = "programl_pb_cc",
     visibility = [
+        "//deeplearning/ml4pl/graphs:__subpackages__",
         "//deeplearning/ml4pl/seq:__subpackages__",
     ],
     deps = [":programl_pb"],
@@ -99,7 +135,7 @@ py_test(
     name = "programl_test",
     size = "enormous",
     srcs = ["programl_test.py"],
-    shard_count = 8,
+    shard_count = 16,
     deps = [
         ":programl",
         ":programl_pb_py",

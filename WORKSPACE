@@ -93,6 +93,21 @@ load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
 
 bats_deps()
 
+# Python config. Needed by pybind11_bazel.
+
+load("//third_party/py:python_configure.bzl", "python_configure")
+
+python_configure(name = "local_config_python")
+
+# Pybind11.
+
+http_archive(
+    name = "pybind11",
+    build_file = "//:third_party/pybind11_bazel/pybind11.BUILD",
+    strip_prefix = "pybind11-2.4.3",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.4.3.tar.gz"],
+)
+
 # OpenCL headers.
 
 http_archive(
