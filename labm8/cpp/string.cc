@@ -1,11 +1,10 @@
 #include "labm8/cpp/string.h"
 
-#include "absl/strings/str_cat.h"
-#include "absl/strings/str_split.h"
-
+#include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
 
-#include <algorithm>
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_split.h"
 
 namespace labm8 {
 
@@ -99,6 +98,19 @@ string ReplaceSubstr(string &s, const string &src, const string &dst) {
 string CopyAndReplaceSubstr(const string &s, const string &src,
                             const string &dst) {
   return boost::replace_all_copy(s, src, dst);
+}
+
+void TruncateWithEllipsis(string &s, const size_t &n) {
+  if (n <= 3) {
+    return;
+  }
+
+  if (s.size() > n) {
+    s.resize(n);
+    s[n - 1] = '.';
+    s[n - 2] = '.';
+    s[n - 3] = '.';
+  }
 }
 
 }  // namespace labm8

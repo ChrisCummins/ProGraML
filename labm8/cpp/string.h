@@ -41,4 +41,8 @@ string ReplaceSubstr(string &s, const string &src, const string &dst);
 string CopyAndReplaceSubstr(const string &s, const string &src,
                             const string &dst);
 
+// If the string `s` has great than `n` characters, truncate the string to
+// n-3 and append an ellipsis.
+void TruncateWithEllipsis(string &s, const size_t &n);
+
 }  // namespace labm8
