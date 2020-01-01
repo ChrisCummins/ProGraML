@@ -128,6 +128,7 @@ cc_library(
     name = "logging",
     srcs = ["logging.cc"],
     hdrs = ["logging.h"],
+    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
         ":macros",
