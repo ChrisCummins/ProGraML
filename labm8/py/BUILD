@@ -226,6 +226,7 @@ py_test(
     data = [
         "//labm8/py/test_data:basic_app.tar",
     ],
+    shard_count = 3,
     visibility = ["//visibility:public"],
     deps = [
         ":dockerutil",
@@ -624,6 +625,7 @@ py_library(
 py_test(
     name = "progress_test",
     srcs = ["progress_test.py"],
+    shard_count = 4,
     deps = [
         ":progress",
         ":test",
