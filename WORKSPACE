@@ -3,6 +3,19 @@ workspace(name = "phd")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+# Workaround for broken python 2 tooling in rules_docker.
+# See: https://github.com/bazelbuild/rules_docker/issues/1022
+git_repository(
+    name = "containerregistry",
+    commit = "da03b395ccdc4e149e34fbb540483efce962dc64",
+    remote = "https://github.com/google/containerregistry",
+    shallow_since = "1554386789 -0400",
+)
+
+load("@containerregistry//:def.bzl", cr_repositories = "repositories")
+
+cr_repositories()
+
 http_archive(
     name = "gtest",
     sha256 = "9bf1fe5182a604b4135edc1a425ae356c9ad15e9b23f9f12a02e80184c3a249c",
