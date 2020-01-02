@@ -750,6 +750,8 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":app",
+        ":fs",
+        "//third_party/py/jupyter",
         "//third_party/py/matplotlib",
     ],
 )
