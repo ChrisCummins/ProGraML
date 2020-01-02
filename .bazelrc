@@ -15,11 +15,20 @@ test --host_force_python=PY2
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
-build --keep_going
+# Promote unused variable warnings to errors.
+build --cxxopt='-Werror=unused-variable'
+test --cxxopt='-Werror=unused-variable'
 
-# Test options:
-test --test_output=errors
+# Promote warnings about missing braces on if/else blocks to errors.
+build --cxxopt='-Werror=dangling-else'
+test --cxxopt='-Werror=dangling-else'
+
+# Default to continuing on error. Override using --keep_going=false.
+build --keep_going
 test --keep_going
+
+# Show test error output.
+test --test_output=errors
 
 # Address sanitizer
 # To use it: bazel build --config asan
