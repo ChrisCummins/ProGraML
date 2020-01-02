@@ -1,8 +1,5 @@
 # See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
 
-build --cxxopt='-std=c++14'
-test --cxxopt='-std=c++14'
-
 # This flag is set by IntelliJ. Set it here so that alternating between command
 # line and IntelliJ invocations does not reset the analysis cache.
 test --runs_per_test=1
@@ -10,7 +7,10 @@ test --runs_per_test=1
 build --workspace_status_command=tools/workspace_status.sh
 test --workspace_status_command=tools/workspace_status.sh
 
-# Build options:
+# This project uses C++14.
+build --cxxopt='-std=c++14'
+test --cxxopt='-std=c++14'
+
 build --keep_going
 
 # Test options:
