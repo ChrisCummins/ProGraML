@@ -26,7 +26,8 @@ linux: sudo apt install -y --no-install-recommends curl
 linux: sudo apt install -y --no-install-recommends wget
 linux: sudo apt install -y --no-install-recommends g++
 linux: sudo apt install -y --no-install-recommends git
-linux: sudo apt install -y --no-install-recommends ocl-icd-opencl-dev
+linux: sudo apt install -y --no-install-recommends ocl-icd-opencl-dev  # Needed for -lOpenCL
+linux: sudo apt install -y --no-install-recommends opencl-c-headers  # Needed for #include <CL/cl.h>
 linux: sudo apt install -y --no-install-recommends pkg-config
 linux: sudo apt install -y --no-install-recommends python
 linux: sudo apt install -y --no-install-recommends python-dev
