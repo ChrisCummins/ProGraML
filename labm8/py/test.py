@@ -429,7 +429,7 @@ def SkipIf(condition: bool, reason: str = ""):
   """Skip the test if the condition is met."""
   if not reason:
     raise TypeError("Must provide a reason to conditionally skip a test.")
-  return pytest.mark.skipif(condition, reason)
+  return pytest.mark.skipif(condition, reason=reason)
 
 
 def Fail(reason: str):
