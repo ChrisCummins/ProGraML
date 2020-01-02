@@ -16,5 +16,7 @@ py_library(
         requirement("nbformat"),
         requirement("prometheus_client"),
         "//third_party/py/jinja2",
+        requirement("ipython"),
+        requirement("ipython-genutils"),
     ],
 )
