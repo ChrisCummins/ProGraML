@@ -2,6 +2,7 @@
 
 # This flag is set by IntelliJ. Set it here so that alternating between command
 # line and IntelliJ invocations does not reset the analysis cache.
+build --runs_per_test=1
 test --runs_per_test=1
 
 build --workspace_status_command=tools/workspace_status.sh
