@@ -225,7 +225,7 @@ def DecimalPrefix(
     DecimalScale,
     min_scale=min_scale,
     max_scale=max_scale,
-  )
+  ).rstrip()
 
 
 def BinaryPrefix(quantity, unit, precision=1, separator=" "):
@@ -285,7 +285,8 @@ def _Prefix(quantity, unit, precision, separator, scale_callable, **args):
     0, (precision - int(math.log(abs(scaled_quantity), 10)) - 1),
   )
 
-  return print_pattern % (scaled_quantity, separator, scaled_unit)
+  string = print_pattern % (scaled_quantity, separator, scaled_unit)
+  return string.rstrip()
 
 
 # Prefixes and corresponding min_scale and max_scale for decimal formating.
