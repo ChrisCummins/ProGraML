@@ -297,6 +297,28 @@ py_library(
     ],
 )
 
+py_binary(
+    name = "gpu_scheduler",
+    srcs = ["gpu_scheduler.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":app",
+        ":humanize",
+        "//third_party/py/appdirs",
+        "//third_party/py/gputil",
+    ],
+)
+
+py_test(
+    name = "gpu_scheduler_test",
+    srcs = ["gpu_scheduler_test.py"],
+    deps = [
+        ":gpu_scheduler",
+        ":test",
+        "//third_party/py/fasteners",
+    ],
+)
+
 py_library(
     name = "io",
     srcs = ["io.py"],
