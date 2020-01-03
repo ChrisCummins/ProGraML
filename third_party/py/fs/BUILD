@@ -13,7 +13,7 @@ py_library(
         requirement("fs"),
         requirement("fs.sshfs"),
         requirement("paramiko"),
-        requirement("appdirs"),
+        "//third_party/py/appdirs",
         requirement("property-cached"),
     ],
 )
