@@ -7,9 +7,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # See: https://github.com/bazelbuild/rules_docker/issues/1022
 git_repository(
     name = "containerregistry",
-    commit = "da03b395ccdc4e149e34fbb540483efce962dc64",
-    remote = "https://github.com/google/containerregistry",
-    shallow_since = "1554386789 -0400",
+    commit = "c66b149fe6c3566a6e3e39979dc913ded439117b",
+    remote = "https://github.com/ChrisCummins/containerregistry",
+    shallow_since = "1578323818 +0000",
 )
 
 load("@containerregistry//:def.bzl", cr_repositories = "repositories")
