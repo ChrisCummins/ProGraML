@@ -1,0 +1,2 @@
+# Install python3 Jupyter kernel:
+all: python3 -m ipykernel install --user
