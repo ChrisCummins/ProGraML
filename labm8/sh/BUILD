@@ -1,4 +1,5 @@
-load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_test")
+load("@rules_bats//:bats.bzl", "bats_test")
+
 
 sh_library(
     name = "test",
