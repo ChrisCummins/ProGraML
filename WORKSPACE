@@ -82,13 +82,13 @@ boost_deps()
 # Bash testing
 
 http_archive(
-    name = "rules_bats",
+    name = "com_github_chriscummins_rules_bats",
     sha256 = "756baa4973fe0bbe3497b7c1a4ba995eac68c3213ff87aa04a7d573d30931aa6",
     strip_prefix = "rules_bats-c9ba42764c6bf7da718732282690d3f566f5773c",
     urls = ["https://github.com/ChrisCummins/rules_bats/archive/c9ba42764c6bf7da718732282690d3f566f5773c.zip"],
 )
 
-load("@rules_bats//:bats.bzl", "bats_deps")
+load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
 
 bats_deps()
 
