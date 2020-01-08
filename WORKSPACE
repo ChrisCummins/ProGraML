@@ -83,9 +83,9 @@ boost_deps()
 
 git_repository(
     name = "com_github_chriscummins_rules_bats",
-    commit = "a20f41953247f5f1188138b84d43b0fb84c1dcad",
+    commit = "6600627545380d2b32485371bed36cef49e9ff68",
     remote = "https://github.com/ChrisCummins/rules_bats.git",
-    shallow_since = "1578443981 +0000",
+    shallow_since = "1578495032 +0000",
 )
 
 load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
