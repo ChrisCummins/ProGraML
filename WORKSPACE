@@ -81,11 +81,11 @@ boost_deps()
 
 # Bash testing
 
-http_archive(
+git_repository(
     name = "com_github_chriscummins_rules_bats",
-    sha256 = "756baa4973fe0bbe3497b7c1a4ba995eac68c3213ff87aa04a7d573d30931aa6",
-    strip_prefix = "rules_bats-c9ba42764c6bf7da718732282690d3f566f5773c",
-    urls = ["https://github.com/ChrisCummins/rules_bats/archive/c9ba42764c6bf7da718732282690d3f566f5773c.zip"],
+    commit = "a20f41953247f5f1188138b84d43b0fb84c1dcad",
+    remote = "https://github.com/ChrisCummins/rules_bats.git",
+    shallow_since = "1578443981 +0000",
 )
 
 load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
@@ -644,28 +644,30 @@ _cc_image_repos()
 container_repositories()
 
 # My custom base image for bazel-compiled binaries.
-# Defined in //tools/docker/phd_base/Dockerfile.
 
 # Minimal python base image.
+# Defined in //tools/docker/phd_base:Dockerfile
 container_pull(
     name = "phd_base",
-    digest = "sha256:d7a855d33458ac5164dced6568579e4d413a57ee502e2b2412af753842228e76",
+    digest = "sha256:3fb41db45b02954e6439f5fa2fd5e0ca2ead9757575fe9125b74cf517dc13c6f",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
 
 # Same as phd_base, but with a Java environment.
+# Defined in //tools/docker/phd_base_java:Dockerfile
 container_pull(
     name = "phd_base_java",
-    digest = "sha256:31719c1233ac4be59e7c546fd53f5d164c209fa374ca73b387104fc4d0919bc1",
+    digest = "sha256:3e9c786b508e9f5471e8aeed76339e1d496a727fed80836baadb8a7a1aa69abe",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_java",
 )
 
 # Full build environment with all required toolchains.
+# Defined in //tools/docker/phd_build:Dockerfile
 container_pull(
     name = "phd_build",
-    digest = "sha256:360eaa5d9c3999856e5e360d5f037be4ee408bd228ee9180cd9a9f96a558499b",
+    digest = "sha256:9820a517922b150f8654bd5534c6d7d11fe73777e7b7fa35afc9528eb7ea20cb",
     registry = "index.docker.io",
     repository = "chriscummins/phd_build",
 )

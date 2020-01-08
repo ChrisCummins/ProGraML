@@ -10,3 +10,4 @@ docker tag phd_base chriscummins/phd_base:latest
 docker tag phd_base chriscummins/phd_base:"$version"
 docker push chriscummins/phd_base:latest
 docker push chriscummins/phd_base:"$version"
+docker rmi phd_base

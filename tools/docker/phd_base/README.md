@@ -22,12 +22,13 @@ py3_image(
 )
 ```
 
-
 ## Updating [chriscummins/phd_base](https://hub.docker.com/r/chriscummins/phd_base)
+
+This is an incredibly tedious process! In short:
 
 1. Modify `tools/docker/phd_base/Dockerfile` with your desired changes.
 2. Build and export the image using: `$ ./tools/docker/phd_base/export.sh`.
-3. Update the digest in the `WORKSPACE` file:
+4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(
     name = "phd_base",
@@ -36,4 +37,13 @@ container_pull(
     repository = "chriscummins/phd_base",
 )
 ```
-4. Update the version tag in `phd_java` docker image.
+5. Update the version tag in `phd_base_java` docker image.
+6. Run the test suite: `$ bazel run //tools/docker/phd_base/...`.
+7. Update the tags in `//tools/docker/phd_base_java:Docker`.
+
+You may find it useful to run an interactive bash shell using:
+
+```sh
+$ docker run -u root --entrypoint /bin/bash -it chriscummins/phd_base
+# apt-get update
+```
