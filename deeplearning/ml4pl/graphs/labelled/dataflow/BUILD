@@ -126,23 +126,23 @@ py_binary(
 #     deps = [":make_data_flow_analysis_dataset"],
 # )
 
-py_test(
-    name = "make_data_flow_analysis_dataset_test",
-    srcs = ["make_data_flow_analysis_dataset_test.py"],
-    shard_count = 8,
-    deps = [
-        ":make_data_flow_analysis_dataset",
-        "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
-        "//deeplearning/ml4pl/graphs/unlabelled:unlabelled_graph_database",
-        "//deeplearning/ml4pl/testing:random_programl_generator",
-        "//deeplearning/ml4pl/testing:random_unlabelled_graph_database_generator",
-        "//deeplearning/ml4pl/testing:testing_databases",
-        "//labm8/py:app",
-        "//labm8/py:progress",
-        "//labm8/py:test",
-        "//third_party/py/sqlalchemy",
-    ],
-)
+#py_test(
+#    name = "make_data_flow_analysis_dataset_test",
+#    srcs = ["make_data_flow_analysis_dataset_test.py"],
+#    shard_count = 8,
+#    deps = [
+#        ":make_data_flow_analysis_dataset",
+#        "//deeplearning/ml4pl/graphs/labelled:graph_tuple_database",
+#        "//deeplearning/ml4pl/graphs/unlabelled:unlabelled_graph_database",
+#        "//deeplearning/ml4pl/testing:random_programl_generator",
+#        "//deeplearning/ml4pl/testing:random_unlabelled_graph_database_generator",
+#        "//deeplearning/ml4pl/testing:testing_databases",
+#        "//labm8/py:app",
+#        "//labm8/py:progress",
+#        "//labm8/py:test",
+#        "//third_party/py/sqlalchemy",
+#    ],
+#)
 
 py_binary(
     name = "split",
