@@ -87,6 +87,12 @@ app.DEFINE_boolean(
 )
 
 
+# Bazel sets the $TEST_TMPDIR environment variable. If present, set this to
+# $TMPDIR, which python uses for resolving where to create test directories.
+if os.environ.get("TEST_TMPDIR"):
+  os.environ["TMPDIR"] = os.environ["TEST_TMPDIR"]
+
+
 def AbsolutePathToModule(file_path: str) -> str:
   """Determine module name from an absolute path."""
   match = re.match(r".+\.runfiles/phd/(.+)", file_path)
