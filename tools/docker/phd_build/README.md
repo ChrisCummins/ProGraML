@@ -26,10 +26,10 @@ py3_image(
 
 ## Updating [chriscummins/phd_build](https://hub.docker.com/r/chriscummins/phd_build)
 
-1. Modify `tools/docker/phd_build/Dockerfile` with your desired changes.
-2. Build and export the image using: `$ ./tools/docker/phd_build/export.sh`.
-3. Update the digest in the `WORKSPACE` file:
-
+1. Set a new project version in `//:version.txt`.
+2. Modify `tools/docker/phd_build/Dockerfile` with your desired changes.
+3. Build and export the image using: `$ ./tools/docker/phd_build/export.sh`.
+4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(
     name = "phd_build",

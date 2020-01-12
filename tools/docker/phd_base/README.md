@@ -26,8 +26,9 @@ py3_image(
 
 This is an incredibly tedious process! In short:
 
-1. Modify `tools/docker/phd_base/Dockerfile` with your desired changes.
-2. Build and export the image using: `$ ./tools/docker/phd_base/export.sh`.
+1. Set a new project version in `//:version.txt`.
+2. Modify `tools/docker/phd_base/Dockerfile` with your desired changes.
+3. Build and export the image using: `$ ./tools/docker/phd_base/export.sh`.
 4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(
@@ -37,9 +38,8 @@ container_pull(
     repository = "chriscummins/phd_base",
 )
 ```
-5. Update the version tag in `phd_base_java` docker image.
-6. Run the test suite: `$ bazel run //tools/docker/phd_base/...`.
-7. Update the tags in `//tools/docker/phd_base_java:Docker`.
+5. Run the test suite: `$ bazel test //tools/docker/phd_base/...`.
+6. Update the base tags in `//tools/docker/phd_base_java:Dockerfile`.
 
 You may find it useful to run an interactive bash shell using:
 

@@ -662,6 +662,15 @@ container_pull(
     repository = "chriscummins/phd_base_java",
 )
 
+# Same as phd_base_java, but with Tensorflow installed.
+# Defined in //tools/docker/phd_base_tf_cpu:Dockerfile
+container_pull(
+    name = "phd_base_tf_cpu",
+    digest = "sha256:910b8ad66e9f8bb1a2d32fe1dbd00cc2455a32afd8c72b5bb2b4c2e324ab00ab",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_base_tf_cpu",
+)
+
 # Full build environment with all required toolchains.
 # Defined in //tools/docker/phd_build:Dockerfile
 container_pull(
