@@ -320,24 +320,23 @@ http_archive(
 
 # Python requirements.
 
-# I use my own fork rather than the official upstream as a I have a collection
-# of workarounds that I must maintain.
-http_archive(
+# I use my own rules_python fork which adds a timeout arg to pip_import.
+git_repository(
     name = "rules_python",
-    sha256 = "de440ce1beea41ba092711ddbfebaec80c63ceb1277d7d0c67c455e283a738de",
-    strip_prefix = "rules_python-01f56e54267d047bde75499371a17b412354adcb",
-    urls = ["https://github.com/ChrisCummins/rules_python/archive/01f56e54267d047bde75499371a17b412354adcb.tar.gz"],
+    commit = "2cc99237d0cc767dc53d3137fabb2679c60f5e67",
+    remote = "git@github.com:ChrisCummins/rules_python.git",
+    shallow_since = "1578538415 +0000",
 )
 
 load(
     "@rules_python//python:pip.bzl",
-    "pip_import",
+    "pip3_import",
     "pip_repositories",
 )
 
 pip_repositories()
 
-pip_import(
+pip3_import(
     name = "protobuf_py_deps",
     timeout = 3600,
     requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
@@ -352,8 +351,8 @@ protobuf_pip_install()
 
 # Load and build all requirements.
 # TODO(github.com/ChrisCummins/phd/issues/58): Break apart requirements.txt,
-# using one pip_import per package.
-pip_import(
+# using one pip3_import per package.
+pip3_import(
     name = "requirements",
     timeout = 3600,
     requirements = "//:requirements.txt",
@@ -376,7 +375,7 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
-pip_import(
+pip3_import(
     name = "grpc_py_deps",
     timeout = 3600,
     requirements = "@build_stack_rules_proto//python:requirements.txt",
@@ -607,7 +606,7 @@ http_archive(
     urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
 )
 
-pip_import(
+pip3_import(
     name = "graknlabs_bazel_distribution_pip",
     timeout = 3600,
     requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
