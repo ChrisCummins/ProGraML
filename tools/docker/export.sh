@@ -16,7 +16,7 @@ source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
   { echo>&2 "ERROR: cannot find $f"; exit 1; }; f=
 # --- begin app init ---
 
-set -eux
+set -eu
 
 main() {
   local path="$1"
@@ -25,12 +25,11 @@ main() {
 
   local version="$(cat $(DataPath phd/version.txt))"
 
-  docker build -t "$image" "$path"
-  docker tag "$image" chriscummins/"$image":latest
-  docker tag "$image" chriscummins/"$image":"$version"
+  docker build -t chriscummins/"$image":latest "$path"
+  docker build -t chriscummins/"$image":"$version" "$path"
   docker push chriscummins/"$image":latest
   docker push chriscummins/"$image":"$version"
-  docker rmi "$image":latest
-  docker rmi "$image":"$version"
+  docker rmi chriscummins/"$image":latest
+  docker rmi chriscummins/"$image":"$version"
 }
 main "$@"
