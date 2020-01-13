@@ -750,5 +750,6 @@ http_file(
     name = "shfmt_mac",
     downloaded_file_path = "shfmt",
     executable = 1,
+    sha256 = "e470d216818a107078fbaf34807079c4857cb98610d67c96bf4dece43a56b66c",
     urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_darwin_amd64"],
 )
