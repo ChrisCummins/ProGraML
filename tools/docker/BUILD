@@ -9,3 +9,8 @@ py_binary(
         "//labm8/py:dockerutil",
     ],
 )
+
+sh_binary(
+    name = "remove_all_docker_images",
+    srcs = ["remove_all_docker_images.sh"],
+)
