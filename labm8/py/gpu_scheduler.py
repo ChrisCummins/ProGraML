@@ -32,6 +32,11 @@ lock granted to a script which has "exclusive" GPU access.
 The default arguments for LockExclusiveProcessGpuAccess() work transparently
 on systems with no GPUs. If no GPUs are available, the return value is None.
 Alternatively, use requires_gpus=True argument to raise an OSError.
+
+By default, GPUs are disabled during testing (as determined by the presence
+of $TEST_TMPDIR which bazel sets). To enable the GPUs for tests, use
+--test_with_gpu, but note that when executing large numbers of tests, they may
+have to queue and execute sequentially, causing timeouts.
 """
 import contextlib
 import functools
@@ -49,6 +54,11 @@ from labm8.py import app
 from labm8.py import humanize
 
 FLAGS = app.FLAGS
+
+app.DEFINE_boolean(
+  "test_with_gpu", False,
+  "If set, enable access to GPUs during testing."
+)
 
 _LOCK_DIR = pathlib.Path("/tmp/phd/labm8/gpu_scheduler_locks")
 
@@ -116,6 +126,9 @@ def GetDefaultScheduler() -> GpuScheduler:
   gpus = GPUtil.getGPUs()
   if not gpus:
     raise NoGpuAvailable("No GPUs available")
+
+  if os.environ.get("TEST_TMPDIR") and not FLAGS.test_with_gpu:
+    raise NoGpuAvailable("GPUs disabled for tests")
 
   app.Log(
     2, "Creating default scheduler for %s", humanize.Plural(len(gpus), "GPU")
