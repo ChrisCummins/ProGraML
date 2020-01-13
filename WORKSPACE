@@ -666,7 +666,7 @@ container_pull(
 # Defined in //tools/docker/phd_base_tf_cpu:Dockerfile
 container_pull(
     name = "phd_base_tf_cpu",
-    digest = "sha256:910b8ad66e9f8bb1a2d32fe1dbd00cc2455a32afd8c72b5bb2b4c2e324ab00ab",
+    digest = "sha256:1b5ae18329edcadd7b4d0b2358b359f405117b997161b61ab94eebdb9327a8b1",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_tf_cpu",
 )
