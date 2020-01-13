@@ -1,5 +1,5 @@
 # An Ubuntu environment configured for building the phd repo.
-# TODO(github.com/ChrisCummins/phd/issues/63): Clone phd repo, run configure, 
+# TODO(github.com/ChrisCummins/phd/issues/63): Clone phd repo, run configure,
 # run bootstrap, remove phd clone.
 FROM chriscummins/phd_base_tf_cpu:2020.01.08
 LABEL maintainer="Chris Cummins <chrisc.101@gmail.com>"
