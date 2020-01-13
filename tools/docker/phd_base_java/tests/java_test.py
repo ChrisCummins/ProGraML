@@ -8,7 +8,7 @@ FLAGS = test.FLAGS
 
 def test_javac_help():
   """Test that javac is installed."""
-  subprocess.check_call(["/usr/bin/javac", "--help"])
+  subprocess.check_call(["/usr/bin/javac", "-help"])
 
 
 if __name__ == "__main__":
