@@ -1,6 +1,6 @@
 # Docker image: phd_build
 
-A self-contained environment configured to build and run the code in this 
+A self-contained environment configured to build and run the code in this
 project.
 
 
@@ -28,7 +28,7 @@ py3_image(
 
 1. Set a new project version in `//:version.txt`.
 2. Modify `tools/docker/phd_build/Dockerfile` with your desired changes.
-3. Build and export the image using: `$ ./tools/docker/phd_build/export.sh`.
+3. Build and export the image using: `$ bazel run //tools/docker:export -- $PHD/tools/docker/phd_build`.
 4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(

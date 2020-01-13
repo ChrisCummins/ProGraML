@@ -6,7 +6,7 @@ An extension of `phd_base_java` with CPU-only Tensorflow.
 
 1. Set a new project version in `//:version.txt`.
 2. Modify `tools/docker/phd_base_tf_cpu/Dockerfile` with your desired changes.
-3. Build and export the image using: `$ ./tools/docker/phd_base_tf_cpu/export.sh`.
+3. Build and export the image using: `$ bazel run //tools/docker:export -- $PHD/tools/docker/phd_base_tf_cpu`.
 4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(

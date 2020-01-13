@@ -21,7 +21,7 @@ py3_image(
 
 1. Set a new project version in `//:version.txt`.
 2. Modify `tools/docker/phd_base/Dockerfile` with your desired changes.
-3. Build and export the image using: `$ ./tools/docker/phd_base/export.sh`.
+3. Build and export the image using: `$ bazel run //tools/docker:export -- $PHD/tools/docker/phd_base_java`.
 4. Update the digest in the `WORKSPACE` file:
 ```
 container_pull(
