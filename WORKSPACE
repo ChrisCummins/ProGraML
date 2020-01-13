@@ -706,19 +706,31 @@ go_repository(
 )
 
 go_repository(
-    name = "com_github_jinzhu_inflection",
-    commit = "f5c5f50e6090ae76a29240b61ae2a90dd810112e",
-    importpath = "github.com/jinzhu/inflection",
-)
-
-go_repository(
-    name = "com_github_mattn_go_sqlite3",
-    commit = "5dd71670cca4bc0ee90371eabd0f1bdba1ac6f35",
-    importpath = "github.com/mattn/go-sqlite3",
-)
-
-go_repository(
     name = "com_github_bazelbuild_buildtools",
     commit = "c4e649df7ade24c3662729fdabd7bcff67866fef",
     importpath = "github.com/bazelbuild/buildtools",
+)
+
+go_repository(
+    name = "com_github_golang_go",
+    commit = "641e61db57f176e33828ed5354810fa3f13ac76d",
+    importpath = "github.com/golang/gp",
+)
+
+# Pre-built go binaries.
+
+http_archive(
+    name = "go_linux",
+    build_file = "//:third_party/go.BUILD",
+    sha256 = "a1bc06deb070155c4f67c579f896a45eeda5a8fa54f35ba233304074c4abbbbd",
+    strip_prefix = "go",
+    urls = ["https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz"],
+)
+
+http_archive(
+    name = "go_mac",
+    build_file = "//:third_party/go.BUILD",
+    sha256 = "1ee0dc6a7abf389dac898cbe27e28c4388a61e45cba2632c01d749e25003007f",
+    strip_prefix = "go",
+    urls = ["https://dl.google.com/go/go1.13.6.darwin-amd64.tar.gz"],
 )
