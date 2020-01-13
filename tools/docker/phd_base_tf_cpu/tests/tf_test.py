@@ -1,4 +1,5 @@
 """Test that Tensorflow works."""
+import site
 import sys
 
 from labm8.py import test
@@ -9,6 +10,7 @@ FLAGS = test.FLAGS
 def test_import_tensorflow():
   print("Python executable:", sys.executable)
   print("Python version:", sys.version)
+  print("Python site packages:", site.getsitepackages())
 
   from third_party.py.tensorflow import tf as tensorflow
 
