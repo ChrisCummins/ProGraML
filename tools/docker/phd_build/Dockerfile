@@ -27,6 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   patch \
   zip \
   m4 \
+  # SSH is required by bazel for pulling in dependencies.
+  openssh-client \
   # Docker
   docker.io \
   # Tidy up.
