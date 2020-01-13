@@ -61,6 +61,7 @@ python_configure(name = "local_config_python")
 http_archive(
     name = "pybind11",
     build_file = "//:third_party/pybind11_bazel/pybind11.BUILD",
+    sha256 = "1eed57bc6863190e35637290f97a20c81cfe4d9090ac0a24f3bbf08f265eb71d",
     strip_prefix = "pybind11-2.4.3",
     urls = ["https://github.com/pybind/pybind11/archive/v2.4.3.tar.gz"],
 )
