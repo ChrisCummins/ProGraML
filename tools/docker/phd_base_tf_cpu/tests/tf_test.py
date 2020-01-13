@@ -2,6 +2,7 @@
 import importlib
 import os
 import sys
+import pathlib
 
 from labm8.py import test
 
@@ -12,22 +13,10 @@ def test_import_tensorflow():
   print("Python executable:", sys.executable)
   print("Python version:", sys.version)
 
-  import site
-
-  print("Site packages:", site.getsitepackages())
-
-  import pathlib
-
-  assert pathlib.Path(
-    "/usr/local/lib/python3.7/site-packages/tensorflow"
-  ).is_file()
-  print(
-    list(
-      pathlib.Path(
-        "/usr/local/lib/python3.7/site-packages/tensorflow"
-      ).iterdir()
-    )
-  )
+  # Monkey-patch the PYPHONPATH to enable import of system tensorflow package
+  # in chriscummins/phd_base_tf_cpu docker image.
+  if pathlib.Path("/usr/local/lib/python3.7/site-packages/tensorflow").is_dir():
+    sys.path.insert(0, "/usr/local/lib/python3.7/site-packages")
 
   try:
     import tensorflow
