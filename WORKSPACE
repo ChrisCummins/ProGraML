@@ -1,6 +1,6 @@
 workspace(name = "phd")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # Workaround for broken python 2 tooling in rules_docker.
@@ -733,4 +733,22 @@ http_archive(
     sha256 = "1ee0dc6a7abf389dac898cbe27e28c4388a61e45cba2632c01d749e25003007f",
     strip_prefix = "go",
     urls = ["https://dl.google.com/go/go1.13.6.darwin-amd64.tar.gz"],
+)
+
+# Pre-compiled shfmt binary
+# https://github.com/mvdan/sh
+
+http_file(
+    name = "shfmt_linux",
+    downloaded_file_path = "shfmt",
+    executable = 1,
+    sha256 = "86892020280d923976ecaaad1e7db372d37dce3cfaad44a7de986f7eb728eae7",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_linux_amd64"],
+)
+
+http_file(
+    name = "shfmt_mac",
+    downloaded_file_path = "shfmt",
+    executable = 1,
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_darwin_amd64"],
 )
