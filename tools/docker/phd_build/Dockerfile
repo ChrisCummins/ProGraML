@@ -1,7 +1,7 @@
 # An Ubuntu environment configured for building the phd repo.
-# TODO(github.com/ChrisCummins/phd/issues/63): Clone phd repo, run configure, 
+# TODO(github.com/ChrisCummins/phd/issues/63): Clone phd repo, run configure,
 # run bootstrap, remove phd clone.
-FROM chriscummins/phd_base_java:2019.08.06
+FROM chriscummins/phd_base_tf_cpu:2020.01.08
 LABEL maintainer="Chris Cummins <chrisc.101@gmail.com>"
 
 # Switch back to root user to do the installation admin.
@@ -12,23 +12,32 @@ USER root
 # timezone.
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install packages required to build the code.
+# Install packages.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  curl unzip default-libmysqlclient-dev g++ zlib1g-dev ocl-icd-opencl-dev python \
-  apt-transport-https ca-certificates gnupg-agent \
-  software-properties-common texlive-full rsync patch zip m4 \
+  # Packages required to build code.
+  unzip \
+  g++ \
+  zlib1g-dev \
+  ocl-icd-opencl-dev \
+  python \
+  apt-transport-https \
+  ca-certificates gnupg-agent \
+  software-properties-common \
+  texlive-full \
+  patch \
+  zip \
+  m4 \
+  # SSH is required by bazel for pulling in dependencies.
+  openssh-client \
+  # Docker
+  docker.io \
+  # Tidy up.
   && rm -rf /var/lib/apt/lists/*
 
-# Install docker (needed to build docker images).
-RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 \
-    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" \
-    && rm -rf /var/lib/apt/lists/*
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io=1.2.2-3 \
-    && rm -rf /var/lib/apt/lists/*
-
 # Install golang.
+RUN apt update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 RUN curl https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz > /tmp/go.tar.gz \
     && tar -C /usr/local -xzf /tmp/go.tar.gz \
     && rm /tmp/go.tar.gz
@@ -46,7 +55,7 @@ RUN apt update \
     && apt-get install -y --no-install-recommends clang-format wget \
     && go get github.com/bazelbuild/buildtools/buildifier \
     && go get github.com/uber/prototool/cmd/prototool \
-    && python -m pip install black-2spaces sqlparse \
+    && python -m pip install sqlparse \
     && npm install -g js-beautify jsonlint \
     && wget https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_386 -O /usr/local/bin/shfmt \
     && chmod +x /usr/local/bin/shfmt \

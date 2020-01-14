@@ -26,7 +26,7 @@ message LogRecord {
     FATAL = 4;
   }
   optional LogLevel level = 1;
-  optional int64 date_utc_epoch_ms = 2;
+  optional int64 date_unix_epoch_ms = 2;
   optional int64 thread_id = 3;
   optional string file_name = 4;
   optional int32 line_number = 5;

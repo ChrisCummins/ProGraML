@@ -306,6 +306,7 @@ py_binary(
         ":app",
         ":humanize",
         "//third_party/py/appdirs",
+        "//third_party/py/fasteners",
         "//third_party/py/gputil",
     ],
 )
@@ -316,7 +317,6 @@ py_test(
     deps = [
         ":gpu_scheduler",
         ":test",
-        "//third_party/py/fasteners",
     ],
 )
 

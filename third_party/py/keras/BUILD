@@ -12,6 +12,7 @@ py_library(
     deps = [
         requirement("keras"),
         requirement("PyYAML"),  # Implicit dependency.
+        "//third_party/py/scipy",  # Implicit dependency.
         "//third_party/py/tensorflow",
     ],
 )

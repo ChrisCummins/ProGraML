@@ -50,6 +50,22 @@ http_archive(
     urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
 )
 
+# Python config. Needed by pybind11_bazel.
+
+load("//third_party/py:python_configure.bzl", "python_configure")
+
+python_configure(name = "local_config_python")
+
+# Pybind11.
+
+http_archive(
+    name = "pybind11",
+    build_file = "//:third_party/pybind11_bazel/pybind11.BUILD",
+    sha256 = "1eed57bc6863190e35637290f97a20c81cfe4d9090ac0a24f3bbf08f265eb71d",
+    strip_prefix = "pybind11-2.4.3",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.4.3.tar.gz"],
+)
+
 # Boost C++ library.
 # See: https://github.com/nelhage/rules_boost
 
@@ -66,11 +82,11 @@ boost_deps()
 
 # Bash testing
 
-http_archive(
+git_repository(
     name = "com_github_chriscummins_rules_bats",
-    sha256 = "756baa4973fe0bbe3497b7c1a4ba995eac68c3213ff87aa04a7d573d30931aa6",
-    strip_prefix = "rules_bats-c9ba42764c6bf7da718732282690d3f566f5773c",
-    urls = ["https://github.com/ChrisCummins/rules_bats/archive/c9ba42764c6bf7da718732282690d3f566f5773c.zip"],
+    commit = "6600627545380d2b32485371bed36cef49e9ff68",
+    remote = "https://github.com/ChrisCummins/rules_bats.git",
+    shallow_since = "1578495032 +0000",
 )
 
 load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
@@ -155,16 +171,6 @@ http_archive(
     sha256 = "3c681998538231a2d24d0c07ed5a7658cb72bfb5fd4bf9911157c0e9ac6a2687",
     urls = ["https://github.com/bazelbuild/bazel-gazelle/releases/download/0.17.0/bazel-gazelle-0.17.0.tar.gz"],
 )
-
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains()
-
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
-
-gazelle_dependencies()
 
 # Linux sources.
 
@@ -315,24 +321,23 @@ http_archive(
 
 # Python requirements.
 
-# I use my own fork rather than the official upstream as a I have a collection
-# of workarounds that I must maintain.
-http_archive(
+# I use my own rules_python fork which adds a timeout arg to pip_import.
+git_repository(
     name = "rules_python",
-    sha256 = "de440ce1beea41ba092711ddbfebaec80c63ceb1277d7d0c67c455e283a738de",
-    strip_prefix = "rules_python-01f56e54267d047bde75499371a17b412354adcb",
-    urls = ["https://github.com/ChrisCummins/rules_python/archive/01f56e54267d047bde75499371a17b412354adcb.tar.gz"],
+    commit = "2cc99237d0cc767dc53d3137fabb2679c60f5e67",
+    remote = "git@github.com:ChrisCummins/rules_python.git",
+    shallow_since = "1578538415 +0000",
 )
 
 load(
     "@rules_python//python:pip.bzl",
-    "pip_import",
+    "pip3_import",
     "pip_repositories",
 )
 
 pip_repositories()
 
-pip_import(
+pip3_import(
     name = "protobuf_py_deps",
     timeout = 3600,
     requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
@@ -347,8 +352,8 @@ protobuf_pip_install()
 
 # Load and build all requirements.
 # TODO(github.com/ChrisCummins/phd/issues/58): Break apart requirements.txt,
-# using one pip_import per package.
-pip_import(
+# using one pip3_import per package.
+pip3_import(
     name = "requirements",
     timeout = 3600,
     requirements = "//:requirements.txt",
@@ -371,7 +376,7 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
-pip_import(
+pip3_import(
     name = "grpc_py_deps",
     timeout = 3600,
     requirements = "@build_stack_rules_proto//python:requirements.txt",
@@ -602,7 +607,7 @@ http_archive(
     urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
 )
 
-pip_import(
+pip3_import(
     name = "graknlabs_bazel_distribution_pip",
     timeout = 3600,
     requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
@@ -639,31 +644,54 @@ _cc_image_repos()
 container_repositories()
 
 # My custom base image for bazel-compiled binaries.
-# Defined in //tools/docker/phd_base/Dockerfile.
 
 # Minimal python base image.
+# Defined in //tools/docker/phd_base:Dockerfile
 container_pull(
     name = "phd_base",
-    digest = "sha256:d7a855d33458ac5164dced6568579e4d413a57ee502e2b2412af753842228e76",
+    digest = "sha256:3fb41db45b02954e6439f5fa2fd5e0ca2ead9757575fe9125b74cf517dc13c6f",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base",
 )
 
 # Same as phd_base, but with a Java environment.
+# Defined in //tools/docker/phd_base_java:Dockerfile
 container_pull(
     name = "phd_base_java",
-    digest = "sha256:31719c1233ac4be59e7c546fd53f5d164c209fa374ca73b387104fc4d0919bc1",
+    digest = "sha256:3e9c786b508e9f5471e8aeed76339e1d496a727fed80836baadb8a7a1aa69abe",
     registry = "index.docker.io",
     repository = "chriscummins/phd_base_java",
 )
 
+# Same as phd_base_java, but with Tensorflow installed.
+# Defined in //tools/docker/phd_base_tf_cpu:Dockerfile
+container_pull(
+    name = "phd_base_tf_cpu",
+    digest = "sha256:1b5ae18329edcadd7b4d0b2358b359f405117b997161b61ab94eebdb9327a8b1",
+    registry = "index.docker.io",
+    repository = "chriscummins/phd_base_tf_cpu",
+)
+
 # Full build environment with all required toolchains.
+# Defined in //tools/docker/phd_build:Dockerfile
 container_pull(
     name = "phd_build",
-    digest = "sha256:360eaa5d9c3999856e5e360d5f037be4ee408bd228ee9180cd9a9f96a558499b",
+    digest = "sha256:9820a517922b150f8654bd5534c6d7d11fe73777e7b7fa35afc9528eb7ea20cb",
     registry = "index.docker.io",
     repository = "chriscummins/phd_build",
 )
+
+# Go dependencies.
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+
+gazelle_dependencies()
 
 go_repository(
     name = "com_github_stretchr_testify",
