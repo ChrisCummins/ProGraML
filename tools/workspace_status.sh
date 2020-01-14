@@ -2,6 +2,9 @@
 #
 # Generate key-value pairs for bazel workspace build status.
 # See: https://docs.bazel.build/versions/master/user-manual.html#flag--workspace_status_command
+#
+# The output of this script is consumed by //:make_build_info_pbtxt to generate
+# the build info proto.
 set -eu
 
 # Volatile keys.
@@ -11,6 +14,8 @@ echo "RANDOM_HASH $(cat /dev/urandom | head -c16 | md5sum 2>/dev/null | cut -f1 
 # Stable keys.
 echo "STABLE_HOST $(hostname)"
 echo "STABLE_USER $(id -un)"
+echo "STABLE_REPO_ROOT" $(pwd)
+echo "STABLE_VERSION" $(cat version.txt)
 
 echo "STABLE_GIT_COMMIT_HASH $(git rev-parse HEAD)"
 echo "STABLE_GIT_COMMIT_TIMESTAMP $(git show -s --format=%ct HEAD)"

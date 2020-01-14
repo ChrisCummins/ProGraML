@@ -1,6 +1,6 @@
 workspace(name = "phd")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # Workaround for broken python 2 tooling in rules_docker.
@@ -706,19 +706,60 @@ go_repository(
 )
 
 go_repository(
-    name = "com_github_jinzhu_inflection",
-    commit = "f5c5f50e6090ae76a29240b61ae2a90dd810112e",
-    importpath = "github.com/jinzhu/inflection",
-)
-
-go_repository(
-    name = "com_github_mattn_go_sqlite3",
-    commit = "5dd71670cca4bc0ee90371eabd0f1bdba1ac6f35",
-    importpath = "github.com/mattn/go-sqlite3",
-)
-
-go_repository(
     name = "com_github_bazelbuild_buildtools",
     commit = "c4e649df7ade24c3662729fdabd7bcff67866fef",
     importpath = "github.com/bazelbuild/buildtools",
+)
+
+go_repository(
+    name = "com_github_golang_go",
+    commit = "641e61db57f176e33828ed5354810fa3f13ac76d",
+    importpath = "github.com/golang/gp",
+)
+
+# Pre-built go binaries.
+
+http_archive(
+    name = "go_linux",
+    build_file = "//:third_party/go.BUILD",
+    sha256 = "a1bc06deb070155c4f67c579f896a45eeda5a8fa54f35ba233304074c4abbbbd",
+    strip_prefix = "go",
+    urls = ["https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz"],
+)
+
+http_archive(
+    name = "go_mac",
+    build_file = "//:third_party/go.BUILD",
+    sha256 = "1ee0dc6a7abf389dac898cbe27e28c4388a61e45cba2632c01d749e25003007f",
+    strip_prefix = "go",
+    urls = ["https://dl.google.com/go/go1.13.6.darwin-amd64.tar.gz"],
+)
+
+# Pre-compiled shfmt binary
+# https://github.com/mvdan/sh
+
+http_file(
+    name = "shfmt_linux",
+    downloaded_file_path = "shfmt",
+    executable = 1,
+    sha256 = "86892020280d923976ecaaad1e7db372d37dce3cfaad44a7de986f7eb728eae7",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_linux_amd64"],
+)
+
+http_file(
+    name = "shfmt_mac",
+    downloaded_file_path = "shfmt",
+    executable = 1,
+    sha256 = "e470d216818a107078fbaf34807079c4857cb98610d67c96bf4dece43a56b66c",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_darwin_amd64"],
+)
+
+# My fork of black fixed for 2 spaces.
+
+http_archive(
+    name = "black2-spaces",
+    build_file = "//third_party/py:black.BUILD",
+    sha256 = "fce1caed01aca58f3239f88bdd9045bf950e9de3b8a2a5b5ed973037d819a6a4",
+    strip_prefix = "black-2spaces-8f1fe951bcade3792f586eb52d45e38a6428c0fd",
+    urls = ["https://github.com/ChrisCummins/black-2spaces/archive/8f1fe951bcade3792f586eb52d45e38a6428c0fd.zip"],
 )

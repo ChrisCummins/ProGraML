@@ -5,6 +5,7 @@ contains utility code designed to help live with these quirks.
 """
 import os
 import pathlib
+import pkgutil
 import re
 import subprocess
 import typing
@@ -46,6 +47,9 @@ def DataPath(
   on whether the current process is executing with a 'bazel run' environment, or
   as a 'bazel-bin' script.
 
+  !!!WARNING!!! For par_binary() rules, this function does not work. See
+  DataString() instead.
+
   Args:
     path: The path to the data, including the name of the workspace.
     must_exist: Require that the file exists, else raise FileNotFoundError.
@@ -70,26 +74,36 @@ def DataPath(
   return real_path
 
 
-def DataString(path: typing.Union[str, pathlib.Path]) -> str:
+def DataString(path: typing.Union[str, pathlib.Path]) -> bytes:
   """Return the contents of a data file.
 
   This allows you to access files from the 'data' attribute of a Python
   target in Bazel. This is needed because the path to the file changes depending
   on whether the current process is executing with a 'bazel run' environment, or
-  as a 'bazel-bin' script.
+  as a 'bazel-bin' script. "String" is a misnomer, this returns a byte array.
+
+  The reason to use this function over DataPath() is that this supports
+  accessing the 'data' attributes of par_binary rules. When a par binary is
+  created, the contents of data files are embedded directly into the
+  executable, so DataPath will raise FileNotFoundError.
 
   Args:
     path: The path to the data, including the name of the workspace.
 
   Returns:
-    The contents of the file
+    The contents of the file as an array of bytes.
 
   Raises:
     FileNotFoundError: If the requested path is not found.
   """
-  with open(DataPath(path)) as f:
-    contents = f.read()
-  return contents
+  try:
+    # Support for reading data files from par binaries.
+    # See: github.com/google/subpar/issues/43
+    return pkgutil.get_data("__main__", path)
+  except ValueError:
+    # pkgutil.get_data() raises ValueError if __spec__ is not found.
+    with open(DataPath(path), "rb") as f:
+      return f.read()
 
 
 class DataArchive(archive.Archive):
