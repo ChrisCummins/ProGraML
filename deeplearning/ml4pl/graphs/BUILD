@@ -17,6 +17,10 @@
 # limitations under the License.
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
+load(
+    "//third_party/pybind11_bazel:build_defs.bzl",
+    "pybind_extension",
+)
 
 cc_library(
     name = "graph_builder",
@@ -62,6 +66,16 @@ cc_test(
         ":graphviz_converter",
         ":programl_pb_cc",
         "//labm8/cpp:test",
+    ],
+)
+
+pybind_extension(
+    "graphviz_converter_py",
+    srcs = ["graphviz_converter_py.cc"],
+    deps = [
+        ":graphviz_converter",
+        ":programl_pb_cc",
+        "//labm8/cpp:string",
     ],
 )
 
@@ -117,6 +131,7 @@ cc_proto_library(
 py_binary(
     name = "programl",
     srcs = ["programl.py"],
+    data = [":graphviz_converter_py.so"],
     visibility = [
         "//deeplearning/ml4pl/graphs:__subpackages__",
         "//deeplearning/ml4pl/seq:__subpackages__",
@@ -133,14 +148,26 @@ py_binary(
 
 py_test(
     name = "programl_test",
-    size = "enormous",
+    timeout = "long",
     srcs = ["programl_test.py"],
     shard_count = 16,
     deps = [
         ":programl",
         ":programl_pb_py",
         "//deeplearning/ml4pl/testing:random_programl_generator",
+        "//deeplearning/ml4pl/testing/fixtures:llvm_program_graph",
         "//labm8/py:decorators",
+        "//labm8/py:test",
+    ],
+)
+
+py_test(
+    name = "programl_benchmark_test",
+    srcs = ["programl_benchmark_test.py"],
+    deps = [
+        ":programl",
+        ":programl_pb_py",
+        "//deeplearning/ml4pl/testing:random_programl_generator",
         "//labm8/py:test",
     ],
 )
