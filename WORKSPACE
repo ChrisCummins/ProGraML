@@ -753,3 +753,13 @@ http_file(
     sha256 = "e470d216818a107078fbaf34807079c4857cb98610d67c96bf4dece43a56b66c",
     urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_darwin_amd64"],
 )
+
+# My fork of black fixed for 2 spaces.
+
+http_archive(
+    name = "black2-spaces",
+    build_file = "//third_party/py:black.BUILD",
+    sha256 = "fce1caed01aca58f3239f88bdd9045bf950e9de3b8a2a5b5ed973037d819a6a4",
+    strip_prefix = "black-2spaces-8f1fe951bcade3792f586eb52d45e38a6428c0fd",
+    urls = ["https://github.com/ChrisCummins/black-2spaces/archive/8f1fe951bcade3792f586eb52d45e38a6428c0fd.zip"],
+)
