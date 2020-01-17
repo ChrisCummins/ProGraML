@@ -26,6 +26,7 @@ import sys
 import tempfile
 import typing
 from importlib import util as importutil
+from typing import Dict
 
 import pytest
 
@@ -441,6 +442,36 @@ def SkipIf(condition: bool, reason: str = ""):
 def Fail(reason: str):
   """Mark a test as failed."""
   return pytest.fail(reason)
+
+
+@contextlib.contextmanager
+def TemporaryEnv(env: Dict[str, str] = None) -> Dict[str, str]:
+  """Create a temporary os.environ.
+
+  Use this to create a scoped environment for writing a test that is sensitive
+  to environment variables, without disturbing the environment for other tests.
+
+  Usage:
+
+    with test.TemporaryEnv() as env:
+      env["DO_A_THING"] = "1"
+      del env["PATH"]
+      assert ComputeSomething() == 2
+
+  Args:
+    env: A dictionary of environment variables to add to the environment prior
+      to yielding it.
+
+  Returns:
+    A reference to os.envrion.
+  """
+  old_env = os.environ.copy()
+  try:
+    os.environ.update(env or {})
+    yield os.environ
+  finally:
+    os.environ.clear()
+    os.environ.update(old_env)
 
 
 @app.skip_log_prefix
