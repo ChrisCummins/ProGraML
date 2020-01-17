@@ -754,6 +754,44 @@ http_file(
     urls = ["https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_darwin_amd64"],
 )
 
+# Pre-compiled buf binary
+# https://buf.build/
+
+http_file(
+    name = "buf_linux",
+    downloaded_file_path = "buf",
+    executable = 1,
+    sha256 = "3d349baa67ce7ff063074e8aff5fb19e90143ca4cdadaa095c2cac1e55afac92",
+    urls = ["https://github.com/bufbuild/buf/releases/download/v0.5.0/buf-Linux-x86_64"],
+)
+
+http_file(
+    name = "buf_darwin",
+    downloaded_file_path = "buf",
+    executable = 1,
+    sha256 = "6da8b67e68b3e386f49bc36d2ca785d766e1420366e5c270a204ea81a76197c7",
+    urls = ["https://github.com/bufbuild/buf/releases/download/v0.5.0/buf-Darwin-x86_64"],
+)
+
+# Pre-compiled prototool binary
+# https://github.com/uber/prototool
+
+http_file(
+    name = "prototool_linux",
+    downloaded_file_path = "prototool",
+    executable = 1,
+    sha256 = "e1e3d81228f7d157d9476034dd1b21005926c96dcd8b7d220074ac071304545e",
+    urls = ["https://github.com/uber/prototool/releases/download/v1.9.0/prototool-Linux-x86_64"],
+)
+
+http_file(
+    name = "prototool_darwin",
+    downloaded_file_path = "prototool",
+    executable = 1,
+    sha256 = "8cb668edbd51a13f057535d8ca7e4b0574fe7ae092338714b3d4b513cf188220",
+    urls = ["https://github.com/uber/prototool/releases/download/v1.9.0/prototool-Darwin-x86_64"],
+)
+
 # My fork of black fixed for 2 spaces.
 
 http_archive(
