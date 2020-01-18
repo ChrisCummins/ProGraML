@@ -3,8 +3,8 @@
 namespace labm8 {
 
 void InitApp(int* argc, char*** argv, const char* usage_string) {
-  std::string usage(usage_string);
-  if (!usage.empty()) {
+  if (usage_string) {
+    std::string usage(usage_string);
     gflags::SetUsageMessage(usage);
   }
 
