@@ -325,7 +325,7 @@ http_archive(
 git_repository(
     name = "rules_python",
     commit = "2cc99237d0cc767dc53d3137fabb2679c60f5e67",
-    remote = "git@github.com:ChrisCummins/rules_python.git",
+    remote = "https://github.com/ChrisCummins/rules_python.git",
     shallow_since = "1578538415 +0000",
 )
 
