@@ -27,6 +27,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   patch \
   zip \
   m4 \
+  # Packages required to build matplotlib.
+  pkg-config \
+  libfreetype6-dev \
+  libpng-dev \
   # SSH is required by bazel for pulling in dependencies.
   openssh-client \
   # Docker

@@ -676,7 +676,7 @@ container_pull(
 # Defined in //tools/docker/phd_build:Dockerfile
 container_pull(
     name = "phd_build",
-    digest = "sha256:9820a517922b150f8654bd5534c6d7d11fe73777e7b7fa35afc9528eb7ea20cb",
+    digest = "sha256:47fa263c92568900f831c0cab664a97baabfafa9a3e31cff7fe058140a5ce629",
     registry = "index.docker.io",
     repository = "chriscummins/phd_build",
 )
