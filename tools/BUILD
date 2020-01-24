@@ -7,7 +7,6 @@ sh_binary(
     srcs = ["whoami.sh"],
     data = [
         "//:build_info_pbtxt",
-        "//:config",
     ],
 )
 

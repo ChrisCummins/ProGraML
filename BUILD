@@ -61,12 +61,6 @@ sh_binary(
     srcs = ["make_build_info_pbtxt.sh"],
 )
 
-filegroup(
-    name = "config",
-    srcs = ["config.pbtxt"],
-    visibility = ["//visibility:public"],
-)
-
 proto_library(
     name = "config_pb",
     srcs = ["config.proto"],
@@ -100,38 +94,6 @@ py_library(
         "//:build_info",
         "//labm8/py:app",
         "//third_party/py/pytest",
-    ],
-)
-
-py_test(
-    name = "configure_test",
-    srcs = ["configure_test.py"],
-    data = [":configure_py"],
-    deps = [
-        "//labm8/py:app",
-        "//labm8/py:bazelutil",
-        "//labm8/py:test",
-    ],
-)
-
-py_library(
-    name = "getconfig",
-    srcs = ["getconfig.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//:config_pb_py",
-        "//:config_pbtxt_py",
-        "//labm8/py:pbutil",
-    ],
-)
-
-py_test(
-    name = "getconfig_test",
-    srcs = ["getconfig_test.py"],
-    deps = [
-        ":getconfig",
-        "//labm8/py:app",
-        "//labm8/py:test",
     ],
 )
 

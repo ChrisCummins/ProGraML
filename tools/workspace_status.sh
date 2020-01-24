@@ -11,10 +11,11 @@ set -eu
 echo "SECONDS_SINCE_EPOCH $(date +%s)"
 echo "RANDOM_HASH $(cat /dev/urandom | head -c16 | md5sum 2>/dev/null | cut -f1 -d' ')"
 
-# Stable keys.
+# Stable keys. See the BuildInfo message schema in //:config.proto for a
+# description of each fields.
+echo "STABLE_UNSAFE_WORKSPACE" $(pwd)
 echo "STABLE_HOST $(hostname)"
 echo "STABLE_USER $(id -un)"
-echo "STABLE_REPO_ROOT" $(pwd)
 echo "STABLE_VERSION" $(cat version.txt)
 
 echo "STABLE_GIT_COMMIT_HASH $(git rev-parse HEAD)"

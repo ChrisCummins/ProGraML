@@ -18,11 +18,7 @@
 /node_modules
 
 # In-tree generated files.
-/.env
 /bootstrap.sh
-/config.pbtxt
-/requirements.txt
-/third_party/py/tensorflow/BUILD
 /learn/docker/clgen/*.tar.bz2
 /experimental/deeplearning/clgen/docker_worker/*.tar.bz2
 /experimental/deeplearning/clgen/docker_worker/cache
