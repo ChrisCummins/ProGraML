@@ -705,6 +705,20 @@ go_repository(
     importpath = "github.com/jinzhu/gorm",
 )
 
+# Needed by @com_github_jinzhu_gorm.
+go_repository(
+    name = "com_github_jinzhu_inflection",
+    commit = "f5c5f50e6090ae76a29240b61ae2a90dd810112e",
+    importpath = "github.com/jinzhu/inflection",
+)
+
+# Needed by @com_github_jinzhu_gorm.
+go_repository(
+    name = "com_github_mattn_go_sqlite3",
+    commit = "5dd71670cca4bc0ee90371eabd0f1bdba1ac6f35",
+    importpath = "github.com/mattn/go-sqlite3",
+)
+
 go_repository(
     name = "com_github_bazelbuild_buildtools",
     commit = "c4e649df7ade24c3662729fdabd7bcff67866fef",
