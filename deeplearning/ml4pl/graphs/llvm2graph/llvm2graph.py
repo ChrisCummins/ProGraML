@@ -87,7 +87,7 @@ def BuildProgramGraphProto(
   if process.returncode == 9 or process.returncode == -9:
     raise TimeoutError(
       f"llvm2graph took longer than {timeout} seconds on "
-      f"{humanize.BinaryPrefix(len(module), '')} input"
+      f"{humanize.BinaryPrefix(len(module), 'B')} input"
     )
   if process.returncode:
     message = "unknown error"
