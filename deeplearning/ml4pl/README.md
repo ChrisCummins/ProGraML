@@ -63,10 +63,10 @@ refactored, and the existing databases have been migrated from an old schema.
 
 ### Step 2: Generate Program Graphs
 
-Generate a program graph protocol buffer from an IR file using:
+Generate a program graph protocol buffer from an LLVM IR file using:
 
 ```
-$ bazel run //deeplearning/ml4pl/graphs/unlabelled/llvm2graph -- < /tmp/foo.ll
+$ bazel run //deeplearning/ml4pl/graphs/llvm2graph -- /tmp/foo.ll
 ```
 
 The above tool is also available as a docker image:

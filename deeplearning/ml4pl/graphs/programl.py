@@ -36,6 +36,7 @@ from typing import Optional
 import networkx as nx
 import numpy as np
 
+from deeplearning.ml4pl.graphs import graphviz_converter_py
 from deeplearning.ml4pl.graphs import programl_pb2
 from labm8.py import app
 from labm8.py import pbutil
@@ -289,6 +290,21 @@ def NetworkXToProgramGraph(
     edge_proto.position = data["position"]
 
   return proto
+
+
+def ProgramGraphToGraphviz(proto: programl_pb2) -> str:
+  """Convert a program graph protocol buffer to a graphviz dot string.
+
+  Wraps the C++ method defined the graphviz_convert_py.cc pybind module.
+
+  Args:
+    proto: A program graph protocol buffer.
+
+  Returns:
+    A string suitable for feeding into `dot`.
+  """
+  proto_str = proto.SerializeToString()
+  return graphviz_converter_py.ProgramGraphToGraphviz(proto_str)
 
 
 def FromBytes(
