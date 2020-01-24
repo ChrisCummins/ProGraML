@@ -14,8 +14,8 @@ github.com/bazelbuild/rules_python/issues/71
 """
 import importlib
 import pathlib
-import sys
 import site
+import sys
 
 try:
   # Try importing Tensorflow the vanilla way. This will succeed once
@@ -34,6 +34,7 @@ except (ImportError, ModuleNotFoundError):
       sys.path.insert(0, path)
       try:
         import tensorflow
+
         break
       except (ImportError, ModuleNotFoundError):
         pass

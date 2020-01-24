@@ -56,8 +56,7 @@ from labm8.py import humanize
 FLAGS = app.FLAGS
 
 app.DEFINE_boolean(
-  "test_with_gpu", False,
-  "If set, enable access to GPUs during testing."
+  "test_with_gpu", False, "If set, enable access to GPUs during testing."
 )
 
 _LOCK_DIR = pathlib.Path("/tmp/phd/labm8/gpu_scheduler_locks")

@@ -1,6 +1,6 @@
 # Docker images
 
-This package contains docker images for to be by bazel for creating dockerized 
+This package contains docker images for to be by bazel for creating dockerized
 builds, for example:
 
 ```

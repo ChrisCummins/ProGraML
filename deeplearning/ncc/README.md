@@ -1,6 +1,6 @@
 # Neural Code Comprehension: A Learnable Representation of Code Semantics
 
-```ncc``` (Neural Code Comprehension) is a general Machine Learning technique to learn semantics from raw code in virtually any programming language. It relies on ```inst2vec```, an embedding space and graph representation of LLVM IR statements and their context. 
+```ncc``` (Neural Code Comprehension) is a general Machine Learning technique to learn semantics from raw code in virtually any programming language. It relies on ```inst2vec```, an embedding space and graph representation of LLVM IR statements and their context.
 
 ![ncc_scheme](figures/overview.png)
 
@@ -42,7 +42,7 @@ Additionally, for training ```ncc``` models:
 * GNU / Linux or Mac OS
 * Python (3.6.5)
   * labm8 (0.1.2)
-  * keras (2.2.0) 
+  * keras (2.2.0)
 
 ### Running the code
 
@@ -67,13 +67,13 @@ $ python train_inst2vec.py \
 > --vocabulary_folder ... (path to the associated vocabulary folder)
 ```
 
-#### 3. Training on tasks with ```ncc``` 
+#### 3. Training on tasks with ```ncc```
 
 We provide the code for training three downstream tasks using the same neural architecture (```ncc```) and ```inst2vec``` embeddings.
 
 **Algorithm classification**
 
-Task: Classify applications into 104 classes given their raw code.  
+Task: Classify applications into 104 classes given their raw code.
 Code and classes provided by https://sites.google.com/site/treebasedcnn/ (see [Convolutional neural networks over tree structures for programming language processing](https://arxiv.org/abs/1409.5718))
 
 Train:

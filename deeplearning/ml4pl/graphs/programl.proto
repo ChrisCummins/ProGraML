@@ -20,16 +20,19 @@ syntax = "proto2";
 
 package ml4pl;
 
+option go_package = "ml4plpb";
+option java_multiple_files = true;
+option java_outer_classname = "ProgramlProto";
+option java_package = "com.ml4pl";
+
 // A program graph.
 message ProgramGraph {
   repeated Node node = 1;
   repeated Edge edge = 2;
   repeated Function function = 3;
-
   // Optional vectors of graph-level features and labels.
   repeated int64 x = 5;
   repeated int64 y = 6;
-
   // Optional fields for encoding data flow annotations.
   //
   // For iterative data flow analyses which have a defined "starting point",
@@ -55,19 +58,15 @@ message Node {
     IMMEDIATE = 2;
   }
   required Type type = 1;
-
   // The text of a node. This is the raw representation of a node, such as the
   // contents of a statement, or the name of an identifier.
   required string text = 2;
-
   // The pre-processed text of a node. This is the
   required string preprocessed_text = 3;
-
   // An index into the ProgramGraph.function list indicating the source function
   // for this node. Omitting this fields means the node does not belong to a
   // function, such as the case for global identifiers.
   optional int32 function = 4;
-
   // Optional vectors of node-level features and labels.
   repeated int64 x = 5;
   repeated int64 y = 6;
@@ -81,14 +80,12 @@ message Edge {
     CALL = 2;
   }
   required Flow flow = 1;
-
   // The source and destination nodes of the edge, as andicies into a
   // ProgramGraph.node list.
   required int32 source_node = 2;
   required int32 destination_node = 3;
-
   // The position of an edge.
-  required int32 position = 4 [default=0];
+  required int32 position = 4 [default = 0];
 }
 
 // A collection of program graphs.

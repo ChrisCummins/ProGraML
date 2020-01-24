@@ -19,8 +19,6 @@ Variables:
   * `UID` (int) User ID.
   * `PID` (int) Process ID.
 """
-from __future__ import print_function
-
 import getpass
 import os
 import socket

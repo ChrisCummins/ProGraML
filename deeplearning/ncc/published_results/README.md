@@ -53,14 +53,14 @@ x | x
 **Prediction Accuracy [%]**
 
 Computing Platform |  [Grewe et al.](http://www.lancaster.ac.uk/staff/wangz3/publications/cgo_omp2ocl.pdf) | [DeepTune](https://chriscummins.cc/pub/2017-pact.pdf) | ncc / inst2vec
------------- | ------------- | ------------- | ------------- 
+------------ | ------------- | ------------- | -------------
 AMD Tahiti 7970 | 73.38 | 83.68 | 82.79
 NVIDIA GTX 970 | 72.94 | 80.29 | 81.76
 
 **Speedups**
 
 Computing Platform | [Grewe et al.](http://www.lancaster.ac.uk/staff/wangz3/publications/cgo_omp2ocl.pdf) | [DeepTune](https://chriscummins.cc/pub/2017-pact.pdf) | ncc / inst2vec
------------- | ------------- | ------------- | ------------- 
+------------ | ------------- | ------------- | -------------
 AMD Tahiti 7970 | 2.91 | 3.34 | 3.42
 NVIDIA GTX 970 | 1.26 | 1.41 | 1.39
 
@@ -70,7 +70,7 @@ NVIDIA GTX 970 | 1.26 | 1.41 | 1.39
 **Speedups**
 
 Computing Platform | [Magni et al.](https://homepages.inf.ed.ac.uk/cdubach/papers/magni14pact.pdf) | [DeepTune](https://chriscummins.cc/pub/2017-pact.pdf) | [DeepTune-TL](https://chriscummins.cc/pub/2017-pact.pdf) | ncc / inst2vec
------------- | ------------- | ------------- | ------------- | ------------- 
+------------ | ------------- | ------------- | ------------- | -------------
 AMD Radeon HD 5900 | 1.21 | 1.10 | 1.17 | 1.25
 AMD Tahiti 7970 | 1.01 | 1.05 | 1.23 | 1.07
 NVIDIA GTX 480 | 0.86 | 1.10 | 1.14 | 1.02

@@ -12,7 +12,6 @@ message EncodeBytecodeOptions {
 message EncodeBytecodeResult {
   optional string input_bytecode = 1;
   repeated int64 encoded = 2;
-
   // Optional debugging values. Each one of these fields has a corresponding
   // `set_` field in the EncodeBytecodeOptions message. Setting that field
   // will set these fields.
