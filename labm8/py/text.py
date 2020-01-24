@@ -13,8 +13,6 @@
 # limitations under the License.
 """Text utilities.
 """
-from __future__ import division
-
 import re
 import typing
 
