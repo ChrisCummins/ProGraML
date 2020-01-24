@@ -75,16 +75,6 @@ python_grpc_library(
     deps = ["//:config_pb"],
 )
 
-python_string_genrule(
-    name = "config_pbtxt_py",
-    src = ":config",
-)
-
-filegroup(
-    name = "configure_py",
-    srcs = ["configure"],
-)
-
 py_library(
     name = "conftest",
     testonly = 1,
