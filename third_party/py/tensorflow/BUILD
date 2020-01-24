@@ -25,7 +25,10 @@ py_library(
     name = "tensorflow",
     srcs = [":tf.py"],
     deps = [
-        requirement("tensorflow"),
+        # rules_pip fails for TensorFlow, causing an empty package to be
+        # downloaded. Because of this, we require the user to manually install
+        # the version of TensorFlow specified in requirements.txt:
+        # requirement("tensorflow"),
         "//third_party/py/numpy",
         "//third_party/py/protobuf",
     ],
@@ -37,10 +40,10 @@ py_test(
     deps = [
         ":tensorflow",
         "//labm8/py:app",
-        "//:getconfig",
+        "//labm8/py:test",
+        "//third_party/py/gputil",
         "//third_party/py/numpy",
         "//third_party/py/pytest",
-        "//labm8/py:test",
     ],
 )
 

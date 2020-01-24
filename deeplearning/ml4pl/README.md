@@ -32,12 +32,7 @@
 
 ### Installation
 
-```sh
-$ ./configure
-# Answer yes/no questions. The defaults should be fine.
-```
-
-Run the test suite:
+Build and run the test suite:
 
 ```sh
 $ bazel test //deeplearning/ml4pl/...
@@ -81,7 +76,7 @@ $ docker pull chriscummins/llvm2graph:latest
 $ docker run -i chriscummins/llvm2graph < /tmp/foo.ll
 ```
 
-TODO(github.com/ChrisCummins/ProGraML/issues/2): The scripts for generating 
+TODO(github.com/ChrisCummins/ProGraML/issues/2): The scripts for generating
 graph protos from databases of IRs are currently being refactored.
 
 
