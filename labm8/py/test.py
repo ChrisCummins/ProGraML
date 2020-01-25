@@ -233,6 +233,33 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
     "no:cacheprovider",
   ]
 
+  # Generate XML test reports which bazel will then consume. This replaces the
+  # default XML report generated from bazel with a much more detailed one. The
+  # XML reports are located in bazel-testlogs/package/target/test.xml, and is
+  # consumed by various tools such as IntelliJ to give nice test output.
+  if os.environ.get("XML_OUTPUT_FILE") and os.environ.get("TEST_TARGET"):
+    # Using the junit XML reporter requires setting a couple of options, and I
+    # don't see a way of passing those options through the command line. As a
+    # result, we instead have to create a pytest.ini file in the execroot of the
+    # test runner and add the options there.
+    #
+    # NOTE: We unset the $XML_OUTPUT_FILE environment variable set by bazel,
+    # as I don't see a legitimate reason for a test to require access to this.
+    pytest_args += [
+      "--junitxml",
+      os.environ.pop("XML_OUTPUT_FILE"),
+      "--rootdir",
+      os.getcwd(),
+    ]
+    with open(os.path.join(os.getcwd(), "pytest.ini"), "w") as f:
+      f.write(
+        f"""
+[pytest]
+junit_suite_name = {os.environ["TEST_TARGET"]}
+junit_family = xunit2
+"""
+      )
+
   if FLAGS.test_color:
     pytest_args.append("--color=yes")
 
