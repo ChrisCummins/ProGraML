@@ -126,8 +126,9 @@ def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
 def CoverageContext(
   test_module, file_path: str, pytest_args: typing.List[str],
 ) -> typing.List[str]:
-  # No test coverage requested.
+  # No test coverage requested, disable pytest-cov plugin.
   if not FLAGS.test_coverage:
+    pytest_args += ["-p", "no:cov"]
     yield pytest_args
     return
 
@@ -258,6 +259,8 @@ def RunPytestOnFileAndExit(
     num_shards = int(os.environ["TEST_TOTAL_SHARDS"])
     shard_index = int(os.environ["TEST_SHARD_INDEX"])
     pytest_args += [f"--shard-id={shard_index}", f"--num-shards={num_shards}"]
+  else:
+    pytest_args += ["-p", "no:pytest-shard"]
 
   # Load the test module so that we can inspect it for attributes.
   spec = importutil.spec_from_file_location("module", file_path)
