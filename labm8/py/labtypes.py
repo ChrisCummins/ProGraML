@@ -17,7 +17,7 @@ import inspect
 import itertools
 import sys
 import typing
-from collections import Mapping
+from collections.abc import Mapping
 
 from six import string_types
 
