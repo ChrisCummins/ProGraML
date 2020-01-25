@@ -263,11 +263,6 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
   # Add the --pytest_args requested by the user.
   pytest_args += FLAGS.pytest_args
 
-  # Allow the user to add a PYTEST_ARGS = ['--foo'] list of additional
-  # arguments.
-  if hasattr(test_module, "PYTEST_ARGS"):
-    pytest_args += test_module.PYTEST_ARGS
-
   with CoverageContext(test_module, file_path, pytest_args) as pytest_args:
     app.Log(1, "Running pytest with arguments: %s", pytest_args)
     ret = pytest.main(pytest_args)
