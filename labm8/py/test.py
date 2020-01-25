@@ -220,6 +220,10 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
     file_path,
     # Run pytest verbosely.
     "-v",
+    # Enable the labm8 test plugin.
+    "-p",
+    "labm8.py.internal.pytest_plugin",
+    # Let bazel handle caching.
     "-p",
     "no:cacheprovider",
   ]

@@ -709,7 +709,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":app",
-        "//:conftest",
+        "//labm8/py/internal:pytest_plugin",
         "//third_party/py/pytest",
     ],
 )

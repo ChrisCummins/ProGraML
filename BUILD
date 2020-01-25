@@ -75,18 +75,6 @@ python_grpc_library(
     deps = ["//:config_pb"],
 )
 
-py_library(
-    name = "conftest",
-    testonly = 1,
-    srcs = ["conftest.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//:build_info",
-        "//labm8/py:app",
-        "//third_party/py/pytest",
-    ],
-)
-
 # Golang.
 # Gazelle directive:
 # gazelle:prefix github.com/ChrisCummins/phd
