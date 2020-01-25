@@ -64,3 +64,12 @@ py_test(
         "//third_party/py/sqlalchemy",
     ],
 )
+
+py_test(
+    name = "run_id_multiprocess_test",
+    srcs = ["run_id_multiprocess_test.py"],
+    deps = [
+        ":run_id",
+        "//labm8/py:test",
+    ],
+)
