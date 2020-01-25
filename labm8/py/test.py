@@ -276,8 +276,10 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
       ret == pytest.ExitCode.NO_TESTS_COLLECTED.value
       and not FLAGS.error_if_no_tests
     ):
-      app.Warning(
-        "The test suite was empty. Use --error_if_no_tests to make this test fail."
+      print(
+        "WARNING: The test suite was empty. "
+        "Use --error_if_no_tests to make this test fail.",
+        file=sys.stderr,
       )
       ret = 0
 
