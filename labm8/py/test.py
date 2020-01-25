@@ -109,8 +109,13 @@ def AbsolutePathToModule(file_path: str) -> str:
     raise OSError(f"Could not determine runfiles directory: {file_path}")
 
 
-def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
+def GuessModuleUnderTest(file_path: str) -> typing.Optional[str]:
   """Determine the module under test. Returns None if no module under test."""
+  # Load the test module so that we can inspect it for attributes.
+  spec = importutil.spec_from_file_location("module", file_path)
+  test_module = importutil.module_from_spec(spec)
+  spec.loader.exec_module(test_module)
+
   # Check for a MODULE_UNDER_TEST attribute in the test module. If present, this
   # is the name of the module under test. Valid values for MODULE_UNDER_TEST are
   # a string, e.g. 'labm8.py.app', or None.
@@ -133,7 +138,7 @@ def CoverageContext(
     return
 
   # Record coverage of module under test.
-  module = GuessModuleUnderTest(test_module, file_path)
+  module = GuessModuleUnderTest(file_path)
   if not module:
     app.Log(1, "Coverage disabled - no module under test")
     yield pytest_args
@@ -259,16 +264,11 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
   else:
     pytest_args += ["-p", "no:pytest-shard"]
 
-  # Load the test module so that we can inspect it for attributes.
-  spec = importutil.spec_from_file_location("module", file_path)
-  test_module = importutil.module_from_spec(spec)
-  spec.loader.exec_module(test_module)
-
   # Add the --pytest_args requested by the user.
   pytest_args += FLAGS.pytest_args
 
-  with CoverageContext(test_module, file_path, pytest_args) as pytest_args:
-    app.Log(1, "Running pytest with arguments: %s", pytest_args)
+  with CoverageContext(file_path, pytest_args) as pytest_args:
+    print("Running pytest with arguments:", " ".join(pytest_args))
     ret = pytest.main(pytest_args)
     # Enable pytest to silently pass if there were no tests collected.
     # See http://doc.pytest.org/en/latest/usage.html
