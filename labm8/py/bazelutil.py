@@ -262,7 +262,9 @@ class Workspace(object):
         end="",
       )
       sys.stdout.flush()
-      bazel = self.BazelQuery([f"deps({target})"], stdout=subprocess.PIPE)
+      bazel = self.BazelQuery(
+        [f"deps({target})"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+      )
       grep = subprocess.Popen(
         ["grep", "^/"],
         stdout=subprocess.PIPE,
