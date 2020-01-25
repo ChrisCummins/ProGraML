@@ -64,6 +64,17 @@ PLATFORM_NAMES = set("darwin linux win32".split())
 HOST_NAMES = set("diana florence".split())
 
 
+def pytest_configure(config):
+  """Programatic configuration of pytest."""
+  # Register the custom markers used by labm8.
+  config.addinivalue_line("markers", "slow")
+  config.addinivalue_line("markers", "darwin")
+  config.addinivalue_line("markers", "linux")
+  config.addinivalue_line("markers", "win32")
+  config.addinivalue_line("markers", "diana")
+  config.addinivalue_line("markers", "florence")
+
+
 def pytest_collection_modifyitems(config, items):
   """A pytest hook to modify the configuration and items to run."""
   del config
