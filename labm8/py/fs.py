@@ -465,8 +465,8 @@ def read(*components, **kwargs):
 
   # Multiple definitions to handle all cases.
   if ignore_comments:
-    comment_line_re = re.compile("^\s*{char}".format(char=comment_char))
-    not_comment_re = re.compile("[^{char}]+".format(char=comment_char))
+    comment_line_re = re.compile(r"^\s*{char}".format(char=comment_char))
+    not_comment_re = re.compile(r"[^{char}]+".format(char=comment_char))
 
     if rstrip:
       # Ignore comments, and right strip results.

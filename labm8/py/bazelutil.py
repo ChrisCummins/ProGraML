@@ -251,15 +251,14 @@ class Workspace(object):
     targets = stdout.rstrip().split("\n")
 
     # Now get the transitive dependencies of each target.
-    targets = [target for target in targets if target not in excluded_targets]
-    all_targets = targets.copy()
-    for i, target in enumerate(targets):
-      app.Log(
-        1,
-        "Collecting transitive deps for target %d of %d: %s",
-        i + 1,
-        len(targets),
-        target,
+    targets = sorted(
+      [target for target in targets if target not in excluded_targets]
+    )
+    all_targets = set(targets)
+    for i, target in enumerate(targets, start=1):
+      print(
+        f"\r\033[KCollecting transitive dependencies ({len(all_targets)}): {target}",
+        end="",
       )
       bazel = self.BazelQuery([f"deps({target})"], stdout=subprocess.PIPE)
       grep = subprocess.Popen(
@@ -276,11 +275,14 @@ class Workspace(object):
         raise OSError("grep of bazel query output failed")
 
       deps = stdout.rstrip().split("\n")
-      all_targets += [
-        target for target in deps if target not in excluded_targets
-      ]
+      all_targets = all_targets.union(set(deps))
 
-    paths = [self.MaybeTargetToPath(target) for target in all_targets]
+    print(f"\r\033[KCollected {len(all_targets)} transitive deps")
+    paths = [
+      self.MaybeTargetToPath(target)
+      for target in all_targets
+      if not target in excluded_targets
+    ]
     return [path for path in paths if path]
 
   def GetBuildFiles(self, target: str) -> typing.List[pathlib.Path]:
