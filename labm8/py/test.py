@@ -124,7 +124,7 @@ def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
 
 @contextlib.contextmanager
 def CoverageContext(
-  test_module, file_path: str, pytest_args: typing.List[str],
+  file_path: str, pytest_args: typing.List[str],
 ) -> typing.List[str]:
   # No test coverage requested, disable pytest-cov plugin.
   if not FLAGS.test_coverage:
@@ -188,26 +188,19 @@ exclude_lines =
     yield pytest_args
 
 
-def RunPytestOnFileAndExit(
-  file_path: str, argv: typing.List[str], capture_output: bool = None
-):
-  """Run pytest on a file and exit.
+def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
+  """Run pytest on a file and exit on failure.
 
-  This is invoked by absl.app.RunWithArgs(), and has access to absl flags.
+  This is invoked by app.Run() and has access to FLAGS.
 
-  This function does not return.
+  If the tests fail, this function does not return.
 
   Args:
     file_path: The path of the file to test.
-    argv: Positional arguments not parsed by absl. No additional arguments are
-      supported.
     capture_output: Whether to capture stdout/stderr when running tests. If
       provided, this value overrides --test_capture_output.
   """
-  if len(argv) > 1:
-    raise app.UsageError("Unknown arguments: '{}'.".format(" ".join(argv[1:])))
-
-  # Always run with the most verbose logging option.
+  # Always run tests with the most verbose logging option.
   app.FLAGS.vmodule += [
     "*=5",
   ]
@@ -288,7 +281,9 @@ def RunPytestOnFileAndExit(
         "The test suite was empty. Use --error_if_no_tests to make this test fail."
       )
       ret = 0
-  sys.exit(ret)
+
+  if ret:
+    sys.exit(ret)
 
 
 def Fixture(
@@ -486,6 +481,11 @@ def Log(msg, *args):
 def Main(capture_output: typing.Optional[bool] = None):
   """Main entry point.
 
+  Call this from your test files instead of using app.Run(), e.g.:
+
+      if __name__ == '__main__':
+        test.Main()
+
   Args:
     capture_output: Whether to capture stdout/stderr when running tests. If
       provided, this value overrides --test_capture_output.
@@ -496,8 +496,6 @@ def Main(capture_output: typing.Optional[bool] = None):
   module = inspect.getmodule(frame[0])
   file_path = module.__file__
 
-  app.RunWithArgs(
-    lambda argv: RunPytestOnFileAndExit(
-      file_path, argv, capture_output=capture_output
-    )
+  app.Run(
+    lambda: RunPytestOnFileOrDie(file_path, capture_output=capture_output)
   )
