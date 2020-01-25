@@ -134,7 +134,7 @@ def pytest_collection_modifyitems(config, items):
     supported_platforms = PLATFORM_NAMES.intersection(item.keywords)
     if supported_platforms and this_platform not in supported_platforms:
       skip_msg = f"Skipping `{item.name}` for platforms: {supported_platforms}"
-      app.Log(1, skip_msg)
+      print(skip_msg)
       item.add_marker(pytest.mark.skip(reason=skip_msg))
       continue
 
@@ -142,7 +142,7 @@ def pytest_collection_modifyitems(config, items):
     supported_hosts = HOST_NAMES.intersection(item.keywords)
     if supported_hosts and this_host not in supported_hosts:
       skip_msg = f"Skipping `{item.name}` for hosts: {supported_hosts}"
-      app.Log(1, skip_msg)
+      print(skip_msg)
       item.add_marker(pytest.mark.skip(reason=skip_msg))
       continue
 
