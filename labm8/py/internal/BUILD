@@ -55,3 +55,15 @@ python_proto_library(
     visibility = ["//labm8/py:__subpackages__"],
     deps = [":logging_pb"],
 )
+
+py_library(
+    name = "pytest_plugin",
+    testonly = 1,
+    srcs = ["pytest_plugin.py"],
+    visibility = ["//labm8/py:__subpackages__"],
+    deps = [
+        "//:build_info",
+        "//labm8/py:app",
+        "//third_party/py/pytest",
+    ],
+)

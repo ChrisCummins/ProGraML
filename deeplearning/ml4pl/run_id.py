@@ -161,6 +161,11 @@ class RunId(NamedTuple):
 
     script_name = pathlib.Path(sys.argv[0]).stem
 
+    # Correct the script name when running from the command line,
+    # e.g. 'python -c "<cmd>"'.
+    if script_name == "-c":
+      script_name = "python"
+
     return cls.GenerateUnique(script_name)
 
   @classmethod

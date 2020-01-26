@@ -55,6 +55,7 @@ py_test(
     size = "enormous",
     timeout = "eternal",
     srcs = ["annotators_benchmark_test.py"],
+    args = ["--pytest_args=--benchmark-warmup-iterations=2"],
     deps = [
         ":annotate",
         ":data_flow_graphs",

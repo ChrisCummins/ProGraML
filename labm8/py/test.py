@@ -109,8 +109,13 @@ def AbsolutePathToModule(file_path: str) -> str:
     raise OSError(f"Could not determine runfiles directory: {file_path}")
 
 
-def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
+def GuessModuleUnderTest(file_path: str) -> typing.Optional[str]:
   """Determine the module under test. Returns None if no module under test."""
+  # Load the test module so that we can inspect it for attributes.
+  spec = importutil.spec_from_file_location("module", file_path)
+  test_module = importutil.module_from_spec(spec)
+  spec.loader.exec_module(test_module)
+
   # Check for a MODULE_UNDER_TEST attribute in the test module. If present, this
   # is the name of the module under test. Valid values for MODULE_UNDER_TEST are
   # a string, e.g. 'labm8.py.app', or None.
@@ -124,15 +129,16 @@ def GuessModuleUnderTest(test_module, file_path: str) -> typing.Optional[str]:
 
 @contextlib.contextmanager
 def CoverageContext(
-  test_module, file_path: str, pytest_args: typing.List[str],
+  file_path: str, pytest_args: typing.List[str],
 ) -> typing.List[str]:
-  # No test coverage requested.
+  # No test coverage requested, disable pytest-cov plugin.
   if not FLAGS.test_coverage:
+    pytest_args += ["-p", "no:cov"]
     yield pytest_args
     return
 
   # Record coverage of module under test.
-  module = GuessModuleUnderTest(test_module, file_path)
+  module = GuessModuleUnderTest(file_path)
   if not module:
     app.Log(1, "Coverage disabled - no module under test")
     yield pytest_args
@@ -187,26 +193,19 @@ exclude_lines =
     yield pytest_args
 
 
-def RunPytestOnFileAndExit(
-  file_path: str, argv: typing.List[str], capture_output: bool = None
-):
-  """Run pytest on a file and exit.
+def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
+  """Run pytest on a file and exit on failure.
 
-  This is invoked by absl.app.RunWithArgs(), and has access to absl flags.
+  This is invoked by app.Run() and has access to FLAGS.
 
-  This function does not return.
+  If the tests fail, this function does not return.
 
   Args:
     file_path: The path of the file to test.
-    argv: Positional arguments not parsed by absl. No additional arguments are
-      supported.
     capture_output: Whether to capture stdout/stderr when running tests. If
       provided, this value overrides --test_capture_output.
   """
-  if len(argv) > 1:
-    raise app.UsageError("Unknown arguments: '{}'.".format(" ".join(argv[1:])))
-
-  # Always run with the most verbose logging option.
+  # Always run tests with the most verbose logging option.
   app.FLAGS.vmodule += [
     "*=5",
   ]
@@ -226,9 +225,40 @@ def RunPytestOnFileAndExit(
     file_path,
     # Run pytest verbosely.
     "-v",
+    # Enable the labm8 test plugin.
+    "-p",
+    "labm8.py.internal.pytest_plugin",
+    # Let bazel handle caching.
     "-p",
     "no:cacheprovider",
   ]
+
+  # Generate XML test reports which bazel will then consume. This replaces the
+  # default XML report generated from bazel with a much more detailed one. The
+  # XML reports are located in bazel-testlogs/package/target/test.xml, and is
+  # consumed by various tools such as IntelliJ to give nice test output.
+  if os.environ.get("XML_OUTPUT_FILE") and os.environ.get("TEST_TARGET"):
+    # Using the junit XML reporter requires setting a couple of options, and I
+    # don't see a way of passing those options through the command line. As a
+    # result, we instead have to create a pytest.ini file in the execroot of the
+    # test runner and add the options there.
+    #
+    # NOTE: We unset the $XML_OUTPUT_FILE environment variable set by bazel,
+    # as I don't see a legitimate reason for a test to require access to this.
+    pytest_args += [
+      "--junitxml",
+      os.environ.pop("XML_OUTPUT_FILE"),
+      "--rootdir",
+      os.getcwd(),
+    ]
+    with open(os.path.join(os.getcwd(), "pytest.ini"), "w") as f:
+      f.write(
+        f"""
+[pytest]
+junit_suite_name = {os.environ["TEST_TARGET"]}
+junit_family = xunit2
+"""
+      )
 
   if FLAGS.test_color:
     pytest_args.append("--color=yes")
@@ -258,22 +288,14 @@ def RunPytestOnFileAndExit(
     num_shards = int(os.environ["TEST_TOTAL_SHARDS"])
     shard_index = int(os.environ["TEST_SHARD_INDEX"])
     pytest_args += [f"--shard-id={shard_index}", f"--num-shards={num_shards}"]
-
-  # Load the test module so that we can inspect it for attributes.
-  spec = importutil.spec_from_file_location("module", file_path)
-  test_module = importutil.module_from_spec(spec)
-  spec.loader.exec_module(test_module)
+  else:
+    pytest_args += ["-p", "no:pytest-shard"]
 
   # Add the --pytest_args requested by the user.
   pytest_args += FLAGS.pytest_args
 
-  # Allow the user to add a PYTEST_ARGS = ['--foo'] list of additional
-  # arguments.
-  if hasattr(test_module, "PYTEST_ARGS"):
-    pytest_args += test_module.PYTEST_ARGS
-
-  with CoverageContext(test_module, file_path, pytest_args) as pytest_args:
-    app.Log(1, "Running pytest with arguments: %s", pytest_args)
+  with CoverageContext(file_path, pytest_args) as pytest_args:
+    print("Running pytest with arguments:", " ".join(pytest_args))
     ret = pytest.main(pytest_args)
     # Enable pytest to silently pass if there were no tests collected.
     # See http://doc.pytest.org/en/latest/usage.html
@@ -281,11 +303,15 @@ def RunPytestOnFileAndExit(
       ret == pytest.ExitCode.NO_TESTS_COLLECTED.value
       and not FLAGS.error_if_no_tests
     ):
-      app.Warning(
-        "The test suite was empty. Use --error_if_no_tests to make this test fail."
+      print(
+        "WARNING: The test suite was empty. "
+        "Use --error_if_no_tests to make this test fail.",
+        file=sys.stderr,
       )
       ret = 0
-  sys.exit(ret)
+
+  if ret:
+    sys.exit(ret)
 
 
 def Fixture(
@@ -483,6 +509,11 @@ def Log(msg, *args):
 def Main(capture_output: typing.Optional[bool] = None):
   """Main entry point.
 
+  Call this from your test files instead of using app.Run(), e.g.:
+
+      if __name__ == '__main__':
+        test.Main()
+
   Args:
     capture_output: Whether to capture stdout/stderr when running tests. If
       provided, this value overrides --test_capture_output.
@@ -493,8 +524,6 @@ def Main(capture_output: typing.Optional[bool] = None):
   module = inspect.getmodule(frame[0])
   file_path = module.__file__
 
-  app.RunWithArgs(
-    lambda argv: RunPytestOnFileAndExit(
-      file_path, argv, capture_output=capture_output
-    )
+  app.Run(
+    lambda: RunPytestOnFileOrDie(file_path, capture_output=capture_output)
   )
