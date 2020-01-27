@@ -214,11 +214,6 @@ def RunPytestOnFileOrDie(file_path: str, capture_output: bool = None):
   if capture_output is not None:
     app.FLAGS.test_capture_output = capture_output
 
-  # Test files must end with _test.py suffix. This is a code style choice, not
-  # a hard requirement.
-  if not file_path.endswith("_test.py"):
-    app.Fatal("File `%s` does not end in suffix _test.py", file_path)
-
   # Assemble the arguments to run pytest with. Note that the //:conftest file
   # performs some additional configuration not captured here.
   pytest_args = [
