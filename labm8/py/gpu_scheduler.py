@@ -34,9 +34,10 @@ on systems with no GPUs. If no GPUs are available, the return value is None.
 Alternatively, use requires_gpus=True argument to raise an OSError.
 
 By default, GPUs are disabled during testing (as determined by the presence
-of $TEST_TMPDIR which bazel sets). To enable the GPUs for tests, use
---test_with_gpu, but note that when executing large numbers of tests, they may
-have to queue and execute sequentially, causing timeouts.
+of $TEST_TARGET which bazel sets). To enable the GPUs for tests, set the
+$TEST_WITH_GPU environment variable to 1. Please note that when executing large
+numbers of tests concurrently, they may have to queue and execute sequentially,
+causing unexpected test timeouts.
 """
 import contextlib
 import functools
@@ -55,9 +56,6 @@ from labm8.py import humanize
 
 FLAGS = app.FLAGS
 
-app.DEFINE_boolean(
-  "test_with_gpu", False, "If set, enable access to GPUs during testing."
-)
 
 _LOCK_DIR = pathlib.Path("/tmp/phd/labm8/gpu_scheduler_locks")
 
@@ -126,7 +124,7 @@ def GetDefaultScheduler() -> GpuScheduler:
   if not gpus:
     raise NoGpuAvailable("No GPUs available")
 
-  if os.environ.get("TEST_TMPDIR") and not FLAGS.test_with_gpu:
+  if os.environ.get("TEST_TARGET") and os.environ.get("TEST_WITH_GPU") != "1":
     raise NoGpuAvailable("GPUs disabled for tests")
 
   app.Log(
