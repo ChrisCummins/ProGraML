@@ -79,6 +79,10 @@ def pytest_collection_modifyitems(config, items):
   """A pytest hook to modify the configuration and items to run."""
   del config
 
+  # Exit early if we have nothing to do.
+  if not items:
+    return
+
   # Fail early and verbosely if the flags cannot be accessed. This is a sign
   # that this file is being used incorrectly. To use this file, you must
   # use labm8.py.test.Main() as the entry point to your tests.
@@ -94,16 +98,15 @@ def pytest_collection_modifyitems(config, items):
   this_host = socket.gethostname()
   slow_skip_marker = pytest.mark.skip(reason="Use --notest_skip_slow to run")
 
-  # Optionally rewrite the file path determined by the pytest collector.
-  # The conditions for rewriting the file paths are:
-  #   * We are running in a bazel environment.
-  #   * The workspace directory determined by build_info exists.
+  # Rewrite the file path determined by the pytest collector from the default
+  # relpath to an absolute path.
   #
   # The reason for rewriting the file path is that bazel's containerized test
   # execution means that the location of the pytest root directory is not the
-  # same as the root directory of the sources being tested. Further, I don't
-  # want to set --root_dir to the real workspace root as that seems too invasive
-  # of a change to bazel's testing strategy.
+  # same as the root directory of the sources being tested. This makes the
+  # relpaths used by pytest hard to interpret, e.g. ../../../../../phd/foo.py.
+  # Further, I don't want to set --root_dir to the real workspace root as that
+  # seems too invasive of a change to bazel's testing strategy.
   #
   # NOTE: Since this plugin is intended to be used only by labm8.py.test.Main(),
   # it is assumed that all test items come from the same location, so we need
@@ -112,16 +115,12 @@ def pytest_collection_modifyitems(config, items):
   # WARNING: It is unclear to me whether rewriting the location will have some
   # unexpected sideffects for bits of pytest that depend on the location. In
   # my experience so far, this rewriting has not caused any problems.
-  rewriten_path = None
-  workspace = build_info.GetBuildInfo().unsafe_workspace
-  if items and os.environ.get("TEST_TARGET") and os.path.isdir(workspace):
-    rewriten_path = os.path.relpath(items[0].location[0], workspace)
+  rewriten_path = os.path.abspath(items[0].location[0])
 
   for item in items:
     # TODO(cec): Skip benchmarks by default.
 
-    if rewriten_path:
-      item.location = (rewriten_path, *item.location[1:])
+    item.location = (rewriten_path, *item.location[1:])
 
     # Skip tests if they been marked for an incompatible platform. To mark a
     # test for a platform, wrap the test function with a decorator. Example:
