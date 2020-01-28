@@ -8,6 +8,7 @@ import pathlib
 import pkgutil
 import re
 import subprocess
+import sys
 import typing
 
 from labm8.py import app
@@ -260,7 +261,10 @@ class Workspace(object):
         f"\r\033[KCollecting transitive dependencies ({len(all_targets)}): {target}",
         end="",
       )
-      bazel = self.BazelQuery([f"deps({target})"], stdout=subprocess.PIPE)
+      sys.stdout.flush()
+      bazel = self.BazelQuery(
+        [f"deps({target})"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+      )
       grep = subprocess.Popen(
         ["grep", "^/"],
         stdout=subprocess.PIPE,
