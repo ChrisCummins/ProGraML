@@ -67,9 +67,12 @@ py_test(
 
 py_test(
     name = "run_id_multiprocess_test",
+    size = "small",
     srcs = ["run_id_multiprocess_test.py"],
+    data = [":run_id"],
     deps = [
         ":run_id",
+        "//labm8/py:bazelutil",
         "//labm8/py:test",
     ],
 )
