@@ -44,7 +44,7 @@ app.DEFINE_boolean(
 )
 app.DEFINE_integer(
   "test_maxfail",
-  1,
+  0,
   "The maximum number of tests that can fail before execution terminates. "
   "If --test_maxfail=0, all tests will execute.",
 )
