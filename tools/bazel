@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Wrapper script which runs bazel under a minimal environment.  This script is
+# invoked automatically by bazel's own wrapper script, which checks for a
+# //tools:bazel script, and, if one is found, execs it with ${BAZEL_REAL}
+# pointing to the true bazel binary path.
+#
+# Bazel is *very* sensitive to environment variables when determining which
+# targets must be rebuilt.  This causes a lot of churn when switching between
+# environments such as terminals, IDEs, editors, etc.  This is especially
+# frustrating as it invalidates the results of (possibly expensive) test runs.
+#
+# This bazel wrapper script forwards only the minimum environment variables
+# required for bazel to complete it's task: a ${TERM} environment (so it knows
+# how to format build output), and a ${PATH} which has the necessary tools
+# required to complete the build (e.g. the compiler toolchains and python
+# runtimes).
+#
+# This assumes that /bin, /usr/bin, and /usr/local/bin contain the necessary
+# build tools, which is true for the standard Linux / macOS environments I use.
+# Your mileage may vary.
+set -eu
+env -i TERM="$TERM" PATH=/bin:/usr/bin:/usr/local/bin "$BAZEL_REAL" "$@"

@@ -429,7 +429,7 @@ java_proto_compile()
 #  5) Set the name to something descriptive.
 #
 
-load("//tools/bzl:maven_jar.bzl", "maven_jar")
+load("//third_party/bazel:maven_jar.bzl", "maven_jar")
 
 maven_jar(
     name = "org_junit",
