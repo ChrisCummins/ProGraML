@@ -11,10 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""A wrapper around absl's app and logging modules.
+"""This module provides common functionality for writing python applications.
+
+For executable scripts, the app.Run() method provides the necessary entry point
+to handle app initialization. Once within the environment set up by this
+function, the app.FLAGS namespace provides access to global flag values, and
+a standardised logging methodology is available through app.Log(), app.Warn(),
+app.Error, and app.FatalWithoutStackTrace().
 
 Attributes:
 
+  FLAGS (namespace): The namespace for accessing global flag values.
   VERSION (str): The project version string, in the form YY.MM.DD.
   GIT_URL (str): The clone URL of the git repo used for this build.
   GIT_COMMIT (str): The checksum of the git commit used for this build.
@@ -26,6 +33,25 @@ Attributes:
     currently running this process.
   ARCH (str): The host target architecture of the build. One of:
     {linux_amd64, darwin_amd64}.
+
+Example Usage:
+
+  $ cat <<EOF >foo.py
+  from labm8.py import app
+
+  FLAGS = app.FLAGS
+
+  app.DEFINE_string("name", "world", "Who to say hello to.")
+
+  def Main():
+    app.Log(1, "Hello, {FLAGS.name}! This is {app.VERSION} speaking")
+
+  if __name__ == "__main__":
+    app.Run(Main)
+  EOF
+
+  $ python foo.py
+  INFO: Hello, world! This is 20.01.30 speaking
 """
 import datetime
 import functools
