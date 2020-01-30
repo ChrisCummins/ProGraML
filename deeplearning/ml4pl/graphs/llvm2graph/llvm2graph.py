@@ -34,7 +34,7 @@ LLVM2GRAPH = bazelutil.DataPath(
 
 def BuildProgramGraphProto(
   module: str,
-  timeout: int = 60,
+  timeout: int = 120,
   graph: Optional[programl_pb2.ProgramGraph] = None,
 ) -> programl_pb2.ProgramGraph:
   """Construct a program graph for the given LLVM IR.
@@ -103,7 +103,7 @@ def BuildProgramGraphProto(
 
 def BuildProgramGraphNetworkX(
   module: str,
-  timeout: int = 60,
+  timeout: int = 120,
   graph: Optional[programl_pb2.ProgramGraph] = None,
 ) -> nx.MultiDiGraph:
   """Construct a NetworkX program graph for the given LLVM IR.
