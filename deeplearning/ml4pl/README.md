@@ -423,5 +423,5 @@ adds a failing test case that reproduces the bug.
 
 ## License
 
-Copyright 2019 the ProGraML authors and released under the terms of the Apache
-Version 2.0 license. See LICENSE.
+Copyright 2019-2020 the ProGraML authors and released under the terms of the
+Apache Version 2.0 license. See LICENSE.

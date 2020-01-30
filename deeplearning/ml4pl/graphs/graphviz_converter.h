@@ -1,6 +1,6 @@
 // This file defines a function for converting program graphs to graphviz.
 //
-// Copyright 2019 the ProGraML authors.
+// Copyright 2019-2020 the ProGraML authors.
 //
 // Contact Chris Cummins <chrisc.101@gmail.com>.
 //
