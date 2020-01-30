@@ -17,12 +17,12 @@
 py_library(
     name = "app",
     srcs = ["app.py"],
+    data = ["//labm8/py/internal:workspace_status"],
     visibility = ["//visibility:public"],
     deps = [
         ":shell",
-        "//:build_info",
         "//labm8/py/internal:flags_parsers",
-        "//labm8/py/internal:logging",
+        "//labm8/py/internal:labm8_logging",
         "//third_party/py/absl",
     ],
 )
@@ -530,7 +530,6 @@ py_test(
     deps = [
         ":pbutil",
         ":test",
-        "//:config_pb_py",
         "//labm8/py/test_data:test_protos_pb_py",
     ],
 )
@@ -742,6 +741,15 @@ py_test(
         ":test",
         ":text",
     ],
+)
+
+py_library(
+    name = "version",
+    srcs = ["version.py"],
+    data = [
+        "//labm8/py/internal:workspace_status",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 py_library(

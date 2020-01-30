@@ -37,8 +37,8 @@ python_proto_library(
 )
 
 py_library(
-    name = "logging",
-    srcs = ["logging.py"],
+    name = "labm8_logging",
+    srcs = ["labm8_logging.py"],
     visibility = ["//labm8/py:__subpackages__"],
     deps = [
         "//third_party/py/absl",
@@ -62,8 +62,20 @@ py_library(
     srcs = ["pytest_plugin.py"],
     visibility = ["//labm8/py:__subpackages__"],
     deps = [
-        "//:build_info",
         "//labm8/py:app",
         "//third_party/py/pytest",
+    ],
+)
+
+# A "python module" which exposes the workspace variables as module constants.
+genrule(
+    name = "workspace_status",
+    outs = ["workspace_status.py"],
+    cmd = ("sed -r 's/ (.*)/=\"\\1\"/' bazel-out/stable-status.txt > $@ &&" +
+           "sed -r 's/ (.*)/=\"\\1\"/' bazel-out/volatile-status.txt >> $@"),
+    stamp = 1,
+    visibility = [
+        "//labm8/py:__subpackages__",
+        "//tools:__subpackages__",
     ],
 )

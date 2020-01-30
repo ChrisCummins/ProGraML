@@ -37,7 +37,7 @@ from labm8.py import labdate
 from labm8.py import pbutil
 from labm8.py import progress
 from labm8.py import text
-from labm8.py.internal import logging
+from labm8.py.internal import labm8_logging as logging
 
 FLAGS = absl_flags.FLAGS
 

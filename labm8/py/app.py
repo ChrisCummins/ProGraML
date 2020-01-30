@@ -13,8 +13,21 @@
 # limitations under the License.
 """A wrapper around absl's app and logging modules.
 
-See: <https://github.com/abseil/abseil-py>
+Attributes:
+
+  VERSION (str): The project version string, in the form YY.MM.DD.
+  GIT_URL (str): The clone URL of the git repo used for this build.
+  GIT_COMMIT (str): The checksum of the git commit used for this build.
+  GIT_DIRTY (bool): Whether the git working tree was dirty during the build.
+  TIMESTAMP (datetime.datetime): The timestamp (rounded to the nearest second)
+    of the build.
+  BUILT_BY (str): A string identifying the source of the build in the form
+    <user>@<host>. This may not be the same as the user or host that is
+    currently running this process.
+  ARCH (str): The host target architecture of the build. One of:
+    {linux_amd64, darwin_amd64}.
 """
+import datetime
 import functools
 import json
 import pathlib
@@ -33,7 +46,8 @@ from absl import logging as absl_logging
 
 from labm8.py import shell
 from labm8.py.internal import flags_parsers
-from labm8.py.internal import logging
+from labm8.py.internal import labm8_logging as logging
+from labm8.py.internal import workspace_status
 
 FLAGS = absl_flags.FLAGS
 
@@ -51,6 +65,19 @@ absl_flags.DEFINE_boolean(
 absl_flags.DEFINE_boolean(
   "log_colors", True, "Whether to colorize logging output."
 )
+
+# Expose some of the variables produced by //tools:workspace_status.sh, see the
+# module docstring for details:
+VERSION = workspace_status.STABLE_VERSION
+GIT_URL = workspace_status.STABLE_GIT_URL
+GIT_COMMIT = workspace_status.STABLE_GIT_COMMIT
+GIT_DIRTY = workspace_status.STABLE_GIT_DIRTY
+TIMESTAMP = datetime.datetime.fromtimestamp(
+  int(workspace_status.BUILD_TIMESTAMP)
+)
+BUILT_BY = f"{workspace_status.BUILD_USER}@{workspace_status.BUILD_HOST}"
+ARCH = workspace_status.STABLE_ARCH
+
 
 # A decorator to mark a function as ignored when computing the log prefix.
 #
@@ -85,27 +112,12 @@ def AssertOrRaise(
 
 def GetVersionInformationString() -> str:
   """Return a string of version information, as printed by --version flag."""
-  # If this is a bazel environment, then the //:build_info package will be
-  # available. However, if this is a labm8 pip package install, then
-  # //:build_info will not be available, so use pkg_resources to get the
-  # version information.
-  try:
-    import build_info
-
-    version = "\n".join(
-      [build_info.FormatVersion(), build_info.FormatShortBuildDescription(),]
-    )
-    url = build_info.GetGithubCommitUrl()
-  except ModuleNotFoundError:
-    import pkg_resources
-
-    version = f'version: {pkg_resources.get_distribution("labm8").version}'
-    url = "https://github.com/ChrisCummins/labm8"
   return "\n".join(
     [
-      version,
-      "Copyright (C) 2014-2019 Chris Cummins <chrisc.101@gmail.com>",
-      f"<{url}>",
+      f"version: {VERSION} {ARCH}",
+      FormatShortBuildDescription(),
+      "Copyright (C) 2014-2020 Chris Cummins <chrisc.101@gmail.com>",
+      f"<{GetGithubCommitUrl()}>",
     ]
   )
 
@@ -689,6 +701,57 @@ def LogToDirectory(
   logdir.mkdir(exist_ok=True, parents=True)
   absl_logging.get_absl_handler().use_absl_log_file(str(name), str(logdir))
   return logdir
+
+
+def ToJson() -> Dict[str, Any]:
+  """Return build information as a JSON dictionary."""
+  return {
+    "version": VERSION,
+    "git_commit": GIT_COMMIT,
+    "git_dirty": GIT_DIRTY,
+    "git_url": GIT_URL,
+    "timestamp": str(int(TIMESTAMP.timestamp())),
+    "built_by": BUILT_BY,
+  }
+
+
+def GetGithubCommitUrl(
+  remote_url: Optional[str] = None, commit_hash: Optional[str] = None,
+) -> Optional[str]:
+  """Calculate the GitHub URL for a commit."""
+  remote_url = remote_url or GIT_URL
+  commit_hash = commit_hash or GIT_COMMIT
+
+  m = re.match(f"git@github\.com:([^/]+)/(.+)\.git", remote_url)
+  if not m:
+    return None
+  return f"https://github.com/{m.group(1)}/{m.group(2)}/commit/{commit_hash}"
+
+
+def FormatShortRevision(html: bool = False) -> str:
+  """Get a shortened revision string."""
+  dirty_suffix = "*" if GIT_DIRTY else ""
+  short_hash = f"{GIT_COMMIT[:7]}{dirty_suffix}"
+  if html:
+    return f'<a href="{GetGithubCommitUrl()}">{short_hash}</a>'
+  else:
+    return short_hash
+
+
+def FormatShortBuildDescription(html: bool = False) -> str:
+  """Get build string in the form: 'build SHORT_HASH on DATE by USER@HOST'."""
+  natural_date = TIMESTAMP.strftime("%Y-%m-%d")
+  revision = FormatShortRevision(html)
+  return f"build: {revision} on {natural_date} by {BUILT_BY}"
+
+
+def FormatLongBuildDescription(html: bool = False) -> str:
+  """Get long multi-line build string."""
+  natural_datetime = TIMESTAMP.strftime("%Y-%m-%d %H:%M:%S")
+  revision = FormatShortRevision(html=html)
+  return (
+    f"Built by {BUILT_BY} at {natural_datetime}.\n" f"Revision: {revision}."
+  )
 
 
 # Get the thread ID as an unsigned integer.
