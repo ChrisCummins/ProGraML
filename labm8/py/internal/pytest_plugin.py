@@ -8,7 +8,6 @@ import typing
 
 import pytest
 
-import build_info
 from labm8.py import app
 
 # *WARNING* Flags used in this file are not defined here! They are declared in
@@ -169,4 +168,7 @@ def pytest_report_header(config) -> typing.Union[str, typing.List[str]]:
   https://docs.pytest.org/en/latest/example/simple.html#adding-info-to-test-report-header
   """
   del config
-  return f"phd: {build_info.FormatShortBuildDescription()}"
+  return (
+    f"version: {app.VERSION} {app.ARCH}\n"
+    f"{app.FormatShortBuildDescription()}"
+  )

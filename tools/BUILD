@@ -5,9 +5,7 @@
 sh_binary(
     name = "whoami",
     srcs = ["whoami.sh"],
-    data = [
-        "//:build_info_pbtxt",
-    ],
+    data = [":workspace_status"],
 )
 
 sh_binary(
@@ -21,4 +19,13 @@ sh_binary(
     name = "py3_wrapper",
     srcs = ["py3_wrapper.sh"],
     visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "workspace_status",
+    outs = ["workspace_status.txt"],
+    cmd = ("cat bazel-out/volatile-status.txt > $@ &&" +
+           "cat bazel-out/stable-status.txt >> $@"),
+    stamp = 1,
+    visibility = ["//labm8/py:__subpackages__"],
 )

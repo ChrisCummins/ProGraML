@@ -125,7 +125,4 @@ __pycache__
 /deeplearning/ml4pl/.env
 /deeplearning/ml4pl/.vscode/
 
-build_info_pbtxt_py.py
-config_pb2.py
-version_py.py
 deeplearning/ml4pl/graphs/programl_pb2.py
