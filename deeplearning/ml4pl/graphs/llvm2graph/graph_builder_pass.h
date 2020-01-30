@@ -1,6 +1,6 @@
 // An LLVM Module pass for constructing a program graph from a module.
 //
-// Copyright 2019 the ProGraML authors.
+// Copyright 2019-2020 the ProGraML authors.
 //
 // Contact Chris Cummins <chrisc.101@gmail.com>.
 //

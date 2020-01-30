@@ -33,7 +33,7 @@
 $ python -m pip install -U labm8
 ```
 
-Copyright 2015-2019 Chris Cummins <chrisc.101@gmail.com>.
+Copyright 2014-2020 Chris Cummins <chrisc.101@gmail.com>.
 
 Released under the terms of the Apache 2.0 license. See
 `LICENSE` for details.

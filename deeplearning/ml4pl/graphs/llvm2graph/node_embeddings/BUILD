@@ -4,7 +4,7 @@
 # elements: !MAGIC, !IMMEDIATE, and !IDENTIFIER. These new vocabulary elements
 # have been assigned random embedding vectors.
 #
-# Copyright 2019 the ProGraML authors.
+# Copyright 2019-2020 the ProGraML authors.
 #
 # Contact Chris Cummins <chrisc.101@gmail.com>.
 #
