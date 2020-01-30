@@ -37,8 +37,8 @@ python_proto_library(
 )
 
 py_library(
-    name = "logging",
-    srcs = ["logging.py"],
+    name = "labm8_logging",
+    srcs = ["labm8_logging.py"],
     visibility = ["//labm8/py:__subpackages__"],
     deps = [
         "//third_party/py/absl",

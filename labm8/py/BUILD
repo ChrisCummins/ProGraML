@@ -22,7 +22,7 @@ py_library(
         ":shell",
         "//:build_info",
         "//labm8/py/internal:flags_parsers",
-        "//labm8/py/internal:logging",
+        "//labm8/py/internal:labm8_logging",
         "//third_party/py/absl",
     ],
 )

@@ -33,7 +33,7 @@ from absl import logging as absl_logging
 
 from labm8.py import shell
 from labm8.py.internal import flags_parsers
-from labm8.py.internal import logging
+from labm8.py.internal import labm8_logging as logging
 
 FLAGS = absl_flags.FLAGS
 
