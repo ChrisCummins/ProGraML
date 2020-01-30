@@ -744,15 +744,6 @@ py_test(
 )
 
 py_library(
-    name = "version",
-    srcs = ["version.py"],
-    data = [
-        "//labm8/py/internal:workspace_status",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-py_library(
     name = "viz",
     srcs = ["viz.py"],
     visibility = ["//visibility:public"],
