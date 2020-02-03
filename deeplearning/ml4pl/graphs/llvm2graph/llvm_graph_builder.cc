@@ -81,9 +81,16 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
 
   // Iterate over the instructions of a basic block in-order.
   for (const llvm::Instruction& instruction : block) {
+#ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
+    // TODO(github.com/ChrisCummins/ProGraML/issues/55): Don't use the entire
+    // text of an instruction (e.g. "%3 = add %1 %2") for statement nodes.
+    const string text = GetInstructionRhs(instruction);
+#else
+    const string text = PrintToString(instruction);
+#endif
+
     // Create the graph node for the instruction.
-    auto statement =
-        AddStatement(GetInstructionRhs(instruction), functionNumber);
+    auto statement = AddStatement(text, functionNumber);
     previousNodeNumber = currentNodeNumber;
     currentNodeNumber = statement.first;
 
@@ -131,6 +138,14 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
         it->second.push_back({currentNodeNumber, position});
       } else if (const auto* operand =
                      llvm::dyn_cast<llvm::Instruction>(value)) {
+#ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
+        // TODO(github.com/ChrisCummins/ProGraML/issues/55): Set name of the
+        // identifier to the LHS of the instruction.
+        const string identifierText = GetInstructionLhs(*operand);
+#else
+        const string identifierText = "!IDENTIFIER";
+#endif
+
         // We have an instruction operand which itself is another instruction.
         //
         // For example, take the following IR snippet:
@@ -152,7 +167,6 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
         // To this we create the intermediate data flow node '%2' immediately,
         // but defer adding the edge from the producer instruction, since we may
         // not have visited it yet.
-        const string identifierText = GetInstructionLhs(*operand);
         auto identifier = AddIdentifier(identifierText, functionNumber);
 
         // Connect the data -> consumer.
@@ -342,8 +356,14 @@ labm8::StatusOr<ProgramGraph> LlvmGraphBuilder::Build(
 
   // Create the constants.
   for (const auto& constant : constants_) {
+#ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
+    const string immediateText = PrintToString(*constant.first);
+#else
+    const string immediateText = "!IMMEDIATE";
+#endif
+
     // Create the node for the constant.
-    auto immmediate = AddImmediate(PrintToString(*constant.first));
+    auto immmediate = AddImmediate(immediateText);
     // Create data in-flow edges.
     for (auto destination : constant.second) {
       AddDataEdge(immmediate.first, destination.first, destination.second);
