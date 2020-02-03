@@ -57,11 +57,12 @@ class GraphNodeEncoder(object):
   def EncodeNodes(self, g: nx.DiGraph) -> None:
     """Pre-process the node text and set the text embedding index.
 
-    For each node, this sets the 'preprocessed_text' and 'x' attributes.
+    For each node, this sets the 'preprocessed_text', 'x', and 'y' attributes.
 
     Args:
       g: The graph to encode the nodes of.
     """
+    # Pre-process the statements of the graph in a single pass.
     lines = [
       [data["text"]]
       for _, data in g.nodes(data=True)
@@ -73,16 +74,19 @@ class GraphNodeEncoder(object):
       for x in preprocessed_lines
     ]
     for (node, data), text in zip(g.nodes(data=True), preprocessed_texts):
-      if text:
-        data["preprocessed_text"] = text
-        data["type"] = programl_pb2.Node.STATEMENT
-        data["x"] = [self.dictionary.get(text, self.dictionary["!UNK"])]
-        data["y"] = []
-      else:
-        data["preprocessed_text"] = "!UNK"
-        data["type"] = programl_pb2.Node.STATEMENT
-        data["x"] = [self.dictionary["!UNK"]]
-        data["y"] = []
+      data["preprocessed_text"] = text
+      data["x"] = [self.dictionary.get(text, self.dictionary["!UNK"])]
+
+    # Re-write the remaining graph nodes.
+    for node, data in g.nodes(data=True):
+      if data["type"] == programl_pb2.Node.IDENTIFIER:
+        data["preprocessed_text"] = "!IDENTIFIER"
+        data["x"] = [self.dictionary["!IDENTIFIER"]]
+      elif data["type"] == programl_pb2.Node.IMMEDIATE:
+        data["preprocessed_text"] = "!IMMEDIATE"
+        data["x"] = [self.dictionary["!IMMEDIATE"]]
+
+      data["y"] = []
 
   @decorators.memoized_property
   def embeddings_tables(self) -> List[np.array]:
