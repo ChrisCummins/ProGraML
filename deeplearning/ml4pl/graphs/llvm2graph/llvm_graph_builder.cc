@@ -126,16 +126,9 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
         // will be produced provide the information we want to capture.
       } else if (const auto* constant = llvm::dyn_cast<llvm::Constant>(value)) {
         // If the operand is a constant value, insert a new entry into the map
-        // of constants to node IDs.
-        auto it = constants_.find(constant);
-        if (it == constants_.end()) {
-          constants_.insert({constant, {}});
-          it = constants_.find(constant);
-        }
-        // Record the mapping from constant value to current node and position.
-        // We defer creating the immediate nodes until we have traversed all
-        // instructions.
-        it->second.push_back({currentNodeNumber, position});
+        // of constants to node IDs and positions. We defer creating the
+        // immediate nodes until we have traversed all
+        constants_[constant].push_back({currentNodeNumber, position});
       } else if (const auto* operand =
                      llvm::dyn_cast<llvm::Instruction>(value)) {
 #ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
