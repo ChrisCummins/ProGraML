@@ -128,7 +128,7 @@ cc_library(
     ],
 )
 
-py_library(
+py_binary(
     name = "node_encoder",
     srcs = ["node_encoder.py"],
     data = [
@@ -140,6 +140,7 @@ py_library(
         "//deeplearning/ml4pl/models:__subpackages__",
     ],
     deps = [
+        "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//deeplearning/ncc/inst2vec:inst2vec_preprocess",
         "//labm8/py:app",

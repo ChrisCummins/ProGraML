@@ -13,13 +13,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""A module for encoding node embeddings."""
+"""A module for encoding node embeddings.
+
+When executed as a binary, this program reads a single program graph from
+stdin, encodes it, and writes a graph to stdout. Use --stdin_fmt and
+--stdout_fmt to convert between different graph types.
+
+Example usage:
+
+  Encode a program graph binary proto and write the result as text format:
+
+    $ bazel run //deeplearning/ml4pl/graphs/llvm2graph:node_encoder -- \
+        --stdin_fmt=pb \
+        --stdout_fmt=pbtxt \
+        < /tmp/proto.pb > /tmp/proto.pbtxt
+"""
 import pickle
 from typing import List
 
 import networkx as nx
 import numpy as np
 
+from deeplearning.ml4pl.graphs import programl
 from deeplearning.ml4pl.graphs import programl_pb2
 from deeplearning.ncc.inst2vec import inst2vec_preprocess
 from labm8.py import app
@@ -93,3 +108,16 @@ class GraphNodeEncoder(object):
     """Return the embeddings tables."""
     node_selector = np.vstack([[1, 0], [0, 1],]).astype(np.float64)
     return [self.node_text_embeddings, node_selector]
+
+
+def Main():
+  """Main entry point."""
+  proto = programl.ReadStdin()
+  g = programl.ProgramGraphToNetworkX(proto)
+  encoder = GraphNodeEncoder()
+  encoder.EncodeNodes(g)
+  programl.WriteStdout(programl.NetworkXToProgramGraph(g))
+
+
+if __name__ == "__main__":
+  app.Run(Main)
