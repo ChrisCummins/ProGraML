@@ -29,6 +29,7 @@ Example usage:
         < /tmp/proto.pb > /tmp/proto.pbtxt
 """
 import enum
+import pickle
 import sys
 from typing import List
 from typing import Optional
@@ -51,6 +52,8 @@ class InputOutputFormat(enum.Enum):
   PB = 1
   # A text protocol buffer.
   PBTXT = 2
+  # A pickled networkx graph.
+  NX = 3
 
 
 app.DEFINE_enum(
@@ -329,6 +332,8 @@ def FromBytes(
     proto.ParseFromString(data)
   elif fmt == InputOutputFormat.PBTXT:
     pbutil.FromString(data.decode("utf-8"), proto)
+  elif fmt == InputOutputFormat.NX:
+    NetworkXToProgramGraph(pickle.loads(data), proto=proto)
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
 
@@ -357,6 +362,8 @@ def ToBytes(
     return program_graph.SerializeToString()
   elif fmt == InputOutputFormat.PBTXT:
     return str(program_graph).encode("utf-8")
+  elif fmt == InputOutputFormat.NX:
+    return pickle.dumps(ProgramGraphToNetworkX(program_graph))
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
 
