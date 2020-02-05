@@ -242,7 +242,12 @@ labm8::StatusOr<FunctionEntryExits> LlvmGraphBuilder::VisitFunction(
   // Construct the identifier data elements for arguments and connect data
   // edges.
   for (auto it : argumentConsumers) {
-    auto argument = AddIdentifier(PrintToString(*it.first), functionNumber);
+#ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
+    auto text = PrintToString(*it.first);
+#else
+    auto text = "!IDENTIFIER";
+#endif
+    auto argument = AddIdentifier(text, functionNumber);
     for (auto argumentConsumer : it.second) {
       AddDataEdge(argument.first, argumentConsumer.first,
                   argumentConsumer.second);
