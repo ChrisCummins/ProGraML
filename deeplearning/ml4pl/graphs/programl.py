@@ -65,6 +65,9 @@ class StdoutGraphFormat(enum.Enum):
   PBTXT = 2
   # A pickled networkx graph.
   NX = 3
+  # A graphviz dot string. WARNING: Conversion to DOT format is lossy. A DOT
+  # format graph cannot be converted back to a protocol buffer.
+  DOT = 4
 
 
 app.DEFINE_enum(
@@ -383,6 +386,8 @@ def ToBytes(
     return str(program_graph).encode("utf-8")
   elif fmt == StdoutGraphFormat.NX:
     return pickle.dumps(ProgramGraphToNetworkX(program_graph))
+  elif fmt == StdoutGraphFormat.DOT:
+    return ProgramGraphToGraphviz(program_graph).encode("utf-8")
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
 
