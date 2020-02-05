@@ -88,7 +88,14 @@ class GraphNodeEncoder(object):
       inst2vec_preprocess.PreprocessStatement(x[0] if len(x) else "")
       for x in preprocessed_lines
     ]
-    for (node, data), text in zip(g.nodes(data=True), preprocessed_texts):
+    for (_, data), text in zip(
+      (
+        (_, data)
+        for _, data in g.nodes(data=True)
+        if data["type"] == programl_pb2.Node.STATEMENT
+      ),
+      preprocessed_texts,
+    ):
       data["preprocessed_text"] = text
       data["x"] = [self.dictionary.get(text, self.dictionary["!UNK"])]
 
