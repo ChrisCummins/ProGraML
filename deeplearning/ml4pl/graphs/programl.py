@@ -79,6 +79,11 @@ app.DEFINE_enum(
   StdoutGraphFormat.PBTXT,
   "The format for output program graphs.",
 )
+app.DEFINE_string(
+  "node_labels",
+  "text",
+  "The Node message field to use for graphviz node labels.",
+)
 
 
 class GraphBuilder(object):
@@ -306,7 +311,9 @@ def NetworkXToProgramGraph(
   return proto
 
 
-def ProgramGraphToGraphviz(proto: programl_pb2) -> str:
+def ProgramGraphToGraphviz(
+  proto: programl_pb2, node_labels: Optional[str] = None
+) -> str:
   """Convert a program graph protocol buffer to a graphviz dot string.
 
   Wraps the C++ method defined the graphviz_convert_py.cc pybind module.
@@ -318,7 +325,8 @@ def ProgramGraphToGraphviz(proto: programl_pb2) -> str:
     A string suitable for feeding into `dot`.
   """
   proto_str = proto.SerializeToString()
-  return graphviz_converter_py.ProgramGraphToGraphviz(proto_str)
+  node_labels = node_labels or FLAGS.node_labels
+  return graphviz_converter_py.ProgramGraphToGraphviz(proto_str, node_labels)
 
 
 def FromBytes(

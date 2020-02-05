@@ -24,14 +24,15 @@
 #include <pybind11/pybind11.h>
 
 // Convert the given serialized program graph proto to a graphviz string.
-string ProgramGraphToGraphviz(const string& serializedProto) {
+string ProgramGraphToGraphviz(const string& serializedProto,
+                              const string& nodeLabels) {
   // Parse the input protocol buffer.
   ml4pl::ProgramGraph graph;
   graph.ParseFromString(serializedProto);
 
   // Serialize to graphviz.
   std::stringstream buffer;
-  ml4pl::SerializeGraphVizToString(graph, &buffer);
+  ml4pl::SerializeGraphVizToString(graph, &buffer, nodeLabels);
   return buffer.str();
 }
 

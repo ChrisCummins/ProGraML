@@ -19,11 +19,12 @@
 
 #include "boost/graph/graphviz.hpp"
 #include "deeplearning/ml4pl/graphs/programl.pb.h"
+#include "labm8/cpp/string.h"
 
 namespace ml4pl {
 
 // Serialize the given program graph to an output stream.
-void SerializeGraphVizToString(const ProgramGraph& graph,
-                               std::ostream* ostream);
+void SerializeGraphVizToString(const ProgramGraph& graph, std::ostream* ostream,
+                               const string& nodeLabels = "text");
 
 }  // namespace ml4pl
