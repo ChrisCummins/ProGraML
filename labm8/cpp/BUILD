@@ -40,6 +40,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":logging",
+        ":status",
+        ":statusor",
         ":string",
         "@boost//:filesystem",
     ],

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 
 #include "boost/filesystem.hpp"
@@ -14,6 +15,7 @@ namespace labm8 {
 // relative to the bazel runfiles root, and begin with the name of the
 // workspace.
 //
+StatusOr<boost::filesystem::path> BazelDataPath(const string& path);
 boost::filesystem::path BazelDataPathOrDie(const string& path);
 
 }  // namespace labm8
