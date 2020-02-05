@@ -45,8 +45,19 @@ from labm8.py import pbutil
 FLAGS = app.FLAGS
 
 
-class InputOutputFormat(enum.Enum):
-  """The input/output format for converting protocol buffer to byte strings."""
+class StdinGraphFormat(enum.Enum):
+  """The format of a graph read from stdin."""
+
+  # A binary protocol buffer.
+  PB = 1
+  # A text protocol buffer.
+  PBTXT = 2
+  # A pickled networkx graph.
+  NX = 3
+
+
+class StdoutGraphFormat(enum.Enum):
+  """The format of a graph written to stdout."""
 
   # A binary protocol buffer.
   PB = 1
@@ -58,14 +69,14 @@ class InputOutputFormat(enum.Enum):
 
 app.DEFINE_enum(
   "stdin_fmt",
-  InputOutputFormat,
-  InputOutputFormat.PBTXT,
+  StdinGraphFormat,
+  StdinGraphFormat.PBTXT,
   "The format for input program graph.",
 )
 app.DEFINE_enum(
   "stdout_fmt",
-  InputOutputFormat,
-  InputOutputFormat.PBTXT,
+  StdoutGraphFormat,
+  StdoutGraphFormat.PBTXT,
   "The format for output program graphs.",
 )
 
@@ -312,7 +323,7 @@ def ProgramGraphToGraphviz(proto: programl_pb2) -> str:
 
 def FromBytes(
   data: bytes,
-  fmt: InputOutputFormat,
+  fmt: StdinGraphFormat,
   proto: Optional[programl_pb2.ProgramGraph] = None,
   empty_okay: bool = False,
 ) -> programl_pb2.ProgramGraph:
@@ -328,11 +339,11 @@ def FromBytes(
     A program graph protocol buffer.
   """
   proto = proto or programl_pb2.ProgramGraph()
-  if fmt == InputOutputFormat.PB:
+  if fmt == StdinGraphFormat.PB:
     proto.ParseFromString(data)
-  elif fmt == InputOutputFormat.PBTXT:
+  elif fmt == StdinGraphFormat.PBTXT:
     pbutil.FromString(data.decode("utf-8"), proto)
-  elif fmt == InputOutputFormat.NX:
+  elif fmt == StdinGraphFormat.NX:
     NetworkXToProgramGraph(pickle.loads(data), proto=proto)
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
@@ -347,7 +358,7 @@ def FromBytes(
 
 
 def ToBytes(
-  program_graph: programl_pb2.ProgramGraph, fmt: InputOutputFormat
+  program_graph: programl_pb2.ProgramGraph, fmt: StdoutGraphFormat
 ) -> bytes:
   """Convert a program graph to a byte array.
 
@@ -358,11 +369,11 @@ def ToBytes(
   Returns:
     A byte array.
   """
-  if fmt == InputOutputFormat.PB:
+  if fmt == StdoutGraphFormat.PB:
     return program_graph.SerializeToString()
-  elif fmt == InputOutputFormat.PBTXT:
+  elif fmt == StdoutGraphFormat.PBTXT:
     return str(program_graph).encode("utf-8")
-  elif fmt == InputOutputFormat.NX:
+  elif fmt == StdoutGraphFormat.NX:
     return pickle.dumps(ProgramGraphToNetworkX(program_graph))
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
