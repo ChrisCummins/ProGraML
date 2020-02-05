@@ -171,3 +171,17 @@ py_test(
         "//labm8/py:test",
     ],
 )
+
+py_test(
+    name = "programl_format_conversion_tests",
+    srcs = ["programl_format_conversion_tests.py"],
+    data = [":programl"],
+    shard_count = 32,
+    deps = [
+        ":programl_pb_py",
+        "//deeplearning/ml4pl/testing/fixtures:llvm_program_graph",
+        "//labm8/py:bazelutil",
+        "//labm8/py:test",
+        "//third_party/py/networkx",
+    ],
+)

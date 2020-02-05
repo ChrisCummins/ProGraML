@@ -13,13 +13,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""A module for encoding node embeddings."""
+"""A module for encoding node embeddings.
+
+When executed as a binary, this program reads a single program graph from
+stdin, encodes it, and writes a graph to stdout. Use --stdin_fmt and
+--stdout_fmt to convert between different graph types.
+
+Example usage:
+
+  Encode a program graph binary proto and write the result as text format:
+
+    $ bazel run //deeplearning/ml4pl/graphs/llvm2graph:node_encoder -- \
+        --stdin_fmt=pb \
+        --stdout_fmt=pbtxt \
+        < /tmp/proto.pb > /tmp/proto.pbtxt
+"""
 import pickle
 from typing import List
 
 import networkx as nx
 import numpy as np
 
+from deeplearning.ml4pl.graphs import programl
 from deeplearning.ml4pl.graphs import programl_pb2
 from deeplearning.ncc.inst2vec import inst2vec_preprocess
 from labm8.py import app
@@ -57,11 +72,12 @@ class GraphNodeEncoder(object):
   def EncodeNodes(self, g: nx.DiGraph) -> None:
     """Pre-process the node text and set the text embedding index.
 
-    For each node, this sets the 'preprocessed_text' and 'x' attributes.
+    For each node, this sets the 'preprocessed_text', 'x', and 'y' attributes.
 
     Args:
       g: The graph to encode the nodes of.
     """
+    # Pre-process the statements of the graph in a single pass.
     lines = [
       [data["text"]]
       for _, data in g.nodes(data=True)
@@ -73,19 +89,35 @@ class GraphNodeEncoder(object):
       for x in preprocessed_lines
     ]
     for (node, data), text in zip(g.nodes(data=True), preprocessed_texts):
-      if text:
-        data["preprocessed_text"] = text
-        data["type"] = programl_pb2.Node.STATEMENT
-        data["x"] = [self.dictionary.get(text, self.dictionary["!UNK"])]
-        data["y"] = []
-      else:
-        data["preprocessed_text"] = "!UNK"
-        data["type"] = programl_pb2.Node.STATEMENT
-        data["x"] = [self.dictionary["!UNK"]]
-        data["y"] = []
+      data["preprocessed_text"] = text
+      data["x"] = [self.dictionary.get(text, self.dictionary["!UNK"])]
+
+    # Re-write the remaining graph nodes.
+    for node, data in g.nodes(data=True):
+      if data["type"] == programl_pb2.Node.IDENTIFIER:
+        data["preprocessed_text"] = "!IDENTIFIER"
+        data["x"] = [self.dictionary["!IDENTIFIER"]]
+      elif data["type"] == programl_pb2.Node.IMMEDIATE:
+        data["preprocessed_text"] = "!IMMEDIATE"
+        data["x"] = [self.dictionary["!IMMEDIATE"]]
+
+      data["y"] = []
 
   @decorators.memoized_property
   def embeddings_tables(self) -> List[np.array]:
     """Return the embeddings tables."""
     node_selector = np.vstack([[1, 0], [0, 1],]).astype(np.float64)
     return [self.node_text_embeddings, node_selector]
+
+
+def Main():
+  """Main entry point."""
+  proto = programl.ReadStdin()
+  g = programl.ProgramGraphToNetworkX(proto)
+  encoder = GraphNodeEncoder()
+  encoder.EncodeNodes(g)
+  programl.WriteStdout(programl.NetworkXToProgramGraph(g))
+
+
+if __name__ == "__main__":
+  app.Run(Main)
