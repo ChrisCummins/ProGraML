@@ -168,15 +168,8 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
         // Defer creation of the edge from producer -> data.
         dataEdgesToAdd->push_back({operand, identifier.first});
       } else if (const auto* operand = llvm::dyn_cast<llvm::Argument>(value)) {
-        // Look up the list of argument consumers, or create one.
-        auto it = argumentConsumers->find(operand);
-        if (it == argumentConsumers->end()) {
-          argumentConsumers->insert({operand, {}});
-          it = argumentConsumers->find(operand);
-        }
-
         // Record the usage of the argument.
-        it->second.push_back({currentNodeNumber, position});
+        (*argumentConsumers)[operand].push_back({currentNodeNumber, position});
       } else if (!(
                      // Basic blocks are not considered data. There will instead
                      // be a control edge from this instruction to the entry
@@ -242,7 +235,12 @@ labm8::StatusOr<FunctionEntryExits> LlvmGraphBuilder::VisitFunction(
   // Construct the identifier data elements for arguments and connect data
   // edges.
   for (auto it : argumentConsumers) {
-    auto argument = AddIdentifier(PrintToString(*it.first), functionNumber);
+#ifdef PROGRAML_FUTURE_NODE_REPRESENTATION
+    auto text = PrintToString(*it.first);
+#else
+    auto text = "!IDENTIFIER";
+#endif
+    auto argument = AddIdentifier(text, functionNumber);
     for (auto argumentConsumer : it.second) {
       AddDataEdge(argument.first, argumentConsumer.first,
                   argumentConsumer.second);

@@ -26,6 +26,32 @@
 
 namespace ml4pl {
 
+namespace {
+
+// An enum describing the different node attributes that can be used for setting
+// text labels.
+enum NodeLabel { kNone = 0, kText, kPreprocessedText, kX, kY };
+
+// Convert a string node labels value to a NodeLabel enum.
+NodeLabel NodeLabelFromString(const string& value) {
+  if (value == "none") {
+    return NodeLabel::kNone;
+  } else if (value == "text") {
+    return NodeLabel::kText;
+  } else if (value == "preprocessed_text") {
+    return NodeLabel::kPreprocessedText;
+  } else if (value == "x") {
+    return NodeLabel::kX;
+  } else if (value == "y") {
+    return NodeLabel::kY;
+  }
+
+  LOG(FATAL) << "Unknown value for node label: `" << value << "`. Supported "
+             << "values: none,text,preprocessed_text,x,y";
+}
+
+}  // anonymous namespace
+
 // The maximum length of a label. Labels longer than this are truncated with
 // ellipses.
 static const int kMaximumLabelLen = 32;
@@ -52,8 +78,10 @@ using GraphvizGraph = boost::adjacency_list<
                             boost::property<boost::graph_edge_attribute_t,
                                             AttributeMap>>>>>;
 
-void SerializeGraphVizToString(const ProgramGraph& graph,
-                               std::ostream* ostream) {
+void SerializeGraphVizToString(const ProgramGraph& graph, std::ostream* ostream,
+                               const string& nodeLabels) {
+  NodeLabel nodeLabelFormat = NodeLabelFromString(nodeLabels);
+
   // To construct a graphviz graph, we create a main graph and then produce
   // a subgraph for each function in the graph. Vertices (nodes) are then added
   // to the subgraphs, and edges added to the main graph.
@@ -107,7 +135,39 @@ void SerializeGraphVizToString(const ProgramGraph& graph,
     auto& attributes = get(boost::vertex_attribute, *dst)[vertex];
 
     // Set the node text.
-    string text = node.text();
+    std::stringstream textStream;
+    string text;
+    switch (nodeLabelFormat) {
+      case kNone:
+        break;
+      case kText:
+        text = node.text();
+        break;
+      case kPreprocessedText:
+        LOG(INFO) << "TEXT " << node.text() << " " << node.DebugString();
+        text = node.preprocessed_text();
+        break;
+      case kX:
+        textStream << std::setprecision(3);
+        for (int i = 0; i < node.x_size(); ++i) {
+          if (i) {
+            textStream << " ";
+          }
+          textStream << node.x(i);
+        }
+        text = textStream.str();
+        break;
+      case kY:
+        textStream << std::setprecision(3);
+        for (int i = 0; i < node.y_size(); ++i) {
+          if (i) {
+            textStream << " ";
+          }
+          textStream << node.y(i);
+        }
+        text = textStream.str();
+        break;
+    }
     labm8::TruncateWithEllipsis(text, kMaximumLabelLen);
     attributes["label"] = text;
 

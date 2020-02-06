@@ -82,6 +82,7 @@
 #pragma once
 
 #include <new>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -153,6 +154,18 @@ class StatusOr {
   Status status_;
   T value_;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// labm8 extension code
+
+// Throw an error if StatusOr is not Status::OK.
+template <typename T, typename Error = std::runtime_error>
+T StatusOrToException(StatusOr<T> statusOr) {
+  if (statusOr.ok()) {
+    return statusOr.ValueOrDie();
+  }
+  throw Error(statusOr.status().ToString());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation details for StatusOr<T>
