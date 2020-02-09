@@ -830,3 +830,34 @@ http_archive(
     strip_prefix = "black-2spaces-8f1fe951bcade3792f586eb52d45e38a6428c0fd",
     urls = ["https://github.com/ChrisCummins/black-2spaces/archive/8f1fe951bcade3792f586eb52d45e38a6428c0fd.zip"],
 )
+
+################################################################################
+# Tensorflow sources. This is not the same as the version of tensorflow which is
+# used by "//third_party/py/tensorflow". That uses the regular pip installed
+# binary.
+#
+# This requires copying a subset of the tensorflow WORKSPACE file,
+# see: https://stackoverflow.com/a/53272388
+
+git_repository(
+    name = "org_tensorflow",
+    commit = "f13f807c83c0d8d4d1ef290a17f26fe884ccfe2f",
+    remote = "https://github.com/ChrisCummins/tensorflow.git",
+    shallow_since = "1581275770 +0000",
+)
+
+http_archive(
+    name = "io_bazel_rules_closure",
+    sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
+    strip_prefix = "rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
+    ],
+)
+
+load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
+
+tf_repositories()
+
+################################################################################
