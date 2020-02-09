@@ -37,10 +37,6 @@ namespace ml4pl {
 // and exit statement nodes, respectively.
 using BasicBlockEntryExit = std::pair<int, int>;
 
-// An <entry, exits> pair which records the node numbers for a function's entry
-// and exit statement nodes, respectively.
-using FunctionEntryExits = std::pair<int, std::vector<int>>;
-
 // A <node, position> pair which records a node number and a position argument.
 using PositionalNode = std::pair<size_t, int>;
 
@@ -92,10 +88,6 @@ class LlvmGraphBuilder : GraphBuilder {
       InstructionNumberMap* instructions,
       ArgumentConsumerMap* argumentConsumers,
       std::vector<DataEdge>* dataEdgesToAdd);
-
-  // Add outgoing and return call edges from a node to a function.
-  void AddCallEdges(const size_t callingNode,
-                    const FunctionEntryExits& calledFunction);
 
  private:
   // A map from node index to functions to mark call sites. This map is

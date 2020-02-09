@@ -17,11 +17,17 @@
 // limitations under the License.
 #pragma once
 
+#include <vector>
+
 #include "absl/container/flat_hash_map.h"
 #include "deeplearning/ml4pl/graphs/programl.pb.h"
 #include "labm8/cpp/string.h"
 
 namespace ml4pl {
+
+// An <entry, exits> pair which records the node numbers for a function's entry
+// and exit statement nodes, respectively.
+using FunctionEntryExits = std::pair<size_t, std::vector<size_t>>;
 
 // A module for constructing a single program graph.
 class GraphBuilder {
@@ -55,6 +61,10 @@ class GraphBuilder {
                 int position);
 
   size_t NextNodeNumber() const { return graph_.node_size(); }
+
+  // Add outgoing and return call edges from a node to a function.
+  void AddCallEdges(const size_t callingNode,
+                    const FunctionEntryExits& calledFunction);
 
  private:
   ProgramGraph graph_;
