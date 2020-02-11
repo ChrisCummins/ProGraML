@@ -33,6 +33,7 @@
 #include "labm8/cpp/stringpiece.h"
 
 #include <iosfwd>
+#include <stdexcept>
 #include <string>
 
 namespace labm8 {
@@ -90,6 +91,35 @@ class Status {
 
   // Return a combination of the error code name and message.
   string ToString() const;
+
+  // Raise an error if !this->ok().
+  void RaiseException() const {
+    if (!ok()) {
+      switch (error_code()) {
+        case error::Code::CANCELLED:
+        case error::Code::UNKNOWN:
+        case error::Code::DEADLINE_EXCEEDED:
+        case error::Code::NOT_FOUND:
+        case error::Code::ALREADY_EXISTS:
+        case error::Code::PERMISSION_DENIED:
+        case error::Code::UNAUTHENTICATED:
+        case error::Code::RESOURCE_EXHAUSTED:
+        case error::Code::ABORTED:
+        case error::Code::INTERNAL:
+        case error::Code::UNAVAILABLE:
+        case error::Code::DATA_LOSS:
+          throw std::runtime_error(error_message());
+        case error::Code::INVALID_ARGUMENT:
+        case error::Code::FAILED_PRECONDITION:
+          throw std::invalid_argument(error_message());
+        case error::Code::OUT_OF_RANGE:
+          throw std::out_of_range(error_message());
+        case error::Code::UNIMPLEMENTED:
+        case error::Code::OK:
+          throw std::logic_error(error_message());
+      }
+    }
+  }
 
  private:
   error::Code error_code_;

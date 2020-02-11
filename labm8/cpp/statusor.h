@@ -152,7 +152,6 @@ class StatusOr {
 
   // Returns a reference to our current value, or raises an exception
   // if !this->ok().
-  template <typename Error = std::runtime_error>
   const T &ValueOrException() const;
 
  private:
@@ -253,11 +252,8 @@ inline const T &StatusOr<T>::ValueOrDie() const {
 }
 
 template <typename T>
-template <typename Error>
 inline const T &StatusOr<T>::ValueOrException() const {
-  if (!status_.ok()) {
-    throw Error(status_.ToString());
-  }
+  status_.RaiseException();
   return value_;
 }
 
