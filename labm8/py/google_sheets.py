@@ -2,6 +2,7 @@
 import pathlib
 from typing import Optional
 
+import appdirs
 import gspread
 import gspread_dataframe
 import pandas as pd
@@ -11,7 +12,7 @@ from labm8.py import app
 
 app.DEFINE_output_path(
   "google_sheets_credentials",
-  "/var/phd/google_sheets_credentials.json",
+  pathlib.Path(appdirs.user_config_dir("phd", appauthor="Chris Cummins")) / "google_sheets_credentials.json",
   "The path to a google service account credentials JSON file.",
 )
 app.DEFINE_string(
