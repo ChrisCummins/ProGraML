@@ -21,6 +21,7 @@ py_binary(
     deps = [
         "//labm8/py:app",
         "//labm8/py:bazelutil",
+        "//labm8/py:google_sheets",
         "//labm8/py:jsonutil",
         "//labm8/py:labdate",
         "//labm8/py:labtypes",
