@@ -2,6 +2,7 @@
 import pathlib
 from typing import Optional
 
+import appdirs
 import gspread
 import gspread_dataframe
 import pandas as pd
@@ -11,7 +12,8 @@ from labm8.py import app
 
 app.DEFINE_output_path(
   "google_sheets_credentials",
-  "/var/phd/google_sheets_credentials.json",
+  pathlib.Path(appdirs.user_config_dir("phd", appauthor="Chris Cummins"))
+  / "google_sheets_credentials.json",
   "The path to a google service account credentials JSON file.",
 )
 app.DEFINE_string(
@@ -38,6 +40,21 @@ class GoogleSheets:
 
     self._connection = gspread.authorize(credentials)
 
+  def GetSpreadsheet(self, name: str):
+    """Return the spreadsheet with the given name.
+
+    Args:
+      name: The name of the spreadsheet, as it appears in Google Drive.
+
+    Returns:
+      A spreadsheet object.
+
+    Raises:
+      gspread.exceptions.SpreadsheetNotFound: If the given spreadsheet is not
+        found.
+    """
+    return self._connection.open(name)
+
   def GetOrCreateSpreadsheet(
     self, name: str, share_with_email_address: Optional[str] = None
   ):
@@ -47,17 +64,22 @@ class GoogleSheets:
       share_with_email_address or FLAGS.google_sheets_default_share_with
     )
     try:
-      sheet = self._connection.open(name)
+      sheet = self.GetSpreadsheet(name)
     except gspread.exceptions.SpreadsheetNotFound:
       sheet = self._connection.create(name)
       sheet.share(share_with_email_address, perm_type="user", role="writer")
     return sheet
 
   @staticmethod
-  def GetOrCreateWorksheet(sheet, name: str):
+  def GetWorksheet(sheet, name: str):
+    """Return the worksheet with the given name, creating it if necessary."""
+    return sheet.worksheet(name)
+
+  @classmethod
+  def GetOrCreateWorksheet(cls, sheet, name: str):
     """Return the worksheet with the given name, creating it if necessary."""
     try:
-      return sheet.worksheet(name)
+      return cls.GetWorksheet(sheet, name)
     except gspread.exceptions.WorksheetNotFound:
       return sheet.add_worksheet(title=name, rows=1, cols=1)
 
@@ -68,6 +90,20 @@ class GoogleSheets:
     gspread_dataframe.set_with_dataframe(
       worksheet, df, include_index=index, resize=True
     )
+
+  @staticmethod
+  def GetAsDataFrame(worksheet, **opts) -> pd.DataFrame:
+    """Return a worksheet as a dataframe.
+
+    Args:
+      worksheet: The name of the worksheet to return.
+      **opts: Keyword arguments passed to gspread_dataframe.get_as_data_frame().
+        See: https://pythonhosted.org/gspread-dataframe/#id1
+
+    Returns:
+      A pandas dataframe.
+    """
+    return gspread_dataframe.get_as_dataframe(worksheet, **opts)
 
   @classmethod
   def FromFlagsOrDie(cls) -> "GoogleSheets":

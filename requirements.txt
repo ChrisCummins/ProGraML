@@ -86,7 +86,7 @@ jupyter-core==4.4.0
 jupyter==1.0.0
 # Support for local runtimes with Google Colaboratory. See:
 # https://research.google.com/colaboratory/local-runtimes.html
-jupyter_http_over_ws==0.0.1a3
+jupyter_http_over_ws==0.0.7
 jwt==0.6.1  # Dependency PyGithub.
 Keras==2.3.1
 kiwisolver==1.0.1
