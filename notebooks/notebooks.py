@@ -4,6 +4,8 @@ This script launches a Jupyter notebook server. It never terminates. It should
 be executed using the run_notebooks.sh helper script so that it can open and
 save files within the project source tree.
 """
+import subprocess
+import sys
 import typing
 
 from notebook import notebookapp
@@ -50,6 +52,11 @@ def main(argv: typing.List[str]):
 
   # Append any arguments not parsed by absl.
   options += argv[1:]
+
+  app.Log(1, "Installing ipykernel")
+  subprocess.check_call(
+    [sys.executable, "-m", "ipykernel", "install", "--user"]
+  )
 
   app.Log(1, "Starting Jupyter notebook server with options: %s", options)
   notebookapp.main(options)
