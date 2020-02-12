@@ -132,11 +132,7 @@ py_binary(
     name = "programl",
     srcs = ["programl.py"],
     data = [":graphviz_converter_py.so"],
-    visibility = [
-        "//deeplearning/ml4pl/graphs:__subpackages__",
-        "//deeplearning/ml4pl/seq:__subpackages__",
-        "//deeplearning/ml4pl/testing:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         ":programl_pb_py",
         "//labm8/py:app",
