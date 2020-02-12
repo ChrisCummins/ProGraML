@@ -456,6 +456,32 @@ def FromBytes(
   return proto
 
 
+def StdoutGraphFormatToFileExtension(fmt: StdoutGraphFormat):
+  if fmt == StdoutGraphFormat.PB:
+    return ".pb"
+  elif fmt == StdoutGraphFormat.PBTXT:
+    return ".pbtxt"
+  elif fmt == StdoutGraphFormat.NX:
+    return ".nx.pickle"
+  elif fmt == StdoutGraphFormat.DOT:
+    return ".dot"
+  else:
+    raise TypeError(f"Unknown fmt: {fmt}")
+
+
+def StdoutGraphFormatToStdinGraphFormat(fmt: StdoutGraphFormat):
+  if fmt == StdoutGraphFormat.PB:
+    return StdinGraphFormat.PB
+  elif fmt == StdoutGraphFormat.PBTXT:
+    return StdinGraphFormat.PBTXT
+  elif fmt == StdoutGraphFormat.NX:
+    return StdinGraphFormat.NX
+  elif fmt == StdoutGraphFormat.DOT:
+    raise TypeError("Cannot construct graphs from dot format")
+  else:
+    raise TypeError(f"Unknown fmt: {fmt}")
+
+
 def ToBytes(
   program_graph: programl_pb2.ProgramGraph, fmt: StdoutGraphFormat
 ) -> bytes:
@@ -478,6 +504,25 @@ def ToBytes(
     return ProgramGraphToGraphviz(program_graph).encode("utf-8")
   else:
     raise ValueError(f"Unknown program graph format: {fmt}")
+
+
+def SerializedProgramGraphToBytes(
+  serialized_proto: bytes, fmt: StdoutGraphFormat
+) -> bytes:
+  """Convert a serialized ProgramGraphProto to a byte array.
+
+  Args:
+    serialized_proto: The serialized program graph proto.
+    fmt: The output format of the byte array.
+
+  Returns:
+    An array of bytes.
+  """
+  if fmt == StdoutGraphFormat.PB:
+    return serialized_proto
+  proto = programl_pb2.ProgramGraph()
+  proto.ParseFromString(serialized_proto)
+  return ToBytes(proto, fmt)
 
 
 def ReadStdin() -> programl_pb2.ProgramGraph:
