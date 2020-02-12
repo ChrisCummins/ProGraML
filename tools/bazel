@@ -23,4 +23,4 @@ set -eu
 
 # PULLET_TIMEOUT to increase the timeout on docker image pulls from the default
 # 600s. See: https://github.com/bazelbuild/rules_docker
-env -i TERM="$TERM" PATH=/bin:/usr/bin:/usr/local/bin PULLER_TIMEOUT=3600 "$BAZEL_REAL" "$@"
+env -i TERM="$TERM" PATH=/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin:/usr/local/bin:/bin PULLER_TIMEOUT=3600 "$BAZEL_REAL" "$@"
