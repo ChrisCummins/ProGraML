@@ -69,6 +69,20 @@ class GoogleSheets:
       worksheet, df, include_index=index, resize=True
     )
 
+  @staticmethod
+  def GetAsDataFrame(worksheet, **opts) -> pd.DataFrame:
+    """Return a worksheet as a dataframe.
+
+    Args:
+      worksheet: The name of the worksheet to return.
+      **opts: Keyword arguments passed to gspread_dataframe.get_as_data_frame().
+        See: https://pythonhosted.org/gspread-dataframe/#id1
+
+    Returns:
+      A pandas dataframe.
+    """
+    return gspread_dataframe.get_as_dataframe(worksheet, **opts)
+
   @classmethod
   def FromFlagsOrDie(cls) -> "GoogleSheets":
     try:
