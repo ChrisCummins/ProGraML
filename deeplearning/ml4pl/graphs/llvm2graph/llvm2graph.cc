@@ -30,6 +30,18 @@ DEFINE_string(stdout_fmt, "pbtxt",
               "prints a text format protocol buffer, or \"dot\" which prints a "
               "graphviz dot string.");
 
+// Assert that the stdout format is legal.
+static bool ValidateStdoutFormat(const char* flagname, const string& value) {
+  if (value == "pb" || value == "pbtxt" || value == "dot") {
+    return true;
+  }
+
+  LOG(FATAL) << "Unknown --" << flagname << ": `" << value << "`. Supported "
+             << "formats: pb,pbtxt,dot";
+  return false;
+}
+DEFINE_validator(stdout_fmt, &ValidateStdoutFormat);
+
 static const char* usage =
     "Generate program graph from an IR.\n"
     "\n"
@@ -51,18 +63,6 @@ static const char* usage =
     "  $ llvm2graph /path/to/llvm.ir --stdout_fmt=dot > /tmp/llvm.dot\n"
     "\n"
     "The output can then be processed by Graphviz.";
-
-// Assert that the stdout format is legal.
-static bool ValidateStdoutFormat(const char* flagname, const string& value) {
-  if (value == "pb" || value == "pbtxt" || value == "dot") {
-    return true;
-  }
-
-  LOG(FATAL) << "Unknown --" << flagname << ": `" << value << "`. Supported "
-             << "formats: pb,pbtxt,dot";
-  return false;
-}
-DEFINE_validator(stdout_fmt, &ValidateStdoutFormat);
 
 int main(int argc, char** argv) {
   labm8::InitApp(&argc, &argv, usage);

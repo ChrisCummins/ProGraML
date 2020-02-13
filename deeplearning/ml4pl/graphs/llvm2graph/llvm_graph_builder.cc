@@ -309,14 +309,6 @@ labm8::StatusOr<FunctionEntryExits> LlvmGraphBuilder::VisitFunction(
   return functionEntryExits;
 }
 
-void LlvmGraphBuilder::AddCallEdges(const size_t callingNode,
-                                    const FunctionEntryExits& calledFunction) {
-  AddCallEdge(callingNode, calledFunction.first);
-  for (auto exitNode : calledFunction.second) {
-    AddCallEdge(exitNode, callingNode);
-  }
-}
-
 labm8::StatusOr<ProgramGraph> LlvmGraphBuilder::Build(
     const llvm::Module& module) {
   // A map from functions to their entry and exit nodes.

@@ -150,22 +150,15 @@ class StatusOr {
   // ConsumeValueOrDie() may be more efficient.
   const T &ValueOrDie() const;
 
+  // Returns a reference to our current value, or raises an exception
+  // if !this->ok().
+  template <typename Error = std::runtime_error>
+  const T &ValueOrException() const;
+
  private:
   Status status_;
   T value_;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// labm8 extension code
-
-// Throw an error if StatusOr is not Status::OK.
-template <typename T, typename Error = std::runtime_error>
-T StatusOrToException(StatusOr<T> statusOr) {
-  if (statusOr.ok()) {
-    return statusOr.ValueOrDie();
-  }
-  throw Error(statusOr.status().ToString());
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation details for StatusOr<T>
@@ -255,6 +248,15 @@ template <typename T>
 inline const T &StatusOr<T>::ValueOrDie() const {
   if (!status_.ok()) {
     internal::StatusOrHelper::Crash(status_);
+  }
+  return value_;
+}
+
+template <typename T>
+template <typename Error>
+inline const T &StatusOr<T>::ValueOrException() const {
+  if (!status_.ok()) {
+    throw Error(status_.ToString());
   }
   return value_;
 }

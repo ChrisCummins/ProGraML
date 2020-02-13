@@ -343,10 +343,12 @@ cc_library(
 
 cc_library(
     name = "test",
+    srcs = ["test.cc"],
     hdrs = ["test.h"],
     visibility = ["//visibility:public"],
     deps = [
         ":app",
+        "@boost//:filesystem",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_benchmark//:benchmark",
         "@gtest",

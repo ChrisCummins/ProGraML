@@ -119,6 +119,14 @@ void GraphBuilder::AddDataEdge(int sourceNode, int destinationNode,
   data_reverse_adjacencies_[destinationNode].push_back({sourceNode, position});
 }
 
+void GraphBuilder::AddCallEdges(const size_t callingNode,
+                                const FunctionEntryExits& calledFunction) {
+  AddCallEdge(callingNode, calledFunction.first);
+  for (auto exitNode : calledFunction.second) {
+    AddCallEdge(exitNode, callingNode);
+  }
+}
+
 void GraphBuilder::AddEdges(const std::vector<std::vector<size_t>>& adjacencies,
                             const Edge::Flow& flow,
                             std::vector<bool>* visitedNodes) {
