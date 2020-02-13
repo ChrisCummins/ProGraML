@@ -30,6 +30,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instruction.h"
 #include "llvm/IR/Instructions.h"
+#include "llvm/IR/ProfileSummary.h"
 #include "llvm/Support/raw_ostream.h"
 
 namespace ml4pl {
@@ -94,6 +95,19 @@ labm8::StatusOr<BasicBlockEntryExit> LlvmGraphBuilder::VisitBasicBlock(
     previousNodeNumber = currentNodeNumber;
     currentNodeNumber = statement.first;
 
+    // Add profiling information, if available.
+    uint64_t profTotalWeight;
+    if (instruction.extractProfTotalWeight(profTotalWeight)) {
+      statement.second->set_llvm_profile_total_weight(profTotalWeight);
+    }
+    uint64_t profTrueWeight;
+    uint64_t profFalseWeight;
+    if (instruction.extractProfMetadata(profTrueWeight, profFalseWeight)) {
+      statement.second->set_llvm_profile_true_weight(profTrueWeight);
+      statement.second->set_llvm_profile_false_weight(profFalseWeight);
+    }
+
+    // Record the instruction in the function-level instructions map.
     instructions->insert({&instruction, currentNodeNumber});
 
     // A basic block consists of a linear sequence of instructions, so we can
@@ -318,6 +332,12 @@ labm8::StatusOr<ProgramGraph> LlvmGraphBuilder::Build(
     // Create the function message.
     auto fn = AddFunction(function.getName());
 
+    // Add profiling information, if available.
+    if (function.hasProfileData()) {
+      auto profileCount = function.getEntryCount();
+      fn.second->set_llvm_entry_count(profileCount.getValue());
+    }
+
     FunctionEntryExits functionEntryExits;
     ASSIGN_OR_RETURN(functionEntryExits, VisitFunction(function, fn.first));
 
@@ -350,6 +370,25 @@ labm8::StatusOr<ProgramGraph> LlvmGraphBuilder::Build(
     // Create data in-flow edges.
     for (auto destination : constant.second) {
       AddDataEdge(immmediate.first, destination.first, destination.second);
+    }
+
+    // Add profiling information, if available.
+    llvm::Metadata* profileMetadata = module.getModuleFlag("ProfileSummary");
+    if (profileMetadata) {
+      llvm::ProfileSummary* profileSummary =
+          llvm::ProfileSummary::getFromMD(profileMetadata);
+      CHECK(profileSummary) << "Module ProfileSummary is null";
+
+      LlvmProfile* profileMessage =
+          GetMutableProgramGraph()->mutable_llvm_profile();
+      profileMessage->set_num_functions(profileSummary->getNumFunctions());
+      profileMessage->set_max_function_count(
+          profileSummary->getMaxFunctionCount());
+      profileMessage->set_num_counts(profileSummary->getNumCounts());
+      profileMessage->set_total_count(profileSummary->getTotalCount());
+      profileMessage->set_max_count(profileSummary->getMaxCount());
+      profileMessage->set_max_internal_count(
+          profileSummary->getMaxInternalCount());
     }
   }
 
