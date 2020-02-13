@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Run PhD build environment with useful directories mounted.
+# Run the PhD build environment with useful directories mounted.
 #
 # The configuration is set so that a persistent bazel cache located at
 # ~/.cache/bazel/_bazel_docker is mapped into the container, speeding up repeat
@@ -29,6 +29,7 @@ else
 fi
 
 set -x
+docker pull chriscummins/phd_build:latest
 docker run \
   -v/var/run/docker.sock:/var/run/docker.sock \
   -v$HOME/.cache/bazel/_bazel_docker:/home/docker/.cache/bazel/_bazel_docker \
