@@ -1,5 +1,12 @@
 # Base image for project docker builds.
 
+exports_files([
+    "run.sh",
+    "Dockerfile",
+    "export.sh",
+    "README.md",
+])
+
 filegroup(
     name = "phd_base",
     srcs = [
