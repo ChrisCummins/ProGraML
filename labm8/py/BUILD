@@ -298,7 +298,7 @@ py_library(
     ],
 )
 
-py_binary(
+py_library(
     name = "gpu_scheduler",
     srcs = ["gpu_scheduler.py"],
     visibility = ["//visibility:public"],
