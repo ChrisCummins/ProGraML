@@ -13,6 +13,7 @@
 # limitations under the License.
 """Utility code for working with pandas."""
 import typing
+from typing import Optional
 
 import pandas as pd
 import tabulate
@@ -68,6 +69,7 @@ def RewriteColumn(
   df: pd.DataFrame,
   column: str,
   rewrite: typing.Callable[[typing.Any], typing.Any],
+  rewrite_error: Optional[str] = None,
 ):
   """Rewrite the values in a column in-place."""
   rewrites = []
@@ -75,7 +77,10 @@ def RewriteColumn(
     try:
       rewrites.append(rewrite(x))
     except Exception as e:
-      raise ValueError(f"Error while rewriting '{x}': {e}")
+      if rewrite_error is None:
+        raise ValueError(f"Error while rewriting '{x}': {e}")
+      else:
+        rewrites.append(rewrite_error)
 
   df[column] = rewrites
 
