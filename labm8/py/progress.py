@@ -150,10 +150,14 @@ class ProgressBarContext(ProgressContext):
         when there are multiple progress bar concurrently.
     """
     self.name = name
-    self.i = i
+    self.i = int(i)
     self.n = n
     self.unit = unit
     self.vertical_position = vertical_position
+
+    # Force conversion to int for counters.
+    if self.n is not None:
+      self.n = int(self.n)
 
     # Prepend whitespace to the unit
     unit = f" {unit}" if unit else unit
