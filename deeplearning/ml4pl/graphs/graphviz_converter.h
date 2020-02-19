@@ -17,7 +17,6 @@
 // limitations under the License.
 #pragma once
 
-#include "boost/graph/graphviz.hpp"
 #include "deeplearning/ml4pl/graphs/programl.pb.h"
 #include "labm8/cpp/string.h"
 
