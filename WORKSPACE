@@ -334,6 +334,28 @@ http_archive(
     urls = ["https://github.com/stackb/rules_proto/archive/d9a123032f8436dbc34069cfc3207f2810a494ee.tar.gz"],
 )
 
+# JSON C++ library.
+# https://github.com/nlohmann/json
+
+http_archive(
+    name = "nlohmann_json",
+    build_file = "//:third_party/nlohmann_json.BUILD",
+    sha256 = "87b5884741427220d3a33df1363ae0e8b898099fbc59f1c451113f6732891014",
+    strip_prefix = "single_include",
+    urls = ["https://github.com/nlohmann/json/releases/download/v3.7.3/include.zip"],
+)
+
+# pybind11 bindings for JSON.
+# https://github.com/pybind/pybind11_json
+
+http_archive(
+    name = "pybind11_json",
+    build_file = "//:third_party/pybind11_json.BUILD",
+    sha256 = "45957f8564e921a412a6de49c578ef1faf3b04e531e859464853e26e1c734ea5",
+    strip_prefix = "pybind11_json-0.2.4/include",
+    urls = ["https://github.com/pybind/pybind11_json/archive/0.2.4.tar.gz"],
+)
+
 # Python requirements.
 
 # I use my own rules_python fork which adds a timeout arg to pip_import.
