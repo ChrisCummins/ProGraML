@@ -37,13 +37,13 @@ symlinks that bazel creates for `bazel-bin` and the like may be replaced.
 
 Many sub-projects have additional build-time or runtime dependencies, such as
 docker, Java, or go. On a supported system, run the following script to generate
-a script which will exhaustively installs all dependencies:
+a script which exhaustively installs all dependencies:
 
 ``` sh
 $ ./tools/make_bootstrap.sh
 ```
 
-This will create a file `bootstrap.sh`. Inspect this script, and if it looks
+This creates a file `bootstrap.sh`. Inspect this script, and if it looks
 good to you, run it.
 
 
