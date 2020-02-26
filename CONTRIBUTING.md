@@ -7,9 +7,9 @@ would like to contribute, please read this document.
 ## 1. Reporting Issues
 
 Report issues and bugs to the GitHub issue tracker for this project. I don't
-have requirements for what must go in an issue, I trust use your judgement. At a
-minimum, please include as much information as is required for me to reproduce
-the issue, and copy and paste the output of:
+have requirements for what must go in an issue, I trust your judgment. Please
+include as much information as is required for me to reproduce the issue, and
+copy and paste the output of:
 
 ```sh
 $ bazel run //tools:whoami
@@ -57,8 +57,7 @@ $ ./third_party/bazel/ci.sh
 
 I have strong opinions about code formatting. Not in the specifics of how to
 ident a certain block or where to put the parenthesis around a statement, but
-rather that code formatting should be automated to cognitively offload the
-developer to focus on more important things.
+rather that code formatting so that you can focus on more important things.
 
 I wrote a tool, [format](https://github.com/ChrisCummins/format), which provides
 automatic code formatters for most of the programming languages used in this
