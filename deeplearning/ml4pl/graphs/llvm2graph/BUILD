@@ -146,6 +146,7 @@ py_binary(
         "//labm8/py:app",
         "//labm8/py:bazelutil",
         "//labm8/py:decorators",
+        "//labm8/py:fs",
         "//third_party/py/numpy",
     ],
 )

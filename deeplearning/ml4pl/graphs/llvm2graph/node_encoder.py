@@ -17,7 +17,9 @@
 
 When executed as a binary, this program reads a single program graph from
 stdin, encodes it, and writes a graph to stdout. Use --stdin_fmt and
---stdout_fmt to convert between different graph types.
+--stdout_fmt to convert between different graph types, and --ir to read the
+IR file that the graph was constructed from, required for resolving struct
+definitions.
 
 Example usage:
 
@@ -26,10 +28,12 @@ Example usage:
     $ bazel run //deeplearning/ml4pl/graphs/llvm2graph:node_encoder -- \
         --stdin_fmt=pb \
         --stdout_fmt=pbtxt \
+        --ir=/tmp/source.ll \
         < /tmp/proto.pb > /tmp/proto.pbtxt
 """
 import pickle
 from typing import List
+from typing import Optional
 
 import networkx as nx
 import numpy as np
@@ -40,9 +44,17 @@ from deeplearning.ncc.inst2vec import inst2vec_preprocess
 from labm8.py import app
 from labm8.py import bazelutil
 from labm8.py import decorators
+from labm8.py import fs
 
 
 FLAGS = app.FLAGS
+app.DEFINE_output_path(
+  "ir",
+  None,
+  "The path of the IR file that was used to construct the graph. This is "
+  "required to inline struct definitions. This argument may be omitted when "
+  "struct definitions do not need to be inlined.",
+)
 
 DICTIONARY = bazelutil.DataPath(
   "phd/deeplearning/ml4pl/graphs/llvm2graph/node_embeddings/inst2vec_augmented_dictionary.pickle"
@@ -69,13 +81,16 @@ class GraphNodeEncoder(object):
     with open(str(AUGMENTED_INST2VEC_EMBEDDINGS), "rb") as f:
       self.node_text_embeddings = pickle.load(f)
 
-  def EncodeNodes(self, g: nx.DiGraph) -> None:
+  def EncodeNodes(self, g: nx.DiGraph, ir: Optional[str] = None) -> None:
     """Pre-process the node text and set the text embedding index.
 
     For each node, this sets the 'preprocessed_text', 'x', and 'y' attributes.
 
     Args:
       g: The graph to encode the nodes of.
+      ir: The LLVM IR that was used to construct the graph. This is required for
+        struct inlining. If struct inlining is not required, this may be
+        omitted.
     """
     # Pre-process the statements of the graph in a single pass.
     lines = [
@@ -83,6 +98,18 @@ class GraphNodeEncoder(object):
       for _, data in g.nodes(data=True)
       if data["type"] == programl_pb2.Node.STATEMENT
     ]
+
+    if ir:
+      # NOTE(github.com/ChrisCummins/ProGraML/issues/57): Extract the struct
+      # definitions from the IR and inline their definitions in place of the
+      # struct names. This is brittle string substitutions, in the future we
+      # should do this inlining in llvm2graph where we have a parsed
+      # llvm::Module.
+      structs = inst2vec_preprocess.GetStructTypes(ir)
+      for line in lines:
+        for struct, definition in structs.items():
+          line[0] = line[0].replace(struct, definition)
+
     preprocessed_lines, _ = inst2vec_preprocess.preprocess(lines)
     preprocessed_texts = [
       inst2vec_preprocess.PreprocessStatement(x[0] if len(x) else "")
@@ -122,7 +149,8 @@ def Main():
   proto = programl.ReadStdin()
   g = programl.ProgramGraphToNetworkX(proto)
   encoder = GraphNodeEncoder()
-  encoder.EncodeNodes(g)
+  ir = fs.Read(FLAGS.ir) if FLAGS.ir else None
+  encoder.EncodeNodes(g, ir=ir)
   programl.WriteStdout(programl.NetworkXToProgramGraph(g))
 
 
