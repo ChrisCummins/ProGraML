@@ -55,6 +55,9 @@ path_dirs=( \
 if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
   CC=/usr/local/opt/llvm/bin/clang
   CXX=/usr/local/opt/llvm/bin/clang++
+else
+  CC="$(which gcc)"
+  CXX="$(which g++)"
 fi
 
 # PULLET_TIMEOUT to increase the timeout on docker image pulls from the default
