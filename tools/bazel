@@ -21,6 +21,52 @@
 # Your mileage may vary.
 set -eu
 
+build_path() {
+    local _dir=""
+    local _path=""
+
+    for _dir in "$@"
+    do
+        if [ -d $_dir ]; then
+            _path=$_path:$_dir
+        fi
+    done
+
+    _path=${_path:1}
+    echo $_path
+}
+
+# Accepts an array of directories and returns a colon separated path
+# of all of the directories that exist, in order.  Example usage:
+#
+#    dirs=("/usr/local/bin" /usr/bin "/not a real path")
+#    unset FOO
+#    FOO=$(build_path "${dirs[@]}")
+#    echo $FOO
+#    # Outputs: /usr/local/bin:/usr/bin
+path_dirs=( \
+    /usr/local/opt/llvm/bin \
+    /usr/local/opt/gnu-sed/libexec/gnubin \
+    /usr/bin \
+    /usr/local/bin \
+    /bin \
+)
+
+if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
+  CC=/usr/local/opt/llvm/bin/clang
+  CXX=/usr/local/opt/llvm/bin/clang++
+else
+  CC="$(which gcc)"
+  CXX="$(which g++)"
+fi
+
 # PULLET_TIMEOUT to increase the timeout on docker image pulls from the default
 # 600s. See: https://github.com/bazelbuild/rules_docker
-env -i TERM="$TERM" PATH=/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin:/usr/local/bin:/bin PULLER_TIMEOUT=3600 "$BAZEL_REAL" "$@"
+set +u
+env -i \
+  TERM="$TERM" \
+  PATH="$(build_path ${path_dirs[@]})" \
+  CC=$CC \
+  CXX=$CXX \
+  PULLER_TIMEOUT=3600 \
+  "$BAZEL_REAL" "$@"

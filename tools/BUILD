@@ -2,6 +2,10 @@
 # Some of these scripts are meant for execution in-tree, and cannot be run
 # using bazel, please see the comments.
 
+exports_files([
+    "bazel",
+])
+
 sh_binary(
     name = "whoami",
     srcs = ["whoami.sh"],

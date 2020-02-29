@@ -25,6 +25,7 @@ import copy
 import os
 import pickle
 import re
+from typing import Dict
 
 import networkx as nx
 
@@ -2957,6 +2958,21 @@ def inline_struct_types_in_file(G, dic, specific_struct_name_pattern):
             )
 
   return G
+
+
+def GetStructTypes(ir: str) -> Dict[str, str]:
+  """Extract a dictionary of struct definitions from the given IR.
+
+  Args:
+    ir: A string of LLVM IR.
+
+  Returns:
+    A dictionary of <name, def> entries, where <name> is the name of a struct
+    definition (e.g. "%struct.foo"), and <def> is the definition of the member
+    types, e.g. "{ i32 }".
+  """
+  _, dict_temp = construct_struct_types_dictionary_for_file(ir.split("\n"))
+  return dict_temp
 
 
 def inline_struct_types(
