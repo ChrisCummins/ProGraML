@@ -43,11 +43,15 @@ message ProgramGraph {
   optional int32 data_flow_steps = 8;
   // The number of nodes with "positive" analysis results.
   optional int32 data_flow_positive_node_count = 9;
+  // Optional LLVM profiling information.
+  optional LlvmProfile llvm_profile = 100;
 }
 
 message Function {
   // The name of the function.
   required string name = 1;
+  // Optional LLVM profiling information.
+  optional uint64 llvm_entry_count = 100;
 }
 
 message Node {
@@ -70,6 +74,10 @@ message Node {
   // Optional vectors of node-level features and labels.
   repeated int64 x = 5;
   repeated int64 y = 6;
+  // Optional LLVM profiling information.
+  optional uint64 llvm_profile_true_weight = 100;
+  optional uint64 llvm_profile_false_weight = 101;
+  optional uint64 llvm_profile_total_weight = 102;
 }
 
 message Edge {
@@ -91,4 +99,13 @@ message Edge {
 // A collection of program graphs.
 message ProgramGraphs {
   repeated ProgramGraph graph = 1;
+}
+
+message LlvmProfile {
+  optional uint32 num_functions = 1;
+  optional uint64 max_function_count = 2;
+  optional uint64 num_counts = 10;
+  optional uint32 total_count = 3;
+  optional uint32 max_count = 4;
+  optional uint32 max_internal_count = 5;
 }

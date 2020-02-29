@@ -526,7 +526,7 @@ def GetFunctionsDeclaredInFile(bytecode_lines):
   for line in bytecode_lines:
 
     # Check whether it contains a function declaration
-    if "declare" in line:
+    if "declare" in line and not line.startswith("call void"):
       # Find the function name
       func = re.match(r"declare .*(" + rgx.func_name + r")", line)
       assert func is not None, "Could not match function name in " + line

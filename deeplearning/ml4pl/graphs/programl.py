@@ -193,6 +193,22 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
       * data_flow_root_node: ProgramGraph.data_flow_root_node
       * data_flow_steps: ProgramGraph.data_flow_steps
       * data_flow_positive_node_count: ProgramGraph.data_flow_positive_node_count
+      
+      Profile info if available:
+      * llvm_profile_num_functions (int):
+          ProgramGraph.LlvmProfile.num_functions (uint32)
+      * llvm_profile_max_function_count (int):
+          ProgramGraph.LlvmProfile.max_function_count (uint64)
+      * llvm_profile_num_counts (int):
+          ProgramGraph.LlvmProfile.num_counts (uint64)
+      * llvm_profile_total_count (int):
+          ProgramGraph.LlvmProfile.total_count (uint32)
+      * llvm_profile_max_count (int):
+          ProgramGraph.LlvmProfile.max_count (uint32)
+      * llvm_profile_max_internal_count (int):
+          ProgramGraph.LlvmProfile.max_internal_count (uint32)
+      * llvm_function_entry_count (Dict[str, int]): A dictionary mapping
+          Function.name to Function.llvm_entry_count (uint64).
 
   Nodes:
       * type (Node.Type enum): Node.type
@@ -201,6 +217,11 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
       * function (Union[str, None]): Function.name
       * x (List[int]): Node.x
       * y (List[int]): Node.y
+      
+      Profile info if available:
+        * llvm_profile_true_weight (int): Node.llvm_profile_true_weight
+        * llvm_profile_false_weight (int): Node.llvm_profile_false_weight
+        * llvm_profile_total_weight (int): Node.llvm_profile_total_weight
 
   Edges:
       * flow (Edge.Flow enum): Edge.flow
@@ -220,21 +241,55 @@ def ProgramGraphToNetworkX(proto: programl_pb2) -> nx.MultiDiGraph:
       "data_flow_positive_node_count"
     ] = proto.data_flow_positive_node_count
 
+  # Graph-level LLVM profiling info.
+  if proto.llvm_profile.HasField("num_functions"):
+    g.graph["llvm_profile_num_functions"] = proto.llvm_profile.num_functions
+  if proto.llvm_profile.HasField("max_function_count"):
+    g.graph[
+      "llvm_profile_max_function_count"
+    ] = proto.llvm_profile.max_function_count
+  if proto.llvm_profile.HasField("num_counts"):
+    g.graph["llvm_profile_num_counts"] = proto.llvm_profile.num_counts
+  if proto.llvm_profile.HasField("total_count"):
+    g.graph["llvm_profile_total_count"] = proto.llvm_profile.total_count
+  if proto.llvm_profile.HasField("max_count"):
+    g.graph["llvm_profile_max_count"] = proto.llvm_profile.max_count
+  if proto.llvm_profile.HasField("max_internal_count"):
+    g.graph[
+      "llvm_profile_max_internal_count"
+    ] = proto.llvm_profile.max_internal_count
+
+  # Function-level LLVM profiling info.
+  function_llvm_entry_counts = {}
+  for function in proto.function:
+    if function.HasField("llvm_entry_count"):
+      function_llvm_entry_counts[function.name] = function.llvm_entry_count
+  if function_llvm_entry_counts:
+    g.graph["llvm_function_entry_count"] = function_llvm_entry_counts
+
   # Build the nodes.
   for i, node in enumerate(proto.node):
-    g.add_node(
-      i,
-      type=node.type,
-      text=node.text,
-      preprocessed_text=node.preprocessed_text,
-      function=(
+    node_data = {
+      "type": node.type,
+      "text": node.text,
+      "preprocessed_text": node.preprocessed_text,
+      "function": (
         proto.function[node.function].name
         if node.HasField("function")
         else None
       ),
-      x=list(node.x),
-      y=list(node.y),
-    )
+      "x": list(node.x),
+      "y": list(node.y),
+    }
+    # Node-level LLVM profiling info.
+    if node.HasField("llvm_profile_true_weight"):
+      node_data["llvm_profile_true_weight"] = node.llvm_profile_true_weight
+    if node.HasField("llvm_profile_false_weight"):
+      node_data["llvm_profile_false_weight"] = node.llvm_profile_false_weight
+    if node.HasField("llvm_profile_total_weight"):
+      node_data["llvm_profile_total_weight"] = node.llvm_profile_total_weight
+
+    g.add_node(i, **node_data)
 
   # Build the edges.
   for edge in proto.edge:
@@ -279,6 +334,14 @@ def NetworkXToProgramGraph(
   for function_name in function_names:
     function_proto = proto.function.add()
     function_proto.name = function_name
+    # Function-level LLVM profiling info.
+    if (
+      "llvm_function_entry_count" in g.graph
+      and function_name in g.graph["llvm_function_entry_count"]
+    ):
+      function_proto.llvm_entry_count = g.graph["llvm_function_entry_count"][
+        function_name
+      ]
 
   # Set the graph-level features and labels.
   proto.x[:] = np.array(g.graph["x"], dtype=np.int64).tolist()
@@ -291,6 +354,23 @@ def NetworkXToProgramGraph(
     proto.data_flow_positive_node_count = g.graph[
       "data_flow_positive_node_count"
     ]
+  # Graph-level LLVM profiling info.
+  if "llvm_profile_num_functions" in g.graph:
+    proto.llvm_profile.num_functions = g.graph["llvm_profile_num_functions"]
+  if "llvm_profile_max_function_count" in g.graph:
+    proto.llvm_profile.max_function_count = g.graph[
+      "llvm_profile_max_function_count"
+    ]
+  if "llvm_profile_num_counts" in g.graph:
+    proto.llvm_profile.num_counts = g.graph["llvm_profile_num_counts"]
+  if "llvm_profile_total_count" in g.graph:
+    proto.llvm_profile.total_count = g.graph["llvm_profile_total_count"]
+  if "llvm_profile_max_count" in g.graph:
+    proto.llvm_profile.max_count = g.graph["llvm_profile_max_count"]
+  if "llvm_profile_max_internal_count" in g.graph:
+    proto.llvm_profile.max_internal_count = g.graph[
+      "llvm_profile_max_internal_count"
+    ]
 
   # Create the node list.
   for node, data in g.nodes(data=True):
@@ -302,6 +382,13 @@ def NetworkXToProgramGraph(
       node_proto.function = function_to_idx_map[data["function"]]
     node_proto.x[:] = np.array(data["x"], dtype=np.int64).tolist()
     node_proto.y[:] = np.array(data["y"], dtype=np.int64).tolist()
+    # Node-level LLVM profiling info.
+    if data.get("llvm_profile_true_weight") is not None:
+      node_proto.llvm_profile_true_weight = data["llvm_profile_true_weight"]
+    if data.get("llvm_profile_false_weight") is not None:
+      node_proto.llvm_profile_false_weight = data["llvm_profile_false_weight"]
+    if data.get("llvm_profile_total_weight") is not None:
+      node_proto.llvm_profile_total_weight = data["llvm_profile_total_weight"]
 
   # Create the edge list.
   for src, dst, data in g.edges(data=True):
@@ -343,6 +430,7 @@ def FromBytes(
   Args:
     data: The binary data to decode.
     fmt: The format of the binary data.
+    proto: A ProgramGraph instance to reuse.
     empty_okay: If False, raise an error if the protocol buffer is not
       initialized, or contains no nodes.
 

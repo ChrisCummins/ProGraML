@@ -66,6 +66,12 @@ class GraphBuilder {
   void AddCallEdges(const size_t callingNode,
                     const FunctionEntryExits& calledFunction);
 
+  // Return a mutable pointer to the graph protocol buffer.
+  ProgramGraph* GetMutableProgramGraph() { return &graph_; }
+
+  // Return the graph protocol buffer.
+  const ProgramGraph& GetProgramGraph() const { return graph_; }
+
  private:
   ProgramGraph graph_;
 
