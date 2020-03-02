@@ -61,6 +61,19 @@ cc_binary(
     ],
 )
 
+sh_test(
+    name = "llvm2graph_benchmark",
+    size = "medium",
+    srcs = ["llvm2graph_benchmark.sh"],
+    data = [
+        ":llvm2graph",
+        "//deeplearning/ml4pl/testing/data:llvm_ir",
+    ],
+    deps = [
+        "//labm8/sh:app",
+    ],
+)
+
 py_library(
     name = "llvm2graph_py",
     srcs = ["llvm2graph.py"],
