@@ -358,12 +358,11 @@ http_archive(
 
 # Python requirements.
 
-# I use my own rules_python fork which adds a timeout arg to pip_import.
 git_repository(
     name = "rules_python",
-    commit = "2cc99237d0cc767dc53d3137fabb2679c60f5e67",
-    remote = "https://github.com/ChrisCummins/rules_python.git",
-    shallow_since = "1578538415 +0000",
+    commit = "748aa53d7701e71101dfd15d800e100f6ff8e5d1",
+    remote = "https://github.com/bazelbuild/rules_python.git",
+    shallow_since = "1583438240 -0500",
 )
 
 load(
