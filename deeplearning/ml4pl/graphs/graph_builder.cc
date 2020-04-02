@@ -91,7 +91,7 @@ void GraphBuilder::AddCallEdge(int sourceNode, int destinationNode) {
         graph_.node(destinationNode).type() == Node::STATEMENT)
       << "Call edge must connect statements";
 
-  call_adjacencies_[sourceNode].push_back(destinationNode);
+  call_adjacencies_[sourceNode].insert(destinationNode);
 }
 
 void GraphBuilder::AddDataEdge(int sourceNode, int destinationNode,
@@ -139,6 +139,24 @@ void GraphBuilder::AddEdges(const std::vector<std::vector<size_t>>& adjacencies,
       edge->set_source_node(sourceNode);
       edge->set_destination_node(destinationNode);
       edge->set_position(position);
+
+      // Record the source and destination nodes in the node set.
+      (*visitedNodes)[sourceNode] = true;
+      (*visitedNodes)[destinationNode] = true;
+    }
+  }
+}
+
+void GraphBuilder::AddEdges(
+    const std::vector<absl::flat_hash_set<size_t>>& adjacencies,
+    const Edge::Flow& flow, std::vector<bool>* visitedNodes) {
+  for (size_t sourceNode = 0; sourceNode < adjacencies.size(); ++sourceNode) {
+    for (size_t destinationNode : adjacencies[sourceNode]) {
+      Edge* edge = graph_.add_edge();
+      edge->set_flow(flow);
+      edge->set_source_node(sourceNode);
+      edge->set_destination_node(destinationNode);
+      edge->set_position(0);
 
       // Record the source and destination nodes in the node set.
       (*visitedNodes)[sourceNode] = true;

@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "deeplearning/ml4pl/graphs/programl.pb.h"
 #include "labm8/cpp/string.h"
 
@@ -45,10 +46,15 @@ class GraphBuilder {
   std::pair<int, Node*> AddImmediate(const string& text);
 
   // Edge factories.
+
+  // Add a control edge. Control edges are given a position automatically by
+  // order in which they are added.
   void AddControlEdge(int sourceNode, int destinationNode);
 
+  // Add a call edge. Call edges always have 0 position.
   void AddCallEdge(int sourceNode, int destinationNode);
 
+  // Add a data edge with the given position.
   void AddDataEdge(int sourceNode, int destinationNode, int position);
 
   // Access the graph.
@@ -75,7 +81,12 @@ class GraphBuilder {
  private:
   ProgramGraph graph_;
 
+  // Add a positional list of edges.
   void AddEdges(const std::vector<std::vector<size_t>>& adjacencies,
+                const Edge::Flow& flow, std::vector<bool>* visitedNodes);
+
+  // Add an unordered set of edges. All edges have position 0.
+  void AddEdges(const std::vector<absl::flat_hash_set<size_t>>& adjacencies,
                 const Edge::Flow& flow, std::vector<bool>* visitedNodes);
 
   void AddReverseEdges(
@@ -85,7 +96,7 @@ class GraphBuilder {
   // Adjacency lists.
   std::vector<std::vector<size_t>> control_adjacencies_;
   std::vector<std::vector<std::pair<size_t, int>>> data_reverse_adjacencies_;
-  std::vector<std::vector<size_t>> call_adjacencies_;
+  std::vector<absl::flat_hash_set<size_t>> call_adjacencies_;
 
   bool finalized_;
 };
