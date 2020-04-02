@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include "fmt/format.h"
 #include "labm8/cpp/string.h"
 #include "labm8/cpp/stringpiece.h"
 
@@ -73,6 +74,13 @@ class Status {
   Status(const Status &);
   Status &operator=(const Status &x);
   ~Status() {}
+
+  // Create a status with formatted error message.
+  template <typename... Args>
+  Status(error::Code error_code, const string &error_message,
+         const Args &... args)
+      : error_code_(error_code),
+        error_message_(fmt::format(error_message, args...)) {}
 
   // Some pre-defined Status objects
   static const Status OK;  // Identical to 0-arg constructor
