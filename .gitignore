@@ -75,6 +75,7 @@ __pycache__
 /docs/**/.autotex.deps
 
 # User specific settings for IntelliJ.
+/.clwb
 /.idea/workspace.xml
 /.idea/tasks.xml
 /.ijwb

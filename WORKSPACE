@@ -69,11 +69,11 @@ http_archive(
 # Boost C++ library.
 # See: https://github.com/nelhage/rules_boost
 
-http_archive(
+git_repository(
     name = "com_github_nelhage_rules_boost",
-    sha256 = "391c6988d9f7822176fb9cf7da8930ef4474b0b35b4f24c78973cb6075fd17e4",
-    strip_prefix = "rules_boost-417642961150e987bc1ac78c7814c617566ffdaa",
-    url = "https://github.com/nelhage/rules_boost/archive/417642961150e987bc1ac78c7814c617566ffdaa.tar.gz",
+    commit = "4ee400beca08f524e7ea3be3ca41cce34454272f",
+    remote = "https://github.com/nelhage/rules_boost",
+    shallow_since = "1582750641 -0500",
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
@@ -358,12 +358,11 @@ http_archive(
 
 # Python requirements.
 
-# I use my own rules_python fork which adds a timeout arg to pip_import.
 git_repository(
     name = "rules_python",
-    commit = "2cc99237d0cc767dc53d3137fabb2679c60f5e67",
-    remote = "https://github.com/ChrisCummins/rules_python.git",
-    shallow_since = "1578538415 +0000",
+    commit = "748aa53d7701e71101dfd15d800e100f6ff8e5d1",
+    remote = "https://github.com/bazelbuild/rules_python.git",
+    shallow_since = "1583438240 -0500",
 )
 
 load(
@@ -952,4 +951,14 @@ http_archive(
     sha256 = "e5a8804c71a4b86149a00deab62bede041003df7109822805ea8cce015d5373b",
     strip_prefix = "progress-cpp-06fdda086eb06b462faff7a917984062bc15b61e",
     urls = ["https://github.com/prakhar1989/progress-cpp/archive/06fdda086eb06b462faff7a917984062bc15b61e.tar.gz"],
+)
+
+# OpenSSL.
+
+http_archive(
+    name = "openssl",
+    build_file_content = all_content,
+    sha256 = "23011a5cc78e53d0dc98dfa608c51e72bcd350aa57df74c5d5574ba4ffb62e74",
+    strip_prefix = "openssl-OpenSSL_1_1_1d",
+    urls = ["https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz"],
 )
