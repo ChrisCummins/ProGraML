@@ -121,11 +121,11 @@ the build.
 
 #### Non-standard $PATH
 
-The script `tools/bazel` specifies the environment in which bazel executes. It
-sets only a handful of environment variables and uses common default values for
-your `$PATH`. If you have installed dependencies in a non-standard path, such
-as when using a python virtualenv, you may need to modify this script so that
-bazel can find the right dependencies.
+The script `tools/bazel_env.sh` specifies the environment in which bazel
+executes.  It sets only a handful of environment variables and uses common
+default values for your `$PATH`. If you have installed dependencies in a
+non-standard path, such as when using a python virtualenv, you may need to
+modify this script so that bazel can find the right dependencies.
 
 
 #### Tensorflow
@@ -150,3 +150,35 @@ $ python3 -m pip install "tensorflow-gpu==1.14.0"
 A symptom of this issue that you may experience breakages if you already have a
 system version of Tensorflow which is incompatible with the one expected by this
 project.
+
+
+#### macOS: Homebrew protobuf interferes with @com_google_protobuf
+
+Homebrew-installed packages can interfere with bazel's build. E.g. `protobuf` and
+`boost` have both caused me problems in the past, such as with:
+
+```sh
+$ bazel build @com_google_protobuf//:protobuf_lite --nokeep_going
+```
+
+If you encounter an error during compilation of either of those packages, try
+removing them and rebuilding with bazel:
+
+```
+$ brew remove --ignore-dependencies protobuf boost
+$ bazel clean --expunge
+```
+
+Alternatively, use the clang provided by Homebrew's `llvm` package, since this
+does not seem to be affected:
+
+```sh
+$ brew install llvm libomp
+```
+
+
+#### macOS: Building PyOpenCL using non-standard compiler
+
+Building the PyOpenCL package (in `@requirements`) can fail when using a compiler
+other than the default XCode clang. If you experience an error during ,
+try removing the `$CC` and `$CXX` assignments in `tools/bazel_env.sh`.
