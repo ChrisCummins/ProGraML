@@ -105,6 +105,52 @@ cc_test(
 )
 
 cc_library(
+    name = "crypto",
+    srcs = ["crypto.cc"],
+    hdrs = ["crypto.h"],
+    visibility = ["//programl:__subpackages__"],
+    deps = [
+        "//labm8/cpp:status",
+        "//labm8/cpp:statusor",
+        "@boost//:filesystem",
+        "@subprocess",
+    ],
+)
+
+cc_test(
+    name = "crypto_test",
+    srcs = ["crypto_test.cc"],
+    deps = [
+        ":crypto",
+        "//labm8/cpp:test",
+        "@boost//:filesystem",
+    ],
+)
+
+cc_library(
+    name = "fsutil",
+    srcs = ["fsutil.cc"],
+    hdrs = ["fsutil.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logging",
+        ":status",
+        ":string",
+        "@boost//:filesystem",
+    ],
+)
+
+cc_test(
+    name = "fsutil_test",
+    srcs = ["fsutil_test.cc"],
+    deps = [
+        ":fsutil",
+        ":test",
+        "@boost//:filesystem",
+    ],
+)
+
+cc_library(
     name = "int128",
     srcs = ["int128.cc"],
     hdrs = ["int128.h"],
