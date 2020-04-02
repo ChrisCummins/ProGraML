@@ -167,7 +167,10 @@ cc_library(
     name = "pbutil",
     hdrs = ["pbutil.h"],
     visibility = ["//visibility:public"],
-    deps = [":logging"],
+    deps = [
+        ":logging",
+        "@com_google_protobuf//:protobuf",
+    ],
 )
 
 cc_test(
