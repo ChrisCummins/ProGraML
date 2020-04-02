@@ -10,6 +10,11 @@ filegroup(
 )
 
 filegroup(
+    name = "clang++",
+    srcs = ["bin/clang++"],
+)
+
+filegroup(
     name = "libcxx_headers",
     srcs = glob([
         "include/c++/v1/**/*",

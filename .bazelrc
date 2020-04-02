@@ -20,6 +20,10 @@ test --cxxopt='-std=c++14'
 build --cxxopt='-Werror=unused-variable'
 test --cxxopt='-Werror=unused-variable'
 
+# Promote unused result warnings to errors.
+build --cxxopt='-Werror=unused-result'
+test --cxxopt='-Werror=unused-result'
+
 # Promote warnings about missing braces on if/else blocks to errors.
 build --cxxopt='-Werror=dangling-else'
 test --cxxopt='-Werror=dangling-else'

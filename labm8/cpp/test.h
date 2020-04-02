@@ -55,3 +55,5 @@ class Test : public ::testing::Test {
     benchmark::RunSpecifiedBenchmarks();                 \
     return ret;                                          \
   }
+
+#define ASSERT_OK(value) ASSERT_TRUE((value).ok())

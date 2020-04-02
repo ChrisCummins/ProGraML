@@ -45,4 +45,6 @@ string CopyAndReplaceSubstr(const string &s, const string &src,
 // n-3 and append an ellipsis.
 void TruncateWithEllipsis(string &s, const size_t &n);
 
+string StripNonUtf8(const string &s);
+
 }  // namespace labm8

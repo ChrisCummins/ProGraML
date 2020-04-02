@@ -883,3 +883,73 @@ load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
 tf_repositories()
 
 ################################################################################
+
+# A modern C++ formatting library.
+# https://fmt.dev
+
+http_archive(
+    name = "fmt",
+    build_file = "//:third_party/fmt.BUILD",
+    sha256 = "1cafc80701b746085dddf41bd9193e6d35089e1c6ec1940e037fcb9c98f62365",
+    strip_prefix = "fmt-6.1.2",
+    urls = ["https://github.com/fmtlib/fmt/archive/6.1.2.tar.gz"],
+)
+
+# Subprocessing with modern C++.
+# https://github.com/arun11299/cpp-subprocess.git
+
+http_archive(
+    name = "subprocess",
+    build_file = "//:third_party/subprocess.BUILD",
+    sha256 = "886df0a814a7bb7a3fdeead22f75400abd8d3235b81d05817bc8c1125eeebb8f",
+    strip_prefix = "cpp-subprocess-2.0",
+    urls = [
+        "https://github.com/arun11299/cpp-subprocess/archive/v2.0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "ctpl",
+    build_file = "//:third_party/ctpl.BUILD",
+    sha256 = "8c1cec7c570d6d84be1d29283af5039ea27c3e69703bd446d396424bf619816e",
+    strip_prefix = "CTPL-ctpl_v.0.0.2",
+    urls = ["https://github.com/vit-vit/CTPL/archive/ctpl_v.0.0.2.tar.gz"],
+)
+
+# Build rules for interfacing with "foreign" (non-Bazel) build systems.
+# https://github.com/bazelbuild/rules_foreign_cc
+
+http_archive(
+    name = "rules_foreign_cc",
+    sha256 = "450563dc2938f38566a59596bb30a3e905fbbcc35b3fff5a1791b122bc140465",
+    strip_prefix = "rules_foreign_cc-456425521973736ef346d93d3d6ba07d807047df",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/456425521973736ef346d93d3d6ba07d807047df.zip",
+)
+
+all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
+
+load("@rules_foreign_cc//:workspace_definitions.bzl", "rules_foreign_cc_dependencies")
+
+rules_foreign_cc_dependencies([])
+
+# The C++ connector for PostgreSQL.
+# https://www.postgresql.org/docs/6.5/libpqplusplus.htm
+
+http_archive(
+    name = "libpqxx",
+    build_file_content = all_content,
+    sha256 = "2280621eee7ec675ed6751abac2273f0ac41395e99be96e06584a54a0cc3985a",
+    strip_prefix = "libpqxx-6.4.6",
+    urls = ["https://github.com/jtv/libpqxx/archive/6.4.6.tar.gz"],
+)
+
+# A flexible ASCII progress-bar for C++.
+# https://github.com/prakhar1989/progress-cpp
+
+http_archive(
+    name = "progress_cpp",
+    build_file = "//:third_party/progress_cpp.BUILD",
+    sha256 = "e5a8804c71a4b86149a00deab62bede041003df7109822805ea8cce015d5373b",
+    strip_prefix = "progress-cpp-06fdda086eb06b462faff7a917984062bc15b61e",
+    urls = ["https://github.com/prakhar1989/progress-cpp/archive/06fdda086eb06b462faff7a917984062bc15b61e.tar.gz"],
+)
