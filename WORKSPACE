@@ -953,3 +953,13 @@ http_archive(
     strip_prefix = "progress-cpp-06fdda086eb06b462faff7a917984062bc15b61e",
     urls = ["https://github.com/prakhar1989/progress-cpp/archive/06fdda086eb06b462faff7a917984062bc15b61e.tar.gz"],
 )
+
+# OpenSSL.
+
+http_archive(
+    name = "openssl",
+    build_file_content = all_content,
+    sha256 = "23011a5cc78e53d0dc98dfa608c51e72bcd350aa57df74c5d5574ba4ffb62e74",
+    strip_prefix = "openssl-OpenSSL_1_1_1d",
+    urls = ["https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz"],
+)
