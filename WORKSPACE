@@ -69,11 +69,11 @@ http_archive(
 # Boost C++ library.
 # See: https://github.com/nelhage/rules_boost
 
-http_archive(
+git_repository(
     name = "com_github_nelhage_rules_boost",
-    sha256 = "391c6988d9f7822176fb9cf7da8930ef4474b0b35b4f24c78973cb6075fd17e4",
-    strip_prefix = "rules_boost-417642961150e987bc1ac78c7814c617566ffdaa",
-    url = "https://github.com/nelhage/rules_boost/archive/417642961150e987bc1ac78c7814c617566ffdaa.tar.gz",
+    commit = "4ee400beca08f524e7ea3be3ca41cce34454272f",
+    remote = "https://github.com/nelhage/rules_boost",
+    shallow_since = "1582750641 -0500",
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
