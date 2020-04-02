@@ -10,63 +10,10 @@
 # environments such as terminals, IDEs, editors, etc.  This is especially
 # frustrating as it invalidates the results of (possibly expensive) test runs.
 #
-# This bazel wrapper script forwards only the minimum environment variables
-# required for bazel to complete it's task: a ${TERM} environment (so it knows
-# how to format build output), and a ${PATH} which has the necessary tools
-# required to complete the build (e.g. the compiler toolchains and python
-# runtimes).
-#
-# This assumes that /bin, /usr/bin, and /usr/local/bin contain the necessary
-# build tools, which is true for the standard Linux / macOS environments I use.
-# Your mileage may vary.
-set -eu
-
-build_path() {
-    local _dir=""
-    local _path=""
-
-    for _dir in "$@"
-    do
-        if [ -d $_dir ]; then
-            _path=$_path:$_dir
-        fi
-    done
-
-    _path=${_path:1}
-    echo $_path
-}
-
-# Accepts an array of directories and returns a colon separated path
-# of all of the directories that exist, in order.  Example usage:
-#
-#    dirs=("/usr/local/bin" /usr/bin "/not a real path")
-#    unset FOO
-#    FOO=$(build_path "${dirs[@]}")
-#    echo $FOO
-#    # Outputs: /usr/local/bin:/usr/bin
-path_dirs=( \
-    /usr/local/opt/llvm/bin \
-    /usr/local/opt/gnu-sed/libexec/gnubin \
-    /usr/bin \
-    /usr/local/bin \
-    /bin \
-)
-
-if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
-  CC=/usr/local/opt/llvm/bin/clang
-  CXX=/usr/local/opt/llvm/bin/clang++
-else
-  CC="$(which gcc)"
-  CXX="$(which g++)"
-fi
-
-# PULLET_TIMEOUT to increase the timeout on docker image pulls from the default
-# 600s. See: https://github.com/bazelbuild/rules_docker
-set +u
-env -i \
-  TERM="$TERM" \
-  PATH="$(build_path ${path_dirs[@]})" \
-  CC=$CC \
-  CXX=$CXX \
-  PULLER_TIMEOUT=3600 \
-  "$BAZEL_REAL" "$@"
+# Instead, the goal of this script is to create consistent environment which
+# can be run from anywhere and always makes sure that bazel gets the same
+# variables to work with. The way of achieving that is to start from a blank
+# slate empty environment and call a script which sets up the necessary
+# variables.
+set -e
+env -i TERM="$TERM" HOME="$HOME" tools/bazel_env.sh "$BAZEL_REAL" "$@"
