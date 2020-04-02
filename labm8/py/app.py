@@ -561,7 +561,6 @@ def DEFINE_output_path(
   required: bool = False,
   is_dir: bool = False,
   exist_ok: bool = True,
-  must_exist: bool = False,
   validator: Callable[[pathlib.Path], bool] = None,
 ):
   """Registers a flag whose value is an output path.
@@ -581,10 +580,9 @@ def DEFINE_output_path(
       that the value be a file. Parsing will fail if the path already exists and
       is of the incorrect type.
     exist_ok: If False, require that the path not exist, else parsing will fail.
-    must_exist: If True, require that the path exists, else parsing will fail.
   """
   parser = flags_parsers.PathParser(
-    must_exist=must_exist, exist_ok=exist_ok, is_dir=is_dir,
+    must_exist=False, exist_ok=exist_ok, is_dir=is_dir,
   )
   serializer = absl_flags.ArgumentSerializer()
   absl_flags.DEFINE(
