@@ -16,6 +16,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <sstream>
+
 #include "deeplearning/ml4pl/graphs/graphviz_converter.h"
 #include "deeplearning/ml4pl/graphs/programl.pb.h"
 
