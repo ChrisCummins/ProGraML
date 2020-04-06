@@ -8,10 +8,6 @@ test --runs_per_test=1
 build --workspace_status_command=tools/workspace_status.sh
 test --workspace_status_command=tools/workspace_status.sh
 
-# Force python2 for bazel since io_bazel_rules_docker uses python2 code.
-build --host_force_python=PY2
-test --host_force_python=PY2
-
 # This project uses C++14.
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
