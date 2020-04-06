@@ -3,19 +3,6 @@ workspace(name = "phd")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-# Workaround for broken python 2 tooling in rules_docker.
-# See: https://github.com/bazelbuild/rules_docker/issues/1022
-git_repository(
-    name = "containerregistry",
-    commit = "c66b149fe6c3566a6e3e39979dc913ded439117b",
-    remote = "https://github.com/ChrisCummins/containerregistry",
-    shallow_since = "1578323818 +0000",
-)
-
-load("@containerregistry//:def.bzl", cr_repositories = "repositories")
-
-cr_repositories()
-
 http_archive(
     name = "gtest",
     sha256 = "9bf1fe5182a604b4135edc1a425ae356c9ad15e9b23f9f12a02e80184c3a249c",
@@ -170,22 +157,33 @@ http_archive(
 
 # Golang and gazelle.
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "f04d2373bcaf8aa09bccb08a98a57e721306c8f6043a2a0ee610fd6853dcde3d",
+    sha256 = "142dd33e38b563605f0d20e89d9ef9eda0fc3cb539a14be1bdb1350de2eda659",
     urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/0.18.6/rules_go-0.18.6.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/0.18.6/rules_go-0.18.6.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.22.2/rules_go-v0.22.2.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.22.2/rules_go-v0.22.2.tar.gz",
     ],
 )
 
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "3c681998538231a2d24d0c07ed5a7658cb72bfb5fd4bf9911157c0e9ac6a2687",
-    urls = ["https://github.com/bazelbuild/bazel-gazelle/releases/download/0.17.0/bazel-gazelle-0.17.0.tar.gz"],
+    sha256 = "d8c45ee70ec39a57e7a05e5027c32b1576cc7f16d9dd37135b0eddde45cf1b10",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/v0.20.0/bazel-gazelle-v0.20.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.20.0/bazel-gazelle-v0.20.0.tar.gz",
+    ],
 )
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()
 
 # Linux sources.
 
@@ -626,49 +624,35 @@ git_repository(
 # Bazel docker rules.
 # See: https://github.com/bazelbuild/rules_docker
 
+# Download the rules_docker repository at release v0.14.1
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "6706b3979498802672252e77a45674dae0a1036f246a7efe5d3adbe53dcbea31",
-    strip_prefix = "rules_docker-31c38b0f506d8aff07487c274ed045c0017f689f",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/31c38b0f506d8aff07487c274ed045c0017f689f.tar.gz"],
+    sha256 = "dc97fccceacd4c6be14e800b2a00693d5e8d07f69ee187babfd04a80a9f8e250",
+    strip_prefix = "rules_docker-0.14.1",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.1/rules_docker-v0.14.1.tar.gz"],
 )
-
-# Bazel rules for assembling and deploying software distributions.
-# https://github.com/graknlabs/bazel-distribution
-
-http_archive(
-    name = "graknlabs_bazel_distribution",
-    sha256 = "7b771d57dfdb426c511ad95301737027f37c632a627b452d85d01d76e0c8ce17",
-    strip_prefix = "bazel-distribution-8dc6490f819d330361f46201e3390ce5457564a2",
-    urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
-)
-
-pip3_import(
-    name = "graknlabs_bazel_distribution_pip",
-    timeout = 3600,
-    requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
-)
-
-load(
-    "@graknlabs_bazel_distribution_pip//:requirements.bzl",
-    graknlabs_bazel_distribution_pip_install = "pip_install",
-)
-
-graknlabs_bazel_distribution_pip_install()
-
-# Enable py3_image() rule.
 
 load(
     "@io_bazel_rules_docker//repositories:repositories.bzl",
     container_repositories = "repositories",
 )
-load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
+
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
+
+# Enable py3_image.
+
 load(
-    "@io_bazel_rules_docker//python3:image.bzl",
+    "@io_bazel_rules_docker//python:image.bzl",
     _py_image_repos = "repositories",
 )
 
 _py_image_repos()
+
+# Enable cc_image.
 
 load(
     "@io_bazel_rules_docker//cc:image.bzl",
@@ -677,9 +661,11 @@ load(
 
 _cc_image_repos()
 
-container_repositories()
-
-# My custom base image for bazel-compiled binaries.
+# My custom base images:
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
 
 # Minimal python base image.
 # Defined in //tools/docker/phd_base:Dockerfile
@@ -717,17 +703,32 @@ container_pull(
     repository = "chriscummins/phd_build",
 )
 
+# Bazel rules for assembling and deploying software distributions.
+# https://github.com/graknlabs/bazel-distribution
+
+http_archive(
+    name = "graknlabs_bazel_distribution",
+    sha256 = "7b771d57dfdb426c511ad95301737027f37c632a627b452d85d01d76e0c8ce17",
+    strip_prefix = "bazel-distribution-8dc6490f819d330361f46201e3390ce5457564a2",
+    urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
+)
+
+pip3_import(
+    name = "graknlabs_bazel_distribution_pip",
+    timeout = 3600,
+    requirements = "@graknlabs_bazel_distribution//pip:requirements.txt",
+)
+
+load(
+    "@graknlabs_bazel_distribution_pip//:requirements.bzl",
+    graknlabs_bazel_distribution_pip_install = "pip_install",
+)
+
+graknlabs_bazel_distribution_pip_install()
+
 # Go dependencies.
 
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains()
-
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
-
-gazelle_dependencies()
 
 go_repository(
     name = "com_github_stretchr_testify",
