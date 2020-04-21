@@ -14,6 +14,9 @@ dependencies of the project are:
 * Python >= 3.6.
 * A modern C++ toolchain with support for (at least) C++14.
 
+Additional dependencies are described below.
+
+
 #### Building with Docker
 
 I maintain a docker image
@@ -40,7 +43,7 @@ docker, Java, or go. On a supported system, run the following script to generate
 a script which exhaustively installs all dependencies:
 
 ``` sh
-$ ./tools/make_bootstrap.sh
+$ ./tools/make_bootstrap.py
 ```
 
 This creates a file `bootstrap.sh`. Inspect this script, and if it looks
