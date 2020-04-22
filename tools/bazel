@@ -16,4 +16,6 @@
 # slate empty environment and call a script which sets up the necessary
 # variables.
 set -e
-env -i TERM="$TERM" HOME="$HOME" tools/bazel_env.sh "$BAZEL_REAL" "$@"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+env -i TERM="$TERM" HOME="$HOME" "$DIR/bazel_env.sh" "$BAZEL_REAL" "$@"
