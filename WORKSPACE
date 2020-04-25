@@ -921,9 +921,9 @@ http_archive(
 
 http_archive(
     name = "rules_foreign_cc",
-    sha256 = "450563dc2938f38566a59596bb30a3e905fbbcc35b3fff5a1791b122bc140465",
-    strip_prefix = "rules_foreign_cc-456425521973736ef346d93d3d6ba07d807047df",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/456425521973736ef346d93d3d6ba07d807047df.zip",
+    sha256 = "0a2a0099c837ddfc365eca74b54f33790fa2542e4fdfbf50e4ad0f22d4821917",
+    strip_prefix = "rules_foreign_cc-8372f383cf7277a88762efe25d8cfee10ad27929",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/8372f383cf7277a88762efe25d8cfee10ad27929.zip",
 )
 
 all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
