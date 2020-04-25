@@ -921,9 +921,9 @@ http_archive(
 
 http_archive(
     name = "rules_foreign_cc",
-    sha256 = "450563dc2938f38566a59596bb30a3e905fbbcc35b3fff5a1791b122bc140465",
-    strip_prefix = "rules_foreign_cc-456425521973736ef346d93d3d6ba07d807047df",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/456425521973736ef346d93d3d6ba07d807047df.zip",
+    sha256 = "0a2a0099c837ddfc365eca74b54f33790fa2542e4fdfbf50e4ad0f22d4821917",
+    strip_prefix = "rules_foreign_cc-8372f383cf7277a88762efe25d8cfee10ad27929",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/8372f383cf7277a88762efe25d8cfee10ad27929.zip",
 )
 
 all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
@@ -962,4 +962,30 @@ http_archive(
     sha256 = "23011a5cc78e53d0dc98dfa608c51e72bcd350aa57df74c5d5574ba4ffb62e74",
     strip_prefix = "openssl-OpenSSL_1_1_1d",
     urls = ["https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz"],
+)
+
+# MNIST dataset
+
+http_file(
+    name = "mnist_train_images",
+    sha256 = "440fcabf73cc546fa21475e81ea370265605f56be210a4024d2ca8f203523609",
+    urls = ["http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz"],
+)
+
+http_file(
+    name = "mnist_train_labels",
+    sha256 = "3552534a0a558bbed6aed32b30c495cca23d567ec52cac8be1a0730e8010255c",
+    urls = ["http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"],
+)
+
+http_file(
+    name = "mnist_test_images",
+    sha256 = "8d422c7b0a1c1c79245a5bcf07fe86e33eeafee792b84584aec276f5a2dbc4e6",
+    urls = ["http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz"],
+)
+
+http_file(
+    name = "mnist_test_labels",
+    sha256 = "f7ae60f92e00ec6debd23a6088c31dbd2371eca3ffa0defaefb259924204aec6",
+    urls = ["http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz"],
 )

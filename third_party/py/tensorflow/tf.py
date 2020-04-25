@@ -12,9 +12,7 @@ This wrapper is required to workaround a known bug with packaging Tensorflow
 as a pip dependency with bazel. See:
 github.com/bazelbuild/rules_python/issues/71
 """
-import importlib
 import pathlib
-import site
 import sys
 
 try:
