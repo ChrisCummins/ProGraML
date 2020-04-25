@@ -55,6 +55,7 @@ fi
 # See: https://github.com/bazelbuild/rules_docker
 export PULLER_TIMEOUT=3600
 
+# Use homebrew installed LLVM, if available.
 if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
   export CC=/usr/local/opt/llvm/bin/clang
   export CXX=/usr/local/opt/llvm/bin/clang++
