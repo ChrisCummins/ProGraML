@@ -15,19 +15,20 @@
 # limitations under the License.
 
 load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
-load("//tools/bzl:exports.bzl", "exports_repo")
+load("@cec_exports_repo//tools/bzl:exports_repo.bzl", "exports_repo")
 
 exports_repo(
     name = "export",
-    github_repo = "ProGraML",
-    move_file_mapping = {
+    path_rename = {
         "deeplearning/ml4pl/bettercodehub.yml": ".bettercodehub.yml",
         "deeplearning/ml4pl/README.md": "README.md",
         "deeplearning/ml4pl/LICENSE": "LICENSE",
         "deeplearning/ml4pl/travis.yml": ".travis.yml",
     },
+    remote = "git@github.com:ChrisCummins/ProGraML.git",
     targets = [
         "//deeplearning/ml4pl/...",
+        "//programl/...",
     ],
 )
 
