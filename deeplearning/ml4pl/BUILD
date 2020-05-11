@@ -26,6 +26,7 @@ exports_repo(
         "deeplearning/ml4pl/travis.yml": ".travis.yml",
     },
     remote = "git@github.com:ChrisCummins/ProGraML.git",
+    tags = ["manual"],
     targets = [
         "//deeplearning/ml4pl/...",
         "//programl/...",
