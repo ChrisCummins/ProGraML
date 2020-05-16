@@ -293,6 +293,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":app",
+        "//third_party/py/appdirs",
         "//third_party/py/gspread",
         "//third_party/py/oauth2client",
     ],
