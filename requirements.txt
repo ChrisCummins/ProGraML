@@ -131,6 +131,7 @@ property-cached==1.6.3
 protobuf==3.6.1
 psutil==5.4.5
 psycopg2-binary==2.8.3
+ptvsd==4.3.2
 ptyprocess==0.5.2
 py-cpuinfo==3.3.0
 py==1.5.2

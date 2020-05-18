@@ -88,6 +88,13 @@ absl_flags.DEFINE_boolean(
   "Print the defined flags and their values to JSON and exit.",
 )
 absl_flags.DEFINE_boolean(
+  "ptvsd",
+  False,
+  "Pauses execution on app start to enable you to attach a debugging session "
+  "in Visual Studio or Visual Studio Code. This requires additional "
+  "configuration of your IDE. See: https://stackoverflow.com/a/61367381",
+)
+absl_flags.DEFINE_boolean(
   "log_colors", True, "Whether to colorize logging output."
 )
 
@@ -189,6 +196,18 @@ def RunWithArgs(
         )
       )
       sys.exit(0)
+
+    # Optionally wait for the user to attach a Visual Studio (Code) debugger.
+    # This requires additional configuration of the IDE.
+    # See: https://stackoverflow.com/a/61367381
+    if FLAGS.ptvsd:
+      import ptvsd
+
+      ptvsd.enable_attach(address=("localhost", 5724), redirect_output=True)
+      Log(1, "Waiting to attach VS Code debugger on port 5724 ...")
+      ptvsd.wait_for_attach()
+      Log(1, "Debugger attached. Resuming ...")
+
     main(argv)
 
   try:

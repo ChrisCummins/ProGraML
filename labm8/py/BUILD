@@ -24,6 +24,7 @@ py_library(
         "//labm8/py/internal:flags_parsers",
         "//labm8/py/internal:labm8_logging",
         "//third_party/py/absl",
+        "//third_party/py/ptvsd",
     ],
 )
 
