@@ -163,6 +163,7 @@ def FromFile(
       else:
         message.ParseFromString(f.read())
   except (
+    google.protobuf.message.DecodeError,
     google.protobuf.text_format.ParseError,
     google.protobuf.json_format.ParseError,
   ) as e:
