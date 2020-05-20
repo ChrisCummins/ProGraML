@@ -2813,7 +2813,7 @@ def construct_struct_types_dictionary_for_file(data):
 
     # Under certain circumstances
     if use_previously_inlined_stmts:
-      print("\t... using previously inlined statements")
+      # print("\t... using previously inlined statements")
       # Loop over contents of "to_process"
       for p in list(to_process.items()):
         # and inline these statements with structures from "ready"
@@ -2971,8 +2971,11 @@ def GetStructTypes(ir: str) -> Dict[str, str]:
     definition (e.g. "%struct.foo"), and <def> is the definition of the member
     types, e.g. "{ i32 }".
   """
-  _, dict_temp = construct_struct_types_dictionary_for_file(ir.split("\n"))
-  return dict_temp
+  try:
+    _, dict_temp = construct_struct_types_dictionary_for_file(ir.split("\n"))
+    return dict_temp
+  except AssertionError as e:
+    raise ValueError(e)
 
 
 def inline_struct_types(
