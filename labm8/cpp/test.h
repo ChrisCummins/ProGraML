@@ -13,6 +13,7 @@
 
 #include "benchmark/benchmark.h"
 #include "gflags/gflags.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #ifdef TEST_MAIN
