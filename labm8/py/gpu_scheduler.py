@@ -112,7 +112,7 @@ class GpuScheduler(object):
 
       if print_status:
         print(
-          f"\rwaiting on a free gpu ... {humanize.Duration(time.time() - start_time)}",
+          f"\rwaiting on a free gpu ... {time.time() - start_time:.1f}s",
           end="",
         )
       time.sleep(0.5)
