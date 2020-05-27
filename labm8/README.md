@@ -49,8 +49,8 @@ Released under the terms of the Apache 2.0 license. See
 $ bazel run //labm8/py:export
 ```
 
-3. Deploy a new versioned release to [pypi](https://pypi.org/project/labm8/):
+3. Deploy a new versioned release of the python package to [pypi](https://pypi.org/project/labm8/):
 
 ```sh
-$ bazel run //labm8/py:deploy -- --release_type=release
+$ bazel run //labm8/py:export_python_pip -- --release_type=release
 ```
