@@ -73,7 +73,6 @@ from absl import logging as absl_logging
 from labm8.py import shell
 from labm8.py.internal import flags_parsers
 from labm8.py.internal import labm8_logging as logging
-from labm8.py.internal import workspace_status
 
 FLAGS = absl_flags.FLAGS
 
@@ -92,17 +91,31 @@ absl_flags.DEFINE_boolean(
   "log_colors", True, "Whether to colorize logging output."
 )
 
-# Expose some of the variables produced by //tools:workspace_status.sh, see the
-# module docstring for details:
-VERSION = workspace_status.STABLE_VERSION
-GIT_URL = workspace_status.STABLE_GIT_URL
-GIT_COMMIT = workspace_status.STABLE_GIT_COMMIT
-GIT_DIRTY = workspace_status.STABLE_GIT_DIRTY
-TIMESTAMP = datetime.datetime.fromtimestamp(
-  int(workspace_status.BUILD_TIMESTAMP)
-)
-BUILT_BY = f"{workspace_status.BUILD_USER}@{workspace_status.BUILD_HOST}"
-ARCH = workspace_status.STABLE_ARCH
+try:
+  # Expose some of the variables produced by //tools:workspace_status.sh, see the
+  # module docstring for details:
+  from labm8.py.internal import workspace_status
+
+  VERSION = workspace_status.STABLE_VERSION
+  GIT_URL = workspace_status.STABLE_GIT_URL
+  GIT_COMMIT = workspace_status.STABLE_GIT_COMMIT
+  GIT_DIRTY = workspace_status.STABLE_GIT_DIRTY
+  TIMESTAMP = datetime.datetime.fromtimestamp(
+    int(workspace_status.BUILD_TIMESTAMP)
+  )
+  BUILT_BY = f"{workspace_status.BUILD_USER}@{workspace_status.BUILD_HOST}"
+  ARCH = workspace_status.STABLE_ARCH
+except ImportError:
+  # If workspace_status does not exist then we are in a pip deployed pacakge.
+  import pkg_resources
+
+  VERSION = pkg_resources.get_distribution("labm8").version
+  GIT_URL = "git@github.com:ChrisCummins/labm8.git"
+  GIT_COMMIT = ""
+  GIT_DIRTY = ""
+  TIMESTAMP = datetime.datetime.now()
+  BUILT_BY = ""
+  ARCH = ""
 
 
 # A decorator to mark a function as ignored when computing the log prefix.
