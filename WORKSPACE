@@ -719,9 +719,9 @@ container_pull(
 
 http_archive(
     name = "graknlabs_bazel_distribution",
-    sha256 = "7b771d57dfdb426c511ad95301737027f37c632a627b452d85d01d76e0c8ce17",
-    strip_prefix = "bazel-distribution-8dc6490f819d330361f46201e3390ce5457564a2",
-    urls = ["https://github.com/graknlabs/bazel-distribution/archive/8dc6490f819d330361f46201e3390ce5457564a2.zip"],
+    sha256 = "1bc61164a3ed85103222898c3745b64653b85c5aa05149a2cb0ad42a3e1e8a71",
+    strip_prefix = "bazel-distribution-6865042c2dcfb0e877adb9ba999c9dfa855e4613",
+    urls = ["https://github.com/ChrisCummins/bazel-distribution/archive/6865042c2dcfb0e877adb9ba999c9dfa855e4613.zip"],
 )
 
 pip3_import(
