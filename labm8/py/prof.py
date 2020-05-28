@@ -22,7 +22,9 @@ import pathlib
 import sys
 import time
 import typing
+from typing import Callable
 from typing import Optional
+from typing import Union
 
 from labm8.py import app
 from labm8.py import humanize
@@ -218,7 +220,7 @@ class ProfilingEvent(object):
 
 
 @contextlib.contextmanager
-def ProfileToStdout(name: str = ""):
+def ProfileToStdout(name: Union[str, Callable[[float], str]] = ""):
   """A context manager which prints the elapsed time to stdout on exit.
 
   Args:
