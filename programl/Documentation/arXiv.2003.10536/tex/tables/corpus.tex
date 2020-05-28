@@ -1,0 +1,25 @@
+\renewcommand{\arraystretch}{1.55}
+\footnotesize
+\begin{tabular}{L{3.35cm} L{1.45cm} L{2.75cm} | r r R{1.69cm} R{1.6cm}}
+  & \textbf{Source language} & \textbf{Domain} & \textbf{IR files} & \textbf{IR lines} & \textbf{Avg. vertices / IR} & \textbf{Avg. edges / IR}\\
+  \hline
+  BLAS 3.8.0 & Fortran & Scientific Computing & 300 & 345,613 & 1,664 & 3,276\\
+  \hline
+  Linux 4.19 & C & Operating Systems & 13,851 & 41,332,089 & 1,857 & 3,760 \\
+  \hline
+  OpenCL Benchmarks~\cite{Cummins2017b} & OpenCL & Benchmarks & 256 & 149,779 & 1,027 & 1,970 \\
+  \hline
+  OpenCV 3.4.0 & C++ & Computer Vision & 400 & 1,168,758 & 3,761 & 7,442\\
+  \hline
+  POJ-104~\cite{Mou2016} & C++ & Standard Algorithms & 182,815 & 64,518,837 & 312 & 569 \\
+  \hline
+  Tensorflow~\cite{Abadi} & C++ & Machine learning & 1,584 & 8,444,443 & 5,786 & 11,482 \\
+  \hline
+  \multirow{4}{*}{GitHub} & C & \multirow{4}{*}{Various} & 42,880 & 89,356,570 & 927 & 1,794\\
+                  & Haskell & & 1,371 & 6,745,312 & 4,705 & 7,518\\
+                  & OpenCL & & 5,188 & 10,472,388 & 2,299 & 5,132 \\
+                  & Swift & & 1,783 & 205,140 & 134 & 371 \\
+  \hline
+  \textbf{Total} & --- & --- & \textbf{250,428} & \textbf{222,738,929} & \textbf{153,426,059} & \textbf{294,685,614} \\
+  \hline
+\end{tabular}

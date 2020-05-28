@@ -1,0 +1,43 @@
+\section{Conclusions}
+
+With the demand for aggressively optimizing compilers increasing,
+there is an increasing burden on compiler heuristics to make good
+optimization decisions. While tuning heuristics by hand is expensive
+and slow to keep up with the pace of compiler and architecture
+advancements, machine learning offers tremendous benefits for
+automatically constructing heuristics that are both cheaper to develop
+and better performing than hand-crafted equivalents. The success of
+these machine learning approaches is bound by the quality of the input
+used to represent programs, and the ability of models to process these
+representations.
+
+In this work, we present a graph-based representation for programs,
+derived from compiler IRs, that accurately captures the semantics of a
+program's statements and the relations between them. Our approach is
+more expressive than prior sequence- or graph-based representations,
+while closely approximating the representations that are traditionally
+used within compilers.
+
+We have shown through a constructivist approach that machine learning
+is capable of approximating the types of compiler analyses that are
+key for optimizations. In testing our approach on a suite of
+established compiler tasks that even state-of-the-art machine learning
+methods struggle with, our goal is to inspire confidence in machine
+learning as a viable tool for reasoning about program semantics, as
+opposed to a black box which discourages, rather than inspires, a more
+systematic approach to reasoning about optimizations. When tasked with
+real-world problems spanning multiple domains and source languages,
+our approach outperforms prior state-of-the-art approaches.
+
+Our hope in developing \textsc{ProGraML} is to provide a re-usable
+toolbox for representing and reasoning about programs that can be used
+for a wide variety of downstream tasks. Promising research avenues for
+downstream tasks enabled by our enriched program representation and
+the ability to perform statement-level inference include automatic
+parallelization, static performance estimation, and IR-to-IR
+transpilation. Additionally, while the applications of deep learning
+to compilers is rapidly evolving~\cite{Allamanis2017a,Cummins2020}, we
+hope to focus attention on the challenges that machine learning
+methods face in the domain of programming languages: scalability when
+faced with large inputs, modeling very-long-range dependencies, and
+learning over unbounded vocabularies.
