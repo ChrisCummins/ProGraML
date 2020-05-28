@@ -50,6 +50,14 @@ namespace labm8 {
 #endif
 
 // ----------------------------------------------------------------------
+// StrLen()
+//    Compile-time string length computation for string literals.
+// ----------------------------------------------------------------------
+inline int constexpr StrLen(const char *str) {
+  return *str ? 1 + StrLen(str + 1) : 0;
+}
+
+// ----------------------------------------------------------------------
 // ascii_isalnum()
 //    Check if an ASCII character is alphanumeric.  We can't use ctype's
 //    isalnum() because it is affected by locale.  This function is applied
