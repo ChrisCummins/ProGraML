@@ -78,7 +78,7 @@ py_library(
     name = "llvm2graph_py",
     srcs = ["llvm2graph.py"],
     data = [":llvm2graph"],
-    visibility = ["//deeplearning/ml4pl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",
@@ -148,10 +148,7 @@ py_binary(
         "//deeplearning/ml4pl/graphs/llvm2graph/node_embeddings:dictionary",
         "//deeplearning/ml4pl/graphs/llvm2graph/node_embeddings:embeddings",
     ],
-    visibility = [
-        "//deeplearning/ml4pl/graphs:__subpackages__",
-        "//deeplearning/ml4pl/models:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ml4pl/graphs:programl",
         "//deeplearning/ml4pl/graphs:programl_pb_py",

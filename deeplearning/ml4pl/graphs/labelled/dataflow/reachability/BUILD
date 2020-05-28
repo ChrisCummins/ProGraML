@@ -19,7 +19,7 @@
 py_library(
     name = "reachability",
     srcs = ["reachability.py"],
-    visibility = ["//deeplearning/ml4pl/graphs/labelled/dataflow:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//deeplearning/ml4pl/graphs:programl_pb_py",
         "//deeplearning/ml4pl/graphs/labelled/dataflow:data_flow_graphs",
