@@ -18,11 +18,10 @@ boost::filesystem::path CanonicalPath(const boost::filesystem::path& path) {
 
 StatusOr<boost::filesystem::path> BazelDataPath(const string& path) {
   boost::filesystem::path fs_path("../" + path);
-  if (!boost::filesystem::is_regular_file(fs_path)) {
-    std::stringstream error;
-    error << "Bazel data path '" << CanonicalPath(fs_path).c_str()
-          << "' not found";
-    return labm8::Status(labm8::error::Code::INVALID_ARGUMENT, error.str());
+  if (!boost::filesystem::exists(fs_path)) {
+    return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,
+                         "Bazel data path '{}' not found",
+                         CanonicalPath(fs_path).c_str());
   }
   return CanonicalPath(fs_path);
 }
