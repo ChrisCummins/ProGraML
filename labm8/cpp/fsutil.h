@@ -1,6 +1,7 @@
 // Utility code for interacting with filesystems.
 #pragma once
 
+#include <sys/stat.h>
 #include <vector>
 
 #include "boost/filesystem.hpp"
@@ -24,6 +25,12 @@ fs::path GetHomeDirectoryOrDie();
 // to files.
 [[nodiscard]] Status EnumerateFilesRecursively(const fs::path& root,
                                                vector<fs::path>* files);
+
+// Return true if the given file exists.
+inline bool FileExists(const string& name) {
+  struct stat buffer;
+  return stat(name.c_str(), &buffer) == 0;
+}
 
 }  // namespace fsutil
 }  // namespace labm8
