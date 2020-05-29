@@ -242,26 +242,31 @@ def Distplot(
   return ax
 
 
-def SummarizeFloats(floats: typing.Iterable[float], nplaces: int = 2) -> str:
+def SummarizeFloats(
+  floats: typing.Iterable[float], nplaces: int = 2, unit: str = ""
+) -> str:
   """Summarize a sequence of floats."""
   arr = np.array(list(floats), dtype=np.float32)
   percs = " ".join(
-    [f"{p}%={np.percentile(arr, p):.{nplaces}f}" for p in [0, 50, 95, 99, 100]]
+    [
+      f"{p}%={np.percentile(arr, p):.{nplaces}f}{unit}"
+      for p in [0, 50, 95, 99, 100]
+    ]
   )
   return (
-    f"n={len(arr)}, mean={arr.mean():.{nplaces}f}, stdev={arr.std():.{nplaces}f}, "
+    f"n={len(arr)}, mean={arr.mean():.{nplaces}f}{unit}, stdev={arr.std():.{nplaces}f}{unit}, "
     f"percentiles=[{percs}]"
   )
 
 
-def SummarizeInts(ints: typing.Iterable[int]) -> str:
+def SummarizeInts(ints: typing.Iterable[int], unit: str = "") -> str:
   """Summarize a sequence of ints."""
   arr = np.array(list(ints), dtype=np.int32)
   percs = " ".join(
-    [f"{p}%={np.percentile(arr, p):.0f}" for p in [0, 50, 95, 99, 100]],
+    [f"{p}%={np.percentile(arr, p):.0f}{unit}" for p in [0, 50, 95, 99, 100]],
   )
   return (
-    f"n={len(arr)}, mean={arr.mean():.2f}, stdev={arr.std():.2f}, "
+    f"n={len(arr)}, mean={arr.mean():.2f}{unit}, stdev={arr.std():.2f}{unit}, "
     f"percentiles=[{percs}]"
   )
 
