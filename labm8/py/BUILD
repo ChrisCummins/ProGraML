@@ -754,6 +754,9 @@ py_library(
         ":fs",
         "//third_party/py/jupyter",
         "//third_party/py/matplotlib",
+        "//third_party/py/numpy",
+        "//third_party/py/scipy",
+        "//third_party/py/seaborn",
     ],
 )
 
