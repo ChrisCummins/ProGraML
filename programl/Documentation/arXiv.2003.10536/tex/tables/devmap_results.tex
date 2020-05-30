@@ -1,0 +1,31 @@
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.6}
+\begin{subfigure}{.48\linewidth}
+\begin{tabular}{l llll}
+  \toprule
+   & Accuracy & Precision & Recall & $F_1$\\
+  \midrule
+  Static Mapping                 & 58.8\% & 0.35 & 0.59 & 0.44\\
+  DeepTune~\cite{Cummins2017b}   & 71.9\% & 0.72 & 0.72 & 0.72\\
+  DeepTune$_{\text{IR}}$         & 73.8\% & 0.76 & 0.74 & 0.75\\
+  NCC~\cite{Ben-nun2018}    & 80.3\% & 0.81 & 0.80 & 0.80\\
+  ProGraML                       & \textbf{86.6}\% & \textbf{0.89} & \textbf{0.87} & \textbf{0.88}\\
+  \midrule
+\end{tabular}
+\caption{AMD}
+\end{subfigure}
+\begin{subfigure}{.48\linewidth}
+\begin{tabular}{l llll}
+  \toprule
+   & Accuracy & Precision & Recall & $F_1$\\
+  \midrule
+  Static Mapping                 & 56.9\%    & 0.32 & 0.57 & 0.41\\
+  DeepTune~\cite{Cummins2017b}   & 61.0\%    & 0.69 & 0.61 & 0.65\\
+  DeepTune$_{\text{IR}}$         & 68.4\% & 0.70 & 0.68 & 0.69\\
+  NCC~\cite{Ben-nun2018}    & 78.5\%   & 0.79 & 0.79 & 0.79\\
+  ProGraML                       & \textbf{80.0}\% & \textbf{0.81} & \textbf{0.80} & \textbf{0.80}\\
+  \midrule
+\end{tabular}
+\caption{NVIDIA}
+\end{subfigure}

@@ -1,0 +1,43 @@
+\footnotesize
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{L{2.45cm} L{3.1cm} L{3.2cm} L{1.6cm} | R{1.3cm} R{1cm} R{1cm}}
+  \toprule
+  \textbf{Problem} & \textbf{Analysis type} & \textbf{Example optimization} & \textbf{Model} & \textbf{Precision} & \textbf{Recall} & $\bm{F_1}$\\
+  \hline
+  \multirow{2}{2.45cm}{\textsc{Reachability}} &
+    \multirow{2}{3.1cm}{Forwards, control flow only} &
+    \multirow{2}{3.2cm}{Dead code elimination}
+        & DeepTune$_{\text{IR}}$ & 0.520 & 0.497 & 0.504\\
+                  & & & ProGraML & \textbf{0.997} & \textbf{0.995} & \textbf{0.996}\\
+  \hline
+  \multirow{2}{2.45cm}{\textsc{DomTree}} &
+    \multirow{2}{3.1cm}{Backwards, control flow only} &
+    \multirow{2}{3.2cm}{Global Code Motion}
+        & DeepTune$_{\text{IR}}$ & 0.721 & 0.081 & 0.138\\
+                  & & & ProGraML & \textbf{0.985} & \textbf{0.693} & \textbf{0.781}\\
+  \hline
+  \multirow{2}{2.45cm}{\textsc{DataDep}} &
+    \multirow{2}{3.1cm}{Backwards, control and data flow} &
+    \multirow{2}{3.2cm}{Instruction scheduling}
+        & DeepTune$_{\text{IR}}$ & 0.999 & 0.136 & 0.236\\
+                  & & & ProGraML & \textbf{1.000} & \textbf{0.988} & \textbf{0.993}\\
+  \hline
+  \multirow{2}{2.45cm}{\textsc{Liveness}} &
+    \multirow{2}{3.1cm}{Backwards, control and data flow} &
+    \multirow{2}{3.2cm}{Register allocation}
+        & DeepTune$_{\text{IR}}$ & --- & --- & ---\\
+                  & & & ProGraML & \textbf{1.000} & \textbf{0.999} & \textbf{0.999}\\
+  \hline
+  \multirow{2}{2.45cm}{\textsc{Subexpressions}} &
+  \multirow{2}{3.1cm}{Forwards, statement and operand values and positions} &
+  \multirow{2}{3.2cm}{Global Common Subexpression Elimination}
+      & DeepTune$_{\text{IR}}$ & \textbf{1.000} & 0.123 & 0.214 \\
+                & & & ProGraML & 0.965 & \textbf{0.925} & \textbf{0.930} \\
+  \hline
+  \multirow{2}{2.45cm}{\textbf{Average}} &
+  \multirow{2}{3.1cm}{---} &
+  \multirow{2}{3.2cm}{---}
+      & DeepTune$_{\text{IR}}$ & 0.810 & 0.209 & 0.273\\
+                & & & ProGraML & \textbf{0.989} & \textbf{0.920} & \textbf{0.940}\\
+  \hline
+\end{tabular}

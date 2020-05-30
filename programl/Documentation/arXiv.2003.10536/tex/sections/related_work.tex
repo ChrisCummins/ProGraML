@@ -1,0 +1,76 @@
+\section{Related Work}
+
+In order to perform machine learning on programs, prior work has
+employed methods from Natural Language Processing and represented
+programs as a sequence of lexical tokens~\cite{Allamanis2013a,
+  Allamanis2016d, Cummins2017b}. However, it has been
+observed~\cite{Raychev2015,Allamanis2017b,Alon2018c} that it is
+critical to capture the structured nature of programs and syntactic
+(tree-based) as well as semantic (graph-based) representations have
+been proposed~\cite{Allamanis2017a,Brauckmann2020}.  There is a line
+of research that considers program representations based on Abstract
+Syntax Trees (ASTs): Dam et al.~\cite{Dam2018} annotate nodes in the
+AST with type information and employ Tree-Based LSTMs~\cite{Tai2015a}
+for program defect prediction.  Both Raychev et al.~\cite{Raychev2015}
+and Alon et al.~\cite{Alon2018a,Alon2018c} use path-based abstractions
+of the AST as program representations, while Allamanis et
+al.~\cite{Allamanis2017b} augment ASTs with a hand-crafted set of
+additional typed edges and use GGNNs~\cite{Li2015a} to learn
+downstream tasks related to variable naming. Another line of research
+considers modelling binary similarity via control-flow graphs (CFGs)
+with an adaptation of GNNs called Graph Matching
+Networks~\cite{Li2019}.
+
+The history of representing programs as graphs for optimization goes
+back to Program Dependence Graphs (PDGs)~\cite{Ferrante1987}, which
+remove superfluous control flow edges to ease optimization with a
+compact graph representation. A more contemporary precursor of our
+\textsc{ProGraML} representation ConteXtual Flow Graphs
+(XFGs)~\cite{Ben-nun2018}, which combine control flow with dataflow in
+order to learn unsupervised embeddings of LLVM-IR statements. While
+\textsc{ProGraML} is designed to extend the concepts of XFGs,
+\textsc{ProGraML} preserve the notion of argument order and includes
+nodes for both variables and constant values and all control flow
+edges. These changes reflects the design goals of the representations
+--- XFGs are designed to easily express program semantics by omitting
+superfluous control relations and other execution-specific
+properties. \textsc{ProGraML}, in combining CG, CFG, and DFG, offers a
+compiler-level program representation that is designed to be useful
+for a variety of purposes from specific program analyses to downstream
+optimization tasks.
+
+Another approach is taken by IR2Vec~\cite{KeerthyS2019}, which defines
+an LLVM-IR-specific statement representation that elegantly models
+part-of-statements as relations. However, in order to compute the
+values of the embeddings, IR2Vec requires access to the type of data
+flow analyses that our approach is learning from data alone.
+
+Brauckmann et al.~independently proposed a graph-based representation
+based on Control and Data Flow Graphs (CDFG)~\cite{Brauckmann2020}. As
+in this work, CDFGs represent instructions as graph vertices and have
+bi-directional edges for control and data relations. What
+differentiates \textsc{ProGraML} from CDFGs is the richness of the
+program representation: CDFGs ignore the data elements of programs,
+and only instruction opcodes are used for vertex embeddings. The
+latent representation of statements is thus invariant to instruction
+operands, their order, data types, and instruction modifiers. This
+limits the representational power of the approach, e.g. by omitting
+code properties required for reasoning about variables and
+expressions, as we explore through the \textsc{Liveness} and
+\textsc{Subexpressions} experiments in this work. Finally, our
+approach provides $76.6\times$ improved inference throughput, though
+we suspect this may be an artifact of our implementation as both
+approaches scale linearly w.r.t.\ the size of the graph and number of
+message passing steps.
+
+Graph Neural Networks comprise a diverse class of neural networks that
+learn by propagating information along
+edges~\cite{Gori2005a,Scarselli2009,Battaglia2018}. Approaches based
+on Recurrent Neural Networks (RNNs)~\cite{Li2015a,Gilmer2017} as well
+as convolutional~\cite{Defferrard2016,Kipf2017} and attention-based
+methods~\cite{Velickovic2018,Wang2019a} exist. GNNs as a family have
+been shown to have enough expressive power to address difficult
+combinatorial problems like the graph isomorphism test~\cite{Xu2019}
+at least as well as the Weisfeiler-Lehman
+algorithm~\cite{Weisfeiler1968}. Please refer to Battaglia et
+al.~\cite{Battaglia2018} for a comprehensive review of GNNs.
