@@ -5,9 +5,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 http_archive(
     name = "cec_exports_repo",
-    sha256 = "338001b0e2e3cea978b72a456ac201b86042aecbbbdb779694ac4b131e949fc2",
-    strip_prefix = "exports_repo-2020.05.06",
-    urls = ["https://github.com/ChrisCummins/exports_repo/archive/2020.05.06.tar.gz"],
+    sha256 = "6601b638e3ad93903af22a87a08044cea2f4146288a24ea3f8e1b93a6e659012",
+    strip_prefix = "exports_repo-2020.06.06",
+    urls = ["https://github.com/ChrisCummins/exports_repo/archive/2020.06.06.tar.gz"],
 )
 
 load("@cec_exports_repo//tools/bzl:deps.bzl", "cec_exports_repo_deps")
