@@ -1,0 +1,38 @@
+// Protocol messages for program functions.
+//
+// Copyright 2019-2020 the ProGraML authors.
+//
+// Contact Chris Cummins <chrisc.101@gmail.com>.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package programl;
+
+option go_package = "programlpb";
+option java_multiple_files = true;
+option java_outer_classname = "FunctionProto";
+option java_package = "com.programl";
+
+import "programl/proto/features.proto";
+
+// Container to describe a program function.
+message Function {
+  // The name of the function.
+  string name = 1;
+  // The source module of the function, as an index into the parent ProgramGraph
+  // message's module list.
+  int32 module = 2;
+  Features features = 3;
+}

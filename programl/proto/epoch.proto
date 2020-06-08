@@ -1,0 +1,86 @@
+// Protocol message to describe model epochs.
+//
+// Copyright 2019-2020 the ProGraML authors.
+//
+// Contact Chris Cummins <chrisc.101@gmail.com>.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package programl;
+
+option go_package = "programlpb";
+option java_multiple_files = true;
+option java_outer_classname = "EpochProto";
+option java_package = "com.programl";
+
+// The type of an epoch.
+enum EpochType {
+  TRAIN = 0;
+  VAL = 1;
+  TEST = 2;
+}
+
+// The set of metrics summarizing a model epoch.
+message EpochResults {
+  // The number of graphs processed.
+  int64 graph_count = 1;
+  // The number of model batches processed.
+  int64 batch_count = 2;
+  // The total number of inference / training targets across all graphs.
+  int64 target_count = 3;
+  // The model iteration count, if applicable.
+  float mean_iteration_count = 4;
+  // The model convergence rate, if applicable.
+  float mean_model_converged = 5;
+  // The model learning rate, if applicable.
+  float mean_learning_rate = 6;
+  // The model loss, if applicable.
+  float mean_loss = 7;
+  // The average accuracy across all targets.
+  float mean_accuracy = 8;
+  // The average precision across all targets.
+  float mean_precision = 9;
+  // The average recall across all targets.
+  float mean_recall = 10;
+  // The average F1 score across all targets.
+  float mean_f1 = 11;
+  // A confusion matrix of model predictions.
+  ConfusionMatrix confusion_matrix = 13;
+  // A walltime measurement of how long the epoch took.
+  float walltime_seconds = 12;
+}
+
+message Epoch {
+  // The "number" for an epoch, starting at 1 and ascending with epoch.
+  int32 epoch_num = 1;
+  // A walltime measurement of how long the epoch took.
+  float walltime_seconds = 5;
+  // Aggregate results for training, validation, and testing.
+  EpochResults train_results = 2;
+  EpochResults val_results = 3;
+  EpochResults test_results = 4;
+}
+
+message EpochList {
+  repeated Epoch epoch = 1;
+}
+
+message ConfusionMatrix {
+  repeated ConfusionMatrixRow column = 1;
+}
+
+message ConfusionMatrixRow {
+  repeated int64 row = 2;
+}

@@ -1,0 +1,43 @@
+// This file defines the ProgramGraph representation.
+//
+// Copyright 2019-2020 the ProGraML authors.
+//
+// Contact Chris Cummins <chrisc.101@gmail.com>.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package programl;
+
+option go_package = "programlpb";
+option java_multiple_files = true;
+option java_outer_classname = "ProgramGraphFeaturesProto";
+option java_package = "com.programl";
+
+import "programl/proto/features.proto";
+
+// Features describing a program.
+message ProgramGraphFeatures {
+  FeatureLists node_features = 1;
+  FeatureLists edge_features = 2;
+  FeatureLists function_features = 3;
+  FeatureLists module_features = 4;
+  Features features = 5;
+}
+
+// A list of program graphs.
+message ProgramGraphFeaturesList {
+  Features context = 1;
+  repeated ProgramGraphFeatures graph = 2;
+}

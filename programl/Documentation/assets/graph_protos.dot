@@ -1,0 +1,81 @@
+digraph G {
+  fontname = "Bitstream Vera Sans"
+
+  // Graphviz formatting.
+
+  node [
+    fontname = "Bitstream Vera Sans"
+    shape = "record"
+  ]
+
+  edge [
+    fontname = "Bitstream Vera Sans"
+  ]
+
+  // Protocol Messages.
+
+  program_graph [
+    label = "{ProgramGraph|node: Node[]\ledge: Edge[]\lfunction: Function[]\lmodule: Module[]\lfeatures: Features\l}"
+    color = "red"
+  ]
+
+  node_ [
+    label = "{Node|type: \{instruction, variable, constant\}\ltext: string\lfunction: int32\lblock: int32\lfeatures: Features\l}"
+  ]
+
+  edge_ [
+    label = "{Edge|flow: \{control, data, call\}\lsource_node: int32\ldestination_node: int32\lposition: int32\lfeatures: Features\l}"
+  ]
+
+  features [
+    label = "{Features|feature: map\<string, Feature\>\l}"
+  ]
+
+  feature [
+    label = "{Feature|\{bytes_list, float_list, int64_list\}\l}"
+  ]
+
+  function [
+    label = "{Function|name: string\lmodule: int32\lfeatures: Features\l}"
+  ]
+
+  module [
+    label = "{Module|name: string\lfeatures: Features\l}"
+  ]
+
+  program_graph_list [
+    label = "{ProgramGraphList|context: Features\lgraph: ProgramGraph[]\l}"
+  ]
+
+  program_graph_features [
+    label = "{ProgramGraphFeatures|node_features: Features[]\ledge_features: Features[]\lfunction_features: Features[]\lmodule_features: Features[]\lfeatures: Features\l}"
+    color = "red"
+  ]
+
+  program_graph_features_list [
+  label = "{ProgramGraphFeaturesList|context: Features\lgraph: ProgramGraphFeatures[]\l}"
+  ]
+
+  // Direct relationships.
+  program_graph -> node_
+  program_graph -> edge_
+  program_graph -> features
+  program_graph -> function
+  program_graph -> module
+  node_ -> features
+  edge_ -> features
+  function -> features
+  module -> features
+  features -> feature
+
+  program_graph_list -> program_graph
+  program_graph_list -> features
+  program_graph_features -> features
+  program_graph_features_list -> features
+  program_graph_features_list -> program_graph_features
+
+  // Indirect relationships.
+  node_ -> function [style=dashed]
+  edge_ -> node_ [style=dashed]
+  function -> module [style=dashed]
+}
