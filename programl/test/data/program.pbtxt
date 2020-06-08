@@ -1,0 +1,136 @@
+# An example conformant program graph. It contains a single function Add()
+# inside a main module which adds a constant value to a variable. The graph for
+# this program looks like:
+#
+#              [instr: root]
+#                    |
+#     [variable: x]  |  [constant: 5]
+#          |         |        |
+#          |         V        |
+#          +-->[instr: add]<--+
+#                    |
+#                    |
+#                    V
+#           [variable: result]
+#
+# where 'root' is the root instruction, and the three remaining nodes are the
+# instruction and its two operands.
+#
+# Note that all program graphs are expected to have a root instruction as the
+# first node.
+node {
+  type: INSTRUCTION
+  text: "<root>"
+}
+# The instruction which adds a constant to a variable.
+node {
+  type: INSTRUCTION
+  text: "add"
+  # The function that an instruction belongs in is specified as an index into
+  # the list of the program's functions (defined below).
+  function: 0
+}
+node {
+  # This node does not explicitly provide a function value, meaning that the
+  # default value (0) is used.
+  type: VARIABLE
+  text: "x"
+  # This node has a couple of features which describe the variable. Features
+  # are not self-describing, it is down to the configuration of the graph
+  # generator / reader as to how to interpret or set feature values.
+  features {
+    feature {
+      key: "dtype"
+      value: {
+        bytes_list: {
+          value: "int32"
+        }
+      }
+    }
+    feature {
+      key: "var_type"
+      value: {
+        bytes_list: {
+          value: "parameter"
+        }
+      }
+    }
+  }
+}
+# A constant value which is used as an operand to the add instruction. Constant
+# values do not have a function.
+node {
+  type: CONSTANT
+  text: "5"
+  features {
+    feature {
+      key: "dtype"
+      value: {
+        bytes_list: {
+          value: "int32"
+        }
+      }
+    }
+  }
+}
+node {
+  type: VARIABLE
+  text: "result"
+  function: 0
+}
+# The control flow from program root to the add instruction.
+edge {
+  flow: CONTROL
+  position: 0
+  source: 0
+  target: 1
+}
+# Data flow from operands to the add instruction.
+edge {
+  flow: DATA
+  position: 0
+  source: 2
+  target: 1
+}
+edge {
+  flow: DATA
+  position: 1
+  source: 3
+  target: 1
+}
+edge {
+  flow: DATA
+  position: 1
+  source: 1
+  target: 4
+}
+# The list of functions in the program.
+function {
+  name: "Add"
+  # Each function belongs to a module, defined below.
+  module: 0
+  features {
+    feature {
+      key: "estimated_runtime"
+      value: {
+        float_list: {
+          value: 0.025
+        }
+      }
+    }
+  }
+}
+# The list of modules for the program.
+module {
+  name: "main"
+  features {
+    feature {
+      key: "instruction_count"
+      value: {
+        int64_list: {
+          value: 1
+        }
+      }
+    }
+  }
+}
