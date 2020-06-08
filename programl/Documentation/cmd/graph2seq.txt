@@ -1,0 +1,58 @@
+graph2seq: Serialize the instruction nodes in a program graph.
+
+Usage:
+
+    graph2seq [--stdin_fmt={pb,pbtxt}] < program_graph.pbtxt
+
+Read a ProgramGraph message from stdin and print a serialized list
+of instruction node indices to stdout.
+
+  Flags from external/com_github_gflags_gflags/src/gflags.cc:
+    -flagfile (load flags from file) type: string default: ""
+    -fromenv (set flags from the environment [use 'export FLAGS_flag1=value'])
+      type: string default: ""
+    -tryfromenv (set flags from the environment if present) type: string
+      default: ""
+    -undefok (comma-separated list of flag names that it is okay to specify on
+      the command line even if the program does not define a flag with that
+      name.  IMPORTANT: flags in this list that have arguments MUST use the
+      flag=value format) type: string default: ""
+
+  Flags from external/com_github_gflags_gflags/src/gflags_completions.cc:
+    -tab_completion_columns (Number of columns to use in output for tab
+      completion) type: int32 default: 80
+    -tab_completion_word (If non-empty, HandleCommandLineCompletions() will
+      hijack the process and attempt to do bash-style command line flag
+      completion on this value.) type: string default: ""
+
+  Flags from external/com_github_gflags_gflags/src/gflags_reporting.cc:
+    -help (show help on all flags [tip: all flags can have two dashes])
+      type: bool default: false
+    -helpfull (show help on all flags -- same as -help) type: bool
+      default: false currently: true
+    -helpmatch (show help on modules whose name contains the specified substr)
+      type: string default: ""
+    -helpon (show help on the modules named by this flag value) type: string
+      default: ""
+    -helppackage (show help on all modules in the main package) type: bool
+      default: false
+    -helpshort (show help on only the main module for this program) type: bool
+      default: false
+    -helpxml (produce an xml version of help) type: bool default: false
+    -version (show version and build info and exit) type: bool default: false
+
+
+
+  Flags from programl/util/stdin_fmt.cc:
+    -stdin_fmt (The type of input format to use. Valid options are: "pbtxt"
+      which reads a text format protocol buffer, "pb" which reads a binary
+      format protocol buffer, or "json" which reads a JSON format protocol
+      buffer.) type: string default: "pbtxt"
+
+  Flags from programl/util/stdout_fmt.cc:
+    -stdout_fmt (The format of output. Valid options are: "pbtxt" for a
+      text-format protocol buffer, "pb" for a binary format protocol buffer, or
+      "json" for JSON. Text format protocol buffers are recommended for
+      human-readable output, binary-format for efficient and fast file storage,
+      and JSON for processing with third-party tools such as `jq`.)
+      type: string default: "pbtxt"

@@ -1,0 +1,88 @@
+Convert a ProgramGraph to NetworkX.
+flags:
+
+programl/cmd/graph2nx.py:
+  --stdin_fmt: The format for stdin. One of {pb,pbtxt}
+    (default: 'pbtxt')
+
+absl.app:
+  -?,--[no]help: show this help
+    (default: 'false')
+  --[no]helpfull: show full help
+    (default: 'false')
+  --[no]helpshort: show this help
+    (default: 'false')
+  --[no]helpxml: like --helpfull, but generates XML output
+    (default: 'false')
+  --[no]only_check_args: Set to true to validate args and exit.
+    (default: 'false')
+  --[no]pdb_post_mortem: Set to true to handle uncaught exceptions with PDB post
+    mortem.
+    (default: 'false')
+  --profile_file: Dump profile information to a file (for python -m pstats).
+    Implies --run_with_profiling.
+  --[no]run_with_pdb: Set to true for PDB debug mode
+    (default: 'false')
+  --[no]run_with_profiling: Set to true for profiling the script. Execution will
+    be slower, and the output format might change over time.
+    (default: 'false')
+  --[no]use_cprofile_for_profiling: Use cProfile instead of the profile module
+    for profiling. This has no effect unless --run_with_profiling is set.
+    (default: 'true')
+
+absl.logging:
+  --[no]alsologtostderr: also log to stderr?
+    (default: 'false')
+  --log_dir: directory to write logfiles into
+    (default: '')
+  --[no]logtostderr: Should only log to stderr?
+    (default: 'false')
+  --[no]showprefixforinfo: If False, do not prepend prefix to info messages when
+    it's logged to stderr, --verbosity is set to INFO level, and python logging
+    is used.
+    (default: 'true')
+  --stderrthreshold: log messages at this level, or more severe, to stderr in
+    addition to the logfile.  Possible values are 'debug', 'info', 'warning',
+    'error', and 'fatal'.  Obsoletes --alsologtostderr. Using --alsologtostderr
+    cancels the effect of this flag. Please also note that this flag is subject
+    to --verbosity and requires logfile not be stderr.
+    (default: 'fatal')
+  -v,--verbosity: Logging verbosity level. Messages logged at this level or
+    lower will be included. Set to 1 for debug logging. If the flag was not set
+    or supplied, the value will be changed from the default of -1 (warning) to 0
+    (info) after flags are parsed.
+    (default: '-1')
+    (an integer)
+
+labm8.py.app:
+  --[no]dump_flags: Print the defined flags and their values and exit.
+    (default: 'false')
+  --[no]dump_flags_to_json: Print the defined flags and their values to JSON and
+    exit.
+    (default: 'false')
+  --[no]log_colors: Whether to colorize logging output.
+    (default: 'true')
+  --[no]ptvsd: Pauses execution on app start to enable you to attach a debugging
+    session in Visual Studio or Visual Studio Code. This requires additional
+    configuration of your IDE. See: https://stackoverflow.com/a/61367381
+    (default: 'false')
+  --[no]version: Print version information and exit.
+    (default: 'false')
+
+labm8.py.internal.labm8_logging:
+  --vmodule: Per-module verbose level. The argument has to contain a comma-
+    separated list of <module name>=<log level>. <module name> is a glob pattern
+    (e.g., gfs* for all modules whose name starts with "gfs"), matched against
+    the filename base (that is, name ignoring .py). <log level> overrides any
+    value given by --v.
+    (default: '')
+    (a comma separated list)
+
+absl.flags:
+  --flagfile: Insert flag definitions from the given file into the command line.
+    (default: '')
+  --undefok: comma-separated list of flag names that it is okay to specify on
+    the command line even if the program does not define a flag with that name.
+    IMPORTANT: flags in this list that have arguments MUST use the --flag=value
+    format.
+    (default: '')
