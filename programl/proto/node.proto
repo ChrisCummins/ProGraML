@@ -1,0 +1,59 @@
+// Protocol message to describe nodes in program graphs.
+//
+// Copyright 2019-2020 the ProGraML authors.
+//
+// Contact Chris Cummins <chrisc.101@gmail.com>.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package programl;
+
+option go_package = "programlpb";
+option java_multiple_files = true;
+option java_outer_classname = "NodeProto";
+option java_package = "com.programl";
+
+import "programl/proto/features.proto";
+
+// A node represents an instruction, variable, or constant.
+message Node {
+  // The type of node.
+  enum Type {
+    INSTRUCTION = 0;
+    VARIABLE = 1;
+    CONSTANT = 2;
+  }
+  Type type = 1;
+  // The text of a node. This is the raw representation of a node, such as the
+  // contents of a statement, or the name of an identifier.
+  string text = 2;
+  // An index into the parent ProgramGraph message's function list indicating
+  // the source function for this node.
+  int32 function = 4;
+  // For IRs with a basic block abstraction, this value can be used to group
+  // nodes by the basic block that they are defined in. This value is optional,
+  // and when set, is used to define an ID for the block. IDs should be unique
+  // across the entire program, i.e. when two nodes have the same block, they
+  // should also have the same function.
+  int32 block = 7;
+  Features features = 8;
+}
+
+// A node map is used to translate node indices between graphs.
+message NodeIndexList {
+  // The keys are node indices in the old graph representation, the
+  // values are node inidices in the new graph representation.
+  repeated int32 node = 1;
+}
