@@ -19,7 +19,7 @@
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/test.h"
 #include "programl/graph/program_graph_builder.h"
-#include "programl/test/analysis_testutil.h"
+#include "programl/test/analysis_test_macros.h"
 
 using labm8::Status;
 using ::testing::UnorderedElementsAre;
