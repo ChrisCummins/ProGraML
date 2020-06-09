@@ -1,0 +1,12 @@
+--batch_size=64
+--padded_sequence_length=5000
+--max_data_flow_steps=30
+--test
+--train_graph_counts=10000,20000,30000,40000,50000,100000,200000,300000,400000,500000,600000,700000,800000,900000,1000000
+--val_graph_count=10000
+--val_seed=204
+--hidden_size=64
+--hidden_dense_layer_count=1
+--selector_embedding_value=50
+--learning_rate=0.001
+--max_graph_node_count=40000
