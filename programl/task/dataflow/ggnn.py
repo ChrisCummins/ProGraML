@@ -242,7 +242,7 @@ def TestDataflowGGNN(
   # Create the logging directories.
   assert (log_dir / "epochs").is_dir()
   assert (log_dir / "checkpoints").is_dir()
-  assert (log_dir / "graph_loader").is_dir()
+  (log_dir / "graph_loader").mkdir(exist_ok=True)
 
   # Create the model, defining the shape of the graphs that it will process.
   #
