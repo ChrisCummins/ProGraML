@@ -7,8 +7,9 @@
 #     $ exec -i tools/bazel_env.sh bazel build //...
 #
 # This script assumes that /bin, /usr/bin, and /usr/local/bin contain the
-# necessary build tools, which is true for the standard Linux / macOS
-# environments I use. Your mileage may vary.
+# necessary build tools, which is true for a standard Linux / macOS
+# environment. Please report bugs and issues to:
+#   <https://github.com/ChrisCummins/phd/issues>
 set -eu
 
 # Accepts an array of directories and returns a colon separated path
