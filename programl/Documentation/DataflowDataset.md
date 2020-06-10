@@ -10,16 +10,14 @@ learning jobs which produced our published experimental results.
 
 | Dataset  | Download Size | Uncompressed Size | Description |
 | ------------- | ------------- | ------------- | ------------- |
-| [`llvm_ir_20.06.01.tar.bz2`](https://www.dropbox.com/s/cw25t4cls6otel5/llvm_ir_20.06.01.tar.bz2?dl=1)  |  1.1GB  |  14GB  | 469,086 real-world LLVM-IR files taken from a variety of C, C++, Swift, Fortran, and OpenCL projects.  |
-| [`graphs_20.06.01.tar.bz2`](https://www.dropbox.com/s/cw25t4cls6otel5/llvm_ir_20.06.01.tar.bz2?dl=1)  |  3.5GB  |  67GB  |  ProGraML graphs for the above LLVM-IRs, divided into 3:1:1 training, validation, and test splits. |
-| [`labels_reachability_20.06.01.tar.bz2`](https://www.dropbox.com/s/ha0lp343an336fp/labels_reachability_20.06.01.tar.bz2?dl=1)  |  81MB  |  25GB  |  Reachability analysis labels for the graphs.  |
-| [`labels_domtree_20.06.01.tar.bz2`](https://www.dropbox.com/s/cl4kuak4kds9yuc/labels_domtree_20.06.01.tar.bz2?dl=1)  |  66MB  |  18GB  |  Dominator analysis labels for the graphs.  |
-| [`labels_datadep_20.06.01.tar.bz2`](https://www.dropbox.com/s/yxqzmp4vvzycxje/labels_datadep_20.06.01.tar.bz2?dl=1)  |  67MB  |  26GB  |  Data dependency analysis labels for the graphs.  |
-| [`labels_liveness_20.06.01.tar.bz2`](https://www.dropbox.com/s/qvhekvovx6n1ino/labels_liveness_20.06.01.tar.bz2?dl=1)  |  119MB  |  24GB  |  Live-out variable analysis labels for the graphs.  |
-| [`labels_subexpressions_20.06.01.tar.bz2`](https://www.dropbox.com/s/a8tkugnu6mq64kq/labels_subexpressions_20.06.01.tar.bz2?dl=1)  |  69MB  |  26GB  |  Common subexpression analysis labels for the graphs.  |
-| `dataflow_logs_20.06.01.tar.bz2` 🏗  |  -  |  -  |  Experimental job logs for ProGraML/inst2vec/CDFG models.  |
-
-🏗 = dataset under construction, link coming soon!
+| [`llvm_ir_20.06.01.tar.bz2`](https://www.dropbox.com/s/cw25t4cls6otel5/llvm_ir_20.06.01.tar.bz2)  |  1.1GB  |  14GB  | 469,086 real-world LLVM-IR files taken from a variety of C, C++, Swift, Fortran, and OpenCL projects.  |
+| [`graphs_20.06.01.tar.bz2`](https://www.dropbox.com/s/f7j2qbo6hobckqy/graphs_20.06.01.tar.bz2)  |  3.5GB  |  67GB  |  ProGraML graphs for the above LLVM-IRs, divided into 3:1:1 training, validation, and test splits. |
+| [`labels_reachability_20.06.01.tar.bz2`](https://www.dropbox.com/s/ha0lp343an336fp/labels_reachability_20.06.01.tar.bz2)  |  81MB  |  25GB  |  Reachability analysis labels for the graphs.  |
+| [`labels_domtree_20.06.01.tar.bz2`](https://www.dropbox.com/s/cl4kuak4kds9yuc/labels_domtree_20.06.01.tar.bz2)  |  66MB  |  18GB  |  Dominator analysis labels for the graphs.  |
+| [`labels_datadep_20.06.01.tar.bz2`](https://www.dropbox.com/s/yxqzmp4vvzycxje/labels_datadep_20.06.01.tar.bz2)  |  67MB  |  26GB  |  Data dependency analysis labels for the graphs.  |
+| [`labels_liveness_20.06.01.tar.bz2`](https://www.dropbox.com/s/qvhekvovx6n1ino/labels_liveness_20.06.01.tar.bz2)  |  119MB  |  24GB  |  Live-out variable analysis labels for the graphs.  |
+| [`labels_subexpressions_20.06.01.tar.bz2`](https://www.dropbox.com/s/a8tkugnu6mq64kq/labels_subexpressions_20.06.01.tar.bz2)  |  69MB  |  26GB  |  Common subexpression analysis labels for the graphs.  |
+| [`dataflow_logs_20.06.01.tar.bz2`](https://www.dropbox.com/s/o3qopbyhf2p5pf2/dataflow_logs_20.06.01.tar.bz2)  |  254MB  |  412MB  |  Configs, logs, and trained models for ProGraML/inst2vec/CDFG.  |
 
 
 ## Directory Layout
