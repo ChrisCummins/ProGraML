@@ -1,0 +1,57 @@
+digraph main {
+margin=0;
+
+graph [
+    fontsize=100,
+    nodesep=1,
+    ranksep=0.3,
+];
+node [
+    fontname=Inconsolata,
+    fontsize=25,
+    penwidth=2,
+    margin=0,
+];
+edge [
+    fontname=Inconsolata,
+    fontsize=22,
+    arrowsize=.8,
+    penwidth=3,
+]
+
+// === Nodes ===
+
+external            [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff" label="[external]", width=2];
+
+// Instructions:
+inst_switch         [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=2, label="switch"];
+inst_br             [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="br"];
+phi                 [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="phi"];
+inst_add_minus_1    [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="add"];
+call_1              [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="call"];
+inst_add_minus_2    [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="add"];
+call_2              [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="call"];
+add_3               [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="add"];
+ret_2               [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="ret"];
+ret_1               [shape=box, style=filled, fillcolor="#3c78d8", fontcolor="#ffffff", width=1, label="ret"];
+
+
+// === Edges ===
+external -> inst_switch [style=invis];
+
+// Control edges:
+inst_switch -> inst_add_minus_1 [color="#345393", weight=10, taillabel=2, labelfontcolor="#345393", minlen=2];
+inst_switch -> phi              [color="#345393", weight=10, taillabel=1, labelfontcolor="#345393", minlen=2];
+inst_switch -> inst_br          [color="#345393", weight=10, taillabel=0, labelfontcolor="#345393", minlen=2];
+inst_br -> phi                  [color="#345393", weight=10];
+inst_add_minus_1 -> call_1      [color="#345393", weight=10];
+call_1 -> inst_add_minus_2      [color="#345393", weight=10];
+inst_add_minus_2 -> call_2      [color="#345393", weight=10];
+call_2 -> add_3                 [color="#345393", weight=10];
+add_3 -> ret_2                  [color="#345393", weight=10];
+phi -> ret_1                    [color="#345393", weight=10];
+
+rankdir = TB;
+{rank = same; inst_add_minus_1; phi; inst_br;}
+{rank = same; ret_1; call_1;}
+}

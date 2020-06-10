@@ -47,6 +47,37 @@ Or if papers are more your ☕, have a read of ours:
 [![Preprint](/programl/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
 
 
+## Constructing the ProGraML Representation
+
+Here's a little example of producing the ProGraML representation for a simple recursive Fibonacci implementation in C.
+
+#### Step 1: Compiler IR
+
+<img src="/programl/Documentation/assets/llvm2graph-1-ir.png" width=300>
+
+We start by lowering the program to a compiler IR. In this case, we'll use LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
+
+#### Step 2: Control-flow
+
+<img src="/programl/Documentation/assets/llvm2graph-2-cfg.png" width=300>
+
+We begin building a graph by constructing a full-flow graph of the program. In a full-flow graph, every instruction is a node and the edges are control-flow. Note that edges are positional so that we can differentiate the branching control flow in that `switch` instruction.
+
+#### Step 3: Data-flow
+
+<img src="/programl/Documentation/assets/llvm2graph-3-dfg.png" width=300>
+
+Then we add a graph node for every variable and constant. In the drawing above, the diamonds are constants and the variables are ovals. We add data-flow edges to describe the relations between constants and the instructions that use them, and variables and the constants which define/use them. Like control edges, data edges have positions. In the case of data edges, the position encodes the order of a data element in the list of instruction operands.
+
+#### Step 4: Call graph
+
+<img src="/programl/Documentation/assets/llvm2graph-4-cg.png" width=300>
+
+Finally, we add call edges (green) from callsites to the function entry instruction, and return edges from function exits to the callsite. Since this is a graph of a recursive function, the callsites refer back to the entry of the function (the `switch`). The `external` node is used to represent a call from an external site.
+
+The process described above can be run locally using our [`clang2graph`](/programl/Documentation/cmd/clang2graph.txt) and [`graph2dot`](/programl/Documentation/cmd/graph2dot.txt) tools: `clang clang2graph -O3 fib.c | graph2dot`
+
+
 ## Datasets
 
 Please see [this doc](/programl/Documentation/DataflowDataset.md) for download links for our publicly available
