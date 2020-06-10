@@ -1,11 +1,11 @@
-# Top level package of the phd repo.
+# Top-level package of the workspace.
 
-load("//tools/bzl:string_genrule.bzl", "python_string_genrule")
 load("@bazel_gazelle//:def.bzl", "gazelle")
-load("@build_stack_rules_proto//python:python_grpc_library.bzl", "python_grpc_library")
 
 exports_files([
     "README.md",
+    "INSTALL.md",
+    "CONTRIBUTING.md",
     "WORKSPACE",
     "version.txt",
     "deployment.properties",
