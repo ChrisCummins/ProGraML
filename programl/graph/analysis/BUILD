@@ -27,9 +27,9 @@ cc_library(
         ":liveness",
         ":reachability",
         ":subexpressions",
-        "//labm8/cpp:status",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -38,10 +38,10 @@ cc_library(
     srcs = ["data_flow_pass.cc"],
     hdrs = ["data_flow_pass.h"],
     deps = [
-        "//labm8/cpp:status",
-        "//labm8/cpp:status_macros",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
     ],
 )
 
@@ -52,11 +52,11 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":data_flow_pass",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "//programl/graph:features",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -65,12 +65,12 @@ cc_test(
     srcs = ["datadep_test.cc"],
     deps = [
         ":datadep",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
         "//programl/test:analysis_test_macros",
         "//programl/test:llvm_program_graphs",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -81,14 +81,14 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":data_flow_pass",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:status_macros",
         "//programl/graph:features",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
     ],
 )
 
@@ -97,12 +97,12 @@ cc_test(
     srcs = ["dominance_test.cc"],
     deps = [
         ":dominance",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
         "//programl/test:analysis_test_macros",
         "//programl/test:llvm_program_graphs",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -112,13 +112,13 @@ cc_library(
     hdrs = ["liveness.h"],
     deps = [
         ":data_flow_pass",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "//programl/graph:features",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -127,11 +127,11 @@ cc_test(
     srcs = ["liveness_test.cc"],
     deps = [
         ":liveness",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
         "//programl/test:analysis_test_macros",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -142,11 +142,11 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":data_flow_pass",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "//programl/graph:features",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -155,12 +155,12 @@ cc_test(
     srcs = ["reachability_test.cc"],
     deps = [
         ":reachability",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
         "//programl/test:analysis_test_macros",
         "//programl/test:llvm_program_graphs",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -171,13 +171,13 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":data_flow_pass",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "//programl/graph:features",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -186,11 +186,11 @@ cc_test(
     srcs = ["subexpressions_test.cc"],
     deps = [
         ":subexpressions",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
         "//programl/test:analysis_test_macros",
         "//programl/test:llvm_program_graphs",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )

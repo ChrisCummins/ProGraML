@@ -29,8 +29,8 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:bazelutil",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -49,10 +49,10 @@ py_test(
     srcs = ["graph_serializer_test.py"],
     deps = [
         ":graph_serializer",
-        "//labm8/py:test",
         "//programl/proto:edge_py",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -60,10 +60,10 @@ pybind_extension(
     "graph_serializer_pybind",
     srcs = ["graph_serializer_pybind.cc"],
     deps = [
-        "//labm8/cpp:status",
-        "//labm8/cpp:string",
         "//programl/graph/format:graph_serializer",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:string",
     ],
 )
 
@@ -100,8 +100,8 @@ py_test(
     srcs = ["graph_tuple_builder_test.py"],
     deps = [
         ":graph_tuple_builder",
-        "//labm8/py:test",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -109,10 +109,10 @@ pybind_extension(
     "node_link_graph_pybind",
     srcs = ["node_link_graph_pybind.cc"],
     deps = [
-        "//labm8/cpp:status",
-        "//labm8/cpp:string",
         "//programl/graph/format:node_link_graph",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:string",
         "@nlohmann_json//:json",
         "@pybind11_json",
     ],
@@ -134,8 +134,8 @@ py_test(
     srcs = ["nx_format_test.py"],
     deps = [
         ":nx_format",
-        "//labm8/py:test",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
         "//third_party/py/networkx",
     ],
 )

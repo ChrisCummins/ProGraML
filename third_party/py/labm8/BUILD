@@ -4,13 +4,12 @@ load("@programl_requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
-licenses(["notice"])  # BSD
+licenses(["notice"])  # Apache 2.0
 
 py_library(
-    name = "networkx",
+    name = "labm8",
     srcs = ["//third_party/py:empty.py"],
     deps = [
-        requirement("networkx"),
-        "//third_party/py/decorator",  # Implicit dependency.
+        requirement("labm8"),
     ],
 )

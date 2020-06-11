@@ -44,9 +44,9 @@ py_test(
     srcs = ["program_graph_builder_test.py"],
     deps = [
         ":program_graph_builder",
-        "//labm8/py:test",
         "//programl/proto:edge_py",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )

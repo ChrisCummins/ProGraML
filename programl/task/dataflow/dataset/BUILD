@@ -18,12 +18,10 @@ py_binary(
     name = "collect_stats",
     srcs = ["collect_stats.py"],
     deps = [
-        "//labm8/py:app",
-        "//labm8/py:pbutil",
-        "//labm8/py:progress",
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
         "//programl/task/dataflow/dataset:pathflag",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -38,14 +36,10 @@ py_binary(
     deps = [
         ":encode_inst2vec",
         ":pathflag",
-        "//labm8/py:app",
-        "//labm8/py:bazelutil",
-        "//labm8/py:labtypes",
-        "//labm8/py:pbutil",
-        "//labm8/py:progress",
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:ir_py",
-        "//third_party/py/mysql",
+        "//third_party/py/labm8",
+        # "//third_party/py/mysql",
     ],
 )
 
@@ -53,8 +47,8 @@ sh_binary(
     name = "count_instances",
     srcs = ["count_instances.sh"],
     data = [
-        "//labm8/sh:app",
         "//programl/cmd:pbq",
+        "@labm8//labm8/sh:app",
     ],
 )
 
@@ -62,8 +56,8 @@ sh_binary(
     name = "count_labels",
     srcs = ["count_labels.sh"],
     data = [
-        "//labm8/sh:app",
         "//programl/cmd:pbq",
+        "@labm8//labm8/sh:app",
     ],
 )
 
@@ -71,8 +65,8 @@ sh_binary(
     name = "create_labels",
     srcs = ["create_labels.sh"],
     data = [
-        "//labm8/sh:app",
         "//programl/cmd:analyze",
+        "@labm8//labm8/sh:app",
     ],
 )
 
@@ -80,14 +74,14 @@ cc_binary(
     name = "create_vocab",
     srcs = ["create_vocab.cc"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:fsutil",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:strutil",
         "//programl/proto:program_graph_cc",
         "@boost//:filesystem",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings:str_format",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:fsutil",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:strutil",
     ],
 )
 
@@ -96,14 +90,10 @@ py_binary(
     srcs = ["encode_inst2vec.py"],
     deps = [
         ":pathflag",
-        "//labm8/py:app",
-        "//labm8/py:decorators",
-        "//labm8/py:labtypes",
-        "//labm8/py:pbutil",
-        "//labm8/py:progress",
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:ir_py",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -112,9 +102,6 @@ cc_library(
     srcs = ["parallel_file_map.cc"],
     hdrs = ["parallel_file_map.h"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:strutil",
         "//programl/graph/analysis:dominance",
         "//programl/graph/analysis:reachability",
         "//programl/proto:program_graph_cc",
@@ -122,6 +109,9 @@ cc_library(
         "//third_party/tbb",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:strutil",
     ],
 )
 
@@ -130,7 +120,7 @@ py_library(
     srcs = ["pathflag.py"],
     visibility = ["//programl/task/dataflow:__subpackages__"],
     deps = [
-        "//labm8/py:app",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -139,14 +129,14 @@ cc_binary(
     srcs = ["unpack_ir_lists.cc"],
     deps = [
         ":parallel_file_map",
-        "//labm8/cpp:app",
-        "//labm8/cpp:fsutil",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:strutil",
         "//programl/graph/format:cdfg",
         "//programl/proto:ir_cc",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:fsutil",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:strutil",
     ],
 )
 
@@ -154,7 +144,7 @@ sh_binary(
     name = "unpack_ir_text",
     srcs = ["unpack_ir_text.sh"],
     data = [
-        "//labm8/sh:app",
         "//programl/cmd:pbq",
+        "@labm8//labm8/sh:app",
     ],
 )

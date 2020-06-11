@@ -26,8 +26,8 @@ py_library(
     srcs = ["xla.py"],
     data = [":xla_pybind.so"],
     deps = [
-        "//labm8/py:app",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
         "//third_party/py/networkx",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto_lib_py",
     ],
@@ -39,10 +39,7 @@ py_test(
     data = ["//programl/test/data:hlo_protos"],
     deps = [
         ":xla",
-        "//labm8/py:app",
-        "//labm8/py:bazelutil",
-        "//labm8/py:pbutil",
-        "//labm8/py:test",
+        "//third_party/py/labm8",
         "@org_tensorflow//tensorflow/compiler/xla:xla_data_proto_lib_py",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto_lib_py",
     ],
@@ -52,9 +49,9 @@ pybind_extension(
     "xla_pybind",
     srcs = ["xla_pybind.cc"],
     deps = [
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/ir/xla:hlo_module_graph_builder",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )

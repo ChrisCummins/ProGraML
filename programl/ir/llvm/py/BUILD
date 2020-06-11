@@ -28,9 +28,9 @@ py_library(
     data = [":graph_builder_bin"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:bazelutil",
         "//programl/proto:program_graph_options_py",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -39,10 +39,10 @@ py_test(
     srcs = ["llvm_test.py"],
     deps = [
         ":llvm",
-        "//labm8/py:test",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_options_py",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -50,10 +50,10 @@ cc_binary(
     name = "graph_builder_bin",
     srcs = ["graph_builder_bin.cc"],
     deps = [
-        "//labm8/cpp:status",
         "//programl/ir/llvm",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
+        "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
     ],
 )

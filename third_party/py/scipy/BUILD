@@ -1,6 +1,6 @@
 # A wrapper around pip package to pull in undeclared dependencies.
 
-load("@requirements//:requirements.bzl", "requirement")
+load("@programl_requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 

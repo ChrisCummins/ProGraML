@@ -16,7 +16,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-load("@cec_exports_repo//tools/bzl:exports_repo.bzl", "exports_repo")
 
 exports_files([
     "README.md",
@@ -25,29 +24,11 @@ exports_files([
     "LICENSE",
 ])
 
-exports_repo(
-    name = "export",
-    path_rename = {
-        "programl/README.md": "README.md",
-        "programl/LICENSE": "LICENSE",
-        "programl/travis.yml": ".travis.yml",
-        "programl/bettercodehub.yml": ".bettercodehub.yml",
-    },
-    paths = [
-        "programl/**/*",
-    ],
-    remote = "git@github.com:ChrisCummins/ProGraML.git",
-    tags = ["manual"],
-    targets = [
-        "//programl/...",
-    ],
-)
-
 sh_binary(
     name = "install",
     srcs = ["install.sh"],
     data = [
-        "//labm8/sh:app",
+        "@labm8//labm8/sh:app",
         "//programl/cmd:analyze",
         "//programl/cmd:graph2cdfg",
         "//programl/cmd:clang2graph",

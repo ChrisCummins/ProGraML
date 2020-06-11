@@ -23,14 +23,14 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":xla_stringifier",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:port",
-        "//labm8/cpp:status_macros",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/graph:program_graph_builder",
         "//programl/proto:program_graph_cc",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:port",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla:xla_data_proto",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
@@ -41,9 +41,9 @@ cc_library(
     srcs = ["hlo_proto_reader.cc"],
     hdrs = ["hlo_proto_reader.h"],
     deps = [
-        "//labm8/cpp:status_macros",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )
@@ -53,8 +53,8 @@ cc_test(
     srcs = ["hlo_proto_reader_test.cc"],
     deps = [
         ":hlo_proto_reader",
-        "//labm8/cpp:test",
         "@boost//:filesystem",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -63,7 +63,7 @@ cc_library(
     srcs = ["xla_stringifier.cc"],
     hdrs = ["xla_stringifier.h"],
     deps = [
-        "//labm8/cpp:string",
+        "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla:xla_data_proto",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],

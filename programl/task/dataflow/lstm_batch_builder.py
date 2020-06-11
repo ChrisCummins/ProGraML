@@ -18,14 +18,14 @@ from typing import Dict
 from typing import Optional
 
 import numpy as np
-
+import tensorflow as tf
 from labm8.py import app
+
 from programl.graph.format.py import graph_serializer
 from programl.models.base_batch_builder import BaseBatchBuilder
 from programl.models.base_graph_loader import BaseGraphLoader
 from programl.models.batch_data import BatchData
 from programl.models.lstm.lstm_batch import LstmBatchData
-from third_party.py.tensorflow import tf
 
 FLAGS = app.FLAGS
 

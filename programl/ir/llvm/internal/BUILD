@@ -35,15 +35,15 @@ cc_library(
     copts = ["-std=c++14"],
     deps = [
         ":text_encoder",
-        "//labm8/cpp:status_macros",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/graph:features",
         "//programl/graph:program_graph_builder",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@llvm//10.0.0",
     ],
 )
@@ -60,8 +60,8 @@ cc_library(
     visibility = ["//programl/ir/llvm:__subpackages__"],
     deps = [
         ":program_graph_builder",
-        "//labm8/cpp:statusor",
         "//programl/proto:program_graph_options_cc",
+        "@labm8//labm8/cpp:statusor",
         "@llvm//10.0.0",
     ],
 )
@@ -72,9 +72,9 @@ cc_library(
     hdrs = ["text_encoder.h"],
     copts = ["-std=c++14"],
     deps = [
-        "//labm8/cpp:logging",
-        "//labm8/cpp:string",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:string",
         "@llvm//10.0.0",
     ],
 )

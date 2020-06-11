@@ -5,9 +5,6 @@
 build --runs_per_test=1
 test --runs_per_test=1
 
-build --workspace_status_command=tools/workspace_status.sh
-test --workspace_status_command=tools/workspace_status.sh
-
 # This project uses C++14.
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'

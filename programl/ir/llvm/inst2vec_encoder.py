@@ -18,21 +18,28 @@ import multiprocessing
 import pathlib
 import pickle
 import random
+import sys
 import time
 from typing import List
 from typing import Optional
 from typing import Tuple
 
 import numpy as np
-
-from deeplearning.ncc.inst2vec import inst2vec_preprocess
 from labm8.py import bazelutil
 from labm8.py import decorators
 from labm8.py import labtypes
 from labm8.py import pbutil
 from labm8.py import progress
+
 from programl.proto import node_pb2
 from programl.proto import program_graph_pb2
+
+# NOTE(cec): Workaround to prevent third_party package name shadowing from
+# labm8.third_party.
+sys.path.insert(0, str(bazelutil.DataPath("programl")))
+from third_party.py.ncc.inst2vec import inst2vec_preprocess
+
+del sys.path[0]
 
 
 DICTIONARY = bazelutil.DataPath(

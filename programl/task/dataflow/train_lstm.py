@@ -23,12 +23,11 @@ import time
 from typing import Dict
 
 import numpy as np
-
-from deeplearning.ncc import vocabulary
 from labm8.py import app
 from labm8.py import gpu_scheduler
 from labm8.py import humanize
 from labm8.py import pbutil
+
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.lstm.lstm import Lstm
@@ -36,6 +35,7 @@ from programl.proto import epoch_pb2
 from programl.task.dataflow import dataflow
 from programl.task.dataflow.graph_loader import DataflowGraphLoader
 from programl.task.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
+from third_party.py.ncc import vocabulary
 
 
 app.DEFINE_integer(

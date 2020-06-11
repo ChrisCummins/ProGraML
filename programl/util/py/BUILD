@@ -21,8 +21,7 @@ py_library(
     srcs = ["stdin_fmt.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:app",
-        "//labm8/py:pbutil",
+        "//third_party/py/labm8",
         "//third_party/py/protobuf",
     ],
 )
@@ -32,7 +31,7 @@ py_library(
     srcs = ["stdout_fmt.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:app",
+        "//third_party/py/labm8",
         "//third_party/py/protobuf",
     ],
 )
