@@ -2054,15 +2054,15 @@ genrule(
         "for f in $(locations :llvm_ir); do" +
         "    basename=$$(basename $$f); " +
         "    out=$(@D)/llvm_ir_graphs/$${basename%.ll}.ProgramGraph.pb;" +
-        "    LD_LIBRARY_PATH=$(location @llvm_linux//:libdir):$(location @llvm_mac//:libdir) $(location //programl/cmd:llvm2graph) --stdout_fmt=pb <$$f --stdout_fmt=pb >$$out;" +
+        "    LD_LIBRARY_PATH=$(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir):$(location @clang-llvm-10.0.0-x86_64-apple-darwin//:libdir) $(location //programl/cmd:llvm2graph) --stdout_fmt=pb <$$f --stdout_fmt=pb >$$out;" +
         "done && " +
         "$(location //programl/cmd:inst2vec) --directory=$(@D)/llvm_ir_graphs"
     ),
     tools = [
         "//programl/cmd:inst2vec",
         "//programl/cmd:llvm2graph",
-        "@llvm_linux//:libdir",
-        "@llvm_mac//:libdir",
+        "@clang-llvm-10.0.0-x86_64-apple-darwin//:libdir",
+        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir",
     ],
 )
 

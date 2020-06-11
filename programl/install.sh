@@ -40,9 +40,9 @@ BINARIES=(
 )
 
 if [[ $(uname) == Darwin ]]; then
-  LLVM_LIBS="$(DataPath llvm_mac/lib)"
+  LLVM_LIBS="$(DataPath clang-llvm-10.0.0-x86_64-apple-darwin/lib)"
 else
-  LLVM_LIBS="$(DataPath llvm_linux/lib)"
+  LLVM_LIBS="$(DataPath clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/lib)"
 fi
 
 main() {

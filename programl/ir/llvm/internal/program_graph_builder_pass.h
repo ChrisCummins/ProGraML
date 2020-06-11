@@ -19,6 +19,7 @@
 
 #include "labm8/cpp/statusor.h"
 #include "llvm/IR/Module.h"
+#include "llvm/Pass.h"
 #include "programl/ir/llvm/internal/program_graph_builder.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"

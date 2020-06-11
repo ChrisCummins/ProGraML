@@ -27,9 +27,10 @@ namespace ir {
 namespace llvm {
 
 #ifdef __APPLE__
-const char* kClangPath = "llvm_mac/bin/clang++";
+const char* kClangPath = "clang-llvm-10.0.0-x86_64-apple-darwin/bin/clang++";
 #else
-const char* kClangPath = "llvm_linux/bin/clang++";
+const char* kClangPath =
+    "clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang++";
 #endif
 
 Status Clang::Compile(const string& src, IrList* irs) const {

@@ -46,6 +46,7 @@ cc_binary(
     name = "clang2graph",
     srcs = ["clang2graph.cc"],
     copts = [
+        "-std=c++14",
         "-fno-rtti",
         "-DGOOGLE_PROTOBUF_NO_RTTI",
     ],
@@ -55,7 +56,7 @@ cc_binary(
         "//programl/ir/llvm",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
-        "//third_party/llvm",
+        "@llvm//10.0.0",
     ],
 )
 
@@ -139,6 +140,7 @@ py_binary(
 cc_binary(
     name = "llvm2graph",
     srcs = ["llvm2graph.cc"],
+    copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
         "//labm8/cpp:app",
@@ -150,7 +152,7 @@ cc_binary(
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
         "//programl/util:stdout_fmt",
-        "//third_party/llvm",
+        "@llvm//10.0.0",
     ],
 )
 

@@ -58,10 +58,10 @@ sh_binary(
         "//programl/cmd:xla2graph",
     ] + select({
         "//:darwin": [
-            "@llvm_mac//:libs",
+            "@clang-llvm-10.0.0-x86_64-apple-darwin//:libs",
         ],
         "//conditions:default": [
-            "@llvm_linux//:libs",
+            "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libs",
         ],
     }),
 )

@@ -389,7 +389,7 @@ StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
     if (function.hasProfileData()) {
       auto profileCount = function.getEntryCount();
       Feature feature;
-      feature.mutable_int64_list()->add_value(profileCount.getValue());
+      feature.mutable_int64_list()->add_value(profileCount.getCount());
       functionMessage->mutable_features()->mutable_feature()->insert(
           {"llvm_profile_entry_count", feature});
     }

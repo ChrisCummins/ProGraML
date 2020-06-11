@@ -54,6 +54,6 @@ cc_binary(
         "//programl/ir/llvm",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
-        "//third_party/llvm",
+        "@llvm//10.0.0",
     ],
 )

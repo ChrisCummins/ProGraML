@@ -137,6 +137,17 @@ http_archive(
 # LLVM.
 
 http_archive(
+    name = "llvm",
+    sha256 = "f90de64a5827690bfb20a5a852f42cc484fd8826f7ea7135bc9d7d31b262174f",
+    strip_prefix = "bazel_llvm-20834c602493b95b4cb23214c1731776a4f24596",
+    urls = ["https://github.com/ChrisCummins/bazel_llvm/archive/20834c602493b95b4cb23214c1731776a4f24596.tar.gz"],
+)
+
+load("@llvm//tools/bzl:deps.bzl", "llvm_deps")
+
+llvm_deps()
+
+http_archive(
     name = "llvm_mac",
     build_file = "//:third_party/llvm.BUILD",
     sha256 = "0ef8e99e9c9b262a53ab8f2821e2391d041615dd3f3ff36fdf5370916b0f4268",

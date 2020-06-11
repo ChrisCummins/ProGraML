@@ -22,10 +22,10 @@ cc_library(
     hdrs = ["clang.h"],
     data = select({
         "//:darwin": [
-            "@llvm_mac//:clang++",
+            "@clang-llvm-10.0.0-x86_64-apple-darwin//:clang++",
         ],
         "//conditions:default": [
-            "@llvm_linux//:clang++",
+            "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang++",
         ],
     }),
     visibility = ["//visibility:public"],
@@ -88,6 +88,7 @@ cc_library(
     name = "llvm",
     srcs = ["llvm.cc"],
     hdrs = ["llvm.h"],
+    copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
         "//labm8/cpp:status",
@@ -95,6 +96,6 @@ cc_library(
         "//programl/ir/llvm/internal:program_graph_builder_pass",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
-        "//third_party/llvm",
+        "@llvm//10.0.0",
     ],
 )

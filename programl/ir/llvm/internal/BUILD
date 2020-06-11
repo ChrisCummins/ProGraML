@@ -32,6 +32,7 @@ cc_library(
     name = "program_graph_builder",
     srcs = ["program_graph_builder.cc"],
     hdrs = ["program_graph_builder.h"],
+    copts = ["-std=c++14"],
     deps = [
         ":text_encoder",
         "//labm8/cpp:status_macros",
@@ -41,9 +42,9 @@ cc_library(
         "//programl/graph:program_graph_builder",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
-        "//third_party/llvm",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@llvm//10.0.0",
     ],
 )
 
@@ -52,6 +53,7 @@ cc_library(
     srcs = ["program_graph_builder_pass.cc"],
     hdrs = ["program_graph_builder_pass.h"],
     copts = [
+        "-std=c++14",
         "-fno-rtti",
         "-DGOOGLE_PROTOBUF_NO_RTTI",
     ],
@@ -60,7 +62,7 @@ cc_library(
         ":program_graph_builder",
         "//labm8/cpp:statusor",
         "//programl/proto:program_graph_options_cc",
-        "//third_party/llvm",
+        "@llvm//10.0.0",
     ],
 )
 
@@ -68,10 +70,11 @@ cc_library(
     name = "text_encoder",
     srcs = ["text_encoder.cc"],
     hdrs = ["text_encoder.h"],
+    copts = ["-std=c++14"],
     deps = [
         "//labm8/cpp:logging",
         "//labm8/cpp:string",
-        "//third_party/llvm",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@llvm//10.0.0",
     ],
 )
