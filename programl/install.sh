@@ -67,7 +67,7 @@ main() {
 
   echo
   echo "Installing libraries ..."
-  rsync -ah "$LLVM_LIBS/" "$prefix/lib"
+  rsync -ahv --delete --exclude '*.a' "$LLVM_LIBS/" "$prefix/lib/"
 
   echo
   echo "===================================================="
