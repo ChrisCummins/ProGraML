@@ -108,7 +108,7 @@ cc_library(
     name = "crypto",
     srcs = ["crypto.cc"],
     hdrs = ["crypto.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//labm8/cpp:status",
         "//labm8/cpp:statusor",
