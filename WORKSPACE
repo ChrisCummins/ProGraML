@@ -147,22 +147,6 @@ load("@llvm//tools/bzl:deps.bzl", "llvm_deps")
 
 llvm_deps()
 
-http_archive(
-    name = "llvm_mac",
-    build_file = "//:third_party/llvm.BUILD",
-    sha256 = "0ef8e99e9c9b262a53ab8f2821e2391d041615dd3f3ff36fdf5370916b0f4268",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin",
-    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz"],
-)
-
-http_archive(
-    name = "llvm_linux",
-    build_file = "//:third_party/llvm.BUILD",
-    sha256 = "cc99fda45b4c740f35d0a367985a2bf55491065a501e2dd5d1ad3f97dcac89da",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04",
-    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
-)
-
 # git-sizer <https://github.com/github/git-sizer/>
 
 http_archive(
@@ -217,36 +201,6 @@ http_archive(
     sha256 = "1865d2130769d4593f3c0cef4afbc9e39cdc791be218b15436a6366708142a81",
     strip_prefix = "linux-4.19",
     urls = ["https://github.com/torvalds/linux/archive/v4.19.tar.gz"],
-)
-
-# Now do the same again for headers, but also strip the include/ directory.
-# The reason for the duplication between @llvm_headers_XXX and @llvm_XXX is
-# because the headers packages strip the include/ path prefix, so that the
-# headers can be included by any cc_library with the package in the deps
-# attributes, without having to set a custom -I path in copts.
-
-http_archive(
-    name = "llvm_headers_mac",
-    build_file = "//:third_party/llvm_headers.BUILD",
-    sha256 = "0ef8e99e9c9b262a53ab8f2821e2391d041615dd3f3ff36fdf5370916b0f4268",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-apple-darwin/include",
-    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz"],
-)
-
-http_archive(
-    name = "llvm_headers_linux",
-    build_file = "//:third_party/llvm_headers.BUILD",
-    sha256 = "cc99fda45b4c740f35d0a367985a2bf55491065a501e2dd5d1ad3f97dcac89da",
-    strip_prefix = "clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/include",
-    urls = ["https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
-)
-
-http_archive(
-    name = "llvm_test_suite",
-    build_file = "//:third_party/llvm_test_suite.BUILD",
-    sha256 = "74e0055efa27b2143415148ee93b817155e6333337d9cadd4cc5d468ad3c0edf",
-    strip_prefix = "test-suite-6.0.0.src",
-    urls = ["http://releases.llvm.org/6.0.0/test-suite-6.0.0.src.tar.xz"],
 )
 
 # Now do the same again for headers, but also strip the include/ directory.
