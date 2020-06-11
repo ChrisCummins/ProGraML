@@ -29,8 +29,10 @@ app.DEFINE_integer(
 )
 FLAGS = app.FLAGS
 
-LLVM_IR_GRAPHS = bazelutil.DataPath("phd/programl/test/data/llvm_ir_graphs")
-ANALYZE = bazelutil.DataPath("phd/programl/cmd/analyze")
+LLVM_IR_GRAPHS = bazelutil.DataPath(
+  "programl/programl/test/data/llvm_ir_graphs"
+)
+ANALYZE = bazelutil.DataPath("programl/programl/cmd/analyze")
 
 ANALYSES = [
   "reachability",

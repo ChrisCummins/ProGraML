@@ -12,7 +12,7 @@ EOF
 }
 
 # --- begin labm8 init ---
-f=phd/labm8/sh/app.sh
+f=programl/labm8/sh/app.sh
 # shellcheck disable=SC1090
 source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null ||
   source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null ||
@@ -29,14 +29,14 @@ f=
 set -euo pipefail
 
 BINARIES=(
-  "$(DataPath phd/programl/cmd/analyze)"
-  "$(DataPath phd/programl/cmd/clang2graph)"
-  "$(DataPath phd/programl/cmd/graph2cdfg)"
-  "$(DataPath phd/programl/cmd/graph2dot)"
-  "$(DataPath phd/programl/cmd/graph2json)"
-  "$(DataPath phd/programl/cmd/llvm2graph)"
-  "$(DataPath phd/programl/cmd/pbq)"
-  "$(DataPath phd/programl/cmd/xla2graph)"
+  "$(DataPath programl/programl/cmd/analyze)"
+  "$(DataPath programl/programl/cmd/clang2graph)"
+  "$(DataPath programl/programl/cmd/graph2cdfg)"
+  "$(DataPath programl/programl/cmd/graph2dot)"
+  "$(DataPath programl/programl/cmd/graph2json)"
+  "$(DataPath programl/programl/cmd/llvm2graph)"
+  "$(DataPath programl/programl/cmd/pbq)"
+  "$(DataPath programl/programl/cmd/xla2graph)"
 )
 
 if [[ $(uname) == Darwin ]]; then

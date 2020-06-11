@@ -18,7 +18,7 @@
 # Copy the following verbatim into the header of any scripts:
 #
 #     # --- begin labm8 init ---
-#     f=phd/labm8/sh/app.sh
+#     f=programl/labm8/sh/app.sh
 #     source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
 #       source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null || \
 #       source "$0.runfiles/$f" 2>/dev/null || \

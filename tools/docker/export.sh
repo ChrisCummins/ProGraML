@@ -7,7 +7,7 @@
 #     # bazel run //tools/docker:export ~/path/to/dir/containing/dockerfile
 
 # --- begin labm8 init ---
-f=phd/labm8/sh/app.sh
+f=programl/labm8/sh/app.sh
 source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null ||
   source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null ||
   source "$0.runfiles/$f" 2>/dev/null ||
@@ -27,7 +27,7 @@ main() {
 
   local image="$(basename $path)"
 
-  local version="$(cat $(DataPath phd/version.txt))"
+  local version="$(cat $(DataPath programl/version.txt))"
 
   docker build -t chriscummins/"$image":latest "$path"
   docker build -t chriscummins/"$image":"$version" "$path"

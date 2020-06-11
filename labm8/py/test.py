@@ -96,7 +96,7 @@ if os.environ.get("TEST_TMPDIR"):
 
 def AbsolutePathToModule(file_path: str) -> str:
   """Determine module name from an absolute path."""
-  match = re.match(r".+\.runfiles/phd/(.+)", file_path)
+  match = re.match(r".+\.runfiles/programl/(.+)", file_path)
   if match:
     # Strip everything up to the root of the project from the path.
     module = match.group(1)

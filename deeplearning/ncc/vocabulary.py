@@ -17,7 +17,7 @@ from labm8.py import decorators
 FLAGS = app.FLAGS
 
 PUBLISHED_VOCABULARY = bazelutil.DataPath(
-  "phd/deeplearning/ncc/published_results/vocabulary.zip"
+  "programl/deeplearning/ncc/published_results/vocabulary.zip"
 )
 
 

@@ -116,7 +116,7 @@ class DataArchive(archive.Archive):
   extracting the zip contents to a temporary directory.
 
   Example:
-    >>> with DataArchive("phd/data.zip") as uncompressed_root:
+    >>> with DataArchive("programl/data.zip") as uncompressed_root:
     ...   print(uncompressed_root.iterdir())
     ['a', 'README.txt']
   """

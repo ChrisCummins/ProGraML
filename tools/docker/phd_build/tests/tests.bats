@@ -7,6 +7,6 @@ teardown() {
 }
 
 @test "run bazel_build" {
-  docker load -i "$(DataPath phd/tools/docker/phd_build/tests/build_test_image.tar)"
+  docker load -i "$(DataPath programl/tools/docker/phd_build/tests/build_test_image.tar)"
   docker run --rm "bazel/tools/docker/phd_build/tests:build_test_image"
 }

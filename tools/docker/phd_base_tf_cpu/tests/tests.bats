@@ -7,6 +7,6 @@ teardown() {
 }
 
 @test "run tf_test" {
-  docker load -i "$(DataPath phd/tools/docker/phd_base_tf_cpu/tests/tf_test_image.tar)"
+  docker load -i "$(DataPath programl/tools/docker/phd_base_tf_cpu/tests/tf_test_image.tar)"
   docker run --rm "bazel/tools/docker/phd_base_tf_cpu/tests:tf_test_image"
 }

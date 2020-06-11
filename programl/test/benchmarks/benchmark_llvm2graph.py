@@ -30,8 +30,8 @@ app.DEFINE_float(
 )
 FLAGS = app.FLAGS
 
-LLVM_IR = bazelutil.DataPath("phd/programl/test/data/llvm_ir")
-LLVM2GRAPH = bazelutil.DataPath("phd/programl/cmd/llvm2graph")
+LLVM_IR = bazelutil.DataPath("programl/programl/test/data/llvm_ir")
+LLVM2GRAPH = bazelutil.DataPath("programl/programl/cmd/llvm2graph")
 
 
 def Main():

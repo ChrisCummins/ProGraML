@@ -8,11 +8,11 @@ teardown() {
 }
 
 @test "run python_version" {
-  docker load -i "$(DataPath phd/tools/docker/phd_base/tests/python_version_image.tar)"
+  docker load -i "$(DataPath programl/tools/docker/phd_base/tests/python_version_image.tar)"
   docker run --rm "bazel/tools/docker/phd_base/tests:python_version_image"
 }
 
 @test "run dependencies_test" {
-  docker load -i "$(DataPath phd/tools/docker/phd_base/tests/dependencies_test_image.tar)"
+  docker load -i "$(DataPath programl/tools/docker/phd_base/tests/dependencies_test_image.tar)"
   docker run --rm "bazel/tools/docker/phd_base/tests:dependencies_test_image"
 }
