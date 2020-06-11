@@ -705,7 +705,7 @@ py_library(
 
 py_library(
     name = "test",
-    testonly = 1,
+    testonly = 0,  # TODO(github.com/ChrisCummins/phd/issues/131): should be testonly = 1.
     srcs = ["test.py"],
     visibility = ["//visibility:public"],
     deps = [

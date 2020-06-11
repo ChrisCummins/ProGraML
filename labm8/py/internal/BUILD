@@ -58,7 +58,7 @@ python_proto_library(
 
 py_library(
     name = "pytest_plugin",
-    testonly = 1,
+    testonly = 0,  # TODO(github.com/ChrisCummins/phd/issues/131).
     srcs = ["pytest_plugin.py"],
     visibility = ["//labm8/py:__subpackages__"],
     deps = [
