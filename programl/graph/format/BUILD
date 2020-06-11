@@ -22,7 +22,6 @@ cc_library(
     hdrs = ["cdfg.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:statusor",
         "//programl/graph:features",
         "//programl/proto:edge_cc",
         "//programl/proto:node_cc",

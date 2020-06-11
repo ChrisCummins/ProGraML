@@ -22,7 +22,6 @@
 // limitations under the License.
 #pragma once
 
-#include "labm8/cpp/statusor.h"
 #include "programl/proto/program_graph.pb.h"
 
 #include <vector>
