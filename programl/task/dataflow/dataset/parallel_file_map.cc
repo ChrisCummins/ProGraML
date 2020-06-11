@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
@@ -48,11 +49,11 @@ std::vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root) {
     }
   }
 
-  // Randomize the order of files to crudely load balancing a
+  // Randomize the order of files to crudely load balance a
   // bunch of parallel workers iterating through this list in order
   // as the there is a high variance in the size / complexity of files.
-  std::srand(unsigned(std::time(0)));
-  std::random_shuffle(files.begin(), files.end());
+  unsigned seed(std::time(0));
+  std::shuffle(files.begin(), files.end(), std::default_random_engine(seed));
   return files;
 }
 
