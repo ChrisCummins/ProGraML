@@ -56,12 +56,4 @@ fi
 # See: https://github.com/bazelbuild/rules_docker
 export PULLER_TIMEOUT=3600
 
-# NOTE: On macOS systems, I have encountered problems building pyopencl
-# when $CC and $CXX are set. If @requirements fetching fails, try disabling
-# these two lines.
-if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
-  export CC=/usr/local/opt/llvm/bin/clang
-  export CXX=/usr/local/opt/llvm/bin/clang++
-fi
-
 $@
