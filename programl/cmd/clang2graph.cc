@@ -166,7 +166,7 @@ int main(int argc, const char **argv, char *const *envp) {
       returncode = 0;
       std::cout << graph.DebugString();
     } else {
-      llvm::errs() << status.error_message();
+      llvm::errs() << status.error_message() << std::endl;
     }
   }
 
