@@ -88,25 +88,3 @@ py_test(
         "//third_party/py/numpy",
     ],
 )
-
-py_test(
-    name = "legacy_pipeline",
-    timeout = "long",
-    srcs = ["legacy_pipeline.py"],
-    data = [
-        "//programl/test/data:llvm_ir",
-    ],
-    tags = ["notravis"],
-    deps = [
-        "//deeplearning/ml4pl/graphs/labelled:graph_batcher",
-        "//deeplearning/ml4pl/graphs/labelled:graph_tuple",
-        "//deeplearning/ml4pl/graphs/labelled/dataflow/reachability",
-        "//deeplearning/ml4pl/graphs/llvm2graph:llvm2graph_py",
-        "//deeplearning/ml4pl/graphs/llvm2graph:node_encoder",
-        "//labm8/py:app",
-        "//labm8/py:bazelutil",
-        "//labm8/py:fs",
-        "//labm8/py:humanize",
-        "//labm8/py:prof",
-    ],
-)
