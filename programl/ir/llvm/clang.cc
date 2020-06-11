@@ -20,6 +20,7 @@
 #include "labm8/cpp/status.h"
 #include "subprocess/subprocess.hpp"
 
+using labm8::Status;
 namespace error = labm8::error;
 
 namespace programl {
@@ -54,14 +55,14 @@ Status Clang::Compile(const string& src, IrList* irs) const {
   return Status::OK;
 }
 
-vector<string> Clang::BuildCompileCommands(const string& baseFlags, int timeout,
-                                           bool abspath) {
+std::vector<string> Clang::BuildCompileCommands(const string& baseFlags,
+                                                int timeout, bool abspath) {
   const string clangPath =
       (abspath ? absl::StrFormat("timeout -s9 %d %s", timeout,
                                  labm8::BazelDataPathOrDie(kClangPath).string())
                : "clang++");
 
-  const vector<string> opts{
+  const std::vector<string> opts{
       "-O0",
       "-O1",
       "-O2",
@@ -72,7 +73,7 @@ vector<string> Clang::BuildCompileCommands(const string& baseFlags, int timeout,
       "-O3 -ffast-math",
   };
 
-  vector<string> commands;
+  std::vector<string> commands;
   commands.reserve(opts.size());
   for (const string& opt : opts) {
     commands.push_back(clangPath + " -emit-llvm -c -S " + baseFlags + " " +

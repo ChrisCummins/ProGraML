@@ -20,8 +20,7 @@
 #include "labm8/cpp/status_macros.h"
 #include "programl/graph/features.h"
 
-using std::pair;
-using std::vector;
+using labm8::Status;
 namespace error = labm8::error;
 
 namespace programl {
@@ -33,7 +32,7 @@ Status DominanceAnalysis::Init() {
   return Status::OK;
 }
 
-vector<int> DominanceAnalysis::GetEligibleRootNodes() {
+std::vector<int> DominanceAnalysis::GetEligibleRootNodes() {
   return GetInstructionsInFunctionsNodeIndices(graph());
 }
 
@@ -46,7 +45,7 @@ Status DominanceAnalysis::ComputeDominators(
   // Because a node may only be dominated by a node from within the same
   // function, we need only consider the statements nodes within the same
   // function as the root node.
-  vector<int> instructionsInFunction;
+  std::vector<int> instructionsInFunction;
   for (int i = 0; i < graph().node_size(); ++i) {
     if (i && graph().node(i).function() == function) {
       instructionsInFunction.push_back(i);

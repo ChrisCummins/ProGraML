@@ -28,13 +28,13 @@ namespace format {
 static const int ROOT_NODE = 0;
 
 void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         vector<int>* serialized,
+                                         std::vector<int>* serialized,
                                          int maxNodes) {
   // An array of function entries to visit, where each function entry is a node
   // that is the destination of an outgoing call edge from the root node.
-  vector<int> function_entries_to_visit;
+  std::vector<int> function_entries_to_visit;
   // A map from source node to a list of destination control edges.
-  flat_hash_map<int, vector<int>> forward_control_edges;
+  absl::flat_hash_map<int, std::vector<int>> forward_control_edges;
 
   // First traverse the graph edges to build the list of function entries to
   // visit and forward control edge map.
@@ -66,7 +66,7 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
 void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
                                          NodeIndexList* serialized,
                                          int maxNodes) {
-  vector<int> vec;
+  std::vector<int> vec;
   SerializeInstructionsInProgramGraph(graph, &vec, maxNodes);
   for (const auto& v : vec) {
     serialized->add_node(v);
@@ -75,8 +75,8 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
 
 bool SerializeInstructionsInFunction(
     const int& root,
-    const flat_hash_map<int, vector<int>>& forward_control_edges,
-    vector<int>* serialized, int maxNodes) {
+    const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
+    std::vector<int>* serialized, int maxNodes) {
   // A set of visited nodes.
   absl::flat_hash_set<int> visited;
   // A queue of nodes to visit.

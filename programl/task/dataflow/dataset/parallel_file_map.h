@@ -37,7 +37,8 @@ namespace programl {
 namespace task {
 namespace dataflow {
 
-vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root);
+std::vector<boost::filesystem::path> EnumerateProgramGraphFiles(
+    const boost::filesystem::path& root);
 
 inline std::chrono::milliseconds Now() {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -47,9 +48,11 @@ inline std::chrono::milliseconds Now() {
 // chunk_size: The size of file path chunks to execute in worker
 // thread inner loops. A larger chunk size creates more infrequent
 // status updates.
-template <void (*ProcessOne)(const fs::path&, const fs::path&),
+template <void (*ProcessOne)(const boost::filesystem::path&,
+                             const boost::filesystem::path&),
           size_t chunkSize = 16>
-void ParallelFileMap(const fs::path& path, const vector<fs::path>& files) {
+void ParallelFileMap(const boost::filesystem::path& path,
+                     const std::vector<boost::filesystem::path>& files) {
   std::chrono::milliseconds startTime = Now();
 
   std::atomic_uint64_t fileCount{0};

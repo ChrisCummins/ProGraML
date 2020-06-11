@@ -25,8 +25,6 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 
-using labm8::Status;
-
 namespace programl {
 namespace ir {
 namespace llvm {
@@ -34,17 +32,19 @@ namespace llvm {
 const static ProgramGraphOptions defaultOptions;
 
 // Construct a program graph from the given module.
-Status BuildProgramGraph(::llvm::Module& module, ProgramGraph* graph,
-                         const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(
+    ::llvm::Module& module, ProgramGraph* graph,
+    const ProgramGraphOptions& options = defaultOptions);
 
 // Construct a program graph from a buffer for a module.
-Status BuildProgramGraph(const ::llvm::MemoryBuffer& irBuffer,
-                         ProgramGraph* graph,
-                         const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(
+    const ::llvm::MemoryBuffer& irBuffer, ProgramGraph* graph,
+    const ProgramGraphOptions& options = defaultOptions);
 
 // Construct a program graph from a string of IR.
-Status BuildProgramGraph(const string& irString, ProgramGraph* graph,
-                         const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(
+    const string& irString, ProgramGraph* graph,
+    const ProgramGraphOptions& options = defaultOptions);
 
 }  // namespace llvm
 }  // namespace ir

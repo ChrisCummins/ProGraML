@@ -24,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-using std::pair;
+using labm8::Status;
 using std::vector;
 namespace error = labm8::error;
 
@@ -46,7 +46,7 @@ Status ReachabilityAnalysis::RunOne(int rootNode,
   vector<bool> visited(graph().node_size(), false);
 
   int dataFlowStepCount = 0;
-  std::queue<pair<int, int>> q;
+  std::queue<std::pair<int, int>> q;
   q.push({rootNode, 1});
 
   const vector<vector<int>>& cfg = adjacencies().control;

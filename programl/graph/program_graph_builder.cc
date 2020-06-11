@@ -18,6 +18,9 @@
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
 
+using labm8::Status;
+namespace error = labm8::error;
+
 namespace programl {
 namespace graph {
 
@@ -64,9 +67,9 @@ Node* ProgramGraphBuilder::AddConstant(const string& text) {
   return AddNode(Node::CONSTANT, text);
 }
 
-StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
-                                                    const Node* source,
-                                                    const Node* target) {
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
+                                                           const Node* source,
+                                                           const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
@@ -96,9 +99,9 @@ StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
   return AddEdge(Edge::CONTROL, position, source, target);
 }
 
-StatusOr<Edge*> ProgramGraphBuilder::AddDataEdge(int32_t position,
-                                                 const Node* source,
-                                                 const Node* target) {
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddDataEdge(int32_t position,
+                                                        const Node* source,
+                                                        const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
@@ -121,8 +124,8 @@ StatusOr<Edge*> ProgramGraphBuilder::AddDataEdge(int32_t position,
   return AddEdge(Edge::DATA, position, source, target);
 }
 
-StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
-                                                 const Node* target) {
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
+                                                        const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
@@ -140,7 +143,7 @@ StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
   return AddEdge(Edge::CALL, /*position=*/0, source, target);
 }
 
-StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {
+labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {
   // Check that all nodes except the root are connected. The root is allowed to
   // have no connections in the case where it is an empty graph.
   if (!emptyModules_.empty()) {

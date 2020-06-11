@@ -22,9 +22,6 @@
 #include "labm8/cpp/string.h"
 #include "programl/proto/ir.pb.h"
 
-using labm8::Status;
-using std::vector;
-
 namespace programl {
 namespace ir {
 namespace llvm {
@@ -53,7 +50,7 @@ class Clang {
 
   // Compile the given source file to produce a list of LLVM-IRs. If any of the
   // compilation commands fails, returns error status.
-  Status Compile(const string& src, IrList* irs) const;
+  labm8::Status Compile(const string& src, IrList* irs) const;
 
  private:
   static std::vector<string> BuildCompileCommands(const string& baseFlags,

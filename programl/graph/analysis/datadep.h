@@ -20,8 +20,6 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
 
-using labm8::Status;
-
 namespace programl {
 namespace graph {
 namespace analysis {
@@ -34,11 +32,12 @@ class DatadepAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode,
+                               ProgramGraphFeatures* features) override;
 
-  virtual vector<int> GetEligibleRootNodes() override;
+  virtual std::vector<int> GetEligibleRootNodes() override;
 
-  virtual Status Init() override;
+  virtual labm8::Status Init() override;
 };
 
 }  // namespace analysis

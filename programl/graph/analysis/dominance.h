@@ -25,8 +25,6 @@
 
 #include <utility>
 
-using labm8::Status;
-
 namespace programl {
 namespace graph {
 namespace analysis {
@@ -40,14 +38,15 @@ class DominanceAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode,
+                               ProgramGraphFeatures* features) override;
 
-  virtual vector<int> GetEligibleRootNodes() override;
+  virtual std::vector<int> GetEligibleRootNodes() override;
 
-  virtual Status Init() override;
+  virtual labm8::Status Init() override;
 
  protected:
-  Status ComputeDominators(
+  labm8::Status ComputeDominators(
       const int rootNode, int* dataFlowSteps,
       absl::flat_hash_map<int, absl::flat_hash_set<int>>* dominators);
 };

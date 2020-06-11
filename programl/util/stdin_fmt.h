@@ -31,9 +31,6 @@ DECLARE_string(stdin_fmt);
 namespace programl {
 namespace util {
 
-namespace error = labm8::error;
-using labm8::Status;
-
 // Read the entire stdin and parse as a protocol buffer of the given type.
 // The format is determined by the --stdin_fmt flag.
 template <typename ProtocolBuffer, int exitCode = 4>

@@ -27,12 +27,6 @@ namespace programl {
 namespace graph {
 namespace analysis {
 
-using absl::flat_hash_map;
-using absl::flat_hash_set;
-using labm8::Status;
-using std::pair;
-using std::vector;
-
 // Common subexpressions analysis.
 //
 // Starting at instruction `n`, label all instructions which compute the same
@@ -41,11 +35,12 @@ class SubexpressionsAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode,
+                               ProgramGraphFeatures* features) override;
 
-  virtual vector<int> GetEligibleRootNodes() override;
+  virtual std::vector<int> GetEligibleRootNodes() override;
 
-  virtual Status Init() override;
+  virtual labm8::Status Init() override;
 
   string ToString() const;
 
@@ -54,12 +49,12 @@ class SubexpressionsAnalysis : public RoodNodeDataFlowAnalysis {
 
   // Return a list of instruction node indices which compute the same
   // subexpression.
-  const vector<flat_hash_set<int>>& subexpression_sets() const {
+  const std::vector<absl::flat_hash_set<int>>& subexpression_sets() const {
     return subexpressionSets_;
   };
 
  private:
-  vector<flat_hash_set<int>> subexpressionSets_;
+  std::vector<absl::flat_hash_set<int>> subexpressionSets_;
 };
 
 }  // namespace analysis

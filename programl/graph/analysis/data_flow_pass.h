@@ -22,9 +22,6 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
 
-using labm8::Status;
-using std::vector;
-
 namespace programl {
 namespace graph {
 namespace analysis {
@@ -40,11 +37,11 @@ struct AdjacencyListOptions {
 
 // A collection of adjacency lists.
 struct AdjacencyLists {
-  vector<vector<int>> control;
-  vector<vector<int>> reverse_control;
-  vector<vector<int>> data;
-  vector<vector<int>> reverse_data;
-  vector<vector<int>> reverse_data_positions;
+  std::vector<std::vector<int>> control;
+  std::vector<std::vector<int>> reverse_control;
+  std::vector<std::vector<int>> data;
+  std::vector<std::vector<int>> reverse_data;
+  std::vector<std::vector<int>> reverse_data_positions;
 
   friend std::ostream& operator<<(std::ostream& os, const AdjacencyLists& dt);
 };
@@ -55,7 +52,7 @@ class DataFlowPass {
   explicit DataFlowPass(const ProgramGraph& graph)
       : graph_(graph){}
 
-            [[nodiscard]] virtual Status
+            [[nodiscard]] virtual labm8::Status
         Run(ProgramGraphFeaturesList * featuresList) = 0;
 
   const ProgramGraph& graph() const { return graph_; }
@@ -88,12 +85,12 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
   //
   // Consider using utility functions GetInstructionsInFunctionsNodeIndices() or
   // GetVariableNodeIndices() to implement this.
-  virtual vector<int> GetEligibleRootNodes() = 0;
+  virtual std::vector<int> GetEligibleRootNodes() = 0;
 
-  [[nodiscard]] virtual Status Run(
+  [[nodiscard]] virtual labm8::Status Run(
       ProgramGraphFeaturesList* featuresList) override;
 
-  [[nodiscard]] virtual Status Init();
+  [[nodiscard]] virtual labm8::Status Init();
 
   int max_instances_per_graph() const { return maxInstancesPerGraph_; }
 
@@ -101,7 +98,8 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
   void seed(unsigned seed) { seed_ = seed; }
 
  protected:
-  virtual Status RunOne(int rootNode, ProgramGraphFeatures* features) = 0;
+  virtual labm8::Status RunOne(int rootNode,
+                               ProgramGraphFeatures* features) = 0;
 
  private:
   const int maxInstancesPerGraph_;
@@ -112,9 +110,10 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
 void AddNodeFeature(ProgramGraphFeatures* features, const string& name,
                     const Feature& value);
 
-vector<int> GetInstructionsInFunctionsNodeIndices(const ProgramGraph& graph);
+std::vector<int> GetInstructionsInFunctionsNodeIndices(
+    const ProgramGraph& graph);
 
-vector<int> GetVariableNodeIndices(const ProgramGraph& graph);
+std::vector<int> GetVariableNodeIndices(const ProgramGraph& graph);
 
 }  // namespace analysis
 }  // namespace graph

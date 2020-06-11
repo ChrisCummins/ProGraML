@@ -23,7 +23,9 @@
 
 #include "labm8/cpp/status_macros.h"
 
+using labm8::Status;
 namespace error = labm8::error;
+using std::vector;
 
 namespace programl {
 namespace graph {

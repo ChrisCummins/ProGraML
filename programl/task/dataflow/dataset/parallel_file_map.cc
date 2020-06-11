@@ -31,7 +31,6 @@
 #include "absl/strings/str_format.h"
 
 namespace fs = boost::filesystem;
-using std::vector;
 
 DEFINE_int32(limit, 0,
              "If --limit > 0, limit the number of input graphs processed to "
@@ -41,8 +40,8 @@ namespace programl {
 namespace task {
 namespace dataflow {
 
-vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root) {
-  vector<fs::path> files;
+std::vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root) {
+  std::vector<fs::path> files;
   for (auto it : fs::directory_iterator(root)) {
     if (labm8::HasSuffixString(it.path().string(), ".ProgramGraph.pb")) {
       files.push_back(it.path());

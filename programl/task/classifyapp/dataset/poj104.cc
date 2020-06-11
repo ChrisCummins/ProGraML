@@ -47,9 +47,6 @@
 #include "tbb/parallel_for.h"
 
 using labm8::Status;
-using labm8::StatusOr;
-using std::pair;
-namespace error = labm8::error;
 namespace fs = boost::filesystem;
 
 namespace programl {
@@ -159,7 +156,7 @@ vector<fs::path> EnumerateFiles(const fs::path& root) {
   return files;
 }
 
-pair<int, int> GetLabelFromPath(const fs::path& path) {
+std::pair<int, int> GetLabelFromPath(const fs::path& path) {
   const size_t labelStart = path.string().rfind('/') + 1;
   const size_t labelEnd = path.string().find('.', labelStart);
   const size_t srcStart = labelEnd + 1;
@@ -175,7 +172,7 @@ EnumerateFilesByLabelAndSource(const fs::path& path) {
 
   absl::flat_hash_map<int, absl::flat_hash_map<int, vector<fs::path>>> grouped;
   for (const auto& path : files) {
-    pair<int, int> v = GetLabelFromPath(path);
+    std::pair<int, int> v = GetLabelFromPath(path);
     grouped[v.first][v.second].push_back(path);
   }
 

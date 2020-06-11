@@ -29,12 +29,13 @@ namespace ir {
 namespace xla {
 
 labm8::StatusOr<ProgramGraph> HloModuleGraphBuilder::Build(
-    const HloProto& proto) {
+    const ::xla::HloProto& proto) {
   RETURN_IF_ERROR(VisitModule(proto.hlo_module()));
   return GetProgramGraph();
 }
 
-labm8::Status HloModuleGraphBuilder::VisitModule(const HloModuleProto& module) {
+labm8::Status HloModuleGraphBuilder::VisitModule(
+    const ::xla::HloModuleProto& module) {
   Module* mod = AddModule(module.name());
 
   // Instantiate the "functions" from HloComputations. Functions are defined in
@@ -62,7 +63,7 @@ labm8::Status HloModuleGraphBuilder::VisitModule(const HloModuleProto& module) {
 }
 
 labm8::StatusOr<FunctionEntryExits> HloModuleGraphBuilder::VisitComputation(
-    const HloComputationProto& computation, const Module* module) {
+    const ::xla::HloComputationProto& computation, const Module* module) {
   Function* fn = AddFunction(computation.name(), module);
 
   // Create an entry statement which acts as a common control predecessor of
@@ -85,7 +86,7 @@ labm8::StatusOr<FunctionEntryExits> HloModuleGraphBuilder::VisitComputation(
 }
 
 labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
-    const HloInstructionProto& instruction, Function* function,
+    const ::xla::HloInstructionProto& instruction, Function* function,
     Node* entryInstruction) {
   bool isParam = instruction.opcode() == "parameter";
   const string name = isParam ? "<param>" : HloInstructionToText(instruction);

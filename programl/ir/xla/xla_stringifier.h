@@ -25,15 +25,11 @@ namespace programl {
 namespace ir {
 namespace xla {
 
-using ::xla::HloInstructionProto;
-using ::xla::LiteralProto;
-using ::xla::ShapeProto;
+string ShapeProtoToString(const ::xla::ShapeProto &shape);
 
-string ShapeProtoToString(const ShapeProto &shape);
+string HloInstructionToText(const ::xla::HloInstructionProto &instruction);
 
-string HloInstructionToText(const HloInstructionProto &instruction);
-
-string LiteralProtoToText(const LiteralProto &literal);
+string LiteralProtoToText(const ::xla::LiteralProto &literal);
 
 }  // namespace xla
 }  // namespace ir

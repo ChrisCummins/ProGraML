@@ -22,8 +22,6 @@
 #include <sstream>
 #include <utility>
 
-using std::make_pair;
-
 namespace programl {
 namespace ir {
 namespace llvm {

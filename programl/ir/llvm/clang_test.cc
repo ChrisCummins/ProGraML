@@ -17,8 +17,6 @@
 // limitations under the License.
 #include "programl/ir/llvm/clang.h"
 
-#include <vector>
-
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/test.h"
 #include "programl/proto/ir.pb.h"

@@ -33,10 +33,6 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 
-using labm8::StatusOr;
-using std::pair;
-using std::vector;
-
 namespace programl {
 namespace ir {
 namespace llvm {
@@ -44,26 +40,26 @@ namespace internal {
 
 // An <entry, exits> pair which records the node numbers for a function's entry
 // and exit statement nodes, respectively.
-using FunctionEntryExits = pair<Node*, vector<Node*>>;
+using FunctionEntryExits = std::pair<Node*, std::vector<Node*>>;
 
 // An <entry, exit> pair which records the node numbers of a basic block's entry
 // and exit statement nodes, respectively.
-using BasicBlockEntryExit = pair<Node*, Node*>;
+using BasicBlockEntryExit = std::pair<Node*, Node*>;
 
 // A <node, position> pair which records a node number and a position argument.
-using PositionalNode = pair<Node*, int32_t>;
+using PositionalNode = std::pair<Node*, int32_t>;
 
 // A <source_instruction, destination_node> pair which records a data flow
 // relation from a producer instruction to data element produced. Since
 // LLVM does not have multi-assignment, the position of all DataEdges is assumed
 // to be zero.
-using DataEdge = pair<const ::llvm::Instruction*, Node*>;
+using DataEdge = std::pair<const ::llvm::Instruction*, Node*>;
 
 // A map from instructions to their node.
 using InstructionMap = absl::flat_hash_map<const ::llvm::Instruction*, Node*>;
 
 using ArgumentConsumerMap =
-    absl::flat_hash_map<const ::llvm::Argument*, vector<PositionalNode>>;
+    absl::flat_hash_map<const ::llvm::Argument*, std::vector<PositionalNode>>;
 
 // A specialized program graph builder for LLVM-IR.
 class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
@@ -73,22 +69,22 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
         options_(options),
         blockCount_(0){}
 
-            [[nodiscard]] StatusOr<ProgramGraph> Build(
+            [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(
                 const ::llvm::Module& module);
 
   void Clear();
 
  protected:
-  [[nodiscard]] StatusOr<FunctionEntryExits> VisitFunction(
+  [[nodiscard]] labm8::StatusOr<FunctionEntryExits> VisitFunction(
       const ::llvm::Function& function, const Function* functionMessage);
 
-  [[nodiscard]] StatusOr<BasicBlockEntryExit> VisitBasicBlock(
+  [[nodiscard]] labm8::StatusOr<BasicBlockEntryExit> VisitBasicBlock(
       const ::llvm::BasicBlock& block, const Function* functionMessage,
       InstructionMap* instructionMap, ArgumentConsumerMap* argumentConsumers,
-      vector<DataEdge>* dataEdgesToAdd);
+      std::vector<DataEdge>* dataEdgesToAdd);
 
-  [[nodiscard]] Status AddCallSite(const Node* source,
-                                   const FunctionEntryExits& target);
+  [[nodiscard]] labm8::Status AddCallSite(const Node* source,
+                                          const FunctionEntryExits& target);
 
   Node* AddLlvmInstruction(const ::llvm::Instruction* instruction,
                            const Function* function);
@@ -112,7 +108,7 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   // A map from constant values to <node, position> uses. This map is
   // populated by VisitBasicBlock() and consumed once all functions have been
   // visited.
-  absl::flat_hash_map<const ::llvm::Constant*, vector<PositionalNode>>
+  absl::flat_hash_map<const ::llvm::Constant*, std::vector<PositionalNode>>
       constants_;
 };
 

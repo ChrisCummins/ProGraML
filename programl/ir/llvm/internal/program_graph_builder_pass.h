@@ -24,8 +24,6 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 
-using labm8::StatusOr;
-
 namespace programl {
 namespace ir {
 namespace llvm {
@@ -48,10 +46,10 @@ class ProgramGraphBuilderPass : public ::llvm::ModulePass {
 
   bool runOnModule(::llvm::Module& module) override;
 
-  StatusOr<ProgramGraph> GetProgramGraph() const { return graph_; }
+  labm8::StatusOr<ProgramGraph> GetProgramGraph() const { return graph_; }
 
  private:
-  StatusOr<ProgramGraph> graph_;
+  labm8::StatusOr<ProgramGraph> graph_;
   ProgramGraphBuilder graphBuilder_;
 };
 

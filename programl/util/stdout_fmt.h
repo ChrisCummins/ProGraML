@@ -28,9 +28,6 @@ DECLARE_string(stdout_fmt);
 namespace programl {
 namespace util {
 
-namespace error = labm8::error;
-using labm8::Status;
-
 // Write the given protocol buffer to stdout.
 // The format is determined by the --stdout_fmt flag.
 template <typename ProtocolBuffer>

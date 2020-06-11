@@ -24,11 +24,6 @@
 #include "labm8/cpp/status.h"
 #include "programl/proto/program_graph.pb.h"
 
-using labm8::Status;
-using std::array;
-using std::pair;
-using std::vector;
-
 namespace programl {
 namespace graph {
 namespace format {
@@ -37,15 +32,15 @@ class GraphTuple {
  public:
   GraphTuple() = default;
 
-  Status AddProgramGraph(const ProgramGraph& graph);
+  labm8::Status AddProgramGraph(const ProgramGraph& graph);
 
   // Remove all elements from the graph tuple.
   void Clear();
 
-  const array<vector<pair<int, int>>, 3>& adjacencies() const {
+  const std::array<std::vector<std::pair<int, int>>, 3>& adjacencies() const {
     return adjacencies_;
   }
-  const array<vector<int>, 3>& edge_positions() const {
+  const std::array<std::vector<int>, 3>& edge_positions() const {
     return edge_positions_;
   }
 
@@ -64,15 +59,17 @@ class GraphTuple {
   inline size_t call_edge_size() const {
     return adjacencies_[Edge::CALL].size();
   }
-  inline const vector<size_t>& node_sizes() const { return node_sizes_; }
-  inline const vector<size_t>& edge_sizes() const { return edge_sizes_; }
+  inline const std::vector<size_t>& node_sizes() const { return node_sizes_; }
+  inline const std::vector<size_t>& edge_sizes() const { return edge_sizes_; }
 
  protected:
-  array<vector<pair<int, int>>, 3>* mutable_adjacencies() {
+  std::array<std::vector<std::pair<int, int>>, 3>* mutable_adjacencies() {
     return &adjacencies_;
   }
 
-  array<vector<int>, 3>* mutable_edge_positions() { return &edge_positions_; }
+  std::array<std::vector<int>, 3>* mutable_edge_positions() {
+    return &edge_positions_;
+  }
 
   inline void set_node_size(size_t node_size) { node_size_ = node_size; }
 
@@ -87,10 +84,10 @@ class GraphTuple {
  private:
   size_t graph_size_;
   size_t node_size_;
-  vector<size_t> node_sizes_;
-  vector<size_t> edge_sizes_;
-  array<vector<pair<int, int>>, 3> adjacencies_;
-  array<vector<int>, 3> edge_positions_;
+  std::vector<size_t> node_sizes_;
+  std::vector<size_t> edge_sizes_;
+  std::array<std::vector<std::pair<int, int>>, 3> adjacencies_;
+  std::array<std::vector<int>, 3> edge_positions_;
 };
 
 }  // namespace format

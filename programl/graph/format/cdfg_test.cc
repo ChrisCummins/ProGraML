@@ -19,8 +19,6 @@
 #include "labm8/cpp/test.h"
 #include "programl/graph/program_graph_builder.h"
 
-using labm8::Status;
-
 namespace programl {
 namespace graph {
 namespace format {
@@ -93,7 +91,7 @@ TEST(CDFGBuilderTest, GraphOne) {
   }
 
   // Build the data-flow graph.
-  vector<absl::flat_hash_set<int>> dfg;
+  std::vector<absl::flat_hash_set<int>> dfg;
   dfg.reserve(cdfg.node_size());
   for (int i = 0; i < cdfg.node_size(); ++i) {
     dfg.push_back({});

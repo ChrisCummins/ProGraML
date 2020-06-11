@@ -19,16 +19,14 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
 
-using labm8::Status;
-
 namespace programl {
 namespace graph {
 namespace analysis {
 
 // Interface to run named analyses on a program graph, producing a list of
 // program graph features.
-Status RunAnalysis(const string& analysisName, const ProgramGraph& graph,
-                   ProgramGraphFeaturesList* featuresList);
+labm8::Status RunAnalysis(const string& analysisName, const ProgramGraph& graph,
+                          ProgramGraphFeaturesList* featuresList);
 
 }  // namespace analysis
 }  // namespace graph

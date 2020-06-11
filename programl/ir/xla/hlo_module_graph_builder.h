@@ -17,6 +17,7 @@
 // limitations under the License.
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
@@ -31,27 +32,25 @@ namespace programl {
 namespace ir {
 namespace xla {
 
-using graph::FunctionEntryExits;
-using ::xla::HloComputationProto;
-using ::xla::HloInstructionProto;
-using ::xla::HloModuleProto;
-using ::xla::HloProto;
+// An <entry, exits> pair which records the node numbers for a function's entry
+// and exit statement nodes, respectively.
+using FunctionEntryExits = std::pair<Node*, std::vector<Node*>>;
 
 // A class for generating program graphs from HloProto messages.
 class HloModuleGraphBuilder : graph::ProgramGraphBuilder {
  public:
   // Main entry point. Accepts a module as input and returns a graph as output,
   // or an error status if graph construction fails.
-  labm8::StatusOr<ProgramGraph> Build(const HloProto& proto);
+  labm8::StatusOr<ProgramGraph> Build(const ::xla::HloProto& proto);
 
  protected:
-  [[nodiscard]] labm8::Status VisitModule(const HloModuleProto& module);
+  [[nodiscard]] labm8::Status VisitModule(const ::xla::HloModuleProto& module);
 
   [[nodiscard]] labm8::StatusOr<FunctionEntryExits> VisitComputation(
-      const HloComputationProto& computation, const Module* module);
+      const ::xla::HloComputationProto& computation, const Module* module);
 
   [[nodiscard]] labm8::StatusOr<Node*> VisitInstruction(
-      const HloInstructionProto& instruction, Function* function,
+      const ::xla::HloInstructionProto& instruction, Function* function,
       Node* entryInstruction);
 
  private:

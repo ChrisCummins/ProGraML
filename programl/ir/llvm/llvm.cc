@@ -23,6 +23,8 @@
 #include "programl/ir/llvm/internal/program_graph_builder_pass.h"
 #include "programl/proto/program_graph.pb.h"
 
+using labm8::Status;
+
 namespace programl {
 namespace ir {
 namespace llvm {

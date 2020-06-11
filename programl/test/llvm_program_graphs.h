@@ -29,9 +29,7 @@
 namespace programl {
 namespace test {
 
-using std::vector;
-
-vector<ProgramGraph> ReadLlvmProgramGraphs();
+std::vector<ProgramGraph> ReadLlvmProgramGraphs();
 
 }  // namespace test
 }  // namespace programl

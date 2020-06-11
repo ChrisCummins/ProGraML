@@ -21,7 +21,9 @@
 
 #include <queue>
 
-using std::pair;
+using absl::flat_hash_set;
+using labm8::Status;
+using std::vector;
 namespace error = labm8::error;
 
 namespace programl {
@@ -168,7 +170,7 @@ Status LivenessAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   // BFS from root node to compute maximum distance from root node to a live-out
   // node.
   int maxDistance = 0;
-  std::queue<pair<int, int>> q;
+  std::queue<std::pair<int, int>> q;
   q.push({rootNode, 1});
   vector<bool> visited(graph().node_size(), false);
   while (!q.empty()) {

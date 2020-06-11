@@ -32,15 +32,17 @@
 #include "programl/ir/llvm/internal/text_encoder.h"
 #include "programl/proto/program_graph.pb.h"
 
+using labm8::Status;
+
 namespace programl {
 namespace ir {
 namespace llvm {
 namespace internal {
 
-StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
+labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
     const ::llvm::BasicBlock& block, const Function* functionMessage,
     InstructionMap* instructions, ArgumentConsumerMap* argumentConsumers,
-    vector<DataEdge>* dataEdgesToAdd) {
+    std::vector<DataEdge>* dataEdgesToAdd) {
   if (!block.size()) {
     return Status(labm8::error::Code::FAILED_PRECONDITION,
                   "Basic block contains no instructions");
@@ -173,7 +175,7 @@ StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
   return std::make_pair(firstNode, lastNode);
 }
 
-StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
+labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     const ::llvm::Function& function, const Function* functionMessage) {
   // A map from basic blocks to <entry,exit> nodes.
   absl::flat_hash_map<const ::llvm::BasicBlock*, BasicBlockEntryExit> blocks;
@@ -186,7 +188,7 @@ StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
   InstructionMap instructions;
 
   // A mapping from producer instructions to consumer instructions.
-  vector<DataEdge> dataEdgesToAdd;
+  std::vector<DataEdge> dataEdgesToAdd;
 
   FunctionEntryExits functionEntryExits;
 
@@ -369,7 +371,7 @@ Node* ProgramGraphBuilder::AddLlvmConstant(const ::llvm::Constant* constant) {
   return node;
 }
 
-StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
+labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
     const ::llvm::Module& module) {
   // A map from functions to their entry and exit nodes.
   absl::flat_hash_map<const ::llvm::Function*, FunctionEntryExits> functions;

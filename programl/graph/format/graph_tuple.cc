@@ -34,7 +34,7 @@ void GraphTuple::Clear() {
   edge_positions_[2].clear();
 }
 
-Status GraphTuple::AddProgramGraph(const ProgramGraph& graph) {
+labm8::Status GraphTuple::AddProgramGraph(const ProgramGraph& graph) {
   for (int i = 0; i < graph.edge_size(); ++i) {
     const Edge& edge = graph.edge(i);
 
@@ -48,7 +48,7 @@ Status GraphTuple::AddProgramGraph(const ProgramGraph& graph) {
   add_node_size(graph.node_size());
   add_edge_size(graph.edge_size());
 
-  return Status::OK;
+  return labm8::Status::OK;
 }
 
 }  // namespace format

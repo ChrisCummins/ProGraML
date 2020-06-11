@@ -18,6 +18,7 @@
 namespace programl {
 namespace test {
 
+using std::vector;
 namespace fs = boost::filesystem;
 
 template <typename ProtocolBuffer>

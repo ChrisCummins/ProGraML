@@ -24,6 +24,8 @@
 #include <utility>
 #include <vector>
 
+using labm8::Status;
+using std::vector;
 namespace error = labm8::error;
 
 namespace programl {
@@ -47,10 +49,10 @@ Status SubexpressionsAnalysis::Init() {
       << " graph size: " << graph().node_size();
 
   // An expression is a statement and an ordered list of operand nodes.
-  using Expression = pair<string, vector<int>>;
+  using Expression = std::pair<string, vector<int>>;
 
   // A map from expression to a list of nodes which evaluate this expression.
-  flat_hash_map<Expression, flat_hash_set<int>> subexpressionSets;
+  absl::flat_hash_map<Expression, absl::flat_hash_set<int>> subexpressionSets;
 
   // Start at index 1 to skip the graph root.
   for (int i = 1; i < graph().node_size(); ++i) {
@@ -62,7 +64,7 @@ Status SubexpressionsAnalysis::Init() {
     }
 
     // Build a list of operand <position, operand> pairs.
-    using Operand = pair<int, int>;
+    using Operand = std::pair<int, int>;
     vector<Operand> positionOrderedPairs;
     positionOrderedPairs.reserve(rdfg[i].size());
     for (int j = 0; j < rdfg[i].size(); ++j) {

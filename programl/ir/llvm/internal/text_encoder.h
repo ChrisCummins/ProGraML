@@ -27,8 +27,6 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Value.h"
 
-using std::pair;
-
 namespace programl {
 namespace ir {
 namespace llvm {
