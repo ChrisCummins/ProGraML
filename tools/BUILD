@@ -1,14 +1,7 @@
-# This package contains miscellaneous utility scripts.
-# Some of these scripts are meant for execution in-tree, and cannot be run
-# using bazel, please see the comments.
-
 exports_files([
     "bazel",
+    "bazel_env.sh",
+    "flaky_bazel.sh",
+    "make_bootstrap.py",
+    "README.md",
 ])
-
-# Python3 wrapper to workaround docker rules bug.
-sh_binary(
-    name = "py3_wrapper",
-    srcs = ["py3_wrapper.sh"],
-    visibility = ["//visibility:public"],
-)

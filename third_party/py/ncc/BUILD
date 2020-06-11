@@ -11,8 +11,6 @@
 #   1. Support for execution within bazel sandbox.
 #   2. Tests!
 
-load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
-
 licenses(["notice"])  # BSD
 
 exports_files([
@@ -35,15 +33,5 @@ py_library(
         ":rgx_utils",
         "//third_party/py/labm8",
         "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
-    ],
-)
-
-py_test(
-    name = "vocabulary_test",
-    srcs = ["vocabulary_test.py"],
-    data = ["//third_party/py/ncc/published_results:vocabulary"],
-    deps = [
-        ":vocabulary",
-        "//third_party/py/labm8",
     ],
 )
