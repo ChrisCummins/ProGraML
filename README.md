@@ -148,6 +148,50 @@ experiment, see `--helpfull` for a full list. Some useful ones include:
 * `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
 
 
+### Using this project as a dependency
+
+If you are using bazel you can add ProGraML as an external dependency. Add to your WORKSPACE file:
+
+```py
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name="programl",
+    strip_prefix="programl-<stable-commit>",
+    urls=["https://github.com/ChrisCummins/labm8/archive/<stable-commit>.tar.gz"],
+)
+
+# === Begin ProGraML dependencies ===
+<WORKSPACE dependencies>
+# === End ProGraML dependencies ===
+```
+
+Where `<WORKSPACE dependencies>` is the block of delimited block of code in
+[@programl//:WORKSPACE](https://github.com/ChrisCummins/ProGraML/blob/master/WORKSPACE)
+(this is an unfortunately clumsy workaround for
+[recursive workspaces](https://github.com/bazelbuild/bazel/issues/1943)).
+
+Then in your BUILD file:
+
+```py
+cc_library(
+    name = "mylib",
+    srcs = ["mylib.cc"],
+    deps = [
+        "@programl//programl/ir/llvm",
+    ],
+)
+
+py_binary(
+    name = "myscript",
+    srcs = ["myscript.py"],
+    deps = [
+        "@programl//programl/ir/llvm/py:llvm",
+    ],
+)
+```
+
+
 ## Acknowledgements
 
 Made with ❤️️ by
