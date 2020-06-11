@@ -22,14 +22,10 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <string>
 
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
-
-namespace fs = boost::filesystem;
-using std::string;
-using std::vector;
+#include "tbb/parallel_for.h"
 
 DECLARE_int32(limit);
 
@@ -61,21 +57,22 @@ void ParallelFileMap(const boost::filesystem::path& path,
                        ? std::min(size_t(files.size()), size_t(FLAGS_limit))
                        : files.size();
 
-#pragma omp parallel for
-  for (size_t j = 0; j < n; j += chunkSize) {
-    for (size_t i = j; i < std::min(n, j + chunkSize); ++i) {
-      ProcessOne(path, files[i]);
-    }
-    fileCount += chunkSize;
-    uint64_t localFileCount = fileCount;
-    std::chrono::milliseconds now = Now();
-    int msPerGraph = ((now - startTime) / localFileCount).count();
-    std::cout << "\r\033[K" << localFileCount << " of " << n
-              << " files processed (" << msPerGraph << " ms / file, "
-              << std::setprecision(3)
-              << (localFileCount / static_cast<float>(n)) * 100 << "%)"
-              << std::flush;
-  }
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, files.size(), chunkSize),
+      [&](const tbb::blocked_range<size_t>& r) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          ProcessOne(path, files[i]);
+        }
+        fileCount += chunkSize;
+        uint64_t localFileCount = fileCount;
+        std::chrono::milliseconds now = Now();
+        int msPerGraph = ((now - startTime) / localFileCount).count();
+        std::cout << "\r\033[K" << localFileCount << " of " << n
+                  << " files processed (" << msPerGraph << " ms / file, "
+                  << std::setprecision(3)
+                  << (localFileCount / static_cast<float>(n)) * 100 << "%)"
+                  << std::flush;
+      });
   std::cout << std::endl;
 }
 

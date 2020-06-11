@@ -111,7 +111,6 @@ cc_library(
     name = "parallel_file_map",
     srcs = ["parallel_file_map.cc"],
     hdrs = ["parallel_file_map.h"],
-    copts = ["-fopenmp"],
     deps = [
         "//labm8/cpp:app",
         "//labm8/cpp:logging",
@@ -120,7 +119,6 @@ cc_library(
         "//programl/graph/analysis:reachability",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
-        "//third_party/openmp",
         "//third_party/tbb",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
@@ -139,7 +137,6 @@ py_library(
 cc_binary(
     name = "unpack_ir_lists",
     srcs = ["unpack_ir_lists.cc"],
-    copts = ["-fopenmp"],
     deps = [
         ":parallel_file_map",
         "//labm8/cpp:app",
@@ -148,7 +145,6 @@ cc_binary(
         "//labm8/cpp:strutil",
         "//programl/graph/format:cdfg",
         "//programl/proto:ir_cc",
-        "//third_party/openmp",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
     ],
