@@ -45,13 +45,6 @@ path_dirs=(
 )
 export PATH="$(build_path ${path_dirs[@]})"
 
-# Note(github.com/ChrisCummins/phd/issues/55): On macOS, custom LDFLAGS and
-# CPPFLAGS are required to pip build MySQLdb:
-if [[ -d /usr/local/opt/openssl ]]; then
-  export LDFLAGS="-L/usr/local/opt/openssl/lib"
-  export CPPFLAGS="-I/usr/local/opt/openssl/include"
-fi
-
 # Increase the timeout on docker image pulls from the default 600s.
 # See: https://github.com/bazelbuild/rules_docker
 export PULLER_TIMEOUT=3600
