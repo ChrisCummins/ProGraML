@@ -1,0 +1,6 @@
+brew "coreutils"
+brew "findutils"
+brew "gnu-sed"
+brew "mysql"
+brew "pybind11"
+brew "zlib"

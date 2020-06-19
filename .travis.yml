@@ -23,6 +23,10 @@ osx_image: xcode11.5
 dist: bionic
 compiler: clang
 
+addons:
+  homebrew:
+    brewfile: tools/Brewfile.travis
+
 env:
   matrix:
     - BAZEL_VERSION=3.1.0
