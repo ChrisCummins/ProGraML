@@ -89,13 +89,13 @@ datasets of LLVM-IRs, ProGraML graphs, and data flow analysis labels.
 
 ### Requirements
 
-* macOS or GNU / Linux
-* bazel >= 2.0
-* Python >= 3.6
+* macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
+* bazel ≥ 2.0
+* Python ≥ 3.6
 * (Optional) NVIDIA GPU with CUDA drivers for TensorFlow and PyTorch
 
-See [INSTALL](/INSTALL.md) for the lowdown on setting up your build environment. Once done,
-you should be able to build and run the full test suite using:
+Test that you have everything prepared by building and running the full test
+suite:
 
 ```sh
 $ bazel test //programl/...
