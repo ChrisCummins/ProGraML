@@ -113,12 +113,12 @@ ProgramGraph CDFGBuilder::Build(const ProgramGraph& graph) {
   return cdfg;
 }
 
-const vector<int>& CDFGBuilder::GetNodeList() const { return nodeList_; }
+const std::vector<int>& CDFGBuilder::GetNodeList() const { return nodeList_; }
 
 void CDFGBuilder::Clear() { nodeList_.clear(); }
 
 absl::flat_hash_map<int, int> NodeListToTranslationMap(
-    const vector<int>& nodeList) {
+    const std::vector<int>& nodeList) {
   absl::flat_hash_map<int, int> map;
   map.reserve(nodeList.size());
   for (size_t i = 0; i < nodeList.size(); ++i) {

@@ -21,8 +21,8 @@ cc_binary(
     srcs = ["create.cc"],
     deps = [
         ":poj104",
-        "//labm8/cpp:app",
         "@boost//:filesystem",
+        "@labm8//labm8/cpp:app",
     ],
 )
 
@@ -31,12 +31,6 @@ cc_library(
     srcs = ["poj104.cc"],
     hdrs = ["poj104.h"],
     deps = [
-        "//labm8/cpp:crypto",
-        "//labm8/cpp:fsutil",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:status_macros",
-        "//labm8/cpp:statusor",
         "//programl/ir/llvm",
         "//programl/ir/llvm:clang",
         "//programl/proto:ir_cc",
@@ -48,6 +42,12 @@ cc_library(
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/time",
         "@ctpl",
+        "@labm8//labm8/cpp:crypto",
+        "@labm8//labm8/cpp:fsutil",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
         "@subprocess",
     ],
 )

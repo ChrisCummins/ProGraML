@@ -24,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-using std::pair;
+using labm8::Status;
 using std::vector;
 namespace error = labm8::error;
 
@@ -53,7 +53,7 @@ Status DatadepAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
       << " graph size: " << graph().node_size();
 
   int dataFlowStepCount = 1;
-  std::queue<pair<int, int>> q;
+  std::queue<std::pair<int, int>> q;
   q.push({rootNode, 0});
 
   while (!q.empty()) {

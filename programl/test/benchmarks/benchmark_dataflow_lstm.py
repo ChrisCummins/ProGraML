@@ -21,19 +21,26 @@ import sys
 import tempfile
 import warnings
 
+from labm8.py import app
+from labm8.py import bazelutil
+from labm8.py import ppar
+from labm8.py import prof
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
-from deeplearning.ncc import vocabulary
-from labm8.py import app
-from labm8.py import ppar
-from labm8.py import prof
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
 from programl.task.dataflow.graph_loader import DataflowGraphLoader
 from programl.task.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from programl.test.py.plugins import llvm_program_graph
 from programl.test.py.plugins import llvm_reachability_features
+
+# NOTE(cec): Workaround to prevent third_party package name shadowing from
+# labm8.
+sys.path.insert(0, str(bazelutil.DataPath("programl")))
+from third_party.py.ncc import vocabulary
+
+del sys.path[0]
 
 
 app.DEFINE_integer("graph_count", None, "The number of graphs to load.")

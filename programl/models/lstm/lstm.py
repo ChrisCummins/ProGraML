@@ -21,16 +21,16 @@ from typing import Dict
 from typing import List
 
 import numpy as np
-
+import tensorflow as tf
 from labm8.py import app
 from labm8.py.progress import NullContext
 from labm8.py.progress import ProgressContext
+
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
 from programl.models.lstm.lstm_batch import LstmBatchData
 from programl.models.model import Model
 from programl.proto import epoch_pb2
-from third_party.py.tensorflow import tf
 
 
 FLAGS = app.FLAGS

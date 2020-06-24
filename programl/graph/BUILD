@@ -32,12 +32,12 @@ cc_library(
     hdrs = ["program_graph_builder.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/proto:program_graph_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
     ],
 )

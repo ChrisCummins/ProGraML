@@ -22,7 +22,7 @@ import google.protobuf.message
 from labm8.py import bazelutil
 from programl.proto import program_graph_pb2
 
-GRAPH2CDFG = bazelutil.DataPath("phd/programl/cmd/graph2cdfg")
+GRAPH2CDFG = bazelutil.DataPath("programl/programl/cmd/graph2cdfg")
 
 
 def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:

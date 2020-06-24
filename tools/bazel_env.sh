@@ -45,23 +45,8 @@ path_dirs=(
 )
 export PATH="$(build_path ${path_dirs[@]})"
 
-# Note(github.com/ChrisCummins/phd/issues/55): On macOS, custom LDFLAGS and
-# CPPFLAGS are required to pip build MySQLdb:
-if [[ -d /usr/local/opt/openssl ]]; then
-  export LDFLAGS="-L/usr/local/opt/openssl/lib"
-  export CPPFLAGS="-I/usr/local/opt/openssl/include"
-fi
-
 # Increase the timeout on docker image pulls from the default 600s.
 # See: https://github.com/bazelbuild/rules_docker
 export PULLER_TIMEOUT=3600
-
-# NOTE: On macOS systems, I have encountered problems building pyopencl
-# when $CC and $CXX are set. If @requirements fetching fails, try disabling
-# these two lines.
-if [[ -f "/usr/local/opt/llvm/bin/clang" ]]; then
-  export CC=/usr/local/opt/llvm/bin/clang
-  export CXX=/usr/local/opt/llvm/bin/clang++
-fi
 
 $@

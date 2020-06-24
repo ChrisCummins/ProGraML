@@ -39,7 +39,7 @@ PYBIND11_MODULE(graph_serializer_pybind, m) {
             throw std::runtime_error("Failed to parse input proto");
           }
 
-          vector<int> nodeList;
+          std::vector<int> nodeList;
           SerializeInstructionsInProgramGraph(graph, &nodeList, maxNodes);
 
           return nodeList;

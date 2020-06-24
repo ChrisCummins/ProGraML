@@ -13,14 +13,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-language: generic
+os:
+  - linux
+  - osx
 
-services:
-  - docker
+# macOS: 10.15.
+osx_image: xcode11.5
+# Linux: Ubuntu Linux 18.04 and clang 7.
+dist: bionic
+compiler: clang
 
-install:
-  - docker pull chriscummins/phd_build:latest
-  - chmod -R 777 $TRAVIS_BUILD_DIR
+addons:
+  homebrew:
+    brewfile: tools/Brewfile.travis
+
+env:
+  matrix:
+    - BAZEL_VERSION=3.1.0
+
+before_install:
+  - OS=linux
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then OS=darwin; fi
+  # Install Bazel.
+  - GH_BASE="https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION"
+  - GH_ARTIFACT="bazel-$BAZEL_VERSION-installer-$OS-x86_64.sh"
+  - CI_BASE="http://ci.bazel.io/job/Bazel/JAVA_VERSION=1.8,PLATFORM_NAME=$OS-x86_64/lastSuccessfulBuild/artifact/output/ci"
+  - CI_ARTIFACT="bazel--installer.sh"
+  - URL="$GH_BASE/$GH_ARTIFACT"
+  - if [[ "$BAZEL_VERSION" == "HEAD" ]]; then CI_ARTIFACT="`wget -qO- $CI_BASE | grep
+    -o 'bazel-[-_a-zA-Z0-9\.]*-installer.sh' | uniq`"; fi
+  - if [[ "$BAZEL_VERSION" == "HEAD" ]]; then URL="$CI_BASE/$CI_ARTIFACT"; fi
+  - echo $URL
+  - wget -O install.sh $URL
+  - chmod +x install.sh
+  - "./install.sh --user"
+  - rm -f install.sh
 
 script:
-  - docker run -v$TRAVIS_BUILD_DIR:/phd chriscummins/phd_build:latest -c "./tools/flaky_bazel.sh query 'tests(//programl/...) except attr("tags", "notravis", //programl/...)' | xargs ./tools/flaky_bazel.sh test --config=travis"
+  - bazel query 'tests(//programl/...) except attr("tags", "notravis", //programl/...)' | xargs bazel test --config=travis --keep_going --verbose_failures --test_output=errors

@@ -31,10 +31,10 @@ cc_library(
     data = ["//programl/test/data:llvm_ir_graphs"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:bazelutil",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:strutil",
         "//programl/proto:program_graph_cc",
         "@boost//:filesystem",
+        "@labm8//labm8/cpp:bazelutil",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:strutil",
     ],
 )

@@ -22,9 +22,6 @@
 #include "labm8/cpp/string.h"
 #include "programl/proto/program_graph.pb.h"
 
-using labm8::Status;
-using labm8::StatusOr;
-
 namespace programl {
 namespace graph {
 namespace format {
@@ -38,10 +35,11 @@ enum NodeLabel {
 };
 
 // Get the named node feature or return an error status if not found.
-StatusOr<Feature> GetNodeFeature(const Node& node, const string& feature);
+labm8::StatusOr<Feature> GetNodeFeature(const Node& node,
+                                        const string& feature);
 
 // Serialize the given program graph to an output stream.
-[[nodiscard]] Status SerializeGraphVizToString(
+[[nodiscard]] labm8::Status SerializeGraphVizToString(
     const ProgramGraph& graph, std::ostream* ostream,
     const NodeLabel& nodeLabelFormat = kText,
     const string& nodeFeatureName = "");

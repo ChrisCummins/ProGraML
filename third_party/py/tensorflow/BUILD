@@ -13,7 +13,7 @@
 # packing Tensorflow as a pip dependency for bazel.
 # See github.com/bazelbuild/rules_python/issues/71
 
-load("@requirements//:requirements.bzl", "requirement")
+load("@programl_requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -32,23 +32,4 @@ py_library(
         "//third_party/py/numpy",
         "//third_party/py/protobuf",
     ],
-)
-
-py_test(
-    name = "smoke_test",
-    srcs = ["smoke_test.py"],
-    deps = [
-        ":tensorflow",
-        "//labm8/py:app",
-        "//labm8/py:test",
-        "//third_party/py/gputil",
-        "//third_party/py/numpy",
-        "//third_party/py/pytest",
-    ],
-)
-
-py_test(
-    name = "overview",
-    srcs = ["overview.py"],
-    deps = [":tensorflow"],
 )

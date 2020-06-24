@@ -18,6 +18,7 @@
 namespace programl {
 namespace test {
 
+using std::vector;
 namespace fs = boost::filesystem;
 
 template <typename ProtocolBuffer>
@@ -41,7 +42,7 @@ vector<ProtocolBuffer> ReadDirectoryOfProtos(const fs::path& path) {
 
 vector<ProgramGraph> ReadLlvmProgramGraphs() {
   const auto path =
-      labm8::BazelDataPathOrDie("phd/programl/test/data/llvm_ir_graphs");
+      labm8::BazelDataPathOrDie("programl/programl/test/data/llvm_ir_graphs");
   return ReadDirectoryOfProtos<ProgramGraph>(path);
 }
 

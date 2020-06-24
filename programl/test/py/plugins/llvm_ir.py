@@ -19,7 +19,7 @@ from typing import Tuple
 from labm8.py import bazelutil
 from labm8.py import test
 
-LLVM_IR = bazelutil.DataPath("phd/programl/test/data/llvm_ir")
+LLVM_IR = bazelutil.DataPath("programl/programl/test/data/llvm_ir")
 
 
 def EnumerateLlvmIrs() -> Iterable[Tuple[str, str]]:

@@ -18,13 +18,12 @@
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/string.h"
 
-namespace fs = boost::filesystem;
-
 namespace programl {
 namespace task {
 namespace classifyapp {
 
-size_t CreatePoj104Dataset(const string& url, const fs::path& outputPath);
+size_t CreatePoj104Dataset(const string& url,
+                           const boost::filesystem::path& outputPath);
 
 }  // namespace classifyapp
 }  // namespace task

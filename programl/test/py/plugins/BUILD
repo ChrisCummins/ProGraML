@@ -24,8 +24,7 @@ py_library(
     srcs = ["llvm_ir.py"],
     data = ["//programl/test/data:llvm_ir"],
     deps = [
-        "//labm8/py:bazelutil",
-        "//labm8/py:test",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -35,10 +34,8 @@ py_library(
     srcs = ["llvm_program_graph.py"],
     data = ["//programl/test/data:llvm_ir_graphs"],
     deps = [
-        "//labm8/py:bazelutil",
-        "//labm8/py:pbutil",
-        "//labm8/py:test",
         "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -48,6 +45,6 @@ py_library(
     srcs = ["llvm_reachability_features.py"],
     data = ["//programl/test/data:llvm_ir_reachability_features"],
     deps = [
-        "//labm8/py:bazelutil",
+        "//third_party/py/labm8",
     ],
 )

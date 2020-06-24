@@ -17,6 +17,10 @@
 
 #include "labm8/cpp/fsutil.h"
 
+using std::string;
+using std::vector;
+namespace fs = boost::filesystem;
+
 namespace programl {
 namespace util {
 

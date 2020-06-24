@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
@@ -31,7 +32,6 @@
 #include "absl/strings/str_format.h"
 
 namespace fs = boost::filesystem;
-using std::vector;
 
 DEFINE_int32(limit, 0,
              "If --limit > 0, limit the number of input graphs processed to "
@@ -41,19 +41,19 @@ namespace programl {
 namespace task {
 namespace dataflow {
 
-vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root) {
-  vector<fs::path> files;
+std::vector<fs::path> EnumerateProgramGraphFiles(const fs::path& root) {
+  std::vector<fs::path> files;
   for (auto it : fs::directory_iterator(root)) {
     if (labm8::HasSuffixString(it.path().string(), ".ProgramGraph.pb")) {
       files.push_back(it.path());
     }
   }
 
-  // Randomize the order of files to crudely load balancing a
+  // Randomize the order of files to crudely load balance a
   // bunch of parallel workers iterating through this list in order
   // as the there is a high variance in the size / complexity of files.
-  std::srand(unsigned(std::time(0)));
-  std::random_shuffle(files.begin(), files.end());
+  unsigned seed(std::time(0));
+  std::shuffle(files.begin(), files.end(), std::default_random_engine(seed));
   return files;
 }
 

@@ -47,13 +47,13 @@ app.DEFINE_string("db", None, "The database to export from.")
 FLAGS = app.FLAGS
 
 CREATE_LABELS = bazelutil.DataPath(
-  "phd/programl/task/dataflow/dataset/create_labels"
+  "programl/programl/task/dataflow/dataset/create_labels"
 )
 CREATE_VOCAB = bazelutil.DataPath(
-  "phd/programl/task/dataflow/dataset/create_vocab"
+  "programl/programl/task/dataflow/dataset/create_vocab"
 )
 UNPACK_IR_LISTS = bazelutil.DataPath(
-  "phd/programl/task/dataflow/dataset/unpack_ir_lists"
+  "programl/programl/task/dataflow/dataset/unpack_ir_lists"
 )
 
 

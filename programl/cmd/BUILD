@@ -32,13 +32,13 @@ cc_binary(
     srcs = ["analyze.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:status",
         "//programl/graph/analysis",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -52,10 +52,10 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:status",
         "//programl/ir/llvm",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
+        "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
     ],
 )
@@ -65,11 +65,11 @@ cc_binary(
     srcs = ["graph2cdfg.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
         "//programl/graph/format:cdfg",
         "//programl/proto:program_graph_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
+        "@labm8//labm8/cpp:app",
     ],
 )
 
@@ -78,10 +78,10 @@ cc_binary(
     srcs = ["graph2dot.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
         "//programl/graph/format:graphviz_converter",
         "//programl/proto:program_graph_cc",
         "//programl/util:stdin_fmt",
+        "@labm8//labm8/cpp:app",
     ],
 )
 
@@ -90,10 +90,10 @@ cc_binary(
     srcs = ["graph2json.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
         "//programl/graph/format:node_link_graph",
         "//programl/proto:program_graph_cc",
         "//programl/util:stdin_fmt",
+        "@labm8//labm8/cpp:app",
     ],
 )
 
@@ -102,10 +102,10 @@ py_binary(
     srcs = ["graph2nx.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:app",
         "//programl/graph/format/py:nx_format",
         "//programl/proto:program_graph_py",
         "//programl/util/py:stdin_fmt",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -127,13 +127,11 @@ py_binary(
     srcs = ["inst2vec.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:app",
-        "//labm8/py:fs",
-        "//labm8/py:pbutil",
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:program_graph_py",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",
+        "//third_party/py/labm8",
     ],
 )
 
@@ -143,15 +141,15 @@ cc_binary(
     copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:status",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:strutil",
         "//programl/ir/llvm",
         "//programl/proto:ir_cc",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_options_cc",
         "//programl/util:stdout_fmt",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:strutil",
         "@llvm//10.0.0",
     ],
 )
@@ -161,7 +159,6 @@ cc_binary(
     srcs = ["pbq.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
         "//programl/proto:checkpoint_cc",
         "//programl/proto:ir_cc",
         "//programl/proto:program_graph_cc",
@@ -170,6 +167,7 @@ cc_binary(
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
         "@com_google_protobuf//:protobuf",
+        "@labm8//labm8/cpp:app",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )
@@ -179,12 +177,12 @@ cc_binary(
     srcs = ["xla2graph.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/ir/xla:hlo_module_graph_builder",
         "//programl/util:stdin_fmt",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )

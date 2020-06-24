@@ -16,7 +16,7 @@ EOF
 }
 
 # --- begin labm8 init ---
-f=phd/labm8/sh/app.sh
+f=programl/labm8/sh/app.sh
 # shellcheck disable=SC1090
 source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null ||
   source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null ||
@@ -33,7 +33,7 @@ f=
 set -eu
 
 # Paths to binaries.
-PBQ="$(DataPath phd/programl/cmd/pbq)"
+PBQ="$(DataPath programl/programl/cmd/pbq)"
 if [[ -f /usr/local/opt/findutils/libexec/gnubin/find ]]; then
   FIND=/usr/local/opt/findutils/libexec/gnubin/find
 else

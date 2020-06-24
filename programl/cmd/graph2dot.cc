@@ -34,6 +34,7 @@ Where --node_label is the attribute to use for producing node labels. Possible v
 DEFINE_string(node_label, "text", "The node attribute to use for node labels.");
 
 using namespace programl;
+using labm8::Status;
 using namespace programl::graph::format;
 
 void NodeLabelFromFlagsOrDie(NodeLabel* label, string* nodeFeatureName) {

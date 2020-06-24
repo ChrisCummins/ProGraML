@@ -20,10 +20,6 @@
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/logging.h"
 
-using std::string;
-using std::vector;
-namespace fs = boost::filesystem;
-
 namespace programl {
 namespace util {
 
@@ -33,10 +29,11 @@ class FilesystemCache {
   FilesystemCache();
 
   // Convert the given key into a local filesystem path.
-  fs::path operator[](const vector<string>& components) const;
+  boost::filesystem::path operator[](
+      const std::vector<std::string>& components) const;
 
  private:
-  const fs::path root_;
+  const boost::filesystem::path root_;
 };
 
 }  // namespace util

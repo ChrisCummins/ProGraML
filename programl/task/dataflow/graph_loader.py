@@ -28,6 +28,7 @@ from typing import Tuple
 from labm8.py import app
 from labm8.py import humanize
 from labm8.py import pbutil
+
 from programl.graph.format.py import cdfg
 from programl.models import base_graph_loader
 from programl.proto import epoch_pb2
@@ -82,17 +83,17 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
     # The number of graphs that have been skipped.
     self.skip_count = 0
 
-    self._outq = Queue(maxsize=max_queue_size)
-    self._thread = threading.Thread(target=self._Worker)
-    self._thread.start()
-    self._stopped = False
-
     # For every file that a graph loader reads, there is the possibility that
     # the contents of the file are never used, such as in the case of an empty
     # graph, or a features file where all of the features are excluded. We keep
     # track of these useless files so that if we every need to read them again
     # we know that we can skip them and save ourselves a disk access.
     self._excluded_graph_files = set()
+
+    self._outq = Queue(maxsize=max_queue_size)
+    self._thread = threading.Thread(target=self._Worker)
+    self._thread.start()
+    self._stopped = False
 
   def Stop(self):
     if self._stopped:

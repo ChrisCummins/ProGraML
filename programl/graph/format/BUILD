@@ -22,7 +22,6 @@ cc_library(
     hdrs = ["cdfg.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:statusor",
         "//programl/graph:features",
         "//programl/proto:edge_cc",
         "//programl/proto:node_cc",
@@ -37,9 +36,9 @@ cc_test(
     srcs = ["cdfg_test.cc"],
     deps = [
         ":cdfg",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:test",
         "//programl/graph:program_graph_builder",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -60,8 +59,8 @@ cc_test(
     srcs = ["graph_serializer_test.cc"],
     deps = [
         ":graph_serializer",
-        "//labm8/cpp:test",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -71,8 +70,8 @@ cc_library(
     hdrs = ["graph_tuple.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:status",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -81,10 +80,10 @@ cc_test(
     srcs = ["graph_tuple_test.cc"],
     deps = [
         ":graph_tuple",
-        "//labm8/cpp:status",
-        "//labm8/cpp:test",
         "//programl/proto:edge_cc",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -94,13 +93,13 @@ cc_library(
     hdrs = ["graphviz_converter.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:status",
-        "//labm8/cpp:status_macros",
-        "//labm8/cpp:statusor",
-        "//labm8/cpp:string",
         "//programl/proto:program_graph_cc",
         "@boost//:graph",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
     ],
 )
 
@@ -110,10 +109,10 @@ cc_library(
     hdrs = ["node_link_graph.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
-        "//labm8/cpp:status_macros",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
         "@nlohmann_json//:json",
     ],
 )
@@ -123,10 +122,10 @@ cc_test(
     srcs = ["node_link_graph_test.cc"],
     deps = [
         ":node_link_graph",
-        "//labm8/cpp:status",
-        "//labm8/cpp:string",
-        "//labm8/cpp:test",
         "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:string",
+        "@labm8//labm8/cpp:test",
         "@nlohmann_json//:json",
     ],
 )

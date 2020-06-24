@@ -17,7 +17,6 @@
 // limitations under the License.
 #pragma once
 
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -27,18 +26,8 @@
 #include "labm8/cpp/string.h"
 #include "programl/proto/program_graph.pb.h"
 
-using labm8::Status;
-using labm8::StatusOr;
-using std::pair;
-using std::tuple;
-using std::vector;
-
 namespace programl {
 namespace graph {
-
-// An <entry, exits> pair which records the nodes of a function's entry and
-// exit instructions, respectively.
-using FunctionEntryExits = pair<Node*, vector<Node*>>;
 
 // A module for constructing a single program graph.
 //
@@ -73,16 +62,16 @@ class ProgramGraphBuilder {
   Node* AddConstant(const string& text);
 
   // Edge factories.
-  [[nodiscard]] StatusOr<Edge*> AddControlEdge(int32_t position,
-                                               const Node* source,
-                                               const Node* target);
+  [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position,
+                                                      const Node* source,
+                                                      const Node* target);
 
-  [[nodiscard]] StatusOr<Edge*> AddDataEdge(int32_t position,
-                                            const Node* source,
-                                            const Node* target);
+  [[nodiscard]] labm8::StatusOr<Edge*> AddDataEdge(int32_t position,
+                                                   const Node* source,
+                                                   const Node* target);
 
-  [[nodiscard]] StatusOr<Edge*> AddCallEdge(const Node* source,
-                                            const Node* target);
+  [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source,
+                                                   const Node* target);
 
   const Node* GetRootNode() const { return &graph_.node(0); }
 
@@ -90,7 +79,7 @@ class ProgramGraphBuilder {
   const ProgramGraph& GetProgramGraph() const { return graph_; }
 
   // Validate the program graph and return it. Call Clear() if you wish to
-  [[nodiscard]] StatusOr<ProgramGraph> Build();
+  [[nodiscard]] labm8::StatusOr<ProgramGraph> Build();
 
   // Reset builder state.
   void Clear();

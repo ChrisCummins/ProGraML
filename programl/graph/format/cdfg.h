@@ -22,7 +22,6 @@
 // limitations under the License.
 #pragma once
 
-#include "labm8/cpp/statusor.h"
 #include "programl/proto/program_graph.pb.h"
 
 #include <vector>
@@ -32,9 +31,6 @@
 namespace programl {
 namespace graph {
 namespace format {
-
-using labm8::StatusOr;
-using std::vector;
 
 class CDFGBuilder {
  public:
@@ -56,7 +52,7 @@ class CDFGBuilder {
   //
   // GetNodeList() will return [2, 4, 5]. The node list reset after each call to
   // Build().
-  const vector<int>& GetNodeList() const;
+  const std::vector<int>& GetNodeList() const;
 
  protected:
   void Clear();
@@ -64,13 +60,13 @@ class CDFGBuilder {
  private:
   // A list of old graph node indices in the order that they appear in the new
   // graph.
-  vector<int> nodeList_;
+  std::vector<int> nodeList_;
 };
 
 // Convert a list of node indices into a map from node index to new node index.
 // E.g. [1, 2, 5] returns a map {1: 0, 2: 1, 5: 2}.
 absl::flat_hash_map<int, int> NodeListToTranslationMap(
-    const vector<int>& nodeList);
+    const std::vector<int>& nodeList);
 
 }  // namespace format
 }  // namespace graph

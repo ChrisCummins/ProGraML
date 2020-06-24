@@ -21,7 +21,7 @@ namespace programl {
 namespace ir {
 namespace xla {
 
-string ShapeProtoToString(const ShapeProto& shape) {
+string ShapeProtoToString(const ::xla::ShapeProto& shape) {
   std::stringstream str;
   str << PrimitiveType_Name(shape.element_type());
   for (int i = 0; i < shape.dimensions_size(); ++i) {
@@ -31,7 +31,7 @@ string ShapeProtoToString(const ShapeProto& shape) {
   return str.str();
 }
 
-string HloInstructionToText(const HloInstructionProto& instruction) {
+string HloInstructionToText(const ::xla::HloInstructionProto& instruction) {
   if (instruction.opcode() == "parameter" ||
       instruction.opcode() == "constant") {
     return instruction.name();
@@ -40,7 +40,7 @@ string HloInstructionToText(const HloInstructionProto& instruction) {
   return instruction.opcode();
 }
 
-string LiteralProtoToText(const LiteralProto& literal) {
+string LiteralProtoToText(const ::xla::LiteralProto& literal) {
   return ShapeProtoToString(literal.shape());
 }
 

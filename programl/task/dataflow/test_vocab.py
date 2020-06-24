@@ -18,14 +18,14 @@ import csv
 import pathlib
 from collections import defaultdict
 
-from deeplearning.ncc.vocabulary import VocabularyZipFile
 from labm8.py import app
 from labm8.py import pbutil
 from labm8.py import progress
-from programl.proto import node_pb2
+
 from programl.proto import program_graph_pb2
 from programl.task.dataflow.dataset import pathflag
 from programl.task.dataflow.vocabulary import LoadVocabulary
+from third_party.py.ncc.vocabulary import VocabularyZipFile
 
 
 app.DEFINE_integer("limit", 0, "Limit the number of files read.")

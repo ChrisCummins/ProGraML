@@ -26,14 +26,12 @@ namespace programl {
 namespace graph {
 namespace format {
 
-using absl::flat_hash_map;
-using std::vector;
-
 // Produce a serialized list of node indices for the instructions in a graph.
 // Order is determined by a depth first traversal of the instructions in each
 // function.
 void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         vector<int>* serialized, int maxNodes);
+                                         std::vector<int>* serialized,
+                                         int maxNodes);
 
 // Produce a serialized list of node indices for the instructions in a graph.
 // Order is determined by a depth first traversal of the instructions in each
@@ -47,8 +45,8 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
 // function.
 bool SerializeInstructionsInFunction(
     const int& root,
-    const flat_hash_map<int, vector<int>>& forward_control_edges,
-    vector<int>* serialized, int maxNodes);
+    const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
+    std::vector<int>* serialized, int maxNodes);
 
 }  // namespace format
 }  // namespace graph

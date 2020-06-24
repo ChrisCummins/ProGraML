@@ -22,6 +22,7 @@
 #include "programl/graph/analysis/reachability.h"
 #include "programl/graph/analysis/subexpressions.h"
 
+using labm8::Status;
 namespace error = labm8::error;
 
 namespace programl {

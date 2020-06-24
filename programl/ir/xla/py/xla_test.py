@@ -25,7 +25,7 @@ from programl.ir.xla.py import xla
 
 FLAGS = app.FLAGS
 
-TEST_PROTO = bazelutil.DataPath("phd/programl/test/data/a.hlo.pb")
+TEST_PROTO = bazelutil.DataPath("programl/programl/test/data/a.hlo.pb")
 
 
 def test_empty_proto():

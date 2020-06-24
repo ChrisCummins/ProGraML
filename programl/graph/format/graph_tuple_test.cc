@@ -22,8 +22,6 @@
 #include "programl/proto/edge.pb.h"
 #include "programl/proto/program_graph.pb.h"
 
-using labm8::Status;
-
 namespace programl {
 namespace graph {
 namespace format {

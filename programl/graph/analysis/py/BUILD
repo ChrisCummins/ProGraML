@@ -36,11 +36,11 @@ pybind_extension(
     name = "analysis_pybind",
     srcs = ["analysis_pybind.cc"],
     deps = [
-        "//labm8/cpp:status",
-        "//labm8/cpp:string",
         "//programl/graph:program_graph_builder",
         "//programl/graph/analysis",
         "//programl/proto:program_graph_cc",
         "//programl/proto:program_graph_features_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:string",
     ],
 )

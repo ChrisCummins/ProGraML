@@ -22,7 +22,7 @@ from programl.proto import program_graph_options_pb2
 from programl.proto import program_graph_pb2
 
 GRAPH_BUILDER_BIN = bazelutil.DataPath(
-  "phd/programl/ir/llvm/py/graph_builder_bin"
+  "programl/programl/ir/llvm/py/graph_builder_bin"
 )
 
 DefaultOptions = program_graph_options_pb2.ProgramGraphOptions()

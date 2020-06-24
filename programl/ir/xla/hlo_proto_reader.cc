@@ -48,12 +48,12 @@ labm8::StatusOr<string> ReadFileOrStdin(const string& path, std::istream& ins) {
   return str;
 }
 
-labm8::StatusOr<HloProto> GetHloProtoFromFileOrStdin(const string& path,
-                                                     bool wireFormat) {
+labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(const string& path,
+                                                            bool wireFormat) {
   string serializedProto;
   ASSIGN_OR_RETURN(serializedProto, ReadFileOrStdin(path));
 
-  HloProto proto;
+  ::xla::HloProto proto;
   if (wireFormat) {
     if (!proto.ParseFromString(serializedProto)) {
       return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,

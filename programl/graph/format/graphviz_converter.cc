@@ -62,10 +62,10 @@ using GraphvizGraph = boost::adjacency_list<
     /*EdgeProperties=*/EdgeProperties,
     /*GraphProperties=*/GraphProperties>;
 
-Status SerializeGraphVizToString(const ProgramGraph& graph,
-                                 std::ostream* ostream,
-                                 const NodeLabel& nodeLabelFormat,
-                                 const string& nodeFeatureName) {
+labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
+                                        std::ostream* ostream,
+                                        const NodeLabel& nodeLabelFormat,
+                                        const string& nodeFeatureName) {
   // To construct a graphviz graph, we create a main graph and then produce
   // a subgraph for each function in the graph. Vertices (nodes) are then added
   // to the subgraphs, and edges added to the main graph.
@@ -258,7 +258,7 @@ Status SerializeGraphVizToString(const ProgramGraph& graph,
 
   boost::write_graphviz(*ostream, main);
 
-  return Status::OK;
+  return labm8::Status::OK;
 }
 
 }  // namespace format

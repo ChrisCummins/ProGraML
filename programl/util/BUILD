@@ -22,9 +22,9 @@ cc_library(
     hdrs = ["filesystem_cache.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:fsutil",
-        "//labm8/cpp:logging",
         "@boost//:filesystem",
+        "@labm8//labm8/cpp:fsutil",
+        "@labm8//labm8/cpp:logging",
     ],
 )
 
@@ -43,8 +43,8 @@ py_binary(
     srcs = ["perf_monitor.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//labm8/py:app",
         "//third_party/py/gputil",
+        "//third_party/py/labm8",
         "//third_party/py/numpy",
         "//third_party/py/psutil",
     ],
@@ -56,10 +56,10 @@ cc_library(
     hdrs = ["stdin_fmt.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "@com_google_protobuf//:protobuf",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )
 
@@ -69,9 +69,9 @@ cc_library(
     hdrs = ["stdout_fmt.h"],
     visibility = ["//programl:__subpackages__"],
     deps = [
-        "//labm8/cpp:app",
-        "//labm8/cpp:logging",
-        "//labm8/cpp:status",
         "@com_google_protobuf//:protobuf",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:logging",
+        "@labm8//labm8/cpp:status",
     ],
 )

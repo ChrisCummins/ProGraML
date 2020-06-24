@@ -29,6 +29,9 @@ Usage:
 
 DEFINE_bool(pretty_print, false, "Pretty-print the generated JSON.");
 
+using json = nlohmann::json;
+using labm8::Status;
+
 int main(int argc, char** argv) {
   labm8::InitApp(&argc, &argv, usage);
   if (argc != 1) {

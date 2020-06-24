@@ -27,8 +27,6 @@ namespace programl {
 namespace ir {
 namespace xla {
 
-using ::xla::HloProto;
-
 // Read the contents of a file to string.
 labm8::StatusOr<string> ReadFileOrStdin(const string& path,
                                         std::istream& stdin = std::cin);
@@ -38,8 +36,8 @@ labm8::StatusOr<string> ReadFileOrStdin(const string& path,
 // Args:
 //     wireFormat: If true, read wire format proto. Else, read text
 //         format proto.
-labm8::StatusOr<HloProto> GetHloProtoFromFileOrStdin(const string& path,
-                                                     bool wireFormat = true);
+labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(
+    const string& path, bool wireFormat = true);
 
 }  // namespace xla
 }  // namespace ir

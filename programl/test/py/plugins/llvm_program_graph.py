@@ -21,7 +21,9 @@ from labm8.py import pbutil
 from labm8.py import test
 from programl.proto import program_graph_pb2
 
-LLVM_IR_GRAPHS = bazelutil.DataPath("phd/programl/test/data/llvm_ir_graphs")
+LLVM_IR_GRAPHS = bazelutil.DataPath(
+  "programl/programl/test/data/llvm_ir_graphs"
+)
 
 
 def EnumerateLlvmProgramGraphs() -> Iterable[
