@@ -11,9 +11,9 @@ load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
 # Python config. Needed by pybind11_bazel.
-load("//third_party/py:python_configure.bzl", "python_configure")
+load("@programl//third_party/py:python_configure.bzl", programl_python_configure = "python_configure")
 
-python_configure(name = "local_config_python")
+programl_python_configure(name = "local_config_python")
 
 # LLVM.
 load("@llvm//tools/bzl:deps.bzl", "llvm_deps")
