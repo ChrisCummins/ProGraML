@@ -12,7 +12,7 @@ EOF
 }
 
 # --- begin labm8 init ---
-f=programl/labm8/sh/app.sh
+f=programl/external/labm8/labm8/sh/app.sh
 # shellcheck disable=SC1090
 source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null ||
   source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null ||
