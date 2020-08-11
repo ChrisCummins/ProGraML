@@ -112,10 +112,16 @@ flow analysis labels.
 * macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
 * bazel ≥ 2.0
 * Python ≥ 3.6
+* MySQL client (N.B. this is not the full MySQL server, just the connector)
+  * On macOS: `brew install mysql-client`
+  * On Ubuntu: `sudo apt-get install libmysqlclient-dev`
+* A Fortran compiler:
+  * On macOS: `brew cask install gfortran`
+  * (Ubuntu has one by default)
 * (Optional) NVIDIA GPU with CUDA drivers for TensorFlow and PyTorch
 
-Test that you have everything prepared by building and running the full test
-suite:
+Once you have the above requirements installed, test that everything is working
+by building and running full test suite:
 
 ```sh
 $ bazel test //programl/...
