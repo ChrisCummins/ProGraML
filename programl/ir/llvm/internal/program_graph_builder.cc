@@ -39,6 +39,16 @@ namespace ir {
 namespace llvm {
 namespace internal {
 
+ProgramGraphBuilder::ProgramGraphBuilder(const ProgramGraphOptions& options)
+    : programl::graph::ProgramGraphBuilder(),
+      options_(options),
+      blockCount_(0),
+      stringsList_((*GetMutableProgramGraph()->mutable_features()->mutable_feature())["strings"]
+                       .mutable_bytes_list()) {
+  // Add an empty
+  graph::AddScalarFeature(GetMutableRootNode(), "llvm_string", AddString(""));
+}
+
 labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
     const ::llvm::BasicBlock& block, const Function* functionMessage, InstructionMap* instructions,
     ArgumentConsumerMap* argumentConsumers, std::vector<DataEdge>* dataEdgesToAdd) {
@@ -184,7 +194,7 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
 
   if (function.isDeclaration()) {
     Node* node = AddInstruction("; undefined function", functionMessage);
-    graph::AddScalarFeature(node, "full_text", "");
+    graph::AddScalarFeature(node, "llvm_string", AddString(""));
     functionEntryExits.first = node;
     functionEntryExits.second.push_back(node);
     return functionEntryExits;
@@ -305,7 +315,7 @@ Node* ProgramGraphBuilder::AddLlvmInstruction(const ::llvm::Instruction* instruc
   const LlvmTextComponents text = textEncoder_.Encode(instruction);
   Node* node = AddInstruction(text.opcode_name, function);
   node->set_block(blockCount_);
-  graph::AddScalarFeature(node, "full_text", text.text);
+  graph::AddScalarFeature(node, "llvm_string", AddString(text.text));
 
   // Add profiling information features, if available.
   uint64_t profTotalWeight;
@@ -327,7 +337,7 @@ Node* ProgramGraphBuilder::AddLlvmVariable(const ::llvm::Instruction* operand,
   const LlvmTextComponents text = textEncoder_.Encode(operand);
   Node* node = AddVariable(text.lhs_type, function);
   node->set_block(blockCount_);
-  graph::AddScalarFeature(node, "full_text", text.lhs);
+  graph::AddScalarFeature(node, "llvm_string", AddString(text.lhs));
 
   return node;
 }
@@ -337,7 +347,7 @@ Node* ProgramGraphBuilder::AddLlvmVariable(const ::llvm::Argument* argument,
   const LlvmTextComponents text = textEncoder_.Encode(argument);
   Node* node = AddVariable(text.lhs_type, function);
   node->set_block(blockCount_);
-  graph::AddScalarFeature(node, "full_text", text.lhs);
+  graph::AddScalarFeature(node, "llvm_string", AddString(text.lhs));
 
   return node;
 }
@@ -346,7 +356,7 @@ Node* ProgramGraphBuilder::AddLlvmConstant(const ::llvm::Constant* constant) {
   const LlvmTextComponents text = textEncoder_.Encode(constant);
   Node* node = AddConstant(text.lhs_type);
   node->set_block(blockCount_);
-  graph::AddScalarFeature(node, "full_text", text.text);
+  graph::AddScalarFeature(node, "llvm_string", AddString(text.text));
 
   return node;
 }
@@ -434,6 +444,27 @@ void ProgramGraphBuilder::Clear() {
   blockCount_ = 0;
   callSites_.clear();
   programl::graph::ProgramGraphBuilder::Clear();
+}
+
+Node* ProgramGraphBuilder::GetOrCreateType(const ::llvm::Type* type) {
+  auto it = types_.find(type);
+  if (it == types_.end()) {
+    Node* node = AddLlvmType(type);
+    types_[type] = node;
+    return node;
+  }
+  return it->second;
+}
+
+int32_t ProgramGraphBuilder::AddString(const string& text) {
+  auto it = stringsListPositions_.find(text);
+  if (it == stringsListPositions_.end()) {
+    int32_t index = stringsListPositions_.size();
+    stringsListPositions_[text] = index;
+    stringsList_->add_value(text);
+    return index;
+  }
+  return it->second;
 }
 
 }  // namespace internal
