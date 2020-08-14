@@ -38,6 +38,7 @@ message Edge {
     CONTROL = 0;
     DATA = 1;
     CALL = 2;
+    TYPE = 3;
   }
   Flow flow = 1;
   int32 position = 2;

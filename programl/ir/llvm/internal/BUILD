@@ -43,6 +43,7 @@ cc_library(
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:status_macros",
         "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:string",
         "@llvm//10.0.0",
     ],
