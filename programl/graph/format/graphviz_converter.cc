@@ -169,26 +169,30 @@ class GraphVizSerializer {
   template <typename T>
   void SetVertexAttributes(const Node& node, T& attributes) {
     attributes["label"] = GetNodeLabel(node);
+    attributes["style"] = "filled";
     switch (node.type()) {
       case Node::INSTRUCTION:
         attributes["shape"] = "box";
-        attributes["style"] = "filled";
         attributes["fillcolor"] = "#3c78d8";
         attributes["fontcolor"] = "#ffffff";
         break;
       case Node::VARIABLE:
         attributes["shape"] = "ellipse";
-        attributes["style"] = "filled";
         attributes["fillcolor"] = "#f4cccc";
         attributes["color"] = "#990000";
         attributes["fontcolor"] = "#990000";
         break;
       case Node::CONSTANT:
-        attributes["shape"] = "diamond";
-        attributes["style"] = "filled";
+        attributes["shape"] = "octagon";
         attributes["fillcolor"] = "#e99c9c";
         attributes["color"] = "#990000";
         attributes["fontcolor"] = "#990000";
+        break;
+      case Node::TYPE:
+        attributes["shape"] = "diamond";
+        attributes["fillcolor"] = "#cccccc";
+        attributes["color"] = "#cccccc";
+        attributes["fontcolor"] = "#222222";
         break;
     }
   }
@@ -201,7 +205,7 @@ class GraphVizSerializer {
       const Node& node = graph_.node(i);
       // Determine the subgraph to add this node to.
       boost::subgraph<GraphvizGraph>* dst = defaultGraph;
-      if (i && node.type() != Node::CONSTANT) {
+      if (i && (node.type() == Node::INSTRUCTION || node.type() == Node::VARIABLE)) {
         dst = &(*functionGraphs)[node.function()].get();
       }
       auto vertex = add_vertex(i, *dst);
@@ -226,14 +230,20 @@ class GraphVizSerializer {
         attributes["color"] = "#65ae4d";
         attributes["weight"] = "1";
         break;
+      case Edge::TYPE:
+        attributes["color"] = "#aaaaaa";
+        attributes["weight"] = "1";
+        attributes["penwidth"] = "1.5";
+        break;
     }
 
     // Set the edge label.
     if (edge.position()) {
       // Position labels for control edge are drawn close to the originating
-      // instruction. For data edges, they are drawn closer to the consuming
-      // instruction.
-      const string label = edge.flow() == Edge::DATA ? "headlabel" : "taillabel";
+      // instruction. For control edges, they are drawn close to the branching
+      // instruction. For data and type edges, they are drawn close to the
+      // consuming node.
+      const string label = edge.flow() == Edge::CONTROL ? "taillabel" : "headlabel";
       attributes[label] = std::to_string(edge.position());
       attributes["labelfontcolor"] = attributes["color"];
     }

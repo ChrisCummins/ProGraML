@@ -14,10 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Unit tests for //programl/ir/llvm/py:llvm."""
+from collections import defaultdict
+
 from labm8.py import test
 
 from programl.ir.llvm.py import llvm
-from programl.proto import node_pb2, program_graph_options_pb2, program_graph_pb2
+from programl.proto import (
+    edge_pb2,
+    node_pb2,
+    program_graph_options_pb2,
+    program_graph_pb2,
+)
 
 SIMPLE_IR = """
 source_filename = "foo.c"
@@ -52,7 +59,7 @@ def test_simple_ir():
     assert len(proto.module) == 1
     assert proto.module[0].name == "foo.c"
 
-    assert len(proto.node) == 6
+    assert len(proto.node) == 7
     assert proto.node[0].text == "[external]"
     assert proto.node[0].type == node_pb2.Node.INSTRUCTION
 
@@ -64,19 +71,35 @@ def test_simple_ir():
     assert proto.node[2].type == node_pb2.Node.INSTRUCTION
     assert NodeFullText(proto, proto.node[2]) == "ret i32 %3"
 
-    assert proto.node[3].text == "i32"
+    assert proto.node[3].text == "var"
     assert proto.node[3].type == node_pb2.Node.VARIABLE
     assert NodeFullText(proto, proto.node[3]) == "i32 %3"
 
+    assert proto.node[4].text == "i32"
+    assert proto.node[4].type == node_pb2.Node.TYPE
+    assert NodeFullText(proto, proto.node[4]) == "i32"
+
     # Use startswith() to compare names for these last two variables as thier
     # order may differ.
-    assert proto.node[4].text == "i32"
-    assert proto.node[4].type == node_pb2.Node.VARIABLE
-    assert NodeFullText(proto, proto.node[4]).startswith("i32 %")
-
-    assert proto.node[5].text == "i32"
+    assert proto.node[5].text == "var"
     assert proto.node[5].type == node_pb2.Node.VARIABLE
     assert NodeFullText(proto, proto.node[5]).startswith("i32 %")
+
+    assert proto.node[6].text == "var"
+    assert proto.node[6].type == node_pb2.Node.VARIABLE
+    assert NodeFullText(proto, proto.node[6]).startswith("i32 %")
+
+    adjacencies = defaultdict(lambda: defaultdict(list))
+    for edge in proto.edge:
+        adjacencies[edge.flow][edge.source].append(edge.target)
+    print(adjacencies)
+
+    assert 1 in adjacencies[edge_pb2.Edge.CALL][0]  # [external] -> add
+    assert 2 in adjacencies[edge_pb2.Edge.CONTROL][1]  # add -> ret
+
+    assert 3 in adjacencies[edge_pb2.Edge.TYPE][4]  # type -> var
+    assert 5 in adjacencies[edge_pb2.Edge.TYPE][4]  # type -> var
+    assert 6 in adjacencies[edge_pb2.Edge.TYPE][4]  # type -> var
 
 
 def test_opt_level():

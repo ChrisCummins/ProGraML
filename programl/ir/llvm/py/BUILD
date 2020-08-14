@@ -39,6 +39,7 @@ py_test(
     srcs = ["llvm_test.py"],
     deps = [
         ":llvm",
+        "//programl/proto:edge_py",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_options_py",
         "//programl/proto:program_graph_py",

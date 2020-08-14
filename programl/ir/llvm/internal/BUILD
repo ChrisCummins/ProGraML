@@ -41,6 +41,7 @@ cc_library(
         "//programl/proto:program_graph_options_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:status_macros",
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
