@@ -4,7 +4,7 @@
 # House keeping notes:
 #
 #   1) When you add a new command line tool, consider adding
-#      it to the //programl:install so that it is installed
+#      it to the //:install target so that it is installed
 #      into the user path.
 #
 #   2) Run ./programl/cmd/update_docs.sh and commit any
