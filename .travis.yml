@@ -50,4 +50,7 @@ before_install:
   - rm -f install.sh
 
 script:
+  # Run the test suite.
   - bazel query 'tests(//programl/...) except attr("tags", "notravis", //programl/...)' | xargs bazel test --config=travis --keep_going --verbose_failures --test_output=errors
+  # Install the package.
+  - mkdir $TRAVIS_BUILD_DIR/install && bazel run -c opt //:install $TRAVIS_BUILD_DIR/install
