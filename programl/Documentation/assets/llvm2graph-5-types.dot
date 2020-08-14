@@ -22,6 +22,9 @@ edge [
 // === Nodes ===
 external            [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393" label="[external]", width=2];
 
+// Types:
+i32                 [shape=diamond, margin=0, style=filled, fillcolor="#CCCCCC", width=1, color="#CCCCCC", fontcolor="#222222", label="i32"];
+
 // Constants:
 const_0             [shape=octagon, margin=0, style=filled, fillcolor="#F4CCCC", width=1, color="#F4CCCC", fontcolor="#990000", label="val"]; // 0
 const_1             [shape=octagon, margin=0, style=filled, fillcolor="#F4CCCC", width=1, color="#F4CCCC", fontcolor="#990000", label="val"];  // 1
@@ -91,15 +94,28 @@ const_minus_1 -> inst_add_minus_1   [color="#EA9999", labelfontcolor="#990000"];
 const_minus_2 -> inst_add_minus_2   [color="#EA9999", labelfontcolor="#990000"];
 
 // Call edges
-external -> inst_switch         [color="#2c9456", penwidth=3, weight=1];
-ret_2 -> external               [color="#2c9456", penwidth=3, weight=1];
-ret_1 -> external               [color="#2c9456", penwidth=3, weight=1];
-ret_1 -> call_2                 [color="#2c9456", penwidth=3, weight=1];
-ret_1 -> call_1                 [color="#2c9456", penwidth=3, weight=1];
-call_1 -> inst_switch           [color="#2c9456", penwidth=3, weight=1];
-call_2 -> inst_switch           [color="#2c9456", penwidth=3, weight=1];
-ret_2 -> call_2                 [color="#2c9456", penwidth=3, weight=1];
-ret_2 -> call_1                 [color="#2c9456", penwidth=3, weight=1];
+external -> inst_switch         [color="#5dba83", weight=0];
+ret_2 -> external               [color="#5dba83", weight=0];
+ret_1 -> external               [color="#5dba83", weight=0];
+ret_1 -> call_2                 [color="#5dba83", weight=0];
+ret_1 -> call_1                 [color="#5dba83", weight=0];
+call_1 -> inst_switch           [color="#5dba83", weight=0];
+call_2 -> inst_switch           [color="#5dba83", weight=0];
+ret_2 -> call_2                 [color="#5dba83", weight=0];
+ret_2 -> call_1                 [color="#5dba83", weight=0];
+
+// Type edges
+i32 -> const_0                  [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> const_1                  [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> const_minus_1            [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> const_minus_2            [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> arg_0                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_4                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_5                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_6                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_7                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_8                    [color="#AAAAAA", penwidth=3, weight=1];
+i32 -> var_10                   [color="#AAAAAA", penwidth=3, weight=1];
 
 rankdir = TB;
 {rank = same; inst_add_minus_1; phi; inst_br;}

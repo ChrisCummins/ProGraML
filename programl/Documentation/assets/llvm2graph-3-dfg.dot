@@ -23,10 +23,10 @@ edge [
 external            [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393" label="[external]", width=2];
 
 // Constants:
-const_1             [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // 1
-const_0             [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"]; // 0
-const_minus_1       [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // -1
-const_minus_2       [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // -2
+const_1             [shape=octagon, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="val"];  // 1
+const_0             [shape=octagon, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="val"]; // 0
+const_minus_1       [shape=octagon, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="val"];  // -1
+const_minus_2       [shape=octagon, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="val"];  // -2
 
 // Instructions:
 inst_switch         [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=2, label="switch"];
@@ -41,13 +41,13 @@ ret_2               [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAF
 ret_1               [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="ret"];
 
 // Variables:
-arg_0               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"]; // %0
-var_4               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %4
-var_5               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %5
-var_6               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %6
-var_7               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %7
-var_8               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %8
-var_10              [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %10
+arg_0               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"]; // %0
+var_4               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %4
+var_5               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %5
+var_6               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %6
+var_7               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %7
+var_8               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %8
+var_10              [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="var"];  // %10
 
 
 // === Edges ===

@@ -74,7 +74,7 @@ control flow in that `switch` instruction.
 <img src="/programl/Documentation/assets/llvm2graph-3-dfg.png" width=300>
 
 Then we add a graph node for every variable and constant. In the drawing above,
-the diamonds are constants and the variables are ovals. We add data-flow edges
+the octagons are constants and the variables are ovals. We add data-flow edges
 to describe the relations between constants and the instructions that use them,
 and variables and the constants which define/use them. Like control edges, data
 edges have positions. In the case of data edges, the position encodes the order
@@ -84,11 +84,22 @@ of a data element in the list of instruction operands.
 
 <img src="/programl/Documentation/assets/llvm2graph-4-cg.png" width=300>
 
-Finally, we add call edges (green) from callsites to the function entry
-instruction, and return edges from function exits to the callsite. Since this is
-a graph of a recursive function, the callsites refer back to the entry of the
-function (the `switch`). The `external` node is used to represent a call from an
-external site.
+Then we add call edges (green) from callsites to the function entry
+instruction, and return edges from function exits to the callsite. Since this
+is a graph of a recursive function, the callsites refer back to the entry of
+the function (the `switch`). The `external` node is used to represent a call
+from an external site.
+
+#### Step 5: Type graph
+
+<img src="/programl/Documentation/assets/llvm2graph-5-types.png" width=300>
+
+Finally, we add data types to the graph. Each unique type is represented as
+a node and connected to all instances of this type through type edges.
+Composite types such as structs, arrays, or pointers to types (not shown here)
+are composed of individual nodes for each primitive type that are then composed
+through type edges. For struct types, a numeric edge position indicates the
+position of each element in the struct's field list.
 
 The process described above can be run locally using our
 [`clang2graph`](/programl/Documentation/cmd/clang2graph.txt) and
