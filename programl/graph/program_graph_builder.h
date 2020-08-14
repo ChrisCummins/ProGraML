@@ -99,6 +99,9 @@ class ProgramGraphBuilder {
   inline Edge* AddEdge(const Edge::Flow& flow, int32_t position,
                        const Node* source, const Node* target);
 
+  // Return a mutable pointer to the root node in the graph.
+  Node* GetMutableRootNode() { return graph_.mutable_node(0); }
+
   // Return a mutable pointer to the graph protocol buffer.
   ProgramGraph* GetMutableProgramGraph() { return &graph_; }
 

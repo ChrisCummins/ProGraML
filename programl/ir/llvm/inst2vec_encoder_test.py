@@ -56,10 +56,21 @@ class Inst2vecGraphBuilder(program_graph_builder.ProgramGraphBuilder):
 
   def Build(self):
     proto = super(Inst2vecGraphBuilder, self).Build()
+
+    # Add the root node string feature.
+    proto.node[0].features.feature["llvm_string"].int64_list.value[:] = [0]
+
+    # Build the strings list.
+    strings_list = list(set(self.full_texts.values()))
+    proto.features.feature["strings"].bytes_list.value[:] = [
+      string.encode("utf-8") for string in strings_list
+    ]
+
+    # Add the string indices.
     for node, full_text in self.full_texts.items():
-      proto.node[node].features.feature["full_text"].bytes_list.value.append(
-        full_text.encode("utf-8")
-      )
+      idx = strings_list.index(full_text)
+      node_feature = proto.node[node].features.feature["llvm_string"]
+      node_feature.int64_list.value.append(idx)
     return proto
 
 
