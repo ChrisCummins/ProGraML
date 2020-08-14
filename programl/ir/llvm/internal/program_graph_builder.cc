@@ -20,6 +20,7 @@
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
+#include "labm8/cpp/logging.h"
 #include "labm8/cpp/status_macros.h"
 #include "labm8/cpp/string.h"
 #include "llvm/IR/BasicBlock.h"
@@ -323,9 +324,13 @@ Node* ProgramGraphBuilder::AddLlvmInstruction(const ::llvm::Instruction* instruc
 Node* ProgramGraphBuilder::AddLlvmVariable(const ::llvm::Instruction* operand,
                                            const programl::Function* function) {
   const LlvmTextComponents text = textEncoder_.Encode(operand);
-  Node* node = AddVariable(text.lhs_type, function);
+  Node* node = AddVariable("var", function);
   node->set_block(blockCount_);
   graph::AddScalarFeature(node, "full_text", text.lhs);
+
+  compositeTypeParts_.clear();  // Reset after previous call.
+  Node* type = GetOrCreateType(operand->getType());
+  CHECK(AddTypeEdge(/*position=*/0, type, node).ok());
 
   return node;
 }
@@ -333,19 +338,117 @@ Node* ProgramGraphBuilder::AddLlvmVariable(const ::llvm::Instruction* operand,
 Node* ProgramGraphBuilder::AddLlvmVariable(const ::llvm::Argument* argument,
                                            const programl::Function* function) {
   const LlvmTextComponents text = textEncoder_.Encode(argument);
-  Node* node = AddVariable(text.lhs_type, function);
+  Node* node = AddVariable("var", function);
   node->set_block(blockCount_);
   graph::AddScalarFeature(node, "full_text", text.lhs);
+
+  compositeTypeParts_.clear();  // Reset after previous call.
+  Node* type = GetOrCreateType(argument->getType());
+  CHECK(AddTypeEdge(/*position=*/0, type, node).ok());
 
   return node;
 }
 
 Node* ProgramGraphBuilder::AddLlvmConstant(const ::llvm::Constant* constant) {
   const LlvmTextComponents text = textEncoder_.Encode(constant);
-  Node* node = AddConstant(text.lhs_type);
+  Node* node = AddConstant("val");
   node->set_block(blockCount_);
   graph::AddScalarFeature(node, "full_text", text.text);
 
+  compositeTypeParts_.clear();  // Reset after previous call.
+  Node* type = GetOrCreateType(constant->getType());
+  CHECK(AddTypeEdge(/*position=*/0, type, node).ok());
+
+  return node;
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::Type* type) {
+  // Dispatch to the type-specific handlers.
+  if (::llvm::dyn_cast<::llvm::StructType>(type)) {
+    return AddLlvmType(::llvm::dyn_cast<::llvm::StructType>(type));
+  } else if (::llvm::dyn_cast<::llvm::PointerType>(type)) {
+    return AddLlvmType(::llvm::dyn_cast<::llvm::PointerType>(type));
+  } else if (::llvm::dyn_cast<::llvm::FunctionType>(type)) {
+    return AddLlvmType(::llvm::dyn_cast<::llvm::FunctionType>(type));
+  } else if (::llvm::dyn_cast<::llvm::ArrayType>(type)) {
+    return AddLlvmType(::llvm::dyn_cast<::llvm::ArrayType>(type));
+  } else if (::llvm::dyn_cast<::llvm::VectorType>(type)) {
+    return AddLlvmType(::llvm::dyn_cast<::llvm::VectorType>(type));
+  } else {
+    const LlvmTextComponents text = textEncoder_.Encode(type);
+    Node* node = AddType(text.text);
+    graph::AddScalarFeature(node, "full_text", text.text);
+    return node;
+  }
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::StructType* type) {
+  Node* node = AddType("struct");
+  compositeTypeParts_[type] = node;
+  graph::AddScalarFeature(node, "full_text", textEncoder_.Encode(type).text);
+
+  // Add types for the struct elements, and add type edges.
+  for (int i = 0; i < type->getNumElements(); ++i) {
+    const auto& member = type->elements()[i];
+    // Don't re-use member types in structs, always create a new type. For
+    // example, the code:
+    //
+    //     struct S {
+    //         int a;
+    //         int b;
+    //     };
+    //     int c;
+    //     int d;
+    //
+    // would produce four type nodes: one for S.a, one for S.b, and one which
+    // is shared by c and d.
+    Node* memberNode = AddLlvmType(member);
+    CHECK(AddTypeEdge(/*position=*/i, memberNode, node).ok());
+  }
+
+  return node;
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::PointerType* type) {
+  Node* node = AddType("*");
+  graph::AddScalarFeature(node, "full_text", textEncoder_.Encode(type).text);
+
+  auto elementType = type->getElementType();
+  auto parent = compositeTypeParts_.find(elementType);
+  if (parent == compositeTypeParts_.end()) {
+    // Re-use the type if it already exists to prevent duplication.
+    auto elementNode = GetOrCreateType(type->getElementType());
+    CHECK(AddTypeEdge(/*position=*/0, elementNode, node).ok());
+  } else {
+    // Bottom-out for self-referencing types.
+    CHECK(AddTypeEdge(/*position=*/0, parent->second, node).ok());
+  }
+
+  return node;
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::FunctionType* type) {
+  const std::string signature = textEncoder_.Encode(type).text;
+  Node* node = AddType(signature);
+  graph::AddScalarFeature(node, "full_text", signature);
+  return node;
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::ArrayType* type) {
+  Node* node = AddType("[]");
+  graph::AddScalarFeature(node, "full_text", textEncoder_.Encode(type).text);
+  // Re-use the type if it already exists to prevent duplication.
+  auto elementType = GetOrCreateType(type->getElementType());
+  CHECK(AddTypeEdge(/*position=*/0, elementType, node).ok());
+  return node;
+}
+
+Node* ProgramGraphBuilder::AddLlvmType(const ::llvm::VectorType* type) {
+  Node* node = AddType("vector");
+  graph::AddScalarFeature(node, "full_text", textEncoder_.Encode(type).text);
+  // Re-use the type if it already exists to prevent duplication.
+  auto elementType = GetOrCreateType(type->getElementType());
+  CHECK(AddTypeEdge(/*position=*/0, elementType, node).ok());
   return node;
 }
 
@@ -459,6 +562,16 @@ void ProgramGraphBuilder::Clear() {
   blockCount_ = 0;
   callSites_.clear();
   programl::graph::ProgramGraphBuilder::Clear();
+}
+
+Node* ProgramGraphBuilder::GetOrCreateType(const ::llvm::Type* type) {
+  auto it = types_.find(type);
+  if (it == types_.end()) {
+    Node* node = AddLlvmType(type);
+    types_[type] = node;
+    return node;
+  }
+  return it->second;
 }
 
 }  // namespace internal

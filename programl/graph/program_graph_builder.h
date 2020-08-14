@@ -64,6 +64,8 @@ class ProgramGraphBuilder {
 
   Node* AddConstant(const string& text);
 
+  Node* AddType(const string& text);
+
   // Edge factories.
   [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position, const Node* source,
                                                       const Node* target);
@@ -72,6 +74,9 @@ class ProgramGraphBuilder {
                                                    const Node* target);
 
   [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source, const Node* target);
+
+  [[nodiscard]] labm8::StatusOr<Edge*> AddTypeEdge(int32_t position, const Node* source,
+                                                   const Node* target);
 
   const Node* GetRootNode() const { return &graph_.node(0); }
 
@@ -116,7 +121,7 @@ class ProgramGraphBuilder {
   int32_t GetIndex(const Function* function);
   int32_t GetIndex(const Node* node);
 
-  // Maps which covert store the index of objects in repeated field lists.
+  // Maps that store the index of objects in repeated field lists.
   absl::flat_hash_map<Module*, int32_t> moduleIndices_;
   absl::flat_hash_map<Function*, int32_t> functionIndices_;
   absl::flat_hash_map<Node*, int32_t> nodeIndices_;

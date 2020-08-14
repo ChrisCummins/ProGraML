@@ -92,6 +92,7 @@ class Inst2vecEncoder(object):
         # Add the node features.
         var_embedding = self.dictionary["!IDENTIFIER"]
         const_embedding = self.dictionary["!IMMEDIATE"]
+        type_embedding = self.dictionary["!IMMEDIATE"]  # Types are immediates
 
         text_index = 0
         for node in proto.node:
@@ -113,6 +114,12 @@ class Inst2vecEncoder(object):
                 node.features.feature["inst2vec_embedding"].int64_list.value.append(
                     const_embedding
                 )
+            elif node.type == node_pb2.Node.TYPE:
+                node.features.feature["inst2vec_embedding"].int64_list.value.append(
+                    type_embedding
+                )
+            else:
+                raise TypeError(f"Unknown node type {node}")
 
         proto.features.feature["inst2vec_annotated"].int64_list.value.append(1)
         return proto
