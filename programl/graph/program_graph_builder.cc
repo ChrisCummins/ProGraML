@@ -26,7 +26,7 @@ namespace graph {
 
 ProgramGraphBuilder::ProgramGraphBuilder() {
   // Create the graph root node.
-  AddNode(Node::INSTRUCTION, "<root>");
+  AddNode(Node::INSTRUCTION, "[external]");
 }
 
 Module* ProgramGraphBuilder::AddModule(const string& name) {
