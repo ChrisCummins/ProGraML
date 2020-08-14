@@ -32,8 +32,8 @@ Key features are:
 * **Portability:** ProGraML is derived from compiler IRs, making it independent
   of the source language (e.g. we have trained models to reason across five
   different source languages at a time). It is easy to target new IRs (we
-  currently support [LLVM](/programl/Documentation/cmd/llvm2graph.txt) and
-  [XLA](/programl/Documentation/cmd/xla2graph.txt)).
+  currently support [LLVM](/Documentation/cmd/llvm2graph.txt) and
+  [XLA](/Documentation/cmd/xla2graph.txt)).
 * **Extensibility:** Features and labels can easily be added at the
   whole-program level, per-instruction level, or for individual relations.
 
@@ -42,11 +42,11 @@ Key features are:
 
 To get stuck in and play around with our graph representation, visit:
 
-[![Program Explorer](/programl/Documentation/assets/program_explorer.png)](https://chriscummins.cc/s/program_explorer)
+[![Program Explorer](/Documentation/assets/program_explorer.png)](https://chriscummins.cc/s/program_explorer)
 
 Or if papers are more your ☕, have a read of ours:
 
-[![Preprint](/programl/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
+[![Preprint](/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
 
 
 ## Constructing the ProGraML Representation
@@ -56,14 +56,14 @@ recursive Fibonacci implementation in C.
 
 #### Step 1: Compiler IR
 
-<img src="/programl/Documentation/assets/llvm2graph-1-ir.png" width=300>
+<img src="/Documentation/assets/llvm2graph-1-ir.png" width=300>
 
 We start by lowering the program to a compiler IR. In this case, we'll use
 LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
 
 #### Step 2: Control-flow
 
-<img src="/programl/Documentation/assets/llvm2graph-2-cfg.png" width=300>
+<img src="/Documentation/assets/llvm2graph-2-cfg.png" width=300>
 
 We begin building a graph by constructing a full-flow graph of the program. In a
 full-flow graph, every instruction is a node and the edges are control-flow.
@@ -72,7 +72,7 @@ control flow in that `switch` instruction.
 
 #### Step 3: Data-flow
 
-<img src="/programl/Documentation/assets/llvm2graph-3-dfg.png" width=300>
+<img src="/Documentation/assets/llvm2graph-3-dfg.png" width=300>
 
 Then we add a graph node for every variable and constant. In the drawing above,
 the diamonds are constants and the variables are ovals. We add data-flow edges
@@ -83,7 +83,7 @@ of a data element in the list of instruction operands.
 
 #### Step 4: Call graph
 
-<img src="/programl/Documentation/assets/llvm2graph-4-cg.png" width=300>
+<img src="/Documentation/assets/llvm2graph-4-cg.png" width=300>
 
 Finally, we add call edges (green) from callsites to the function entry
 instruction, and return edges from function exits to the callsite. Since this is
@@ -92,14 +92,14 @@ function (the `switch`). The `external` node is used to represent a call from an
 external site.
 
 The process described above can be run locally using our
-[`clang2graph`](/programl/Documentation/cmd/clang2graph.txt) and
-[`graph2dot`](/programl/Documentation/cmd/graph2dot.txt) tools: `clang
+[`clang2graph`](/Documentation/cmd/clang2graph.txt) and
+[`graph2dot`](/Documentation/cmd/graph2dot.txt) tools: `clang
 clang2graph -O3 fib.c | graph2dot`
 
 
 ## Datasets
 
-Please see [this doc](/programl/Documentation/DataflowDataset.md) for download
+Please see [this doc](/Documentation/DataflowDataset.md) for download
 links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
 flow analysis labels.
 
@@ -125,10 +125,10 @@ $ bazel test //programl/...
 ### Command-line tools
 
 In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
-using [command-line tools](/programl/Documentation/cmd) which act as filters,
+using [command-line tools](/Documentation/cmd) which act as filters,
 reading in graphs from stdin and emitting graphs to stdout. The structure for
 graphs is described through a series of [protocol
-buffers](/programl/Documentation/ProtocolBuffers.md).
+buffers](/Documentation/ProtocolBuffers.md).
 
 Build and install the command line tools to `~/.local/opt/programl` (or a
 directory of your choice) using:
@@ -148,7 +148,7 @@ export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 ### Dataflow experiments
 
 Download and unpack our [dataflow
-dataset](/programl/Documentation/DataflowDataset.md), then train and evaluate a
+dataset](/Documentation/DataflowDataset.md), then train and evaluate a
 graph neural network model using:
 
 ```sh

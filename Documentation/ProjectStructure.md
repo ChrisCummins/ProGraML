@@ -6,8 +6,8 @@ supporting libraries.
 
 This project is divided into the following top level packages:
 
+* [`Documentation`](/Documentation): Additional (possibly out-of-date 😢) documentation.
 * [`programl/cmd`](/programl/cmd): Command line tools. All executable binaries are stored here.
-* [`programl/Documentation`](/programl/Documentation): Additional (possibly out-of-date 😢) documentation.
 * [`programl/graph`](/programl/graph): Libraries for creating and manipulating the ProGraML graph representation.
 * [`programl/ir`](/programl/ir): Support for specific compiler IRs, e.g. LLVM.
 * [`programl/proto`](/programl/proto): Protocol message definitions. These define the core data structures for this project.
