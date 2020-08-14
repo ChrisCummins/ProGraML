@@ -64,8 +64,7 @@ using ArgumentConsumerMap =
 // A specialized program graph builder for LLVM-IR.
 class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
  public:
-  explicit ProgramGraphBuilder(const ProgramGraphOptions& options)
-      : programl::graph::ProgramGraphBuilder(options), blockCount_(0) {}
+  explicit ProgramGraphBuilder(const ProgramGraphOptions& options);
 
   [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(const ::llvm::Module& module);
 
@@ -87,6 +86,13 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   Node* AddLlvmVariable(const ::llvm::Argument* argument, const Function* function);
   Node* AddLlvmConstant(const ::llvm::Constant* constant);
 
+  // Add a string to the strings list and return its position.
+  //
+  // We use a graph-level "strings" feature to store a list of the original
+  // LLVM-IR string corresponding to each graph nodes. This allows to us to
+  // refer to the same string from multiple nodes without duplication.
+  int32_t AddString(const string& text);
+
  private:
   TextEncoder textEncoder_;
 
@@ -100,6 +106,12 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   // populated by VisitBasicBlock() and consumed once all functions have been
   // visited.
   absl::flat_hash_map<const ::llvm::Constant*, std::vector<PositionalNode>> constants_;
+
+  // A mapping from string table value to its position in the "strings_table"
+  // graph-level feature.
+  absl::flat_hash_map<string, int32_t> stringsListPositions_;
+  // The underlying storage for the strings table.
+  BytesList* stringsList_;
 };
 
 }  // namespace internal
