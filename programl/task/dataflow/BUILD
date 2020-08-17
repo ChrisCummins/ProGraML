@@ -178,6 +178,20 @@ py_binary(
     ],
 )
 
+py_test(
+    name = "train_lstm_test",
+    srcs = ["train_lstm_test.py"],
+    data = [
+        "//programl/test/data:llvm_ir_graphs",
+        "//programl/test/data:llvm_ir",
+        "//programl/test/data:llvm_ir_reachability_features"
+    ],
+    deps = [
+        ":train_lstm",
+        "//third_party/py/labm8",
+    ]
+)
+
 py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
