@@ -110,7 +110,9 @@ flow analysis labels.
 ### Requirements
 
 * macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
-* bazel ≥ 2.0
+* bazel ≥ 2.0 (we recommend using
+  [bazelisk](https://github.com/bazelbuild/bazelisk) to automatically
+  download and use the correct bazel version).
 * Python ≥ 3.6
 * (Optional) NVIDIA GPU with CUDA drivers for TensorFlow and PyTorch
 
