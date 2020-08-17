@@ -4,15 +4,12 @@ load("@programl_requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
-licenses(["notice"])  # MIT
+licenses(["notice"])  # Apache 2.0
 
 py_library(
-    name = "keras",
+    name = "absl",
     srcs = ["//third_party/py:empty.py"],
     deps = [
-        requirement("keras"),
-        requirement("PyYAML"),  # Implicit dependency.
-        "//third_party/py/scipy",  # Implicit dependency.
-        "//third_party/py/tensorflow",
+        requirement("absl-py"),
     ],
 )
