@@ -19,11 +19,13 @@ This script reads ProGraML graphs and uses an LSTM to predict binary
 classification targets for data flow problems.
 """
 import pathlib
+import sys
 import time
 from typing import Dict
 
 import numpy as np
 from labm8.py import app
+from labm8.py import bazelutil
 from labm8.py import gpu_scheduler
 from labm8.py import humanize
 from labm8.py import pbutil
@@ -35,6 +37,10 @@ from programl.proto import epoch_pb2
 from programl.task.dataflow import dataflow
 from programl.task.dataflow.graph_loader import DataflowGraphLoader
 from programl.task.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
+
+# NOTE(cec): Workaround to prevent third_party package name shadowing from
+# labm8.
+sys.path.insert(0, str(bazelutil.DataPath("programl")))
 from third_party.py.ncc import vocabulary
 
 

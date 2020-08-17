@@ -25,6 +25,7 @@ import tensorflow as tf
 from labm8.py import app
 from labm8.py.progress import NullContext
 from labm8.py.progress import ProgressContext
+from tensorflow import keras
 
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
@@ -99,7 +100,7 @@ class Lstm(Model):
 
     # Reset any previous Tensorflow session. This is required when running
     # consecutive LSTM models in the same process.
-    tf.compat.v1.keras.backend.clear_session()
+    keras.backend.clear_session()
 
   @staticmethod
   def MakeLstmLayer(*args, **kwargs):
@@ -110,18 +111,18 @@ class Lstm(Model):
     much slower but works on CPU.
     """
     if FLAGS.cudnn_lstm and tf.compat.v1.test.is_gpu_available():
-      return tf.compat.v1.keras.layers.CuDNNLSTM(*args, **kwargs)
+      return keras.layers.CuDNNLSTM(*args, **kwargs)
     else:
-      return tf.compat.v1.keras.layers.LSTM(*args, **kwargs, implementation=1)
+      return keras.layers.LSTM(*args, **kwargs, implementation=1)
 
-  def CreateKerasModel(self) -> tf.compat.v1.keras.Model:
+  def CreateKerasModel(self): # -> keras.Model:
     """Construct the tensorflow computation graph."""
-    vocab_ids = tf.compat.v1.keras.layers.Input(
+    vocab_ids = keras.layers.Input(
       batch_shape=(self.batch_size, self.padded_sequence_length,),
       dtype="int32",
       name="sequence_in",
     )
-    embeddings = tf.compat.v1.keras.layers.Embedding(
+    embeddings = keras.layers.Embedding(
       input_dim=len(self.vocabulary) + 2,
       input_length=self.padded_sequence_length,
       output_dim=FLAGS.hidden_size,
@@ -129,13 +130,13 @@ class Lstm(Model):
       trainable=FLAGS.trainable_embeddings,
     )(vocab_ids)
 
-    selector_vectors = tf.compat.v1.keras.layers.Input(
+    selector_vectors = keras.layers.Input(
       batch_shape=(self.batch_size, self.padded_sequence_length, 2),
       dtype="float32",
       name="selector_vectors",
     )
 
-    lang_model_input = tf.compat.v1.keras.layers.Concatenate(
+    lang_model_input = keras.layers.Concatenate(
       axis=2, name="embeddings_and_selector_vectorss"
     )([embeddings, selector_vectors],)
 
@@ -152,18 +153,18 @@ class Lstm(Model):
 
     # Dense layers.
     for i in range(1, FLAGS.hidden_dense_layer_count + 1):
-      lang_model = tf.compat.v1.keras.layers.Dense(
+      lang_model = keras.layers.Dense(
         FLAGS.hidden_size, activation="relu", name=f"dense_{i}",
       )(lang_model)
-    node_out = tf.compat.v1.keras.layers.Dense(
+    node_out = keras.layers.Dense(
       self.node_y_dimensionality, activation="sigmoid", name="node_out",
     )(lang_model)
 
-    model = tf.compat.v1.keras.Model(
+    model = keras.Model(
       inputs=[vocab_ids, selector_vectors], outputs=[node_out],
     )
     model.compile(
-      optimizer=tf.compat.v1.keras.optimizers.Adam(
+      optimizer=keras.optimizers.Adam(
         learning_rate=FLAGS.learning_rate
       ),
       metrics=["accuracy"],
@@ -297,7 +298,7 @@ class Lstm(Model):
       tf.compat.v1.reset_default_graph()
       SetAllowedGrowthOnKerasSession()
 
-      self.model = tf.compat.v1.keras.models.load_model(path)
+      self.model = keras.models.load_model(path)
 
 
 def SetAllowedGrowthOnKerasSession():
@@ -305,5 +306,5 @@ def SetAllowedGrowthOnKerasSession():
   config = tf.compat.v1.ConfigProto()
   config.gpu_options.allow_growth = True
   session = tf.compat.v1.Session(config=config)
-  tf.compat.v1.keras.backend.set_session(session)
+  # set_session(session)
   return session

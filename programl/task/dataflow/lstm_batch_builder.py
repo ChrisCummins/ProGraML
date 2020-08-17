@@ -18,7 +18,7 @@ from typing import Dict
 from typing import Optional
 
 import numpy as np
-import tensorflow as tf
+from tensorflow import keras
 from labm8.py import app
 
 from programl.graph.format.py import graph_serializer
@@ -84,7 +84,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
       graph_count=len(self.graph_node_sizes),
       model_data=LstmBatchData(
         graph_node_sizes=np.array(self.graph_node_sizes, dtype=np.int32),
-        encoded_sequences=tf.compat.v1.keras.preprocessing.sequence.pad_sequences(
+        encoded_sequences=keras.preprocessing.sequence.pad_sequences(
           self.vocab_ids,
           maxlen=self.padded_sequence_length,
           dtype="int32",
@@ -92,7 +92,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
           truncating="post",
           value=self._vocab_id_pad,
         ),
-        selector_vectors=tf.compat.v1.keras.preprocessing.sequence.pad_sequences(
+        selector_vectors=keras.preprocessing.sequence.pad_sequences(
           self.selector_vectors,
           maxlen=self.padded_sequence_length,
           dtype="float32",
@@ -100,7 +100,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
           truncating="post",
           value=np.zeros(2, dtype=np.float32),
         ),
-        node_labels=tf.compat.v1.keras.preprocessing.sequence.pad_sequences(
+        node_labels=keras.preprocessing.sequence.pad_sequences(
           self.targets,
           maxlen=self.padded_sequence_length,
           dtype="float32",
