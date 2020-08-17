@@ -1,0 +1,19 @@
+tensorflow == 2.3.0
+# Tensorflow requirements
+# https://github.com/tensorflow/tensorflow/blob/f3a015274fadab00ec8cad92af2a968e0ecd434f/tensorflow/tools/pip_package/setup.py#L54-L73
+absl-py >= 0.7.0
+astunparse == 1.6.3
+flatbuffers >= 1.12
+gast == 0.3.3
+google_pasta >= 0.1.8
+h5py >= 2.10.0, < 2.11.0
+keras_preprocessing >= 1.1.1, < 1.2
+numpy >= 1.16.0, < 1.19.0
+opt_einsum >= 2.3.2
+protobuf >= 3.13.0
+tensorboard >= 2.3.0, < 3
+tensorflow_estimator >= 2.3.0, < 2.4.0
+termcolor >= 1.1.0
+wrapt >= 1.11.1
+wheel >= 0.26
+six >= 1.12.0
