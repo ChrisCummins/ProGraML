@@ -34,6 +34,7 @@ message Node {
     INSTRUCTION = 0;
     VARIABLE = 1;
     CONSTANT = 2;
+    TYPE = 3;
   }
   Type type = 1;
   // The text of a node. This is the raw representation of a node, such as the

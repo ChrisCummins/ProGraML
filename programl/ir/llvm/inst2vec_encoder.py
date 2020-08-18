@@ -50,13 +50,13 @@ AUGMENTED_INST2VEC_EMBEDDINGS = bazelutil.DataPath(
 )
 
 
-def NodeFullText(node: node_pb2.Node) -> str:
+def NodeFullText(
+    graph: program_graph_pb2.ProgramGraph,
+    node: node_pb2.Node
+) -> str:
   """Get the full text of a node, or an empty string if not set."""
-  if len(node.features.feature["full_text"].bytes_list.value):
-    return (
-      node.features.feature["full_text"].bytes_list.value[0].decode("utf-8")
-    )
-  return ""
+  idx = node.features.feature["llvm_string"].int64_list.value[0]
+  return graph.features.feature["strings"].bytes_list.value[idx].decode("utf-8")
 
 
 class Inst2vecEncoder(object):
@@ -94,7 +94,7 @@ class Inst2vecEncoder(object):
     """
     # Gather the instruction texts to pre-process.
     lines = [
-      [NodeFullText(node)]
+      [NodeFullText(proto, node)]
       for node in proto.node
       if node.type == node_pb2.Node.INSTRUCTION
     ]
@@ -122,6 +122,7 @@ class Inst2vecEncoder(object):
     # Add the node features.
     var_embedding = self.dictionary["!IDENTIFIER"]
     const_embedding = self.dictionary["!IMMEDIATE"]
+    type_embedding = self.dictionary["!IMMEDIATE"]  # Types are immediates
 
     text_index = 0
     for node in proto.node:
@@ -143,6 +144,12 @@ class Inst2vecEncoder(object):
         node.features.feature["inst2vec_embedding"].int64_list.value.append(
           const_embedding
         )
+      elif node.type == node_pb2.Node.TYPE:
+        node.features.feature["inst2vec_embedding"].int64_list.value.append(
+          type_embedding
+        )
+      else:
+        raise TypeError(f"Unknown node type {node}")
 
     proto.features.feature["inst2vec_annotated"].int64_list.value.append(1)
     return proto

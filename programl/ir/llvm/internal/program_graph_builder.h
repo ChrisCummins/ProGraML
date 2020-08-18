@@ -64,15 +64,18 @@ using ArgumentConsumerMap =
 // A specialized program graph builder for LLVM-IR.
 class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
  public:
-  explicit ProgramGraphBuilder(const ProgramGraphOptions& options)
-      : programl::graph::ProgramGraphBuilder(),
-        options_(options),
-        blockCount_(0){}
+  explicit ProgramGraphBuilder(const ProgramGraphOptions& options);
 
-            [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(
-                const ::llvm::Module& module);
+  [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(
+      const ::llvm::Module& module);
 
   void Clear();
+
+  // Return the node representing a type. If no node already exists
+  // for this type, a new node is created and added to the graph. In
+  // the case of composite types, multiple new nodes may be added by
+  // this call, and the root type returned.
+  Node* GetOrCreateType(const ::llvm::Type* type);
 
  protected:
   [[nodiscard]] labm8::StatusOr<FunctionEntryExits> VisitFunction(
@@ -93,6 +96,19 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   Node* AddLlvmVariable(const ::llvm::Argument* argument,
                         const Function* function);
   Node* AddLlvmConstant(const ::llvm::Constant* constant);
+  Node* AddLlvmType(const ::llvm::Type* type);
+  Node* AddLlvmType(const ::llvm::StructType* type);
+  Node* AddLlvmType(const ::llvm::PointerType* type);
+  Node* AddLlvmType(const ::llvm::FunctionType* type);
+  Node* AddLlvmType(const ::llvm::ArrayType* type);
+  Node* AddLlvmType(const ::llvm::VectorType* type);
+
+  // Add a string to the strings list and return its position.
+  //
+  // We use a graph-level "strings" feature to store a list of the original
+  // LLVM-IR string corresponding to each graph nodes. This allows to us to
+  // refer to the same string from multiple nodes without duplication.
+  int32_t AddString(const string& text);
 
  private:
   const ProgramGraphOptions options_;
@@ -110,6 +126,32 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   // visited.
   absl::flat_hash_map<const ::llvm::Constant*, std::vector<PositionalNode>>
       constants_;
+
+  // A mapping from string table value to its position in the "strings_table"
+  // graph-level feature.
+  absl::flat_hash_map<string, int32_t> stringsListPositions_;
+  // The underlying storage for the strings table.
+  BytesList* stringsList_;
+
+  // A map from an LLVM type to the node message that represents it.
+  absl::flat_hash_map<const ::llvm::Type*, Node*> types_;
+
+  // When adding a new type to the graph we need to know whether the type that
+  // we are adding is part of a composite type that references itself. For
+  // example:
+  //
+  //     struct BinaryTree {
+  //       int data;
+  //       struct BinaryTree* left;
+  //       struct BinaryTree* right;
+  //     }
+  //
+  // When the recursive GetOrCreateType() resolves the "left" member, it needs
+  // to know that the parent BinaryTree type has already been processed. This
+  // map stores the Nodes corresponding to any parent structs that have been
+  // already added in a call to GetOrCreateType(). It must be cleared between
+  // calls.
+  absl::flat_hash_map<const ::llvm::Type*, Node*> compositeTypeParts_;
 };
 
 }  // namespace internal

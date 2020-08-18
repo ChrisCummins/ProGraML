@@ -27,7 +27,7 @@ def test_empty_proto():
   builder = program_graph_builder.ProgramGraphBuilder()
   with test.Raises(ValueError) as e_ctx:
     builder.Build()
-  assert "INSTRUCTION has no connections: `<root>`" == str(e_ctx.value)
+  assert "INSTRUCTION has no connections: `[external]`" == str(e_ctx.value)
 
 
 def test_add_empty_module():
@@ -75,7 +75,7 @@ def test_linear_statement_control_flow():
 
   assert len(builder.Build().node) == 3
 
-  assert builder.Build().node[builder.root].text == "<root>"
+  assert builder.Build().node[builder.root].text == "[external]"
   assert builder.Build().node[builder.root].type == node_pb2.Node.INSTRUCTION
 
   assert builder.Build().node[a].text == "a"

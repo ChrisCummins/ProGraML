@@ -19,6 +19,12 @@
 package(default_visibility = ["//programl:__subpackages__"])
 
 filegroup(
+    name = "dataflow_task_mini_dataset_tar",
+    testonly = 1,
+    srcs = ["dataflow_task_mini_dataset.tar.bz2"],
+)
+
+filegroup(
     name = "hlo_protos",
     testonly = 1,
     srcs = glob(["*.hlo.pb"]),

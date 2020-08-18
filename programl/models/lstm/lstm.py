@@ -14,24 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """An LSTM for instruction classification."""
-import pathlib
-import tempfile
 from typing import Any
 from typing import Dict
 from typing import List
 
 import numpy as np
-import tensorflow as tf
+import torch
+from torch import nn
+from torch import optim
 from labm8.py import app
 from labm8.py.progress import NullContext
 from labm8.py.progress import ProgressContext
 
+from programl.models.ggnn.node_embeddings import NodeEmbeddings
+from programl.models.ggnn.loss import Loss
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
 from programl.models.lstm.lstm_batch import LstmBatchData
 from programl.models.model import Model
 from programl.proto import epoch_pb2
-
 
 FLAGS = app.FLAGS
 
@@ -61,17 +62,22 @@ app.DEFINE_float(
   "The value used for the positive class in the 1-hot selector embedding "
   "vectors. Has no effect when selector embeddings are not used.",
 )
-app.DEFINE_boolean(
-  "cudnn_lstm",
-  True,
-  "If set, use CuDNNLSTM implementation when a GPU is available. Else use "
-  "default Keras implementation. Note that the two implementations are "
-  "incompatible - a model saved using one LSTM type cannot be restored using "
-  "the other LSTM type.",
-)
 app.DEFINE_float("learning_rate", 0.001, "The mode learning rate.")
 app.DEFINE_boolean(
   "trainable_embeddings", True, "Whether the embeddings are trainable."
+)
+
+# Embeddings options.
+app.DEFINE_string(
+    "text_embedding_type",
+    "random",
+    "The type of node embeddings to use. One of "
+    "{constant_zero, constant_random, random}.",
+)
+app.DEFINE_integer(
+    "text_embedding_dimensionality",
+    32,
+    "The dimensionality of node text embeddings.",
 )
 
 
@@ -82,103 +88,56 @@ class Lstm(Model):
     self,
     vocabulary: Dict[str, int],
     node_y_dimensionality: int,
+    graph_y_dimensionality: int,
+    graph_x_dimensionality: int,
+    use_selector_embeddings: bool,
     test_only: bool = False,
     name: str = "lstm",
   ):
     """Constructor."""
-    super(Lstm, self).__init__(
-      test_only=test_only, vocabulary=vocabulary, name=name
-    )
+    super().__init__(test_only=test_only, vocabulary=vocabulary, name=name)
 
     self.vocabulary = vocabulary
     self.node_y_dimensionality = node_y_dimensionality
+    self.graph_y_dimensionality = graph_y_dimensionality
+    self.graph_x_dimensionality = graph_x_dimensionality
+    self.node_selector_dimensionality = 2 if use_selector_embeddings else 0
 
     # Flag values.
     self.batch_size = FLAGS.batch_size
     self.padded_sequence_length = FLAGS.padded_sequence_length
 
-    # Reset any previous Tensorflow session. This is required when running
-    # consecutive LSTM models in the same process.
-    tf.compat.v1.keras.backend.clear_session()
-
-  @staticmethod
-  def MakeLstmLayer(*args, **kwargs):
-    """Construct an LSTM layer.
-
-    If a GPU is available and --cudnn_lstm, this will use NVIDIA's fast
-    CuDNNLSTM implementation. Else it will use Keras' builtin LSTM, which is
-    much slower but works on CPU.
-    """
-    if FLAGS.cudnn_lstm and tf.compat.v1.test.is_gpu_available():
-      return tf.compat.v1.keras.layers.CuDNNLSTM(*args, **kwargs)
-    else:
-      return tf.compat.v1.keras.layers.LSTM(*args, **kwargs, implementation=1)
-
-  def CreateKerasModel(self) -> tf.compat.v1.keras.Model:
-    """Construct the tensorflow computation graph."""
-    vocab_ids = tf.compat.v1.keras.layers.Input(
-      batch_shape=(self.batch_size, self.padded_sequence_length,),
-      dtype="int32",
-      name="sequence_in",
-    )
-    embeddings = tf.compat.v1.keras.layers.Embedding(
-      input_dim=len(self.vocabulary) + 2,
-      input_length=self.padded_sequence_length,
-      output_dim=FLAGS.hidden_size,
-      name="embedding",
-      trainable=FLAGS.trainable_embeddings,
-    )(vocab_ids)
-
-    selector_vectors = tf.compat.v1.keras.layers.Input(
-      batch_shape=(self.batch_size, self.padded_sequence_length, 2),
-      dtype="float32",
-      name="selector_vectors",
+    self.model = LstmModel(
+        node_embeddings=NodeEmbeddings(
+            node_embeddings_type=FLAGS.text_embedding_type,
+            use_selector_embeddings=self.node_selector_dimensionality,
+            selector_embedding_value=FLAGS.selector_embedding_value,
+            embedding_shape=(
+              # Add one to the vocabulary size to account for the out-of-vocab token.
+              len(vocabulary) + 1,
+              FLAGS.text_embedding_dimensionality,
+            ),
+        ),
+        loss=Loss(
+            num_classes=self.node_y_dimensionality,
+            has_aux_input=self.has_aux_input,
+            intermediate_loss_weight=None,  # NOTE(cec): Intentionally broken.
+            class_prevalence_weighting=False,
+        ),
+        padded_sequence_length=self.padded_sequence_length,
+        learning_rate=FLAGS.learning_rate,
+        test_only=test_only,
+        hidden_size=FLAGS.hidden_size,
+        hidden_dense_layer_count=FLAGS.hidden_dense_layer_count,
     )
 
-    lang_model_input = tf.compat.v1.keras.layers.Concatenate(
-      axis=2, name="embeddings_and_selector_vectorss"
-    )([embeddings, selector_vectors],)
+  @property
+  def num_classes(self) -> int:
+    return self.node_y_dimensionality or self.graph_y_dimensionality
 
-    # Recurrent layers.
-    lang_model = self.MakeLstmLayer(
-      FLAGS.hidden_size, return_sequences=True, name="lstm_1"
-    )(lang_model_input)
-    lang_model = self.MakeLstmLayer(
-      FLAGS.hidden_size,
-      return_sequences=True,
-      return_state=False,
-      name="lstm_2",
-    )(lang_model)
-
-    # Dense layers.
-    for i in range(1, FLAGS.hidden_dense_layer_count + 1):
-      lang_model = tf.compat.v1.keras.layers.Dense(
-        FLAGS.hidden_size, activation="relu", name=f"dense_{i}",
-      )(lang_model)
-    node_out = tf.compat.v1.keras.layers.Dense(
-      self.node_y_dimensionality, activation="sigmoid", name="node_out",
-    )(lang_model)
-
-    model = tf.compat.v1.keras.Model(
-      inputs=[vocab_ids, selector_vectors], outputs=[node_out],
-    )
-    model.compile(
-      optimizer=tf.compat.v1.keras.optimizers.Adam(
-        learning_rate=FLAGS.learning_rate
-      ),
-      metrics=["accuracy"],
-      loss=["categorical_crossentropy"],
-      loss_weights=[1.0],
-    )
-
-    return model
-
-  def CreateModelData(self, test_only: bool) -> None:
-    """Initialize an LSTM model. This is called during Initialize()."""
-    # Create the Tensorflow session and graph for the model.
-    tf.get_logger().setLevel("ERROR")
-    SetAllowedGrowthOnKerasSession()
-    self.model = self.CreateKerasModel()
+  @property
+  def has_aux_input(self) -> bool:
+    return self.graph_x_dimensionality > 0
 
   def RunBatch(
     self,
@@ -203,24 +162,32 @@ class Lstm(Model):
       self.batch_size,
       self.padded_sequence_length,
     ), model_data.encoded_sequences.shape
-    assert model_data.selector_vectors.shape == (
+    assert model_data.selector_ids.shape == (
       self.batch_size,
       self.padded_sequence_length,
-      2,
-    ), model_data.selector_vectors.shape
-
-    x = [model_data.encoded_sequences, model_data.selector_vectors]
-    y = [model_data.node_labels]
+    ), model_data.selector_ids.shape
 
     if epoch_type == epoch_pb2.TRAIN:
-      loss, *_ = self.model.train_on_batch(x, y)
+      if not self.model.training:
+        self.model.train()
+      targets, logits = self.model(model_data.encoded_sequences, model_data.selector_ids, model_data.node_labels)
     else:
-      loss = None
+      if self.model.training:
+        self.model.eval()
+        self.model.opt.zero_grad()
+      # Inference only, don't trace the computation graph.
+      with torch.no_grad():
+        targets, logits = self.model(model_data.encoded_sequences, model_data.selector_ids, model_data.node_labels)
 
-    padded_predictions = self.model.predict_on_batch(x)
+    loss = self.model.loss((logits, None), targets)
+
+    if epoch_type == epoch_pb2.TRAIN:
+      loss.backward()
+      self.model.opt.step()
+      self.model.opt.zero_grad()
 
     # Reshape the outputs.
-    predictions = self.ReshapePaddedModelOutput(batch_data, padded_predictions)
+    predictions = self.ReshapePaddedModelOutput(batch_data, outputs)
 
     # Flatten the targets and predictions lists so that we can compare them.
     # Shape (batch_node_count, node_y_dimensionality).
@@ -228,7 +195,10 @@ class Lstm(Model):
     predictions = np.concatenate(predictions)
 
     return BatchResults.Create(
-      targets=targets, predictions=predictions, loss=loss,
+        targets=model_data.node_labels,
+        predictions=logits.detach().cpu().numpy(),
+        learning_rate=self.model.learning_rate,
+        loss=loss.item(),
     )
 
   def ReshapePaddedModelOutput(
@@ -274,36 +244,71 @@ class Lstm(Model):
 
   def GetModelData(self) -> Any:
     """Get the model state."""
-    # According to https://keras.io/getting-started/faq/, it is not recommended
-    # to pickle a Keras model. So as a workaround, I use Keras's saving
-    # mechanism to store the weights, and pickle that.
-    with tempfile.TemporaryDirectory(prefix="lstm_pickle_") as d:
-      path = pathlib.Path(d) / "weights.h5"
-      self.model.save(path)
-      with open(path, "rb") as f:
-        model_data = f.read()
-    return model_data
+    return {
+      "model_state_dict": self.model.state_dict(),
+      "optimizer_state_dict": self.model.opt.state_dict(),
+      "scheduler_state_dict": self.model.scheduler.state_dict(),
+    }
 
   def LoadModelData(self, data_to_load: Any) -> None:
     """Restore the model state."""
-    # Load the weights from a file generated by ModelDataToSave().
-    with tempfile.TemporaryDirectory(prefix="lstm_pickle_") as d:
-      path = pathlib.Path(d) / "weights.h5"
-      with open(path, "wb") as f:
-        f.write(data_to_load)
-
-      # The default TF graph is finalized in Initialize(), so we must
-      # first reset the session and create a new graph.
-      tf.compat.v1.reset_default_graph()
-      SetAllowedGrowthOnKerasSession()
-
-      self.model = tf.compat.v1.keras.models.load_model(path)
+    self.model.load_state_dict(data_to_load["model_state_dict"])
+    # only restore opt if needed. opt should be None o/w.
+    if not self.test_only:
+      self.model.opt.load_state_dict(data_to_load["optimizer_state_dict"])
+      self.model.scheduler.load_state_dict(data_to_load["scheduler_state_dict"])
 
 
-def SetAllowedGrowthOnKerasSession():
-  """Allow growth on GPU for Keras."""
-  config = tf.compat.v1.ConfigProto()
-  config.gpu_options.allow_growth = True
-  session = tf.compat.v1.Session(config=config)
-  tf.compat.v1.keras.backend.set_session(session)
-  return session
+
+class LstmModel(nn.Module):
+
+  def __init__(self, node_embeddings: NodeEmbeddings,
+              loss: Loss, padded_sequence_length: int, test_only: bool, learning_rate: float,
+      hidden_size: int,
+      hidden_dense_layer_count: int, # TODO(cec): Implement.
+  ):
+    super().__init__()
+    self.node_embeddings = node_embeddings
+    self.loss = loss
+    self.padded_sequence_length = padded_sequence_length
+    self.learning_rate = learning_rate
+    self.hidden_size = hidden_size
+    self.learning_rate = learning_rate
+
+    self.lstm = nn.LSTM(
+        self.node_embeddings.embedding_dimensionality + 2,
+        self.hidden_size,
+    )
+    self.hidden2label = nn.Linear(self.hidden_size, 2)
+
+    if test_only:
+      self.opt = None
+      self.eval()
+    else:
+      self.opt = optim.AdamW(self.parameters(), lr=self.learning_rate)
+
+  def forward(
+      self,
+      encoded_sequences,
+      selector_ids,
+      node_labels,
+  ):
+    print("SHAPES", encoded_sequences.shape, selector_ids.shape, node_labels.shape)
+
+    encoded_sequences = torch.tensor(encoded_sequences, dtype=torch.long)
+    selector_ids = torch.tensor(selector_ids, dtype=torch.long)
+    node_labels = torch.tensor(node_labels, dtype=torch.long)
+
+    # Embed and concatenate sequences and selector vectors.
+    embeddings = self.node_embeddings(encoded_sequences, selector_ids)
+
+    lstm_out, _ = self.lstm(embeddings.view(
+        self.padded_sequence_length, len(encoded_sequences), -1
+    ))
+    print(lstm_out.shape)
+
+    label_space = self.hidden2label(lstm_out.view(self.padded_sequence_length, -1))
+    logits = F.log_softmax(label_space, dim=2)
+
+    targets = node_labels
+    return logits, targets

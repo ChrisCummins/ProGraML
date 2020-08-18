@@ -119,6 +119,7 @@ py_library(
         "//programl/models/lstm:lstm_batch",
         "//third_party/py/labm8",
         "//third_party/py/numpy",
+        "//third_party/py/keras_preprocessing",
     ],
 )
 
@@ -176,6 +177,20 @@ py_binary(
         "//third_party/py/ncc:vocabulary",
         "//third_party/py/numpy",
     ],
+)
+
+py_test(
+    name = "train_lstm_test",
+    srcs = ["train_lstm_test.py"],
+    data = [
+        "//programl/test/data:llvm_ir_graphs",
+        "//programl/test/data:llvm_ir",
+        "//programl/test/data:llvm_ir_reachability_features"
+    ],
+    deps = [
+        ":train_lstm",
+        "//third_party/py/labm8",
+    ]
 )
 
 py_library(
