@@ -18,8 +18,8 @@ from typing import Dict
 from typing import Optional
 
 import numpy as np
-from tensorflow import keras
 from labm8.py import app
+from keras_preprocessing.sequence import pad_sequences
 
 from programl.graph.format.py import graph_serializer
 from programl.models.base_batch_builder import BaseBatchBuilder
@@ -51,12 +51,12 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
     # Mutable state.
     self.graph_node_sizes = []
     self.vocab_ids = []
-    self.selector_vectors = []
+    self.selector_ids = []
     self.targets = []
 
     # Padding values.
     self._vocab_id_pad = len(self.vocabulary) + 1
-    self._selector_vector_pad = np.zeros((0, 2), dtype=np.int32)
+    self._selector_id_pad = 0
     self._node_label_pad = np.zeros(
       (0, self.node_y_dimensionality), dtype=np.int32
     )
@@ -77,14 +77,14 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
       self.vocab_ids += [
         np.array([self._vocab_id_pad], dtype=np.int32)
       ] * pad_count
-      self.selector_vectors += [self._selector_vector_pad] * pad_count
+      self.selector_ids += [np.array([self._selector_id_pad], dtype=np.int32)] * pad_count
       self.targets += [self._node_label_pad] * pad_count
 
     batch = BatchData(
       graph_count=len(self.graph_node_sizes),
       model_data=LstmBatchData(
         graph_node_sizes=np.array(self.graph_node_sizes, dtype=np.int32),
-        encoded_sequences=keras.preprocessing.sequence.pad_sequences(
+        encoded_sequences=pad_sequences(
           self.vocab_ids,
           maxlen=self.padded_sequence_length,
           dtype="int32",
@@ -92,15 +92,15 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
           truncating="post",
           value=self._vocab_id_pad,
         ),
-        selector_vectors=keras.preprocessing.sequence.pad_sequences(
-          self.selector_vectors,
+        selector_ids=pad_sequences(
+          self.selector_ids,
           maxlen=self.padded_sequence_length,
-          dtype="float32",
+          dtype="int32",
           padding="pre",
           truncating="post",
-          value=np.zeros(2, dtype=np.float32),
+          value=self._selector_id_pad,
         ),
-        node_labels=keras.preprocessing.sequence.pad_sequences(
+        node_labels=pad_sequences(
           self.targets,
           maxlen=self.padded_sequence_length,
           dtype="float32",
@@ -116,7 +116,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
     # Reset mutable state.
     self.graph_node_sizes = []
     self.vocab_ids = []
-    self.selector_vectors = []
+    self.selector_ids = []
     self.targets = []
 
     return batch
@@ -142,7 +142,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
         )
         for n in node_list
       ]
-      selector_values = np.array(
+      selector_ids = np.array(
         [
           features.node_features.feature_list["data_flow_root_node"]
           .feature[n]
@@ -151,10 +151,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
         ],
         dtype=np.int32,
       )
-      selector_vectors = np.zeros((selector_values.size, 2), dtype=np.float32)
-      selector_vectors[
-        np.arange(selector_values.size), selector_values
-      ] = FLAGS.selector_embedding_value
+      # TODO: FLAGS.selector_embedding_value
       targets = np.array(
         [
           features.node_features.feature_list["data_flow_value"]
@@ -174,7 +171,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
 
     self.graph_node_sizes.append(len(node_list))
     self.vocab_ids.append(vocab_ids)
-    self.selector_vectors.append(selector_vectors)
+    self.selector_ids.append(selector_ids)
     self.targets.append(targets_1hot)
 
     if len(self.graph_node_sizes) >= self.batch_size:

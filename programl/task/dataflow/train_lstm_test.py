@@ -79,7 +79,9 @@ def main():
       "--max_data_flow_steps", str(10),
       "--val_graph_count", str(10),
       "--val_seed", str(0xCC),
-      "--train_graph_counts", "10,20"
+      "--train_graph_counts", "10,20",
+      "--padded_sequence_length", str(10),
+      "--batch_size", str(8),
     ])
     p.communicate()
     if p.returncode:

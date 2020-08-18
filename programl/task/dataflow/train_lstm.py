@@ -122,7 +122,9 @@ def TrainDataflowLSTM(
   #
   # For these data flow experiments, our graphs contain per-node binary
   # classification targets (e.g. reachable / not-reachable).
-  model = Lstm(vocabulary=vocab, test_only=False, node_y_dimensionality=2,)
+  model = Lstm(vocabulary=vocab, test_only=False, node_y_dimensionality=2,
+               graph_y_dimensionality=0,
+               graph_x_dimensionality=0, use_selector_embeddings=True)
 
   if restore_from:
     # Pick up training where we left off.
@@ -139,8 +141,6 @@ def TrainDataflowLSTM(
     # Else initialize a new model.
     model.Initialize()
     start_epoch_step, start_graph_cumsum = 1, 0
-
-  model.model.summary()
 
   # Create training batches and split into epochs.
   epochs = EpochBatchIterator(

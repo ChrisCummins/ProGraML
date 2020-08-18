@@ -34,8 +34,6 @@ load(
 
 pip_repositories()
 
-# ProGraML pip requirements.
-
 pip3_import(
     name = "programl_requirements",
     timeout = 3600,
@@ -44,21 +42,6 @@ pip3_import(
 
 load(
     "@programl_requirements//:requirements.bzl",
-    programl_pip_install = "pip_install",
-)
-
-programl_pip_install()
-
-# TensorFlow pip requirements.
-
-pip3_import(
-    name = "programl_tensorflow_requirements",
-    timeout = 3600,
-    requirements = "@programl//third_party/py/tensorflow:requirements.txt",
-)
-
-load(
-    "@programl_tensorflow_requirements//:requirements.bzl",
     programl_pip_install = "pip_install",
 )
 

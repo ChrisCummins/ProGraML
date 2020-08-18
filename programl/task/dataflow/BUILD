@@ -119,6 +119,7 @@ py_library(
         "//programl/models/lstm:lstm_batch",
         "//third_party/py/labm8",
         "//third_party/py/numpy",
+        "//third_party/py/keras_preprocessing",
     ],
 )
 
