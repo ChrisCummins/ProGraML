@@ -33,6 +33,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
+        "//programl/proto:program_graph_options_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",

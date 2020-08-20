@@ -94,7 +94,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         // will be produced provide the information we want to capture.
       } else if (const auto* constant =
                      ::llvm::dyn_cast<::llvm::Constant>(value)) {
-        if (options_.instructions_only()) {
+        if (options().instructions_only()) {
           continue;
         }
         // If the operand is a constant value, insert a new entry into the map
@@ -103,7 +103,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         constants_[constant].push_back({instructionMessage, position});
       } else if (const auto* operand =
                      ::llvm::dyn_cast<::llvm::Instruction>(value)) {
-        if (options_.instructions_only()) {
+        if (options().instructions_only()) {
           continue;
         }
         // We have an instruction operand which itself is another instruction.
@@ -137,7 +137,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         dataEdgesToAdd->push_back({operand, variable});
       } else if (const auto* operand =
                      ::llvm::dyn_cast<::llvm::Argument>(value)) {
-        if (options_.instructions_only()) {
+        if (options().instructions_only()) {
           continue;
         }
         (*argumentConsumers)[operand].push_back({instructionMessage, position});
@@ -312,7 +312,7 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
 Status ProgramGraphBuilder::AddCallSite(const Node* source,
                                         const FunctionEntryExits& target) {
   RETURN_IF_ERROR(AddCallEdge(source, target.first).status());
-  if (!options_.ignore_call_returns()) {
+  if (!options().ignore_call_returns()) {
     for (auto exitNode : target.second) {
       RETURN_IF_ERROR(AddCallEdge(exitNode, source).status());
     }

@@ -36,6 +36,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_py",
+        "//programl/proto:program_graph_options_py",
     ],
 )
 

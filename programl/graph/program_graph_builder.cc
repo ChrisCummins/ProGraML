@@ -24,7 +24,8 @@ namespace error = labm8::error;
 namespace programl {
 namespace graph {
 
-ProgramGraphBuilder::ProgramGraphBuilder() {
+ProgramGraphBuilder::ProgramGraphBuilder(const ProgramGraphOptions& options)
+    : options_(options) {
   // Create the graph root node.
   AddNode(Node::INSTRUCTION, "[external]");
 }
