@@ -27,6 +27,11 @@ option java_package = "com.programl";
 
 // Options used to generate a program graph.
 message ProgramGraphOptions {
+  // If set, the program graph builder will reject graphs where:
+  //  1. A module contains no nodes.
+  //  2. A function contains no nodes.
+  //  3. A node is unnconnected.
+  bool strict = 3;
   bool instructions_only = 1;
   bool ignore_call_returns = 2;
   int32 opt_level = 4;

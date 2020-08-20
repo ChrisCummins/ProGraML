@@ -26,6 +26,7 @@ pybind_extension(
     srcs = ["program_graph_builder_pybind.cc"],
     deps = [
         "//programl/graph:program_graph_builder",
+        "//programl/proto:program_graph_options_cc",
     ],
 )
 
@@ -48,6 +49,7 @@ py_test(
         "//programl/proto:edge_py",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_py",
+        "//programl/proto:program_graph_options_py",
         "//third_party/py/labm8",
     ],
 )

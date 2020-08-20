@@ -15,23 +15,36 @@
 # limitations under the License.
 """Unit tests for //programl/graph/py:program_graph_builder."""
 from labm8.py import test
-from programl.graph.py import program_graph_builder
+from programl.graph.py.program_graph_builder import ProgramGraphBuilder
 from programl.proto import edge_pb2
 from programl.proto import node_pb2
 from programl.proto import program_graph_pb2
+from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
 
 FLAGS = test.FLAGS
 
 
 def test_empty_proto():
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
+  assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+
+
+def test_empty_proto_strict():
+  builder = ProgramGraphBuilder(ProgramGraphOptions(strict=True))
   with test.Raises(ValueError) as e_ctx:
     builder.Build()
   assert "INSTRUCTION has no connections: `[external]`" == str(e_ctx.value)
 
 
 def test_add_empty_module():
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
+  foo = builder.AddModule("foo")
+
+  assert foo == 0
+  assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+
+def test_add_empty_module_strict():
+  builder = ProgramGraphBuilder(ProgramGraphOptions(strict=True))
   foo = builder.AddModule("foo")
 
   assert foo == 0
@@ -41,7 +54,15 @@ def test_add_empty_module():
 
 
 def test_add_empty_function():
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
+  mod = builder.AddModule("foo")
+  foo = builder.AddFunction("bar", mod)
+
+  assert foo == 0
+  assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+
+def test_add_empty_function_strict():
+  builder = ProgramGraphBuilder(ProgramGraphOptions(strict=True))
   mod = builder.AddModule("foo")
   foo = builder.AddFunction("bar", mod)
 
@@ -52,7 +73,16 @@ def test_add_empty_function():
 
 
 def test_graph_with_unconnected_node():
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
+  mod = builder.AddModule("x")
+  fn = builder.AddFunction("x", mod)
+  builder.AddInstruction("x", fn)
+
+  assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+
+
+def test_graph_with_unconnected_node_strict():
+  builder = ProgramGraphBuilder(ProgramGraphOptions(strict=True))
   mod = builder.AddModule("x")
   fn = builder.AddFunction("x", mod)
   builder.AddInstruction("x", fn)
@@ -63,7 +93,7 @@ def test_graph_with_unconnected_node():
 
 def test_linear_statement_control_flow():
   """Test that graph construction doesn't set on fire."""
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
   mod = builder.AddModule("x")
   fn = builder.AddFunction("x", mod)
   a = builder.AddInstruction("a", fn)
@@ -99,7 +129,7 @@ def test_linear_statement_control_flow():
 
 
 def test_clear():
-  builder = program_graph_builder.ProgramGraphBuilder()
+  builder = ProgramGraphBuilder()
   a = builder.AddModule("x")
   builder.Clear()
   b = builder.AddModule("x")

@@ -81,8 +81,11 @@ class ProgramGraphBuilder {
   // Return the graph protocol buffer.
   const ProgramGraph& GetProgramGraph() const { return graph_; }
 
-  // Validate the program graph and return it. Call Clear() if you wish to
+  // Return the program graph, and validate it first if strict option is set.
   [[nodiscard]] labm8::StatusOr<ProgramGraph> Build();
+
+  // Validate the program graph.
+  [[nodiscard]] labm8::Status ValidateGraph() const;
 
   // Reset builder state.
   void Clear();
