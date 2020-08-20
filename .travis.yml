@@ -27,14 +27,11 @@ addons:
   homebrew:
     brewfile: tools/Brewfile.travis
 
-env:
-  matrix:
-    - BAZEL_VERSION=3.1.0
-
 before_install:
   - OS=linux
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then OS=darwin; fi
   # Install Bazel.
+  - BAZEL_VERSION="$(cat .bazelversion | tr -d '\n')"
   - GH_BASE="https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION"
   - GH_ARTIFACT="bazel-$BAZEL_VERSION-installer-$OS-x86_64.sh"
   - CI_BASE="http://ci.bazel.io/job/Bazel/JAVA_VERSION=1.8,PLATFORM_NAME=$OS-x86_64/lastSuccessfulBuild/artifact/output/ci"
