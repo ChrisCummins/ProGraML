@@ -5,7 +5,7 @@ Install the command line ProGraML tools.
 
 Usage:
 
-  $ install [prefix]
+  $ bazel run -c opt //:install [prefix]
 
 Installs the command line tools to [prefix]/bin. [prefix] defaults to ~/.local/opt/programl.
 EOF
