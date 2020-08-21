@@ -59,6 +59,11 @@ DEFINE_bool(ignore_call_returns, false,
 DEFINE_int32(ir_list_index, 0,
              "If reading an IrList protocol buffer, use this value to index "
              "into the list.");
+DEFINE_bool(strict, false,
+            "Validate that the generated graph conforms to expectations of "
+            "what a graph should look like - i.e. the module is not empty, "
+            "every function contains instructions, and it does not contain "
+            "unreachable code.");
 
 StatusOr<programl::ProgramGraphOptions> GetProgramGraphOptionsFromFlags() {
   programl::ProgramGraphOptions options;
@@ -67,6 +72,9 @@ StatusOr<programl::ProgramGraphOptions> GetProgramGraphOptionsFromFlags() {
   }
   if (FLAGS_ignore_call_returns) {
     options.set_ignore_call_returns(true);
+  }
+  if (FLAGS_strict) {
+    options.set_strict(true);
   }
   return options;
 }
