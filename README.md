@@ -244,6 +244,15 @@ py_binary(
 ```
 
 
+## Contributing
+
+Patches, bug reports, feature requests are welcome! Please use the
+[issue tracker](https://github.com/ChrisCummins/ProGraML/issues) to file a
+bug report or question. Please read the
+[development workflow](/programl/Documentation/Development.md)
+document before contributing code.
+
+
 ## Acknowledgements
 
 Made with ❤️️ by
