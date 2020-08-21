@@ -1,25 +1,45 @@
 # ProGraML: Program Graphs for Machine Learning
 
-<!-- Travis CI -->
-<a href="https://travis-ci.org/ChrisCummins/ProGraML">
-  <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/master.svg">
-</a>
-<!-- Better code -->
-<a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
-  <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=master">
-</a>
 <!-- license -->
 <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
   <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
-</a>
-<!-- Repo size -->
-<a href="https://github.com/ChrisCummins/ProGraML">
-  <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
 </a>
 <!-- Commit counter -->
 <a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
   <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
 </a>
+<!-- Better code -->
+<a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
+  <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development">
+</a>
+<!-- Repo size -->
+<a href="https://github.com/ChrisCummins/ProGraML">
+  <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
+</a>
+
+<!-- Travis CI -->
+<table>
+  <tr>
+    <td>
+      Stable
+    </td>
+    <td>
+      <a href="https://travis-ci.org/ChrisCummins/ProGraML">
+        <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/stable.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Development
+    </td>
+    <td>
+      <a href="https://travis-ci.org/ChrisCummins/ProGraML">
+        <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/development.svg">
+      </a>
+    </td>
+  </tr>
+</table>
 
 ProGraML is a representation for programs as input to a machine learning model.
 
@@ -198,8 +218,8 @@ http_archive(
 # === End ProGraML dependencies ===
 ```
 
-Where `<WORKSPACE dependencies>` is the block of delimited block of code in
-[@programl//:WORKSPACE](https://github.com/ChrisCummins/ProGraML/blob/master/WORKSPACE)
+Where `<WORKSPACE dependencies>` is the block of delimited code in
+[@programl//:WORKSPACE](https://github.com/ChrisCummins/ProGraML/blob/development/WORKSPACE)
 (this is an unfortunately clumsy workaround for [recursive
 workspaces](https://github.com/bazelbuild/bazel/issues/1943)).
 
@@ -222,6 +242,15 @@ py_binary(
     ],
 )
 ```
+
+
+## Contributing
+
+Patches, bug reports, feature requests are welcome! Please use the
+[issue tracker](https://github.com/ChrisCummins/ProGraML/issues) to file a
+bug report or question. Please read the
+[development workflow](/programl/Documentation/Development.md)
+document before contributing code.
 
 
 ## Acknowledgements

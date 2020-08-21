@@ -1,10 +1,6 @@
 # Project Structure
 
-This repository is exported from a subset of my [phd](https://github.com/ChrisCummins/phd)
-monorepo. The core of the project is rooted in the `programl` directory, everything else is
-supporting libraries.
-
-This project is divided into the following top level packages:
+The key directories of this project are:
 
 * [`programl/cmd`](/programl/cmd): Command line tools. All executable binaries are stored here.
 * [`programl/Documentation`](/programl/Documentation): Additional (possibly out-of-date 😢) documentation.
