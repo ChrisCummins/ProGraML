@@ -8,38 +8,17 @@
 <a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
   <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
 </a>
-<!-- Better code -->
-<a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
-  <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development">
-</a>
 <!-- Repo size -->
 <a href="https://github.com/ChrisCummins/ProGraML">
   <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
 </a>
 
-<!-- Travis CI -->
-<table>
-  <tr>
-    <td>
-      Stable
-    </td>
-    <td>
-      <a href="https://travis-ci.org/ChrisCummins/ProGraML">
-        <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/stable.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Development
-    </td>
-    <td>
-      <a href="https://travis-ci.org/ChrisCummins/ProGraML">
-        <img src="https://img.shields.io/travis/ChrisCummins/ProGraML/development.svg">
-      </a>
-    </td>
-  </tr>
-</table>
+<!-- Build status -->
+| Branch | Travis CI | Better Code |
+| ------ | --------- | ----------- |
+| [stable](https://github.com/ChrisCummins/ProGraML/tree/stable) | <a href="https://travis-ci.org/ChrisCummins/ProGraML"><img src="https://img.shields.io/travis/ChrisCummins/ProGraML/stable.svg"></a> | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable"></a> |
+| [development](https://github.com/ChrisCummins/ProGraML/tree/development) | <a href="https://travis-ci.org/ChrisCummins/ProGraML"><img src="https://img.shields.io/travis/ChrisCummins/ProGraML/development.svg"></a> | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development"></a> |
+
 
 ProGraML is a representation for programs as input to a machine learning model.
 
