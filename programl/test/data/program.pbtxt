@@ -20,7 +20,7 @@
 # first node.
 node {
   type: INSTRUCTION
-  text: "<root>"
+  text: "[external]"
 }
 # The instruction which adds a constant to a variable.
 node {

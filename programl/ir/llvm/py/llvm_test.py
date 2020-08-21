@@ -52,7 +52,7 @@ def test_simple_ir():
   assert proto.module[0].name == "foo.c"
 
   assert len(proto.node) == 6
-  assert proto.node[0].text == "<root>"
+  assert proto.node[0].text == "[external]"
   assert proto.node[0].type == node_pb2.Node.INSTRUCTION
 
   assert proto.node[1].text == "add"
