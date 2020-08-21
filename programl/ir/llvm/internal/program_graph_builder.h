@@ -65,8 +65,7 @@ using ArgumentConsumerMap =
 class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
  public:
   explicit ProgramGraphBuilder(const ProgramGraphOptions& options)
-      : programl::graph::ProgramGraphBuilder(),
-        options_(options),
+      : programl::graph::ProgramGraphBuilder(options),
         blockCount_(0){}
 
             [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(
@@ -95,8 +94,6 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   Node* AddLlvmConstant(const ::llvm::Constant* constant);
 
  private:
-  const ProgramGraphOptions options_;
-
   TextEncoder textEncoder_;
 
   int32_t blockCount_;

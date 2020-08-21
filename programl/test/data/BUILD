@@ -3082,3 +3082,9 @@ genrule(
     ),
     tools = ["//programl/cmd:analyze"],
 )
+
+filegroup(
+    name = "module_with_unreachable_instructions",
+    testonly = 1,
+    srcs = ["module_with_unreachable_instructions.ll"],
+)

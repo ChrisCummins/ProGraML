@@ -17,6 +17,7 @@
 #include "programl/graph/program_graph_builder.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
+#include "labm8/cpp/status_macros.h"
 
 using labm8::Status;
 namespace error = labm8::error;
@@ -24,7 +25,8 @@ namespace error = labm8::error;
 namespace programl {
 namespace graph {
 
-ProgramGraphBuilder::ProgramGraphBuilder() {
+ProgramGraphBuilder::ProgramGraphBuilder(const ProgramGraphOptions& options)
+    : options_(options) {
   // Create the graph root node.
   AddNode(Node::INSTRUCTION, "[external]");
 }
@@ -144,6 +146,13 @@ labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
 }
 
 labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {
+  if (options().strict()) {
+    RETURN_IF_ERROR(ValidateGraph());
+  }
+  return GetProgramGraph();
+}
+
+labm8::Status ProgramGraphBuilder::ValidateGraph() const {
   // Check that all nodes except the root are connected. The root is allowed to
   // have no connections in the case where it is an empty graph.
   if (!emptyModules_.empty()) {
@@ -163,7 +172,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {
                   (*unconnectedNodes_.begin())->text());
   }
 
-  return GetProgramGraph();
+  return Status::OK;
 }
 
 void ProgramGraphBuilder::Clear() {
