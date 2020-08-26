@@ -12,12 +12,6 @@ include as much information as is required for me to reproduce the issue, and
 copy and paste the output of:
 
 ```sh
-$ bazel run //tools:whoami
-```
-
-If you can't use bazel, run the script directly and report its output:
-
-```sh
 $ ./tools/whoami.sh
 ```
 

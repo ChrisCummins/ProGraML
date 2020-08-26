@@ -47,6 +47,8 @@ before_install:
   - rm -f bazel_install.sh
 
 script:
+  # Run the diagnostic tests.
+  - ./tools/whoami.sh
   # Run the test suite.
   - bazel query 'tests(//...) except attr("tags", "notravis", //...)' | xargs bazel test --config=travis --keep_going --verbose_failures --test_output=errors
   # Install the package.
