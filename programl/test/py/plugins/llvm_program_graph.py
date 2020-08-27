@@ -15,6 +15,7 @@
 # limitations under the License.
 from typing import Iterable
 from typing import Tuple
+from pathlib import Path
 
 from labm8.py import bazelutil
 from labm8.py import pbutil
@@ -29,7 +30,7 @@ LLVM_IR_GRAPHS = bazelutil.DataPath(
 def EnumerateLlvmProgramGraphs() -> Iterable[
   Tuple[str, program_graph_pb2.ProgramGraph]
 ]:
-  """Enumerate a test set of LLVM IR file paths."""
+  """Enumerate a test set of LLVM ProGraML graph proto paths."""
   for path in LLVM_IR_GRAPHS.iterdir():
     yield path.name, pbutil.FromFile(path, program_graph_pb2.ProgramGraph())
 
@@ -39,6 +40,16 @@ def EnumerateLlvmProgramGraphs() -> Iterable[
   params=list(EnumerateLlvmProgramGraphs()),
   namer=lambda s: s[0],
 )
-def llvm_program_graph(request) -> str:
-  """A test fixture which yields an LLVM-IR string."""
+def llvm_program_graph(request) -> program_graph_pb2.ProgramGraph:
+  """A test fixture which yields an LLVM ProGraML graph."""
   return request.param[1]
+
+
+@test.Fixture(
+  scope="session",
+  params=list(LLVM_IR_GRAPHS.iterdir()),
+  namer=lambda path: path.name,
+)
+def llvm_program_graph_path(request) -> Path:
+  """A test fixture which yields the path of an LLVM ProGraML file."""
+  return request.param
