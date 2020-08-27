@@ -1,3 +1,4 @@
+# TODO: decide on default log dir in docstring below.
 """
 Usage:
    run.py [options]
@@ -8,7 +9,7 @@ Options:
                                         Will overwrite the per-dataset defaults if provided.
 
     --log_dir LOG_DIR               Directory(*) to store logfiles and trained models relative to repository dir.
-                                        [default: deeplearning/ml4pl/poj104/logs/unspecified]
+                                        [default: programl/task/graph_level_classification/logs/unspecified]
     --model MODEL                   The model to run.
     --dataset DATASET               The dataset to us.
     --config CONFIG                 Path(*) to a config json dump with params.
@@ -33,17 +34,16 @@ Options:
 """
 
 
-import pickle, time, os, json, sys
+import time, os, json, sys
 from pathlib import Path
 
 from docopt import docopt
 import tqdm
 import numpy as np
 import torch
-from torch_geometric.data import Data, InMemoryDataset, DataLoader # (see below)
+from torch_geometric.data import DataLoader # (see below)
 
 # make this file executable from anywhere
-#if __name__ == '__main__':
 full_path = os.path.realpath(__file__)
 print(full_path)
 REPO_ROOT = full_path.rsplit('ProGraML', maxsplit=1)[0] + 'ProGraML'
@@ -52,13 +52,13 @@ print(REPO_ROOT)
 sys.path.insert(1, REPO_ROOT)
 REPO_ROOT = Path(REPO_ROOT)
 
-from deeplearning.ml4pl.poj104.dataloader import NodeLimitedDataLoader
+from .dataloader import NodeLimitedDataLoader
 
-from deeplearning.ml4pl.models.ggnn.modeling import (
+from .modeling import (
     GGNNModel,
     GraphTransformerModel,
 )
-from deeplearning.ml4pl.models.ggnn.configs import (
+from .configs import (
     ProGraMLBaseConfig,
     GGNN_POJ104_Config,
     GGNN_ForPretraining_Config,
@@ -72,7 +72,7 @@ from deeplearning.ml4pl.models.ggnn.configs import (
     GraphTransformer_ForPretraining_Config,
 )
 
-from deeplearning.ml4pl.poj104.dataset import (
+from .dataset import (
     POJ104Dataset,
     NCCDataset,
     ThreadcoarseningDataset,
@@ -81,8 +81,8 @@ from deeplearning.ml4pl.poj104.dataset import (
 )
 
 # Importing twice like this enables restoring
-from deeplearning.ml4pl.models.ggnn import modeling
-from deeplearning.ml4pl.models.ggnn import configs
+from . import modeling
+from . import configs
 
 
 
