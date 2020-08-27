@@ -1,8 +1,7 @@
 import torch.utils.data
+from torch._six import container_abcs, int_classes, string_classes
 from torch.utils.data.dataloader import default_collate
-
-from torch_geometric.data import Data, Batch
-from torch._six import container_abcs, string_classes, int_classes
+from torch_geometric.data import Batch, Data
 
 
 class DataLoader(torch.utils.data.DataLoader):
@@ -18,8 +17,8 @@ class DataLoader(torch.utils.data.DataLoader):
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
     """
-    def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[],
-                 **kwargs):
+
+    def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[], **kwargs):
         def collate(batch):
             elem = batch[0]
             if isinstance(elem, Data):
@@ -32,18 +31,21 @@ class DataLoader(torch.utils.data.DataLoader):
                 return batch
             elif isinstance(elem, container_abcs.Mapping):
                 return {key: collate([d[key] for d in batch]) for key in elem}
-            elif isinstance(elem, tuple) and hasattr(elem, '_fields'):
+            elif isinstance(elem, tuple) and hasattr(elem, "_fields"):
                 return type(elem)(*(collate(s) for s in zip(*batch)))
             elif isinstance(elem, container_abcs.Sequence):
                 return [collate(s) for s in zip(*batch)]
+            raise TypeError(
+                "DataLoader found invalid type: {}".format(type(elem).__name__)
+            )
 
-            raise TypeError('DataLoader found invalid type: {}'.format(
-                type(elem)))
-
-        super(DataLoader,
-              self).__init__(dataset, batch_size, shuffle,
-                             collate_fn=lambda batch: collate(batch), **kwargs)
-
+        super().__init__(
+            dataset,
+            batch_size,
+            shuffle,
+            collate_fn=lambda batch: collate(batch),
+            **kwargs,
+        )
 
 
 class NodeLimitedDataLoader(torch.utils.data.DataLoader):
@@ -59,8 +61,17 @@ class NodeLimitedDataLoader(torch.utils.data.DataLoader):
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
     """
-    def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[],
-                 max_num_nodes=None, warn_on_limit=False, **kwargs):
+
+    def __init__(
+        self,
+        dataset,
+        batch_size=1,
+        shuffle=False,
+        follow_batch=[],
+        max_num_nodes=None,
+        warn_on_limit=False,
+        **kwargs,
+    ):
         self.max_num_nodes = max_num_nodes
 
         def collate(batch):
@@ -75,12 +86,16 @@ class NodeLimitedDataLoader(torch.utils.data.DataLoader):
                         if num_nodes + elem.num_nodes <= self.max_num_nodes:
                             limited_batch.append(elem)
                             num_nodes += elem.num_nodes
-                        else: # for debugging
+                        else:  # for debugging
                             pass
                     if len(limited_batch) < len(batch):
                         if warn_on_limit:
-                            print(f"dropped {len(batch) - len(limited_batch)} graphs from batch!")
-                    assert limited_batch != [], f'limited batch is empty! original batch was {batch}'
+                            print(
+                                f"dropped {len(batch) - len(limited_batch)} graphs from batch!"
+                            )
+                    assert (
+                        limited_batch != []
+                    ), f"limited batch is empty! original batch was {batch}"
                     return Batch.from_data_list(limited_batch, follow_batch)
                 else:
                     return Batch.from_data_list(batch, follow_batch)
@@ -92,14 +107,17 @@ class NodeLimitedDataLoader(torch.utils.data.DataLoader):
                 return batch
             elif isinstance(elem, container_abcs.Mapping):
                 return {key: collate([d[key] for d in batch]) for key in elem}
-            elif isinstance(elem, tuple) and hasattr(elem, '_fields'):
+            elif isinstance(elem, tuple) and hasattr(elem, "_fields"):
                 return type(elem)(*(collate(s) for s in zip(*batch)))
             elif isinstance(elem, container_abcs.Sequence):
                 return [collate(s) for s in zip(*batch)]
 
-            raise TypeError('DataLoader found invalid type: {}'.format(
-                type(elem)))
+            raise TypeError("DataLoader found invalid type: {}".format(type(elem)))
 
-        super(NodeLimitedDataLoader,
-              self).__init__(dataset, batch_size, shuffle,
-                             collate_fn=lambda batch: collate(batch), **kwargs)
+        super().__init__(
+            dataset,
+            batch_size,
+            shuffle,
+            collate_fn=lambda batch: collate(batch),
+            **kwargs,
+        )

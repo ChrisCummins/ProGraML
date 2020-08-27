@@ -42,7 +42,7 @@ class ProGraMLBaseConfig(object):
 
         self.vocab_size: int = 8568
         self.cdfg_vocab: bool = False
-        
+
         # ABLATION OPTIONS
         # NONE = 0 No ablation - use the full vocabulary (default).
         # NO_VOCAB = 1 Ignore the vocabulary - every node has an x value of 0.
@@ -56,7 +56,7 @@ class ProGraMLBaseConfig(object):
         # this reduces the tokens that the network sees to only
         # !IDENTIFIERs and !UNK statements
         #  One of {zero, constant, random, random_const, finetune, none}
-        self.inst2vec_embeddings = 'random'
+        self.inst2vec_embeddings = "random"
 
         self.ablate_structure = None  # one of {control,data,call}
 
@@ -71,20 +71,29 @@ class ProGraMLBaseConfig(object):
             if hasattr(config, key):
                 setattr(config, key, params[key])
             else:
-                print(f"(*CONFIG FROM DICT*  Default {config.name} doesn't have a key {key}. Will add key to config anyway!")
+                print(
+                    f"(*CONFIG FROM DICT*  Default {config.name} doesn't have a key {key}. Will add key to config anyway!"
+                )
                 setattr(config, key, params[key])
         return config
 
     def to_dict(self):
-        config_dict = {a: getattr(self, a) for a in dir(self) if not a.startswith('__') and not callable(getattr(self, a))}
+        config_dict = {
+            a: getattr(self, a)
+            for a in dir(self)
+            if not a.startswith("__") and not callable(getattr(self, a))
+        }
         return config_dict
 
     def check_equal(self, other):
         # take either config object or config_dict
         other_dict = other if isinstance(other, dict) else other.to_dict()
         if not self.to_dict() == other_dict:
-            print(f"WARNING: GGNNConfig.check_equal() FAILED:\nself and other are unequal: "
-                  f"The difference is {set(self.to_dict()) ^ set(other.to_dict())}.\n self={self.to_dict()}\n other={other_dict}")
+            print(
+                f"WARNING: GGNNConfig.check_equal() FAILED:\nself and other are unequal: "
+                f"The difference is {set(self.to_dict()) ^ set(other.to_dict())}.\n self={self.to_dict()}\n other={other_dict}"
+            )
+
 
 class GGNN_POJ104_Config(ProGraMLBaseConfig):
     def __init__(self):
@@ -94,8 +103,8 @@ class GGNN_POJ104_Config(ProGraMLBaseConfig):
         self.gnn_layers: int = 8
         self.message_weight_sharing: int = 2
         self.update_weight_sharing: int = 2
-        #self.message_timesteps: List[int] = [2, 2, 2, 2]
-        #self.update_timesteps: List[int] = [2, 2, 2, 2]
+        # self.message_timesteps: List[int] = [2, 2, 2, 2]
+        # self.update_timesteps: List[int] = [2, 2, 2, 2]
 
         # currently only admits node types 0 and 1 for statements and identifiers.
         self.use_node_types = True
@@ -121,7 +130,8 @@ class GGNN_POJ104_Config(ProGraMLBaseConfig):
         # self.selector_size: int = 2 if getattr(self, 'use_selector_embeddings', False) else 0
         # TODO(Zach) Maybe refactor non-rectangular edge passing matrices for independent hidden size.
         # hidden size of the whole model
-        self.hidden_size: int = self.emb_size + getattr(self, 'selector_size', 0)
+        self.hidden_size: int = self.emb_size + getattr(self, "selector_size", 0)
+
 
 class GGNN_Devmap_Config(GGNN_POJ104_Config):
     def __init__(self):
@@ -153,6 +163,7 @@ class GGNN_Threadcoarsening_Config(GGNN_POJ104_Config):
         self.has_graph_labels: bool = True
         # self.has_aux_input: bool = False
 
+
 class GGNN_ForPretraining_Config(GGNN_POJ104_Config):
     def __init__(self):
         super().__init__()
@@ -175,42 +186,43 @@ class GraphTransformer_POJ104_Config(ProGraMLBaseConfig):
         ###### borrowed for debugging ##########
 
         # GGNNMessage Layer
-        #self.msg_mean_aggregation: bool = True
-        #self.use_edge_bias: bool = True
+        # self.msg_mean_aggregation: bool = True
+        # self.use_edge_bias: bool = True
 
         ###############
         self.backward_edges: bool = True
         self.gnn_layers: int = 8
         self.message_weight_sharing: int = 2
         self.update_weight_sharing: int = 2
-        #self.layer_timesteps: List[int] = [1, 1, 1, 1, 1, 1, 1, 1] #[2, 2, 2, 2]
+        # self.layer_timesteps: List[int] = [1, 1, 1, 1, 1, 1, 1, 1] #[2, 2, 2, 2]
         self.use_node_types: bool = False
 
         # Dataset Specific, don't change!
         self.num_classes: int = 104
         self.has_graph_labels: bool = True
-        self.hidden_size: int = self.emb_size + getattr(self, 'selector_size', 0)
+        self.hidden_size: int = self.emb_size + getattr(self, "selector_size", 0)
 
         # Message:
         self.position_embeddings: bool = True
         #  Self-Attn Layer
         self.attn_bias = True
-        self.attn_num_heads = 5 #8 # choose among 4,5,8,10 for emb_sz 200
+        self.attn_num_heads = 5  # 8 # choose among 4,5,8,10 for emb_sz 200
         self.attn_dropout = 0.1
         self.attn_v_pos = False
 
         # Update:
 
         # Transformer Update Layer
-        self.update_layer: str = 'ff' # or 'gru'
-        self.tfmr_act = 'gelu' # relu or gelu, default relu
-        self.tfmr_dropout = 0.2 # default 0.1
-        self.tfmr_ff_sz = 512 #512 # ~ 2.5 model_dim (Bert: 768 - 2048, Trfm: base 512 - 2048, big 1024 - 4096)
+        self.update_layer: str = "ff"  # or 'gru'
+        self.tfmr_act = "gelu"  # relu or gelu, default relu
+        self.tfmr_dropout = 0.2  # default 0.1
+        self.tfmr_ff_sz = 512  # 512 # ~ 2.5 model_dim (Bert: 768 - 2048, Trfm: base 512 - 2048, big 1024 - 4096)
 
         # Optionally: GGNN Update Layer
-        #self.update_layer: str = 'gru' # or 'ff'
-        #self.edge_weight_dropout: float = 0.0
-        #self.graph_state_dropout: float = 0.2
+        # self.update_layer: str = 'gru' # or 'ff'
+        # self.edge_weight_dropout: float = 0.0
+        # self.graph_state_dropout: float = 0.2
+
 
 class GraphTransformer_Devmap_Config(GraphTransformer_POJ104_Config):
     def __init__(self):
@@ -219,9 +231,9 @@ class GraphTransformer_Devmap_Config(GraphTransformer_POJ104_Config):
         self.batch_size = 64
         self.lr = 2.5e-4
         self.num_epochs = 600
-        #self.graph_state_dropout = 0.0 #GGNN only
-        
-        #self.output_dropout # <- applies to Readout func!
+        # self.graph_state_dropout = 0.0 #GGNN only
+
+        # self.output_dropout # <- applies to Readout func!
 
         # Auxiliary Readout
         self.aux_use_better = False
@@ -234,16 +246,18 @@ class GraphTransformer_Devmap_Config(GraphTransformer_POJ104_Config):
         self.num_classes: int = 2
         self.has_graph_labels: bool = True
         self.has_aux_input: bool = True
-    
+
+
 class GraphTransformer_Threadcoarsening_Config(GraphTransformer_POJ104_Config):
     def __init__(self):
         super().__init__()
-        self.lr = 5e-5 #2.5-4?
+        self.lr = 5e-5  # 2.5-4?
         self.num_epochs = 600
         # Dataset inherent, don't change!
         self.num_classes: int = 6
         self.has_graph_labels: bool = True
         # self.has_aux_input: bool = False
+
 
 class GraphTransformer_ForPretraining_Config(GraphTransformer_POJ104_Config):
     def __init__(self):
@@ -266,7 +280,7 @@ class GGNN_BranchPrediction_Config(GGNN_POJ104_Config):
     def __init__(self):
         super().__init__()
         self.batch_size = 4
-        #self.use_tanh_readout = False !
+        # self.use_tanh_readout = False !
         self.num_classes = 1
         self.has_graph_labels = False
 
@@ -275,6 +289,6 @@ class GraphTransformer_BranchPrediction_Config(GraphTransformer_POJ104_Config):
     def __init__(self):
         super().__init__()
         self.batch_size = 4
-        #self.use_tanh_readout = False !
+        # self.use_tanh_readout = False !
         self.num_classes = 1
         self.has_graph_labels = False
