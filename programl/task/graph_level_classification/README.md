@@ -39,7 +39,9 @@ Options:
 ```
 Therefore, an exemplary command could look like this:
 ```
-[Example Run command]
+Reproduce the Transformer result for the rebuttal:
+
+python run.py --model transformer_poj104 --dataset poj104 --data_dir ~/rebuttal_datasets/classifyapp/ --log_dir logs/classifyapp_logs/rebuttal_transformer_poj104/ --config_json="{'train_subset': [0, 100], 'batch_size': 48, 'max_num_nodes': 40000, 'num_epochs': 70, 'vocab_size': 2231, 'message_weight_sharing': 2, 'update_weight_sharing': 2, 'lr': 1e-4, 'gnn_layers': 10}" 
 ```
 NB: You can pass a double quoted string of config options in json format, except that you may use single quotes (they will be parsed as double quotes to transform this almost-json format into valid json)
 
