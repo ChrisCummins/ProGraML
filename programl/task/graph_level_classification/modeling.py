@@ -26,9 +26,11 @@ from torch_geometric.utils import softmax as scatter_softmax
 
 SMALL_NUMBER = 1e-8
 
+
 def print_state_dict(mod):
     for n, t in mod.state_dict().items():
         print(n, t.size())
+
 
 def num_parameters(mod) -> int:
     """Compute the number of trainable parameters in a nn.Module and its children.
@@ -36,8 +38,11 @@ def num_parameters(mod) -> int:
         This function misses some parameters, i.e. in pytorch's official MultiheadAttention layer,
         while the state dict doesn't miss any!
     """
-    num_params = sum(param.numel() for param in mod.parameters(recurse=True) if param.requires_grad)
+    num_params = sum(
+        param.numel() for param in mod.parameters(recurse=True) if param.requires_grad
+    )
     return f"{num_params:,} params, weights size: {num_params * 4 / 1e6:.3f}MB."
+
 
 def assert_no_nan(tensor_list):
     for i, t in enumerate(tensor_list):
@@ -54,7 +59,9 @@ class BaseGNNModel(nn.Module):
     def setup(self, config, test_only):
         self.loss = Loss(config)
         # move model to device before making optimizer!
-        self.dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        self.dev = (
+            torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        )
 
         self.to(self.dev)
         print(f"Moved model to {self.dev}")
@@ -70,13 +77,28 @@ class BaseGNNModel(nn.Module):
 
     def num_parameters(self) -> int:
         """Compute the number of trainable parameters in this nn.Module and its children."""
-        num_params = sum(param.numel() for param in self.parameters(recurse=True) if param.requires_grad)
+        num_params = sum(
+            param.numel()
+            for param in self.parameters(recurse=True)
+            if param.requires_grad
+        )
         return f"{num_params:,} params, weights size: ~{num_params * 4 // 1e6:,}MB."
 
-    def forward(self, vocab_ids, labels, edge_lists, selector_ids=None,
-                pos_lists=None, num_graphs=None, graph_nodes_list=None,
-                node_types=None, aux_in=None, test_time_steps=None, readout_mask=None, runtimes=None,
-        ):
+    def forward(
+        self,
+        vocab_ids,
+        labels,
+        edge_lists,
+        selector_ids=None,
+        pos_lists=None,
+        num_graphs=None,
+        graph_nodes_list=None,
+        node_types=None,
+        aux_in=None,
+        test_time_steps=None,
+        readout_mask=None,
+        runtimes=None,
+    ):
         # Input
         # selector_ids are ignored anyway by the NodeEmbeddings module that doesn't support them.
         raw_in = self.node_embeddings(vocab_ids, selector_ids)
@@ -88,8 +110,10 @@ class BaseGNNModel(nn.Module):
         # instead!
 
         # Readout
-        if getattr(self.config, 'has_graph_labels', False):
-            assert graph_nodes_list is not None and num_graphs is not None, 'has_graph_labels requires graph_nodes_list and num_graphs tensors.'
+        if getattr(self.config, "has_graph_labels", False):
+            assert (
+                graph_nodes_list is not None and num_graphs is not None
+            ), "has_graph_labels requires graph_nodes_list and num_graphs tensors."
             nodewise_readout, graphwise_readout = self.readout(
                 raw_in,
                 raw_out,
@@ -100,60 +124,64 @@ class BaseGNNModel(nn.Module):
             )
             logits = graphwise_readout
         else:  # nodewise only
-            nodewise_readout, _ = self.readout(raw_in, raw_out, readout_mask=readout_mask)
+            nodewise_readout, _ = self.readout(
+                raw_in, raw_out, readout_mask=readout_mask
+            )
             graphwise_readout = None
             logits = nodewise_readout
 
         # do the old style aux_readout if not aux_use_better is set
-        if getattr(self.config, 'has_aux_input', False) and not getattr(self.config, 'aux_use_better', False):
-            assert self.config.has_graph_labels is True, \
-                "Implementation hasn't been checked for use with aux_input and nodewise prediction! It could work or fail silently."
+        if getattr(self.config, "has_aux_input", False) and not getattr(
+            self.config, "aux_use_better", False
+        ):
+            assert (
+                self.config.has_graph_labels is True
+            ), "Implementation hasn't been checked for use with aux_input and nodewise prediction! It could work or fail silently."
             assert aux_in is not None
             logits, graphwise_readout = self.aux_readout(logits, aux_in)
 
-
         if readout_mask is not None:  # need to mask labels in the same fashion.
-            assert readout_mask.dtype == torch.bool, 'Readout mask should be boolean!'
+            assert readout_mask.dtype == torch.bool, "Readout mask should be boolean!"
             labels = labels[readout_mask]
 
         # Metrics
         # accuracy, correct?, targets, maybe runtimes: actual, optimal
         metrics_tuple = self.metrics(logits, labels, runtimes)
 
-        outputs = (
-            (logits,) + metrics_tuple + (graphwise_readout,) + tuple(unroll_stats)
-        )
+        outputs = (logits,) + metrics_tuple + (graphwise_readout,) + tuple(unroll_stats)
 
         return outputs
 
 
 class GraphTransformerModel(BaseGNNModel):
     """Transformer Encoder for Graphs."""
+
     def __init__(self, config, pretrained_embeddings=None, test_only=False):
         super().__init__()
         self.config = config
         self.node_embeddings = NodeEmbeddings(config)
         self.gnn = GraphTransformerEncoder(config)
 
-
         # get readout and maybe tack on the aux readout
         self.has_aux_input = getattr(self.config, "has_aux_input", False)
-        self.aux_use_better = getattr(self.config, 'aux_use_better', False)
-        
+        self.aux_use_better = getattr(self.config, "aux_use_better", False)
+
         if self.has_aux_input and self.aux_use_better:
             self.readout = BetterAuxiliaryReadout(config)
         elif self.has_aux_input:
             self.readout = Readout(config)
             self.aux_readout = AuxiliaryReadout(config)
         else:
-            assert not self.aux_use_better, 'aux_use_better only with has_aux_input!'
+            assert not self.aux_use_better, "aux_use_better only with has_aux_input!"
             self.readout = Readout(config)
 
         self.metrics = Metrics()
 
         self.setup(config, test_only)
         print(self)
-        print(f"Number of trainable params in GraphTransformerModel: {self.num_parameters()}")
+        print(
+            f"Number of trainable params in GraphTransformerModel: {self.num_parameters()}"
+        )
 
 
 class GGNNModel(BaseGNNModel):
@@ -162,23 +190,24 @@ class GGNNModel(BaseGNNModel):
         self.config = config
 
         # input layer
-        if getattr(config, 'use_selector_embeddings', False):
-            self.node_embeddings = NodeEmbeddingsWithSelectors(config, pretrained_embeddings)
+        if getattr(config, "use_selector_embeddings", False):
+            self.node_embeddings = NodeEmbeddingsWithSelectors(
+                config, pretrained_embeddings
+            )
         else:
             self.node_embeddings = NodeEmbeddings(config, pretrained_embeddings)
-
 
         # Readout layer
         # get readout and maybe tack on the aux readout
         self.has_aux_input = getattr(self.config, "has_aux_input", False)
-        self.aux_use_better = getattr(self.config, 'aux_use_better', False)
+        self.aux_use_better = getattr(self.config, "aux_use_better", False)
         if self.has_aux_input and self.aux_use_better:
             self.readout = BetterAuxiliaryReadout(config)
         elif self.has_aux_input:
             self.readout = Readout(config)
             self.aux_readout = AuxiliaryReadout(config)
         else:
-            assert not self.aux_use_better, 'aux_use_better only with has_aux_input!'
+            assert not self.aux_use_better, "aux_use_better only with has_aux_input!"
             self.readout = Readout(config)
 
         # GNN
@@ -191,6 +220,7 @@ class GGNNModel(BaseGNNModel):
         self.setup(config, test_only)
         print(self)
         print(f"Number of trainable params in GGNNModel: {self.num_parameters()}")
+
 
 ################################################
 # GNN Encoder: Message+Aggregate, Update
@@ -210,37 +240,52 @@ class GGNNEncoder(nn.Module):
         self.update_weight_sharing = config.update_weight_sharing
         message_layers = self.gnn_layers // self.message_weight_sharing
         update_layers = self.gnn_layers // self.update_weight_sharing
-        assert message_layers * self.message_weight_sharing == self.gnn_layers, "layer number and reuse mismatch."
-        assert update_layers * self.update_weight_sharing == self.gnn_layers, "layer number and reuse mismatch."
-        #self.layer_timesteps = config.layer_timesteps
+        assert (
+            message_layers * self.message_weight_sharing == self.gnn_layers
+        ), "layer number and reuse mismatch."
+        assert (
+            update_layers * self.update_weight_sharing == self.gnn_layers
+        ), "layer number and reuse mismatch."
+        # self.layer_timesteps = config.layer_timesteps
 
         self.position_embeddings = config.position_embeddings
 
         # optional eval time unrolling parameter
-        self.test_layer_timesteps = getattr(config, 'test_layer_timesteps', 0)
-        self.unroll_strategy = getattr(config, 'unroll_strategy', 'none')
-        self.max_timesteps = getattr(config, 'max_timesteps', 1000)
-        self.label_conv_threshold = getattr(config, 'label_conv_threshold', 0.995)
-        self.label_conv_stable_steps = getattr(config, 'label_conv_stable_steps', 1)
+        self.test_layer_timesteps = getattr(config, "test_layer_timesteps", 0)
+        self.unroll_strategy = getattr(config, "unroll_strategy", "none")
+        self.max_timesteps = getattr(config, "max_timesteps", 1000)
+        self.label_conv_threshold = getattr(config, "label_conv_threshold", 0.995)
+        self.label_conv_stable_steps = getattr(config, "label_conv_stable_steps", 1)
 
         # make readout avalable for label_convergence tests
         if self.unroll_strategy == "label_convergence":
-            assert not self.config.has_aux_input, "aux_input is not supported with label_convergence"
-            assert readout, "Gotta pass instantiated readout module for label_convergence tests!"
+            assert (
+                not self.config.has_aux_input
+            ), "aux_input is not supported with label_convergence"
+            assert (
+                readout
+            ), "Gotta pass instantiated readout module for label_convergence tests!"
             self.readout = readout
 
         # Message and update layers
         self.message = nn.ModuleList()
-        #for i in range(len(self.layer_timesteps)):§
+        # for i in range(len(self.layer_timesteps)):§
         for i in range(message_layers):
             self.message.append(GGNNMessageLayer(config))
 
         self.update = nn.ModuleList()
-        #for i in range(len(self.layer_timesteps)):
+        # for i in range(len(self.layer_timesteps)):
         for i in range(update_layers):
             self.update.append(GGNNUpdateLayer(config))
 
-    def forward(self, edge_lists, node_states, pos_lists=None, node_types=None, test_time_steps=None):
+    def forward(
+        self,
+        edge_lists,
+        node_states,
+        pos_lists=None,
+        node_types=None,
+        test_time_steps=None,
+    ):
         old_node_states = node_states.clone()
 
         if self.backward_edges:
@@ -253,34 +298,36 @@ class GGNNEncoder(nn.Module):
 
         # we allow for some fancy unrolling strategies.
         # Currently only at eval time, but there is really no good reason for this.
-        assert self.unroll_strategy == 'none', 'New layer_timesteps not implemented for this unroll_strategy.'
-        #if self.training or self.unroll_strategy == "none":
+        assert (
+            self.unroll_strategy == "none"
+        ), "New layer_timesteps not implemented for this unroll_strategy."
+        # if self.training or self.unroll_strategy == "none":
         #    #layer_timesteps =
         #    #layer_timesteps = self.layer_timesteps
-        #elif self.unroll_strategy == "constant":
+        # elif self.unroll_strategy == "constant":
         #    layer_timesteps = self.test_layer_timesteps
-        #elif self.unroll_strategy == "edge_count":
+        # elif self.unroll_strategy == "edge_count":
         #    assert (
         #        test_time_steps is not None
         #    ), f"You need to pass test_time_steps or not use unroll_strategy '{self.unroll_strategy}''"
         #    layer_timesteps = [min(test_time_steps, self.max_timesteps)]
-        #elif self.unroll_strategy == "data_flow_max_steps":
+        # elif self.unroll_strategy == "data_flow_max_steps":
         #    assert (
         #        test_time_steps is not None
         #    ), f"You need to pass test_time_steps or not use unroll_strategy '{self.unroll_strategy}''"
         #    layer_timesteps = [min(test_time_steps, self.max_timesteps)]
-        #elif self.unroll_strategy == "label_convergence":
+        # elif self.unroll_strategy == "label_convergence":
         #    node_states, unroll_steps, converged = self.label_convergence_forward(
         #        edge_lists, node_states, pos_lists, node_types, initial_node_states=old_node_states
         #    )
         #    return node_states, old_node_states, unroll_steps, converged
-        #else:
+        # else:
         #    raise TypeError(
         #        "Unreachable! "
         #        f"Unroll strategy: {self.unroll_strategy}, training: {self.training}"
         #    )
 
-        #for (layer_idx, num_timesteps) in enumerate(layer_timesteps):
+        # for (layer_idx, num_timesteps) in enumerate(layer_timesteps):
         #    for t in range(num_timesteps):
         #        messages = self.message[layer_idx](edge_lists, node_states, pos_lists)
         #        node_states = self.update[layer_idx](messages, node_states, node_types)
@@ -300,9 +347,7 @@ class GGNNEncoder(nn.Module):
         ), f"Label convergence only supports one-layer GGNNs, but {len(self.layer_timesteps)} are configured in layer_timesteps: {self.layer_timesteps}"
 
         stable_steps, i = 0, 0
-        old_tentative_labels = self.tentative_labels(
-            initial_node_states, node_states
-        )
+        old_tentative_labels = self.tentative_labels(initial_node_states, node_states)
 
         while True:
             messages = self.message[0](edge_lists, node_states, pos_lists)
@@ -349,58 +394,73 @@ class GraphTransformerEncoder(nn.Module):
         self.update_weight_sharing = config.update_weight_sharing
         message_layers = self.gnn_layers // self.message_weight_sharing
         update_layers = self.gnn_layers // self.update_weight_sharing
-        assert message_layers * self.message_weight_sharing == self.gnn_layers, "layer number and reuse mismatch."
-        assert update_layers * self.update_weight_sharing == self.gnn_layers, "layer number and reuse mismatch."
-        #self.layer_timesteps = config.layer_timesteps
+        assert (
+            message_layers * self.message_weight_sharing == self.gnn_layers
+        ), "layer number and reuse mismatch."
+        assert (
+            update_layers * self.update_weight_sharing == self.gnn_layers
+        ), "layer number and reuse mismatch."
+        # self.layer_timesteps = config.layer_timesteps
 
-        self.use_node_types = getattr(config, 'use_node_types', False)
+        self.use_node_types = getattr(config, "use_node_types", False)
         assert not self.use_node_types, "not implemented"
 
         # Position Embeddings
-        if getattr(config, 'position_embeddings', False):
-            self.selector_size = getattr(config, 'selector_size', 0)
+        if getattr(config, "position_embeddings", False):
+            self.selector_size = getattr(config, "selector_size", 0)
             self.emb_size = config.emb_size
             # we are going to lookup the pos embs only once per batch instead of within every message layer
             self.position_embs = PositionEmbeddings()
-            #self.register_buffer("position_embs",
+            # self.register_buffer("position_embs",
             #    PositionEmbeddings()(
             #        torch.arange(512, dtype=torch.get_default_dtype()),
             #        config.emb_size,
             #        dpad=getattr(config, 'selector_size', 0),
             #    ),
-            #)
+            # )
         else:
             self.position_embs = None
 
         # Message and update layers
         self.message = nn.ModuleList()
-        #for i in range(len(self.layer_timesteps)):
+        # for i in range(len(self.layer_timesteps)):
         for i in range(message_layers):
             self.message.append(TypedSelfAttentionMessageLayer(config))
 
-        update_layer = getattr(config, 'update_layer', 'ff')
-        if update_layer == 'ff':
+        update_layer = getattr(config, "update_layer", "ff")
+        if update_layer == "ff":
             UpdateLayer = TransformerUpdateLayer
-        elif update_layer == 'gru':
+        elif update_layer == "gru":
             UpdateLayer = GGNNUpdateLayer
         else:
             raise ValueError("config.update_layer has to be 'gru' or 'ff'!")
 
         self.update = nn.ModuleList()
-        #for i in range(len(self.layer_timesteps)):
+        # for i in range(len(self.layer_timesteps)):
         for i in range(update_layers):
             self.update.append(UpdateLayer(config))
 
-    def forward(self, edge_lists, node_states, pos_lists=None, node_types=None, test_time_steps=None):
+    def forward(
+        self,
+        edge_lists,
+        node_states,
+        pos_lists=None,
+        node_types=None,
+        test_time_steps=None,
+    ):
         old_node_states = node_states.clone()
 
         # gather position embeddings for each edge
         pos_emb_lists = None
-        if getattr(self, 'position_embs') is not None:
+        if getattr(self, "position_embs") is not None:
             pos_emb_lists = []
             for i, pl in enumerate(pos_lists):
                 # p_emb = torch.index_select(self.position_embs, dim=0, index=pl)
-                p_emb = self.position_embs(pl.to(dtype=torch.get_default_dtype()), self.emb_size, dpad=self.selector_size)
+                p_emb = self.position_embs(
+                    pl.to(dtype=torch.get_default_dtype()),
+                    self.emb_size,
+                    dpad=self.selector_size,
+                )
                 pos_emb_lists.append(p_emb)
 
         # Prepare for backward edges
@@ -423,6 +483,7 @@ class GraphTransformerEncoder(nn.Module):
 
 
 ###### Message Layers
+
 
 class SelfAttentionMessageLayer(nn.Module):
     """Implements transformer scaled dot-product self-attention, cf. Vaswani et al. 2017,
@@ -456,15 +517,26 @@ class SelfAttentionMessageLayer(nn.Module):
         self.dropout_p = config.attn_dropout
 
         head_dim = self.embed_dim // self.num_heads
-        assert head_dim * self.num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
+        assert (
+            head_dim * self.num_heads == self.embed_dim
+        ), "embed_dim must be divisible by num_heads"
 
         # projection from input to q, k, v
         # Myle Ott et al. apparently observed that initializing the qkv_projection (in one matrix) with xavier_uni and gain 1/sqrt(2) to be much better than 1.
-        self.qkv_in_proj = LinearNet(self.embed_dim, self.embed_dim * 3, bias=self.bias, gain=1 / math.sqrt(2))
+        self.qkv_in_proj = LinearNet(
+            self.embed_dim, self.embed_dim * 3, bias=self.bias, gain=1 / math.sqrt(2)
+        )
         self.out_proj = LinearNet(self.embed_dim, self.embed_dim, bias=self.bias)
         self.dropout = nn.Dropout(p=self.dropout_p, inplace=True)
 
-    def forward(self, edge_lists=None, node_states=None, pos_lists=None, edges=None, need_weights=False):
+    def forward(
+        self,
+        edge_lists=None,
+        node_states=None,
+        pos_lists=None,
+        edges=None,
+        need_weights=False,
+    ):
         """NB: pos_lists are ignored."""
 
         # Glue Code:
@@ -479,7 +551,6 @@ class SelfAttentionMessageLayer(nn.Module):
             edge_sources = edges[0, :]
             edge_targets = edges[1, :]
 
-
         # ~~~ Sparse Self-Attention ~~~
         # The implementation follows the official pytorch implementation, but sparse.
         # Legend:
@@ -491,14 +562,15 @@ class SelfAttentionMessageLayer(nn.Module):
         assert embed_dim == self.embed_dim
 
         head_dim = embed_dim // self.num_heads
-        assert head_dim * self.num_heads == embed_dim, "embed_dim must be divisible by num_heads"
+        assert (
+            head_dim * self.num_heads == embed_dim
+        ), "embed_dim must be divisible by num_heads"
 
         # 1) get Q, K, V from node_states
         #   (needs to be merged with step 2 if we want to use positions..., bc
         #   they need to be added before retrieving Q, K, V)
 
         q, k, v = self.qkv_in_proj(node_states).chunk(3, dim=1)
-
 
         # 2) get Q', K', V' \in <M, D> by doing an F.emb lookup on Q, K, V (maybe transposed)
         #   according to index
@@ -510,14 +582,15 @@ class SelfAttentionMessageLayer(nn.Module):
         v_prime = torch.index_select(v, dim=0, index=edge_sources)
 
         messages, attn_weights = self.sparse_attn_forward(
-                                        q_prime, k_prime, v_prime,
-                                        num_nodes, edge_targets, need_weights
-                                    )
+            q_prime, k_prime, v_prime, num_nodes, edge_targets, need_weights
+        )
         if need_weights:
             return messages, attn_weights
         return messages
 
-    def sparse_attn_forward(self, q_prime, k_prime, v_prime, num_nodes, edge_targets, need_weights):
+    def sparse_attn_forward(
+        self, q_prime, k_prime, v_prime, num_nodes, edge_targets, need_weights
+    ):
         """Differently to dense self-attention, we expect q', k', v',
         which are the query, key and value projected node_states [+pos embs]
         index_selected by edge_targets, edge_sources and edge_source.
@@ -533,10 +606,15 @@ class SelfAttentionMessageLayer(nn.Module):
         head_dim = embed_dim // self.num_heads
 
         # some checks
-        assert head_dim * self.num_heads == embed_dim, "embed_dim must be divisible by num_heads"
-        assert q_prime.size() == k_prime.size(), \
-            f"q_prime, k_prime size mismatch: {q_prime.size()}, {k_prime.size()}"
-        assert q_prime.size()[0] == v_prime.size()[0], 'number of queries and values mismatch'
+        assert (
+            head_dim * self.num_heads == embed_dim
+        ), "embed_dim must be divisible by num_heads"
+        assert (
+            q_prime.size() == k_prime.size()
+        ), f"q_prime, k_prime size mismatch: {q_prime.size()}, {k_prime.size()}"
+        assert (
+            q_prime.size()[0] == v_prime.size()[0]
+        ), "number of queries and values mismatch"
 
         # ~~~ Sparse Self-Attention ~~~
         # The implementation follows the official pytorch implementation, but sparse.
@@ -552,10 +630,16 @@ class SelfAttentionMessageLayer(nn.Module):
         #   We will end up with <M, h> unnormalized attention scores.
         scores_prime = q_prime * k_prime
         # sum segments of head_dim size into num_head chunks
-        scores = scores_prime.transpose(0,1).view(self.num_heads, head_dim, -1).sum(dim=1).t().contiguous()
+        scores = (
+            scores_prime.transpose(0, 1)
+            .view(self.num_heads, head_dim, -1)
+            .sum(dim=1)
+            .t()
+            .contiguous()
+        )
         scaling = float(head_dim) ** -0.5
         scores = scores * scaling
-        assert scores.size() == (q_prime.size()[0], self.num_heads) # <M, num_heads>
+        assert scores.size() == (q_prime.size()[0], self.num_heads)  # <M, num_heads>
 
         # 4) Scattered Softmax:
         #   Perform a softmax by normalizing scores with the sum of those scores
@@ -564,7 +648,9 @@ class SelfAttentionMessageLayer(nn.Module):
         # 4*) multi-head: here we run the scattered_softmax in parallel over the h dimensions independently.
 
         # <M, num_heads>
-        attn_output_weights = scatter_softmax(scores, index=edge_targets, num_nodes=num_nodes)  # noqa: F821
+        attn_output_weights = scatter_softmax(
+            scores, index=edge_targets, num_nodes=num_nodes
+        )  # noqa: F821
         attn_output_weights = self.dropout(attn_output_weights)
 
         # 5) V' * %4: weight values V' <M> by attention.
@@ -573,7 +659,7 @@ class SelfAttentionMessageLayer(nn.Module):
         #   then get back the old view
         v_prime = v_prime.transpose(0, 1)
         v_prime = v_prime.view(self.num_heads, head_dim, -1)
-        v_prime = v_prime.permute(2,0,1) # v_prime now: <M, num_heads, head_dim>
+        v_prime = v_prime.permute(2, 0, 1)  # v_prime now: <M, num_heads, head_dim>
 
         attn_out_per_edge = v_prime * attn_output_weights.unsqueeze(2)
         attn_out_per_edge = attn_out_per_edge.view(-1, embed_dim)
@@ -581,7 +667,9 @@ class SelfAttentionMessageLayer(nn.Module):
         # 6) Scatter Add: aggregate messages via index_add with index edge_target
         # to end up with
         #       messages <N, D>
-        attn_out = torch.zeros(num_nodes, embed_dim, dtype=torch.get_default_dtype(), device=q_prime.device)
+        attn_out = torch.zeros(
+            num_nodes, embed_dim, dtype=torch.get_default_dtype(), device=q_prime.device
+        )
         attn_out.index_add_(0, edge_targets, attn_out_per_edge)
 
         # 5* b) Additionally project from the concatenation back to D. cf. vaswani et al. 2017
@@ -622,34 +710,46 @@ class TypedSelfAttentionMessageLayer(SelfAttentionMessageLayer):
         # init as a module without running parent __init__.
         nn.Module.__init__(self)
 
-        self.edge_type_count = config.edge_type_count * 2 if config.backward_edges else config.edge_type_count
+        self.edge_type_count = (
+            config.edge_type_count * 2
+            if config.backward_edges
+            else config.edge_type_count
+        )
         self.embed_dim = config.hidden_size
         self.bias = config.attn_bias
         self.num_heads = config.attn_num_heads
         self.dropout_p = config.attn_dropout
 
         head_dim = self.embed_dim // self.num_heads
-        assert head_dim * self.num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
+        assert (
+            head_dim * self.num_heads == self.embed_dim
+        ), "embed_dim must be divisible by num_heads"
 
-        self.position_embs = getattr(config, 'position_embeddings', False)
-        self.attn_v_pos = getattr(config, 'attn_v_pos', False)
+        self.position_embs = getattr(config, "position_embeddings", False)
+        self.attn_v_pos = getattr(config, "attn_v_pos", False)
         if not self.position_embs:
-            assert not self.attn_v_pos, "Use position_embeddings if you want attn_v_pos!"
+            assert (
+                not self.attn_v_pos
+            ), "Use position_embeddings if you want attn_v_pos!"
 
         # projection from input to q, k, v
         # Myle Ott et al. apparently observed that initializing the qkv_projection (in one matrix)
         #   with
         #        nn.init.xavier_uniform_(self.k_proj.weight, gain=1 / math.sqrt(2))
         #   to be much better than only xavier.
-        #self.qkv_in_proj = LinearNet(self.embed_dim, self.embed_dim * 3, bias=self.bias, gain=1 / math.sqrt(2))
+        # self.qkv_in_proj = LinearNet(self.embed_dim, self.embed_dim * 3, bias=self.bias, gain=1 / math.sqrt(2))
 
         # in projection per edge type.
         self.q_proj = LinearNet(self.embed_dim, self.embed_dim, bias=self.bias)
         self.k_proj = nn.ModuleList()
         self.v_proj = nn.ModuleList()
         for i in range(self.edge_type_count):
-            self.k_proj.append(LinearNet(self.embed_dim, self.embed_dim, bias=self.bias))
-            self.v_proj.append(LinearNet(self.embed_dim, self.embed_dim, bias=self.bias))
+            self.k_proj.append(
+                LinearNet(self.embed_dim, self.embed_dim, bias=self.bias)
+            )
+            self.v_proj.append(
+                LinearNet(self.embed_dim, self.embed_dim, bias=self.bias)
+            )
 
         self.out_proj = LinearNet(self.embed_dim, self.embed_dim, bias=self.bias)
         self.dropout = nn.Dropout(p=self.dropout_p, inplace=True)
@@ -667,7 +767,9 @@ class TypedSelfAttentionMessageLayer(SelfAttentionMessageLayer):
         assert embed_dim == self.embed_dim
 
         head_dim = embed_dim // self.num_heads
-        assert head_dim * self.num_heads == embed_dim, "embed_dim must be divisible by num_heads"
+        assert (
+            head_dim * self.num_heads == embed_dim
+        ), "embed_dim must be divisible by num_heads"
 
         # 1) get Q', K', V' \in <M, D>  from node_states
         # by index_select according to index
@@ -713,8 +815,9 @@ class TypedSelfAttentionMessageLayer(SelfAttentionMessageLayer):
         v_prime = torch.cat(v_primes, dim=0)
 
         # ~~~~ From here, we are back in the general sparse self-attention setting ~~~~~
-        messages, attn_weights = self.sparse_attn_forward(q_prime, k_prime, v_prime,
-                                                     num_nodes, edge_targets, need_weights)
+        messages, attn_weights = self.sparse_attn_forward(
+            q_prime, k_prime, v_prime, num_nodes, edge_targets, need_weights
+        )
         if need_weights:
             return messages, attn_weights
         return messages
@@ -748,20 +851,20 @@ class GGNNMessageLayer(nn.Module):
         )
 
         self.pos_transform = None
-        if getattr(config, 'position_embeddings', False):
-            self.selector_size = getattr(config, 'selector_size', 0)
+        if getattr(config, "position_embeddings", False):
+            self.selector_size = getattr(config, "selector_size", 0)
             self.emb_size = config.emb_size
             self.position_embs = PositionEmbeddings()
-            
-            #legacy
-            #self.register_buffer(
+
+            # legacy
+            # self.register_buffer(
             #    "position_embs",
             #    PositionEmbeddings()(
             #        torch.arange(512, dtype=torch.get_default_dtype()),
             #        config.emb_size,
             #        dpad=getattr(config, 'selector_size', 0),
             #    ),
-            #)
+            # )
             self.pos_transform = LinearNet(
                 self.dim,
                 self.dim,
@@ -774,12 +877,14 @@ class GGNNMessageLayer(nn.Module):
 
         # all edge types are handled in one matrix, but we
         # let propagated_states[i] be equal to the case with only edge_type i
-        #propagated_states = (
+        # propagated_states = (
         #    self.transform(node_states)
         #    .transpose(0, 1)
         #    .view(self.edge_type_count, self.dim, -1)
-        #)
-        propagated_states = self.transform(node_states).chunk(self.edge_type_count, dim=1)
+        # )
+        propagated_states = self.transform(node_states).chunk(
+            self.edge_type_count, dim=1
+        )
 
         messages_by_targets = torch.zeros_like(node_states)
         if self.msg_mean_aggregation:
@@ -792,19 +897,27 @@ class GGNNMessageLayer(nn.Module):
             edge_targets = edge_list[:, 1]
             edge_sources = edge_list[:, 0]
 
-            #messages_by_source = F.embedding(
+            # messages_by_source = F.embedding(
             #    edge_sources, propagated_states[i].transpose(0, 1)
-            #)
-            messages_by_source = torch.index_select(propagated_states[i], dim=0, index=edge_sources)
+            # )
+            messages_by_source = torch.index_select(
+                propagated_states[i], dim=0, index=edge_sources
+            )
 
             if self.pos_transform:
                 pos_list = pos_lists[i]
                 # torch.index_select(pos_gating, dim=0, index=pos_list)
-                pos_by_source = self.position_embs(pos_list.to(dtype=torch.get_default_dtype()), self.emb_size, dpad=self.selector_size)
-                
-                pos_gating_by_source = 2 * torch.sigmoid(self.pos_transform(pos_by_source))
-                
-                #messages_by_source.mul_(pos_by_source)
+                pos_by_source = self.position_embs(
+                    pos_list.to(dtype=torch.get_default_dtype()),
+                    self.emb_size,
+                    dpad=self.selector_size,
+                )
+
+                pos_gating_by_source = 2 * torch.sigmoid(
+                    self.pos_transform(pos_by_source)
+                )
+
+                # messages_by_source.mul_(pos_by_source)
                 messages_by_source = messages_by_source * pos_gating_by_source
 
             messages_by_targets.index_add_(0, edge_targets, messages_by_source)
@@ -816,8 +929,10 @@ class GGNNMessageLayer(nn.Module):
         if self.msg_mean_aggregation:
             divisor = bincount.float()
             divisor[bincount == 0] = 1.0  # avoid div by zero for lonely nodes
-            #messages_by_targets /= divisor.unsqueeze_(1) + SMALL_NUMBER
-            messages_by_targets = messages_by_targets / divisor.unsqueeze_(1) + SMALL_NUMBER
+            # messages_by_targets /= divisor.unsqueeze_(1) + SMALL_NUMBER
+            messages_by_targets = (
+                messages_by_targets / divisor.unsqueeze_(1) + SMALL_NUMBER
+            )
 
         return messages_by_targets
 
@@ -832,12 +947,12 @@ class PositionEmbeddings(nn.Module):
                 position: 1d long Tensor of positions,
                 demb: int    size of embedding vector
             """
-        inv_freq = 1 / (10000 ** (torch.arange(0.0, demb, 2.0, device=positions.device) / demb))
+        inv_freq = 1 / (
+            10000 ** (torch.arange(0.0, demb, 2.0, device=positions.device) / demb)
+        )
 
         sinusoid_inp = torch.ger(positions, inv_freq)
-        pos_emb = torch.cat(
-            (torch.sin(sinusoid_inp), torch.cos(sinusoid_inp)), dim=1
-        )
+        pos_emb = torch.cat((torch.sin(sinusoid_inp), torch.cos(sinusoid_inp)), dim=1)
 
         if dpad > 0:
             in_length = positions.size()[0]
@@ -863,6 +978,7 @@ class PositionEmbeddings(nn.Module):
 
 #######  Update Layers
 
+
 class GGNNUpdateLayer(nn.Module):
     """GRU update function of GGNN architecture, optionally distinguishing two kinds of node types.
     Args:
@@ -872,6 +988,7 @@ class GGNNUpdateLayer(nn.Module):
     Returns:
         updated node_states <N, D+S>
     """
+
     def __init__(self, config):
         super().__init__()
         self.dropout = config.graph_state_dropout
@@ -884,7 +1001,7 @@ class GGNNUpdateLayer(nn.Module):
         )
 
         # currently only admits node types 0 and 1 for statements and identifiers.
-        self.use_node_types = getattr(config, 'use_node_types', False)
+        self.use_node_types = getattr(config, "use_node_types", False)
         if self.use_node_types:
             self.id_gru = nn.GRUCell(
                 input_size=config.hidden_size, hidden_size=config.hidden_size
@@ -892,7 +1009,9 @@ class GGNNUpdateLayer(nn.Module):
 
     def forward(self, messages, node_states, node_types=None):
         if self.use_node_types:
-            assert node_types is not None, "Need to provide node_types <N> if config.use_node_types!"
+            assert (
+                node_types is not None
+            ), "Need to provide node_types <N> if config.use_node_types!"
             output = torch.zeros_like(node_states, device=node_states.device)
             stmt_mask = node_types == 0
             output[stmt_mask] = self.gru(messages[stmt_mask], node_states[stmt_mask])
@@ -905,6 +1024,7 @@ class GGNNUpdateLayer(nn.Module):
             F.dropout(output, p=self.dropout, training=self.training, inplace=True)
         return output
 
+
 class TransformerUpdateLayer(nn.Module):
     """Represents the residual MLP around the self-attention in the transformer
     encoder layer. The implementation is sparse for usage in GNNs.
@@ -916,14 +1036,15 @@ class TransformerUpdateLayer(nn.Module):
     Returns:
         updated node_states
     """
+
     def __init__(self, config):
         super().__init__()
-        self.use_node_types = getattr(config, 'use_node_types', False)
+        self.use_node_types = getattr(config, "use_node_types", False)
         assert not self.use_node_types, "not implemented"
 
-        activation = config.tfmr_act # relu or gelu, default relu
-        dropout = config.tfmr_dropout # default 0.1
-        dim_feedforward = config.tfmr_ff_sz # ~ 2.5 * model dim
+        activation = config.tfmr_act  # relu or gelu, default relu
+        dropout = config.tfmr_dropout  # default 0.1
+        dim_feedforward = config.tfmr_ff_sz  # ~ 2.5 * model dim
 
         # Implementation of Feedforward model
         self.linear1 = nn.Linear(config.hidden_size, dim_feedforward)
@@ -948,14 +1069,16 @@ class TransformerUpdateLayer(nn.Module):
     def forward(self, messages, node_states, node_types=None):
 
         # message layer is elsewhere!
-        #messages = self.self_attn(src, src, src)[0]
+        # messages = self.self_attn(src, src, src)[0]
 
         # 1st 'Add & Norm' block (cf. vaswani et al. 2017, fig. 1)
         node_states = node_states + self.dropout1(messages)
         node_states = self.norm1(node_states)
 
         # 'Feed Forward' block
-        messages = self.linear2(self.dropout(self.activation(self.linear1(node_states))))
+        messages = self.linear2(
+            self.dropout(self.activation(self.linear1(node_states)))
+        )
 
         # 2nd 'Add & Norm' block
         node_states = node_states + self.dropout2(messages)
@@ -976,7 +1099,7 @@ class Readout(nn.Module):
         super().__init__()
         self.has_graph_labels = config.has_graph_labels
         self.num_classes = config.num_classes
-        self.use_tanh_readout = getattr(config, 'use_tanh_readout', False)
+        self.use_tanh_readout = getattr(config, "use_tanh_readout", False)
 
         self.regression_gate = LinearNet(
             2 * config.hidden_size, self.num_classes, dropout=config.output_dropout,
@@ -985,8 +1108,15 @@ class Readout(nn.Module):
             config.hidden_size, self.num_classes, dropout=config.output_dropout,
         )
 
-    def forward(self, raw_node_in, raw_node_out, graph_nodes_list=None,
-                num_graphs=None, auxiliary_features=None, readout_mask=None):
+    def forward(
+        self,
+        raw_node_in,
+        raw_node_out,
+        graph_nodes_list=None,
+        num_graphs=None,
+        auxiliary_features=None,
+        readout_mask=None,
+    ):
         if readout_mask is not None:
             # mask first to only process the stuff that goes into the loss function!
             raw_node_in = raw_node_in[readout_mask]
@@ -999,11 +1129,15 @@ class Readout(nn.Module):
         if not self.use_tanh_readout:
             nodewise_readout = gating * self.regression_transform(raw_node_out)
         else:
-            nodewise_readout = gating * torch.tanh(self.regression_transform(raw_node_out))
-        
+            nodewise_readout = gating * torch.tanh(
+                self.regression_transform(raw_node_out)
+            )
+
         graph_readout = None
         if self.has_graph_labels:
-            assert graph_nodes_list is not None and num_graphs is not None, 'has_graph_labels requires graph_nodes_list and num_graphs tensors.'
+            assert (
+                graph_nodes_list is not None and num_graphs is not None
+            ), "has_graph_labels requires graph_nodes_list and num_graphs tensors."
             # aggregate via sums over graphs
             device = raw_node_out.device
             graph_readout = torch.zeros(num_graphs, self.num_classes, device=device)
@@ -1070,6 +1204,7 @@ class LinearNet(nn.Module):
 ###########################################
 # Mixing in graph-level features to readout
 
+
 class AuxiliaryReadout(nn.Module):
     """Produces per-graph predictions by combining
     the per-graph predictions with auxiliary features.
@@ -1081,7 +1216,7 @@ class AuxiliaryReadout(nn.Module):
         self.num_classes = config.num_classes
         self.aux_in_log1p = getattr(config, "aux_in_log1p", False)
         assert (
-        config.has_graph_labels
+            config.has_graph_labels
         ), "We expect aux readout in combination with graph labels, not node labels"
         self.feed_forward = None
 
@@ -1097,7 +1232,7 @@ class AuxiliaryReadout(nn.Module):
 
     def forward(self, graph_features, auxiliary_features):
         assert (
-        graph_features.size()[0] == auxiliary_features.size()[0]
+            graph_features.size()[0] == auxiliary_features.size()[0]
         ), "every graph needs aux_features. Dimension mismatch."
         if self.aux_in_log1p:
             auxiliary_features.log1p_()
@@ -1107,7 +1242,6 @@ class AuxiliaryReadout(nn.Module):
         normed_features = self.batch_norm(aggregate_features)
         out = self.feed_forward(normed_features)
         return out, graph_features
-
 
 
 class BetterAuxiliaryReadout(nn.Module):
@@ -1122,8 +1256,9 @@ class BetterAuxiliaryReadout(nn.Module):
         super().__init__()
 
         self.aux_in_log1p = getattr(config, "aux_in_log1p", False)
-        assert config.has_graph_labels, \
-            "We expect aux readout in combination with graph labels, not node labels"
+        assert (
+            config.has_graph_labels
+        ), "We expect aux readout in combination with graph labels, not node labels"
 
         self.has_graph_labels = config.has_graph_labels
         self.num_classes = config.num_classes
@@ -1131,22 +1266,36 @@ class BetterAuxiliaryReadout(nn.Module):
         # now with aux_in concat'ed and batchnorm
         self.regression_gate = nn.Sequential(
             nn.BatchNorm1d(2 * config.hidden_size + config.aux_in_size),
-            LinearNet(2 * config.hidden_size + config.aux_in_size,
-                      self.num_classes, dropout=config.output_dropout,
-            )
+            LinearNet(
+                2 * config.hidden_size + config.aux_in_size,
+                self.num_classes,
+                dropout=config.output_dropout,
+            ),
         )
         # now with aux_in concat'ed and with intermediate layer
         self.regression_transform = nn.Sequential(
             nn.BatchNorm1d(config.hidden_size + config.aux_in_size),
-            LinearNet(config.hidden_size + config.aux_in_size,
-                      config.aux_in_layer_size, dropout=config.output_dropout,
+            LinearNet(
+                config.hidden_size + config.aux_in_size,
+                config.aux_in_layer_size,
+                dropout=config.output_dropout,
             ),
             nn.ReLU(),
             LinearNet(config.aux_in_layer_size, config.num_classes),
         )
 
-    def forward(self, raw_node_in, raw_node_out, graph_nodes_list, num_graphs, auxiliary_features, readout_mask=None):
-        assert graph_nodes_list is not None and auxiliary_features is not None, 'need those'
+    def forward(
+        self,
+        raw_node_in,
+        raw_node_out,
+        graph_nodes_list,
+        num_graphs,
+        auxiliary_features,
+        readout_mask=None,
+    ):
+        assert (
+            graph_nodes_list is not None and auxiliary_features is not None
+        ), "need those"
         if readout_mask is not None:
             # mask first to only process the stuff that goes into the loss function!
             raw_node_in = raw_node_in[readout_mask]
@@ -1156,7 +1305,9 @@ class BetterAuxiliaryReadout(nn.Module):
 
         if self.aux_in_log1p:
             auxiliary_features.log1p_()
-        aux_by_node = torch.index_select(auxiliary_features, dim=0, index=graph_nodes_list)
+        aux_by_node = torch.index_select(
+            auxiliary_features, dim=0, index=graph_nodes_list
+        )
 
         # info: the gate and regression include batch norm inside!
         gate_input = torch.cat((raw_node_in, raw_node_out, aux_by_node), dim=-1)
@@ -1166,7 +1317,9 @@ class BetterAuxiliaryReadout(nn.Module):
 
         graph_readout = None
         if self.has_graph_labels:
-            assert graph_nodes_list is not None and num_graphs is not None, 'has_graph_labels requires graph_nodes_list and num_graphs tensors.'
+            assert (
+                graph_nodes_list is not None and num_graphs is not None
+            ), "has_graph_labels requires graph_nodes_list and num_graphs tensors."
             # aggregate via sums over graphs
             device = raw_node_out.device
             graph_readout = torch.zeros(num_graphs, self.num_classes, device=device)
@@ -1179,7 +1332,7 @@ class BetterAuxiliaryReadout(nn.Module):
 ############################
 # GNN Input: Embedding Layers
 ############################
-#class NodeEmbeddingsForPretraining(nn.Module):
+# class NodeEmbeddingsForPretraining(nn.Module):
 #    """NodeEmbeddings with added embedding for [MASK] token."""
 #
 #    def __init__(self, config):
@@ -1220,7 +1373,9 @@ class NodeEmbeddings(nn.Module):
         if config.inst2vec_embeddings == "constant":
             print("Using pre-trained inst2vec embeddings frozen.")
             assert pretrained_embeddings is not None
-            assert pretrained_embeddings.size()[0] == 8568, "Wrong number of embs; don't come here with MLM models!"
+            assert (
+                pretrained_embeddings.size()[0] == 8568
+            ), "Wrong number of embs; don't come here with MLM models!"
             self.node_embs = nn.Embedding.from_pretrained(
                 pretrained_embeddings, freeze=True
             )
@@ -1233,7 +1388,9 @@ class NodeEmbeddings(nn.Module):
         elif config.inst2vec_embeddings == "finetune":
             print("Fine-tuning inst2vec embeddings")
             assert pretrained_embeddings is not None
-            assert pretrained_embeddings.size()[0] == 8568, "Wrong number of embs; don't come here with MLM models!"
+            assert (
+                pretrained_embeddings.size()[0] == 8568
+            ), "Wrong number of embs; don't come here with MLM models!"
             self.node_embs = nn.Embedding.from_pretrained(
                 pretrained_embeddings, freeze=False
             )
@@ -1246,9 +1403,8 @@ class NodeEmbeddings(nn.Module):
         else:
             raise NotImplementedError(config.inst2vec_embeddings)
 
-
     def forward(self, vocab_ids, *ignored_args, **ignored_kwargs):
-        if self.inst2vec_embeddings == 'none':
+        if self.inst2vec_embeddings == "none":
             # map IDs to 1 and everything else to 0
             ids = (vocab_ids == 8565).to(torch.long)  # !IDENTIFIER token id
             embs = self.node_embs(ids)
@@ -1273,11 +1429,14 @@ class NodeEmbeddingsWithSelectors(NodeEmbeddings):
     Returns:
     node_states: <N, config.hidden_size>
     """
+
     def __init__(self, config, pretrained_embeddings=None):
         super().__init__(config, pretrained_embeddings)
 
         self.node_embs = super().forward
-        assert config.use_selector_embeddings, "This Module is for use with use_selector_embeddings!"
+        assert (
+            config.use_selector_embeddings
+        ), "This Module is for use with use_selector_embeddings!"
 
         selector_init = torch.tensor(
             # TODO(github.com/ChrisCummins/ProGraML/issues/27): x50 is maybe a
@@ -1285,9 +1444,7 @@ class NodeEmbeddingsWithSelectors(NodeEmbeddings):
             [[0, 50.0], [50.0, 0]],
             dtype=torch.get_default_dtype(),
         )
-        self.selector_embs = nn.Embedding.from_pretrained(
-            selector_init, freeze=True
-        )
+        self.selector_embs = nn.Embedding.from_pretrained(selector_init, freeze=True)
 
     def forward(self, vocab_ids, selector_ids):
         node_embs = self.node_embs(vocab_ids)
@@ -1317,13 +1474,13 @@ class Loss(nn.Module):
             # class labels '-1' don't contribute to the gradient!
             # however in most cases it will be more efficient to gather
             # the relevant data into a dense tensor
-            self.loss = nn.CrossEntropyLoss(ignore_index=-1, reduction='mean')
-            #loss = F.nll_loss(
+            self.loss = nn.CrossEntropyLoss(ignore_index=-1, reduction="mean")
+            # loss = F.nll_loss(
             #    F.log_softmax(logits, dim=-1, dtype=torch.float32),
             #    targets,
             #    reduction='mean',
             #    ignore_index=-1,
-            #)
+            # )
 
     def forward(self, logits, targets):
         """inputs: (logits) or (logits, intermediate_logits)"""
@@ -1331,7 +1488,7 @@ class Loss(nn.Module):
             l = torch.sigmoid(logits[0])
             logits = (l, logits[1])
         loss = self.loss(logits[0].squeeze(dim=1), targets)
-        if getattr(self.config, 'has_aux_input', False):
+        if getattr(self.config, "has_aux_input", False):
             loss = loss + self.config.intermediate_loss_weight * self.loss(
                 logits[1], targets
             )
@@ -1355,8 +1512,9 @@ class Metrics(nn.Module):
         elif len(labels.size()) == 1:
             targets = labels
         else:
-            raise ValueError(f"labels={labels.size()} tensor is is neither 1 nor 2-dimensional. :/")
-
+            raise ValueError(
+                f"labels={labels.size()} tensor is is neither 1 nor 2-dimensional. :/"
+            )
 
         pred_targets = logits.argmax(dim=1)
         correct_preds = targets.eq(pred_targets).float()
@@ -1365,14 +1523,17 @@ class Metrics(nn.Module):
         ret = accuracy, correct_preds, targets
 
         if runtimes is not None:
-            assert runtimes.size() == logits.size(), \
-                f"We need to have a runtime for each sample and every possible label!" \
+            assert runtimes.size() == logits.size(), (
+                f"We need to have a runtime for each sample and every possible label!"
                 f"runtimes={runtimes.size()}, logits={logits.size()}."
-            #actual = runtimes[pred#torch.index_select(runtimes, dim=1, index=pred_targets)
-            actual = torch.gather(runtimes, dim=1, index=pred_targets.view(-1, 1)).squeeze()
-            #actual = runtimes[:, pred_targets]
+            )
+            # actual = runtimes[pred#torch.index_select(runtimes, dim=1, index=pred_targets)
+            actual = torch.gather(
+                runtimes, dim=1, index=pred_targets.view(-1, 1)
+            ).squeeze()
+            # actual = runtimes[:, pred_targets]
             optimal = torch.gather(runtimes, dim=1, index=targets.view(-1, 1)).squeeze()
-            #optimal = runtimes[:, targets]
+            # optimal = runtimes[:, targets]
             ret += (actual, optimal)
 
         return ret

@@ -62,26 +62,26 @@ def load(file: str, cdfg: bool = False) -> ProgramGraph:
         orig_graph: the original programl proto (that contains graph level labels)
     """
     graph = ProgramGraph()
-    with open(file, 'rb') as f:
+    with open(file, "rb") as f:
         proto = f.read()
 
-    
     if cdfg:
         # hotfix missing graph labels in cdfg proto
         orig_graph = ProgramGraph()
         orig_graph.ParseFromString(proto)
 
         graph2cdfg = subprocess.Popen(
-            [str(GRAPH2CDFG), '--stdin_fmt=pb', '--stdout_fmt=pb'],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE
+            [str(GRAPH2CDFG), "--stdin_fmt=pb", "--stdout_fmt=pb"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
         )
         proto, _ = graph2cdfg.communicate(proto)
         assert not graph2cdfg.returncode, f"CDFG conversion failed: {file}"
 
     graph.ParseFromString(proto)
-    
+
     if not cdfg:
-        orig_graph = graph    
+        orig_graph = graph
     return graph, orig_graph
 
 
@@ -112,10 +112,8 @@ class AblationVocab(enum.IntEnum):
 
 
 def filename(
-        split: str,
-        cdfg: bool = False,
-        ablation_vocab: AblationVocab = AblationVocab.NONE
-    ) -> str:
+    split: str, cdfg: bool = False, ablation_vocab: AblationVocab = AblationVocab.NONE
+) -> str:
     """Generate the name for a data file.
 
     Args:
@@ -138,12 +136,14 @@ def filename(
     return f"{name}_data.pt"
 
 
-def nx2data(graph: ProgramGraph,
-            vocabulary: Dict[str, int],
-            y_feature_name: Optional[str] = None,
-            ignore_profile_info=True,
-            ablate_vocab = AblationVocab.NONE,
-            orig_graph: ProgramGraph = None):
+def nx2data(
+    graph: ProgramGraph,
+    vocabulary: Dict[str, int],
+    y_feature_name: Optional[str] = None,
+    ignore_profile_info=True,
+    ablate_vocab=AblationVocab.NONE,
+    orig_graph: ProgramGraph = None,
+):
     r"""Converts a program graph protocol buffer to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -168,8 +168,7 @@ def nx2data(graph: ProgramGraph,
     # collect x
     if ablate_vocab == AblationVocab.NONE:
         vocabulary_indices = vocab_ids = [
-            vocabulary.get(node.text, len(vocabulary))
-            for node in graph.node
+            vocabulary.get(node.text, len(vocabulary)) for node in graph.node
         ]
     elif ablate_vocab == AblationVocab.NO_VOCAB:
         vocabulary_indices = [0] * len(graph.node)
@@ -183,31 +182,41 @@ def nx2data(graph: ProgramGraph,
 
     x = torch.cat([xs, types]).view(2, -1).t().contiguous()
 
-    assert edge_attr.size()[0] == edge_index.size()[1], f'edge_attr={edge_attr.size()} size mismatch with edge_index={edge_index.size()}'
+    assert (
+        edge_attr.size()[0] == edge_index.size()[1]
+    ), f"edge_attr={edge_attr.size()} size mismatch with edge_index={edge_index.size()}"
 
     data_dict = {
-        'x': x,
-        'edge_index': edge_index,
-        'edge_attr': edge_attr,
+        "x": x,
+        "edge_index": edge_index,
+        "edge_attr": edge_attr,
     }
-    
+
     # maybe collect these data too
     if y_feature_name is not None:
         assert orig_graph is not None, "need orig_graph to retrieve graph level labels!"
-        y = torch.tensor(orig_graph.features.feature[y_feature_name].int64_list.value[0]).view(1)  # <1>
+        y = torch.tensor(
+            orig_graph.features.feature[y_feature_name].int64_list.value[0]
+        ).view(
+            1
+        )  # <1>
         if y_feature_name == "poj104_label":
             y -= 1
-        data_dict['y'] = y
-    
+        data_dict["y"] = y
+
     # branch prediction / profile info specific
     if not ignore_profile_info:
-        raise NotImplementedError("profile info is not supported with the new nx2data (from programgraph) adaptation.")
+        raise NotImplementedError(
+            "profile info is not supported with the new nx2data (from programgraph) adaptation."
+        )
         profile_info = []
         for i, node_data in nx_graph.nodes(data=True):
             # default to -1, -1, -1 if not all profile info is given.
-            if not (node_data.get("llvm_profile_true_weight") is not None and \
-                    node_data.get("llvm_profile_false_weight") is not None and \
-                    node_data.get("llvm_profile_total_weight") is not None):
+            if not (
+                node_data.get("llvm_profile_true_weight") is not None
+                and node_data.get("llvm_profile_false_weight") is not None
+                and node_data.get("llvm_profile_total_weight") is not None
+            ):
                 mask = 0
                 true_weight = -1
                 false_weight = -1
@@ -219,10 +228,9 @@ def nx2data(graph: ProgramGraph,
                 total_weight = node_data["llvm_profile_total_weight"]
 
             profile_info.append([mask, true_weight, false_weight, total_weight])
-        
-        data_dict['profile_info'] = torch.tensor(profile_info)
-    
-    
+
+        data_dict["profile_info"] = torch.tensor(profile_info)
+
     # make Data
     data = Data(**data_dict)
 
@@ -230,11 +238,15 @@ def nx2data(graph: ProgramGraph,
 
 
 class BranchPredictionDataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/branch_prediction_data',
-                 split='train',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100],
-                 train_subset_seed=0):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/branch_prediction_data",
+        split="train",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -246,7 +258,9 @@ class BranchPredictionDataset(InMemoryDataset):
         self.train_subset_seed = train_subset_seed
         super().__init__(root, transform, pre_transform)
 
-        assert split in ['train'], "The BranchPrediction dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
+        assert split in [
+            "train"
+        ], "The BranchPrediction dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
         self.data, self.slices = torch.load(self.processed_paths[0])
         pass
 
@@ -258,13 +272,15 @@ class BranchPredictionDataset(InMemoryDataset):
     @property
     def processed_file_names(self):
         """A list of files in the processed_dir which needs to be found in order to skip the processing."""
-        base = f'{self.split}_data.pt'
+        base = f"{self.split}_data.pt"
 
-        if tuple(self.train_subset) == (0, 100) or self.split in ['val', 'test']:
+        if tuple(self.train_subset) == (0, 100) or self.split in ["val", "test"]:
             return [base]
         else:
-            assert self.split == 'train'
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            assert self.split == "train"
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         """Download raw data to `self.raw_dir`"""
@@ -276,13 +292,14 @@ class BranchPredictionDataset(InMemoryDataset):
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(30, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(30, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -291,11 +308,14 @@ class BranchPredictionDataset(InMemoryDataset):
         return
 
     def return_cross_validation_splits(self, split):
-        assert self.train_subset == [0, 100], "Do cross-validation on the whole dataset!"
-        #num_samples = len(self)
-        #perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
+        assert self.train_subset == [
+            0,
+            100,
+        ], "Do cross-validation on the whole dataset!"
+        # num_samples = len(self)
+        # perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
-         # 10-fold cross-validation
+        # 10-fold cross-validation
         n_splits = 10
         kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
         (train_index, test_index) = list(kf.split(range(len(self))))[split]
@@ -309,7 +329,9 @@ class BranchPredictionDataset(InMemoryDataset):
             if d.num_nodes <= max_num_nodes:
                 idx.append(i)
         dataset = self.__indexing__(idx)
-        print(f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining.")
+        print(
+            f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining."
+        )
         return dataset
 
     def process(self):
@@ -321,35 +343,39 @@ class BranchPredictionDataset(InMemoryDataset):
             Instead of looking for .ll.pickle (nx graphs), we directly look for '*.data.p' files.
         """
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / f'{self.split}_data.pt'
+        full_dataset = Path(self.processed_dir) / f"{self.split}_data.pt"
         if full_dataset.is_file():
-            assert self.split == 'train', 'here shouldnt be reachable.'
-            print(f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            assert self.split == "train", "here shouldnt be reachable."
+            print(
+                f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
 
         # read data into huge `Data` list.
         data_list = []
 
         ds_base = Path(self.root)
-        print(f'Creating {self.split} dataset at {str(ds_base)}')
+        print(f"Creating {self.split} dataset at {str(ds_base)}")
         # TODO change this line to go to the new format
-        #out_base = ds_base / ('ir_' + self.split + '_programl')
-        #assert out_base.exists(), f"{out_base} doesn't exist!"
+        # out_base = ds_base / ('ir_' + self.split + '_programl')
+        # assert out_base.exists(), f"{out_base} doesn't exist!"
         # TODO collect .ll.pickle instead and call nx2data on the fly!
         print(f"=== DATASET {str(ds_base)}: Collecting .data.p files into dataset")
 
-        #files = list(ds_base.rglob('*.data.p'))
-        #files = list(ds_base.rglob('*.ll.pickle'))
-        files = list(ds_base.rglob('*.ll.p'))
-        
+        # files = list(ds_base.rglob('*.data.p'))
+        # files = list(ds_base.rglob('*.ll.pickle'))
+        files = list(ds_base.rglob("*.ll.p"))
+
         for file in tqdm.tqdm(files):
             if not file.is_file():
                 continue
@@ -362,14 +388,18 @@ class BranchPredictionDataset(InMemoryDataset):
                 data = nx2data(nx_graph, ignore_profile_info=False)
                 data_list.append(data)
             except IndexError:
-                print(f"Failing nx2data bc IndexError (prob. empty graph) on {file}! Skipping ...")
+                print(
+                    f"Failing nx2data bc IndexError (prob. empty graph) on {file}! Skipping ..."
+                )
                 continue
 
         print(f" * COMPLETED * === DATASET {ds_base}: now pre-filtering...")
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -379,17 +409,23 @@ class BranchPredictionDataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-
 class NCCDataset(InMemoryDataset):
-    def __init__(self, root=REPO_ROOT / 'deeplearning/ml4pl/poj104/ncc_data',
-                 split='train',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100],
-                 train_subset_seed=0):
+    def __init__(
+        self,
+        root=REPO_ROOT / "deeplearning/ml4pl/poj104/ncc_data",
+        split="train",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+    ):
         """
         NCC dataset
 
@@ -404,7 +440,9 @@ class NCCDataset(InMemoryDataset):
         self.train_subset_seed = train_subset_seed
         super().__init__(root, transform, pre_transform)
 
-        assert split in ['train'], "The NCC dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
+        assert split in [
+            "train"
+        ], "The NCC dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -415,13 +453,15 @@ class NCCDataset(InMemoryDataset):
     @property
     def processed_file_names(self):
         """A list of files in the processed_dir which needs to be found in order to skip the processing."""
-        base = f'{self.split}_data.pt'
+        base = f"{self.split}_data.pt"
 
-        if tuple(self.train_subset) == (0, 100) or self.split in ['val', 'test']:
+        if tuple(self.train_subset) == (0, 100) or self.split in ["val", "test"]:
             return [base]
         else:
-            assert self.split == 'train'
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            assert self.split == "train"
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         """Download raw data to `self.raw_dir`"""
@@ -433,13 +473,14 @@ class NCCDataset(InMemoryDataset):
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(30, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(30, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -453,7 +494,9 @@ class NCCDataset(InMemoryDataset):
             if d.num_nodes <= max_num_nodes:
                 idx.append(i)
         dataset = self.__indexing__(idx)
-        print(f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining.")
+        print(
+            f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining."
+        )
         return dataset
 
     def process(self):
@@ -465,35 +508,39 @@ class NCCDataset(InMemoryDataset):
             Instead of looking for .ll.pickle (nx graphs), we directly look for '*.data.p' files.
         """
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / f'{self.split}_data.pt'
+        full_dataset = Path(self.processed_dir) / f"{self.split}_data.pt"
         if full_dataset.is_file():
-            assert self.split == 'train', 'here shouldnt be reachable.'
-            print(f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            assert self.split == "train", "here shouldnt be reachable."
+            print(
+                f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
 
         # read data into huge `Data` list.
         data_list = []
 
         ds_base = Path(self.root)
-        print(f'Creating {self.split} dataset at {str(ds_base)}')
+        print(f"Creating {self.split} dataset at {str(ds_base)}")
         # TODO change this line to go to the new format
-        #out_base = ds_base / ('ir_' + self.split + '_programl')
-        #assert out_base.exists(), f"{out_base} doesn't exist!"
+        # out_base = ds_base / ('ir_' + self.split + '_programl')
+        # assert out_base.exists(), f"{out_base} doesn't exist!"
         # TODO collect .ll.pickle instead and call nx2data on the fly!
         print(f"=== DATASET {str(ds_base)}: Collecting .data.p files into dataset")
 
-        #files = list(ds_base.rglob('*.data.p'))
-        #files = list(ds_base.rglob('*.ll.pickle'))
-        files = list(ds_base.rglob('*.ll.p'))
-        
+        # files = list(ds_base.rglob('*.data.p'))
+        # files = list(ds_base.rglob('*.ll.pickle'))
+        files = list(ds_base.rglob("*.ll.p"))
+
         for file in tqdm.tqdm(files):
             if not file.is_file():
                 continue
@@ -506,14 +553,18 @@ class NCCDataset(InMemoryDataset):
                 data = nx2data(nx_graph)
                 data_list.append(data)
             except IndexError:
-                print(f"Failing nx2data bc IndexError (prob. empty graph) on {file}! Skipping ...")
+                print(
+                    f"Failing nx2data bc IndexError (prob. empty graph) on {file}! Skipping ..."
+                )
                 continue
 
         print(f" * COMPLETED * === DATASET {ds_base}: now pre-filtering...")
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -523,18 +574,23 @@ class NCCDataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-
-
 class LegacyNCCDataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/unsupervised_ncc_data',
-                 split='train',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100],
-                 train_subset_seed=0):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/unsupervised_ncc_data",
+        split="train",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -547,7 +603,9 @@ class LegacyNCCDataset(InMemoryDataset):
         self.train_subset_seed = train_subset_seed
         super().__init__(root, transform, pre_transform)
 
-        assert split in ['train'], "The NCC dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
+        assert split in [
+            "train"
+        ], "The NCC dataset only has a 'train' split. use train_subset=[0,x] and [x, 100] for training and testing."
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -558,13 +616,15 @@ class LegacyNCCDataset(InMemoryDataset):
     @property
     def processed_file_names(self):
         """A list of files in the processed_dir which needs to be found in order to skip the processing."""
-        base = f'{self.split}_data.pt'
+        base = f"{self.split}_data.pt"
 
-        if tuple(self.train_subset) == (0, 100) or self.split in ['val', 'test']:
+        if tuple(self.train_subset) == (0, 100) or self.split in ["val", "test"]:
             return [base]
         else:
-            assert self.split == 'train'
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            assert self.split == "train"
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         """Download raw data to `self.raw_dir`"""
@@ -576,13 +636,14 @@ class LegacyNCCDataset(InMemoryDataset):
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(30, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(30, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -596,7 +657,9 @@ class LegacyNCCDataset(InMemoryDataset):
             if d.num_nodes <= max_num_nodes:
                 idx.append(i)
         dataset = self.__indexing__(idx)
-        print(f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining.")
+        print(
+            f"Filtering out graphs larger than {max_num_nodes} yields a dataset with {len(dataset)}/{len(self)} samples remaining."
+        )
         return dataset
 
     def process(self):
@@ -608,32 +671,36 @@ class LegacyNCCDataset(InMemoryDataset):
             Instead of looking for .ll.pickle (nx graphs), we directly look for '*.data.p' files.
         """
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / f'{self.split}_data.pt'
+        full_dataset = Path(self.processed_dir) / f"{self.split}_data.pt"
         if full_dataset.is_file():
-            assert self.split == 'train', 'here shouldnt be reachable.'
-            print(f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            assert self.split == "train", "here shouldnt be reachable."
+            print(
+                f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
 
         # read data into huge `Data` list.
         data_list = []
 
         ds_base = Path(self.root)
-        print(f'Creating {self.split} dataset at {str(ds_base)}')
+        print(f"Creating {self.split} dataset at {str(ds_base)}")
         # TODO change this line to go to the new format
-        #out_base = ds_base / ('ir_' + self.split + '_programl')
-        #assert out_base.exists(), f"{out_base} doesn't exist!"
+        # out_base = ds_base / ('ir_' + self.split + '_programl')
+        # assert out_base.exists(), f"{out_base} doesn't exist!"
         # TODO collect .ll.pickle instead and call nx2data on the fly!
         print(f"=== DATASET {str(ds_base)}: Collecting .data.p files into dataset")
 
-        files = list(ds_base.rglob('*.data.p'))
+        files = list(ds_base.rglob("*.data.p"))
         for file in tqdm.tqdm(files):
             if not file.is_file():
                 continue
@@ -644,7 +711,9 @@ class LegacyNCCDataset(InMemoryDataset):
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET {ds_base}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -654,16 +723,23 @@ class LegacyNCCDataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-
 class ThreadcoarseningDataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/threadcoarsening_data',
-                 split='fail_fast',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100], train_subset_seed=0):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/threadcoarsening_data",
+        split="fail_fast",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -672,7 +748,12 @@ class ThreadcoarseningDataset(InMemoryDataset):
             split: 'amd' or 'nvidia'
 
         """
-        assert split in ["Cypress", "Tahiti", "Fermi", "Kepler"], f"Split is {split}, but has to be 'Cypress', 'Tahiti', 'Fermi', or  'Kepler'"
+        assert split in [
+            "Cypress",
+            "Tahiti",
+            "Fermi",
+            "Kepler",
+        ], f"Split is {split}, but has to be 'Cypress', 'Tahiti', 'Fermi', or  'Kepler'"
         self.split = split
         self.train_subset = train_subset
         self.train_subset_seed = train_subset_seed
@@ -682,24 +763,31 @@ class ThreadcoarseningDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return 'threadcoarsening_data.zip'
+        return "threadcoarsening_data.zip"
 
     @property
     def processed_file_names(self):
-        base = f'{self.split}_data.pt'
+        base = f"{self.split}_data.pt"
 
         if tuple(self.train_subset) == (0, 100):
             return [base]
         else:
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         # download to self.raw_dir
         pass
 
     def return_cross_validation_splits(self, split):
-        assert self.train_subset == [0, 100], "Do cross-validation on the whole dataset!"
-        assert split <= 16 and split >= 0, f"This dataset shall be 17-fold (leave one out) cross-validated, but split={split}."
+        assert self.train_subset == [
+            0,
+            100,
+        ], "Do cross-validation on the whole dataset!"
+        assert (
+            split <= 16 and split >= 0
+        ), f"This dataset shall be 17-fold (leave one out) cross-validated, but split={split}."
         # leave one out
         n_splits = 17
         train_idx = list(range(n_splits))
@@ -708,20 +796,20 @@ class ThreadcoarseningDataset(InMemoryDataset):
         test_data = self.__indexing__([split])
         return train_data, test_data
 
-
     def _save_train_subset(self):
         """saves a train_subset of self to file.
         Percentile slice is taken according to self.train_subset
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(100, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(100, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -743,18 +831,22 @@ class ThreadcoarseningDataset(InMemoryDataset):
 
     def _get_all_runtimes(self, platform, df, oracles):
         all_runtimes = {}
-        for kernel in oracles['kernel']:
+        for kernel in oracles["kernel"]:
             kernel_r = []
             for cf in [1, 2, 4, 8, 16, 32]:
-                row = df[(df['kernel'] == kernel) & (df['cf'] == cf)]
+                row = df[(df["kernel"] == kernel) & (df["cf"] == cf)]
                 if len(row) == 1:
-                    value = float(row[f'runtime_{platform}'].values)
+                    value = float(row[f"runtime_{platform}"].values)
                     if math.isnan(value):
-                        print(f"WARNING: Dataset contain NaN value (missing entry in runtimes most likely). kernel={kernel}, cf={cf}, value={row}.Replacing by infinity!.")
-                        value = float('inf')
+                        print(
+                            f"WARNING: Dataset contain NaN value (missing entry in runtimes most likely). kernel={kernel}, cf={cf}, value={row}.Replacing by infinity!."
+                        )
+                        value = float("inf")
                     kernel_r.append(value)
                 elif len(row) == 0:
-                    print(f' kernel={kernel:>20} is missing cf={cf}. Ad-hoc inserting result from last existing coarsening factor.')
+                    print(
+                        f" kernel={kernel:>20} is missing cf={cf}. Ad-hoc inserting result from last existing coarsening factor."
+                    )
                     kernel_r.append(kernel_r[-1])
                 else:
                     raise
@@ -763,17 +855,21 @@ class ThreadcoarseningDataset(InMemoryDataset):
 
     def process(self):
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / f'{self.split}_data.pt'
+        full_dataset = Path(self.processed_dir) / f"{self.split}_data.pt"
         if full_dataset.is_file():
-            print(f"Full dataset {full_dataset.name} found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            print(
+                f"Full dataset {full_dataset.name} found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
 
         root = Path(self.root)
@@ -784,18 +880,22 @@ class ThreadcoarseningDataset(InMemoryDataset):
         runtimes_file = root / "pact-2014-runtimes.csv"
         df = pd.read_csv(runtimes_file)
 
-        print('\tReading data from', oracle_file, '\n\tand', runtimes_file)
+        print("\tReading data from", oracle_file, "\n\tand", runtimes_file)
 
         # get all runtime info per kernel
         runtimes = self._get_all_runtimes(self.split, df=df, oracles=oracles)
 
         # get oracle labels
         cfs = [1, 2, 4, 8, 16, 32]
-        y = np.array([cfs.index(int(x)) for x in oracles["cf_" + self.split]], dtype=np.int64)
+        y = np.array(
+            [cfs.index(int(x)) for x in oracles["cf_" + self.split]], dtype=np.int64
+        )
 
         # sanity check oracles against min runtimes
         for i, (k, v) in enumerate(runtimes.items()):
-            assert int(y[i]) == np.argmin(v), f"{i}: {k} {v}, argmin(v): {np.argmin(v)} vs. oracles data {int(y[i])}."
+            assert int(y[i]) == np.argmin(
+                v
+            ), f"{i}: {k} {v}, argmin(v): {np.argmin(v)} vs. oracles data {int(y[i])}."
 
         # Add attributes to graphs
         data_list = []
@@ -803,26 +903,30 @@ class ThreadcoarseningDataset(InMemoryDataset):
         kernels = oracles["kernel"].values  # list of strings of kernel names
 
         for kernel in kernels:
-            #legacy
-            #file = root / 'kernels_ir_programl' / (kernel + '.data.p')
-            file = root / 'kernels_ir' / (kernel + '.ll.p')
-            assert file.exists(), f'input file not found: {file}'
-            #with open(file, 'rb') as f:
+            # legacy
+            # file = root / 'kernels_ir_programl' / (kernel + '.data.p')
+            file = root / "kernels_ir" / (kernel + ".ll.p")
+            assert file.exists(), f"input file not found: {file}"
+            # with open(file, 'rb') as f:
             #    data = pickle.load(f)
             g = load(file)
             data = nx2data(g)
             # add attributes
-            data['y'] = torch.tensor([np.argmin(runtimes[kernel])], dtype=torch.long)
-            data['runtimes'] = torch.tensor([runtimes[kernel]])
+            data["y"] = torch.tensor([np.argmin(runtimes[kernel])], dtype=torch.long)
+            data["runtimes"] = torch.tensor([runtimes[kernel]])
             data_list.append(data)
 
         ##################################
 
-        print(f" * COMPLETED * === DATASET Threadcoarsening-{self.split}: now pre-filtering...")
+        print(
+            f" * COMPLETED * === DATASET Threadcoarsening-{self.split}: now pre-filtering..."
+        )
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET Threadcoarsening-{self.split}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET Threadcoarsening-{self.split}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -831,16 +935,25 @@ class ThreadcoarseningDataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-
 class DevmapDataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/devmap_data',
-                 split='fail', transform=None, pre_transform=None,
-                 train_subset=[0, 100], train_subset_seed=0, cdfg: bool = False,
-                 ablation_vocab: AblationVocab = AblationVocab.NONE):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/devmap_data",
+        split="fail",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+        cdfg: bool = False,
+        ablation_vocab: AblationVocab = AblationVocab.NONE,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -849,7 +962,10 @@ class DevmapDataset(InMemoryDataset):
             split: 'amd' or 'nvidia'
             cdfg: Use CDFG graph representation.
         """
-        assert split in ['amd', 'nvidia'], f"Split is {split}, but has to be 'amd' or 'nvidia'"
+        assert split in [
+            "amd",
+            "nvidia",
+        ], f"Split is {split}, but has to be 'amd' or 'nvidia'"
         self.split = split
         self.train_subset = train_subset
         self.train_subset_seed = train_subset_seed
@@ -861,7 +977,7 @@ class DevmapDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return 'devmap_data.zip'
+        return "devmap_data.zip"
 
     @property
     def processed_file_names(self):
@@ -870,18 +986,23 @@ class DevmapDataset(InMemoryDataset):
         if tuple(self.train_subset) == (0, 100):
             return [base]
         else:
-            return [f'{name}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            return [
+                f"{name}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         # download to self.raw_dir
         pass
 
     def return_cross_validation_splits(self, split):
-        assert self.train_subset == [0, 100], "Do cross-validation on the whole dataset!"
-        #num_samples = len(self)
-        #perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
+        assert self.train_subset == [
+            0,
+            100,
+        ], "Do cross-validation on the whole dataset!"
+        # num_samples = len(self)
+        # perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
-         # 10-fold cross-validation
+        # 10-fold cross-validation
         n_splits = 10
         kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
         (train_index, test_index) = list(kf.split(self.data.y, self.data.y))[split]
@@ -900,7 +1021,7 @@ class DevmapDataset(InMemoryDataset):
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(100, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(100, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -913,17 +1034,20 @@ class DevmapDataset(InMemoryDataset):
         name = filename(self.split, self.cdfg, self.ablation_vocab)
         full_dataset = Path(self.processed_dir) / name
         if full_dataset.is_file():
-            print(f"Full dataset {full_dataset.name} found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            print(
+                f"Full dataset {full_dataset.name} found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
-
 
         vocab = load_vocabulary(CDFG_VOCABULARY if self.cdfg else PROGRAML_VOCABULARY)
         assert len(vocab) > 0, "vocab is empty :|"
@@ -934,7 +1058,7 @@ class DevmapDataset(InMemoryDataset):
         input_files = list((root / f"graphs_{self.split}").iterdir())
 
         num_files = len(input_files)
-        print('\n--- Preparing to read', num_files, 'input files')
+        print("\n--- Preparing to read", num_files, "input files")
 
         # read data into huge `Data` list.
 
@@ -945,18 +1069,22 @@ class DevmapDataset(InMemoryDataset):
             proto, _ = load(filename, cdfg=self.cdfg)
             data = nx2data(proto, vocabulary=vocab, ablate_vocab=self.ablation_vocab)
 
-            # graph2cdfg conversion drops the graph features, so we may have to 
+            # graph2cdfg conversion drops the graph features, so we may have to
             # reload the graph.
             if self.cdfg:
                 proto = load(filename)
 
             # Add the features and label.
             proto_features = proto.features.feature
-            data['y'] = torch.tensor(proto_features["devmap_label"].int64_list.value[0]).view(1)
-            data['aux_in'] = torch.tensor([
-                proto_features["transfer_bytes"].int64_list.value[0],
-                proto_features["wgsize"].int64_list.value[0],
-            ])
+            data["y"] = torch.tensor(
+                proto_features["devmap_label"].int64_list.value[0]
+            ).view(1)
+            data["aux_in"] = torch.tensor(
+                [
+                    proto_features["transfer_bytes"].int64_list.value[0],
+                    proto_features["wgsize"].int64_list.value[0],
+                ]
+            )
 
             data_list.append(data)
 
@@ -966,7 +1094,9 @@ class DevmapDataset(InMemoryDataset):
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET Devmap-{name}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET Devmap-{name}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -979,15 +1109,18 @@ class DevmapDataset(InMemoryDataset):
             self._save_train_subset()
 
 
-
-
 class POJ104Dataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/classifyapp_data',
-                 split='fail',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100], train_subset_seed=0,
-                 cdfg: bool = False,
-                 ablation_vocab: AblationVocab = AblationVocab.NONE):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/classifyapp_data",
+        split="fail",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+        cdfg: bool = False,
+        ablation_vocab: AblationVocab = AblationVocab.NONE,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -1002,22 +1135,24 @@ class POJ104Dataset(InMemoryDataset):
         self.ablation_vocab = ablation_vocab
         super().__init__(root, transform, pre_transform)
 
-        assert split in ['train', 'val', 'test']
+        assert split in ["train", "val", "test"]
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return 'classifyapp_data.zip' #['ir_val', 'ir_val_programl']
+        return "classifyapp_data.zip"  # ['ir_val', 'ir_val_programl']
 
     @property
     def processed_file_names(self):
         base = filename(self.split, self.cdfg, self.ablation_vocab)
 
-        if tuple(self.train_subset) == (0, 100) or self.split in ['val', 'test']:
+        if tuple(self.train_subset) == (0, 100) or self.split in ["val", "test"]:
             return [base]
         else:
-            assert self.split == 'train'
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            assert self.split == "train"
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         # download to self.raw_dir
@@ -1029,13 +1164,14 @@ class POJ104Dataset(InMemoryDataset):
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(100, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(100, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -1048,20 +1184,26 @@ class POJ104Dataset(InMemoryDataset):
         num_classes = 104
 
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / filename(self.split, self.cdfg, self.ablation_vocab)
+        full_dataset = Path(self.processed_dir) / filename(
+            self.split, self.cdfg, self.ablation_vocab
+        )
         if full_dataset.is_file():
-            assert self.split == 'train', 'here shouldnt be reachable.'
-            print(f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            assert self.split == "train", "here shouldnt be reachable."
+            print(
+                f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
-        
+
         # get vocab first
         vocab = load_vocabulary(CDFG_VOCABULARY if self.cdfg else PROGRAML_VOCABULARY)
         assert len(vocab) > 0, "vocab is empty :|"
@@ -1069,36 +1211,42 @@ class POJ104Dataset(InMemoryDataset):
         data_list = []
 
         ds_base = Path(self.root)
-        print(f'Creating {self.split} dataset at {str(ds_base)}')
+        print(f"Creating {self.split} dataset at {str(ds_base)}")
 
         split_folder = ds_base / (self.split)
         assert split_folder.exists(), f"{split_folder} doesn't exist!"
-        
+
         # collect .pb and call nx2data on the fly!
-        print(f"=== DATASET {split_folder}: Collecting ProgramGraph.pb files into dataset")
+        print(
+            f"=== DATASET {split_folder}: Collecting ProgramGraph.pb files into dataset"
+        )
 
         # only take files from subfolders (with class names!) recursively
         files = [x for x in split_folder.rglob("*ProgramGraph.pb")]
         assert len(files) > 0, "no files collected. error."
         for file in tqdm.tqdm(files):
             # skip classes that are larger than what config says to enable debugging with less data
-            #class_label = int(file.parent.name) - 1  # let classes start from 0.
-            #if class_label >= num_classes:
+            # class_label = int(file.parent.name) - 1  # let classes start from 0.
+            # if class_label >= num_classes:
             #    continue
 
             g, orig_graph = load(file, cdfg=self.cdfg)
-            data = nx2data(graph=g,
-                           vocabulary=vocab,
-                           ablate_vocab=self.ablation_vocab,
-                           y_feature_name="poj104_label",
-                           orig_graph=orig_graph)
+            data = nx2data(
+                graph=g,
+                vocabulary=vocab,
+                ablate_vocab=self.ablation_vocab,
+                y_feature_name="poj104_label",
+                orig_graph=orig_graph,
+            )
             data_list.append(data)
 
         print(f" * COMPLETED * === DATASET {split_folder}: now pre-filtering...")
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET {split_folder}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET {split_folder}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -1107,17 +1255,23 @@ class POJ104Dataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-
-
 class LegacyPOJ104Dataset(InMemoryDataset):
-    def __init__(self, root='deeplearning/ml4pl/poj104/classifyapp_data',
-                 split='fail',
-                 transform=None, pre_transform=None,
-                 train_subset=[0, 100], train_subset_seed=0):
+    def __init__(
+        self,
+        root="deeplearning/ml4pl/poj104/classifyapp_data",
+        split="fail",
+        transform=None,
+        pre_transform=None,
+        train_subset=[0, 100],
+        train_subset_seed=0,
+    ):
         """
         Args:
             train_subset: [start_percentile, stop_percentile)    default [0,100).
@@ -1130,22 +1284,24 @@ class LegacyPOJ104Dataset(InMemoryDataset):
         self.train_subset_seed = train_subset_seed
         super().__init__(root, transform, pre_transform)
 
-        assert split in ['train', 'val', 'test']
+        assert split in ["train", "val", "test"]
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return 'classifyapp_data.zip' #['ir_val', 'ir_val_programl']
+        return "classifyapp_data.zip"  # ['ir_val', 'ir_val_programl']
 
     @property
     def processed_file_names(self):
-        base = f'{self.split}_data.pt'
+        base = f"{self.split}_data.pt"
 
-        if tuple(self.train_subset) == (0, 100) or self.split in ['val', 'test']:
+        if tuple(self.train_subset) == (0, 100) or self.split in ["val", "test"]:
             return [base]
         else:
-            assert self.split == 'train'
-            return [f'{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt']
+            assert self.split == "train"
+            return [
+                f"{self.split}_data_subset_{self.train_subset[0]}_{self.train_subset[1]}_seed_{self.train_subset_seed}.pt"
+            ]
 
     def download(self):
         # download to self.raw_dir
@@ -1157,13 +1313,14 @@ class LegacyPOJ104Dataset(InMemoryDataset):
         with a fixed random permutation with self.train_subset_seed.
         """
         import numpy as np
+
         perm = np.random.RandomState(self.train_subset_seed).permutation(len(self))
 
         # take slice of perm according to self.train_subset
         start = np.math.floor(len(self) / 100 * self.train_subset[0])
         stop = np.math.floor(len(self) / 100 * self.train_subset[1])
         perm = perm[start:stop]
-        print(f'Fixed permutation starts with: {perm[:min(100, len(perm))]}')
+        print(f"Fixed permutation starts with: {perm[:min(100, len(perm))]}")
 
         dataset = self.__indexing__(perm)
 
@@ -1176,32 +1333,40 @@ class LegacyPOJ104Dataset(InMemoryDataset):
         num_classes = 104
 
         # check if we need to create the full dataset:
-        full_dataset = Path(self.processed_dir) / f'{self.split}_data.pt'
+        full_dataset = Path(self.processed_dir) / f"{self.split}_data.pt"
         if full_dataset.is_file():
-            assert self.split == 'train', 'here shouldnt be reachable.'
-            print(f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}")
+            assert self.split == "train", "here shouldnt be reachable."
+            print(
+                f"Full dataset found. Generating train_subset={self.train_subset} with seed={self.train_subset_seed}"
+            )
             # just get the split and save it
             self.data, self.slices = torch.load(full_dataset)
             self._save_train_subset()
-            print(f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk.")
+            print(
+                f"Saved train_subset={self.train_subset} with seed={self.train_subset_seed} to disk."
+            )
             return
 
         # ~~~~~ we need to create the full dataset ~~~~~~~~~~~
-        assert not full_dataset.is_file(), 'shouldnt be'
+        assert not full_dataset.is_file(), "shouldnt be"
         processed_path = str(full_dataset)
 
         # read data into huge `Data` list.
         data_list = []
 
         ds_base = Path(self.root)
-        print(f'Creating {self.split} dataset at {str(ds_base)}')
+        print(f"Creating {self.split} dataset at {str(ds_base)}")
         # TODO change this line to go to the new format
-        out_base = ds_base / ('ir_' + self.split + '_programl')
+        out_base = ds_base / ("ir_" + self.split + "_programl")
         assert out_base.exists(), f"{out_base} doesn't exist!"
         # TODO collect .ll.pickle instead and call nx2data on the fly!
         print(f"=== DATASET {out_base}: Collecting .data.p files into dataset")
 
-        folders = [x for x in out_base.glob("*") if x.is_dir() and x.name not in ['_nx', '_tuples']]
+        folders = [
+            x
+            for x in out_base.glob("*")
+            if x.is_dir() and x.name not in ["_nx", "_tuples"]
+        ]
         for folder in tqdm.tqdm(folders):
             # skip classes that are larger than what config says to enable debugging with less data
             if int(folder.name) > num_classes:
@@ -1215,7 +1380,9 @@ class LegacyPOJ104Dataset(InMemoryDataset):
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]
-        print(f" * COMPLETED * === DATASET {out_base}: Completed filtering, now pre_transforming...")
+        print(
+            f" * COMPLETED * === DATASET {out_base}: Completed filtering, now pre_transforming..."
+        )
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
@@ -1224,15 +1391,18 @@ class LegacyPOJ104Dataset(InMemoryDataset):
         torch.save((self.data, self.slices), processed_path)
 
         # maybe save train_subset as well
-        if not tuple(self.train_subset) == (0, 100) and self.split not in ['val', 'test']:
+        if not tuple(self.train_subset) == (0, 100) and self.split not in [
+            "val",
+            "test",
+        ]:
             self._save_train_subset()
 
 
-if __name__ == '__main__':
-    #d = NewNCCDataset()
-    #print(d.data)
-    root = '/home/zacharias/llvm_datasets/threadcoarsening_data/'
-    a = ThreadcoarseningDataset(root, 'Cypress')
-    b = ThreadcoarseningDataset(root, 'Tahiti')
-    c = ThreadcoarseningDataset(root, 'Fermi')
-    d = ThreadcoarseningDataset(root, 'Kepler')
+if __name__ == "__main__":
+    # d = NewNCCDataset()
+    # print(d.data)
+    root = "/home/zacharias/llvm_datasets/threadcoarsening_data/"
+    a = ThreadcoarseningDataset(root, "Cypress")
+    b = ThreadcoarseningDataset(root, "Tahiti")
+    c = ThreadcoarseningDataset(root, "Fermi")
+    d = ThreadcoarseningDataset(root, "Kepler")

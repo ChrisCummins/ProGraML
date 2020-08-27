@@ -16,7 +16,7 @@ Options:
     --log_dir LOG_DIR               Directory(*) to store logfiles and trained models relative to repository dir.
                                         [default: programl/task/graph_level_classification/logs/unspecified]
     --model MODEL                   The model to run.
-    --dataset DATASET               The dataset to us.
+    --dataset DATASET               The dataset to use.
     --config CONFIG                 Path(*) to a config json dump with params.
     --config_json CONFIG_JSON       Config json with params.
     --restore CHECKPOINT            Path(*) to a model file to restore from.
