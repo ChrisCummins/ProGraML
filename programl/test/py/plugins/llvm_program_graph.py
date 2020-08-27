@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import Path
 from typing import Iterable, Tuple
 
 from labm8.py import bazelutil, pbutil, test
@@ -38,3 +39,13 @@ def EnumerateLlvmProgramGraphs() -> Iterable[
 def llvm_program_graph(request) -> str:
     """A test fixture which yields an LLVM-IR string."""
     return request.param[1]
+
+
+@test.Fixture(
+    scope="session",
+    params=list(LLVM_IR_GRAPHS.iterdir()),
+    namer=lambda path: path.name,
+)
+def llvm_program_graph_path(request) -> Path:
+    """A test fixture which yields the path of an LLVM ProGraML file."""
+    return request.param
