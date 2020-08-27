@@ -3088,3 +3088,30 @@ filegroup(
     testonly = 1,
     srcs = ["module_with_unreachable_instructions.ll"],
 )
+
+genrule(
+    name = "reachability_dataflow_dataset",
+    testonly = 1,
+    outs = ["reachability_dataflow_dataset.tar.bz2"],
+    cmd = (
+        "$(location :make_reachability_dataflow_dataset) --path=$(@D)/dtmp && " +
+        "tar cjf $(@D)/reachability_dataflow_dataset.tar.bz2 -C $(@D)/dtmp . && " +
+        "rm -rf $(@D)/dtmp"
+    ),
+    tools = [":make_reachability_dataflow_dataset"],
+)
+
+py_binary(
+    name = "make_reachability_dataflow_dataset",
+    testonly = 1,
+    srcs = ["make_reachability_dataflow_dataset.py"],
+    data = [
+        ":llvm_ir_graphs",
+        ":llvm_ir",
+        ":llvm_ir_reachability_features",
+        "//programl/task/dataflow/dataset:create_vocab",
+    ],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)

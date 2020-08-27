@@ -50,7 +50,7 @@ texts, and <node_text> is the unique text value.)";
 
 DEFINE_string(
     path,
-    (labm8::fsutil::GetHomeDirectoryOrDie() / "programl/dataflow").string(),
+    "/tmp/programl/dataflow",
     "The directory to write generated files to.");
 DEFINE_int32(limit, 0,
              "If --limit > 0, limit the number of input graphs processed to "

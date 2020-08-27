@@ -48,3 +48,13 @@ py_library(
         "//third_party/py/labm8",
     ],
 )
+
+py_library(
+    name = "reachability_dataflow_dataset",
+    testonly = 1,
+    srcs = ["reachability_dataflow_dataset.py"],
+    data = ["//programl/test/data:reachability_dataflow_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)

@@ -83,6 +83,7 @@ cc_binary(
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:strutil",
     ],
+    visibility = ["//visibility:public"],
 )
 
 py_binary(
