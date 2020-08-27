@@ -73,6 +73,7 @@ sh_binary(
 cc_binary(
     name = "create_vocab",
     srcs = ["create_vocab.cc"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
         "@boost//:filesystem",
