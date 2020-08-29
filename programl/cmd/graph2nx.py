@@ -18,18 +18,18 @@ import pickle
 import sys
 
 from labm8.py import app
+
 from programl.graph.format.py import nx_format
 from programl.proto import program_graph_pb2
 from programl.util.py.stdin_fmt import ParseStdinOrDie
-
 
 FLAGS = app.FLAGS
 
 
 def Main():
-  proto = ParseStdinOrDie(program_graph_pb2.ProgramGraph())
-  pickle.dump(nx_format.ProgramGraphToNetworkX(proto), sys.stdout.buffer)
+    proto = ParseStdinOrDie(program_graph_pb2.ProgramGraph())
+    pickle.dump(nx_format.ProgramGraphToNetworkX(proto), sys.stdout.buffer)
 
 
 if __name__ == "__main__":
-  app.Run(Main)
+    app.Run(Main)

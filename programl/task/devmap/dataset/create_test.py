@@ -22,16 +22,16 @@ from programl.task.devmap.dataset.create import create_devmap_dataset
 
 
 def test_create_devmap_dataset(tempdir: Path):
-  """Test dataset creation."""
-  create_devmap_dataset(tempdir)
-  assert (tempdir / "ir").is_dir()
-  assert (tempdir / "src").is_dir()
-  assert (tempdir / "graphs_amd").is_dir()
-  assert (tempdir / "graphs_nvidia").is_dir()
+    """Test dataset creation."""
+    create_devmap_dataset(tempdir)
+    assert (tempdir / "ir").is_dir()
+    assert (tempdir / "src").is_dir()
+    assert (tempdir / "graphs_amd").is_dir()
+    assert (tempdir / "graphs_nvidia").is_dir()
 
-  assert len(list((tempdir / "graphs_amd").iterdir())) == 680
-  assert len(list((tempdir / "graphs_nvidia").iterdir())) == 680
+    assert len(list((tempdir / "graphs_amd").iterdir())) == 680
+    assert len(list((tempdir / "graphs_nvidia").iterdir())) == 680
 
 
 if __name__ == "__main__":
-  test.Main()
+    test.Main()

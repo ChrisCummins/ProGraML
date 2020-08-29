@@ -18,41 +18,41 @@ import subprocess
 from typing import Optional
 
 import google.protobuf.message
-
 from labm8.py import bazelutil
+
 from programl.proto import program_graph_pb2
 
 GRAPH2CDFG = bazelutil.DataPath("programl/programl/cmd/graph2cdfg")
 
 
 def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:
-  """Convert a binary ProgramGraph message file to a CDFG.
+    """Convert a binary ProgramGraph message file to a CDFG.
 
-  Args:
-    path: The path of a ProgramGraph protocol buffer.
+    Args:
+      path: The path of a ProgramGraph protocol buffer.
 
-  Returns:
-    A ProgramGraph instance, or None if graph conversion failed.
+    Returns:
+      A ProgramGraph instance, or None if graph conversion failed.
 
-  Raises:
-    ValueError: If the graph cannot be converted.
-  """
-  graph = program_graph_pb2.ProgramGraph()
+    Raises:
+      ValueError: If the graph cannot be converted.
+    """
+    graph = program_graph_pb2.ProgramGraph()
 
-  with open(path, "rb") as f:
-    p = subprocess.Popen(
-      [str(GRAPH2CDFG), "--stdin_fmt", "pb", "--stdout_fmt", "pb"],
-      stdin=subprocess.PIPE,
-      stdout=subprocess.PIPE,
-    )
-    stdout, _ = p.communicate(f.read())
+    with open(path, "rb") as f:
+        p = subprocess.Popen(
+            [str(GRAPH2CDFG), "--stdin_fmt", "pb", "--stdout_fmt", "pb"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+        )
+        stdout, _ = p.communicate(f.read())
 
-  if p.returncode:
-    return None
+    if p.returncode:
+        return None
 
-  try:
-    graph.ParseFromString(stdout)
-  except google.protobuf.message.DecodeError:
-    return None
+    try:
+        graph.ParseFromString(stdout)
+    except google.protobuf.message.DecodeError:
+        return None
 
-  return graph
+    return graph

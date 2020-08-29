@@ -13,3 +13,19 @@ jobs:
         uses: DoozyX/clang-format-lint-action@v0.8
         with:
           clangFormatVersion: 10
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install isort+black
+        run: |
+          python3 -m pip install isort black
+          python3 -m isort --version
+          python3 -m black --version
+      - name: isort
+        run: python3 -m isort . --check-only --diff --profile black
+      - name: black
+        run: python3 -m black . --check --diff --target-version py36

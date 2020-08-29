@@ -18,15 +18,12 @@ import subprocess
 import time
 
 import numpy as np
-
-from labm8.py import app
-from labm8.py import bazelutil
-from labm8.py import viz
+from labm8.py import app, bazelutil, viz
 
 app.DEFINE_float(
-  "min_benchmark_time",
-  30,
-  "The minimum number of seconds to run the benchmark loop.",
+    "min_benchmark_time",
+    30,
+    "The minimum number of seconds to run the benchmark loop.",
 )
 FLAGS = app.FLAGS
 
@@ -35,20 +32,20 @@ LLVM2GRAPH = bazelutil.DataPath("programl/programl/cmd/llvm2graph")
 
 
 def Main():
-  runtimes = []
-  start_time = time.time()
-  while time.time() < start_time + FLAGS.min_benchmark_time:
-    for path in LLVM_IR.iterdir():
-      file_start_time = time.time()
-      subprocess.check_call(
-        [str(LLVM2GRAPH), str(path), "--stdout_fmt=pb"],
-        stdout=subprocess.DEVNULL,
-      )
-      runtimes.append(time.time() - file_start_time)
-  runtimes_ms = np.array(runtimes) * 1000
-  print("Runtimes for llvm2graph on test LLVM-IR files:")
-  print(viz.SummarizeFloats(runtimes_ms, unit="ms"))
+    runtimes = []
+    start_time = time.time()
+    while time.time() < start_time + FLAGS.min_benchmark_time:
+        for path in LLVM_IR.iterdir():
+            file_start_time = time.time()
+            subprocess.check_call(
+                [str(LLVM2GRAPH), str(path), "--stdout_fmt=pb"],
+                stdout=subprocess.DEVNULL,
+            )
+            runtimes.append(time.time() - file_start_time)
+    runtimes_ms = np.array(runtimes) * 1000
+    print("Runtimes for llvm2graph on test LLVM-IR files:")
+    print(viz.SummarizeFloats(runtimes_ms, unit="ms"))
 
 
 if __name__ == "__main__":
-  app.Run(Main)
+    app.Run(Main)

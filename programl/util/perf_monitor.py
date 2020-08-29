@@ -27,269 +27,265 @@ import time
 import GPUtil
 import numpy as np
 import psutil
-
 from labm8.py import app
 
 app.DEFINE_float(
-  "perf_monitor_frequency",
-  10,
-  "The number of seconds between updates to performance monitor",
+    "perf_monitor_frequency",
+    10,
+    "The number of seconds between updates to performance monitor",
 )
 FLAGS = app.FLAGS
 
 
 class PerformanceMonitor(threading.Thread):
-  """A class for monitoring system performance in a background thread.
+    """A class for monitoring system performance in a background thread.
 
-  An instance of this class runs in a separate thread, passively recording
-  system stats at a fixed interval frequency and updating rolling averages.
-  These stats can be printed or saved to file whenever as you please.
+    An instance of this class runs in a separate thread, passively recording
+    system stats at a fixed interval frequency and updating rolling averages.
+    These stats can be printed or saved to file whenever as you please.
 
-  This class can be used in a 'with' context, for example:
+    This class can be used in a 'with' context, for example:
 
-      with PerformanceMonitor(frequency=2) as perf:
-        # ... do heavy work
-      print(perf.stats)
+        with PerformanceMonitor(frequency=2) as perf:
+          # ... do heavy work
+        print(perf.stats)
 
-  Or by manually calling Stop() when you are done:
+    Or by manually calling Stop() when you are done:
 
-      perf = PerforamnceMonitor():
-      # ... do work
-      print(perf.stats)
-      perf.Stop()
+        perf = PerforamnceMonitor():
+        # ... do work
+        print(perf.stats)
+        perf.Stop()
 
-  Once stopped, a PerformanceMonitor can not be restarted.
+    Once stopped, a PerformanceMonitor can not be restarted.
 
-  At every set frequency interval, the rolling averages are computed. To reset
-  the rolling averages, call Reset().
+    At every set frequency interval, the rolling averages are computed. To reset
+    the rolling averages, call Reset().
 
-  To passively record or log stats, a callback function (or list of callback
-  functions) can be provided which will be called after every observation:
+    To passively record or log stats, a callback function (or list of callback
+    functions) can be provided which will be called after every observation:
 
-      def SaveStatsAndReset(perf):
-        # For every 10 observations, write stats to file and reset averages.
-        if not perf.observation_count % 10:
-          with open(f'/tmp/perf_log_{int(time.time())}', 'w' as f:
-            json.dump(perf.stats)
-          perf.Reset()
+        def SaveStatsAndReset(perf):
+          # For every 10 observations, write stats to file and reset averages.
+          if not perf.observation_count % 10:
+            with open(f'/tmp/perf_log_{int(time.time())}', 'w' as f:
+              json.dump(perf.stats)
+            perf.Reset()
 
-      callbacks = [
-        lambda p: print(p.stats),
-        SaveStats,
-      ]
+        callbacks = [
+          lambda p: print(p.stats),
+          SaveStats,
+        ]
 
-      perf = PerformanceMonitor(on_observation=callbacks)
-      with perf:
-        # ... do heavy work
-  """
-
-  def __init__(self, frequency: int = None, on_observation=None):
-    """Constructor.
-
-    Args:
-      frequency: The period of time to wait between recording observations,
-        in seconds. A lower frequency will result in more accurate estimates of
-        statistic averages, at the expense of higher cost. Memory overhead is
-        constant with frequency.
-      on_observation: A callback, or list of callbacks, which are called after
-        every observation. Each callback takes a single argument, the instance
-        of this class.
+        perf = PerformanceMonitor(on_observation=callbacks)
+        with perf:
+          # ... do heavy work
     """
-    super(PerformanceMonitor, self).__init__()
-    self.observation_frequency = frequency or FLAGS.perf_monitor_frequency
-    self.on_observation = on_observation or []
 
-    self.stopped = False
+    def __init__(self, frequency: int = None, on_observation=None):
+        """Constructor.
 
-    # Initialized in Reset().
-    self.stats = None
-    self.prev_disk_counters = None
-    self.prev_net_counters = None
-    self.last_record_time = None
+        Args:
+          frequency: The period of time to wait between recording observations,
+            in seconds. A lower frequency will result in more accurate estimates of
+            statistic averages, at the expense of higher cost. Memory overhead is
+            constant with frequency.
+          on_observation: A callback, or list of callbacks, which are called after
+            every observation. Each callback takes a single argument, the instance
+            of this class.
+        """
+        super(PerformanceMonitor, self).__init__()
+        self.observation_frequency = frequency or FLAGS.perf_monitor_frequency
+        self.on_observation = on_observation or []
 
-    self.Reset()
-    self.start()
+        self.stopped = False
 
-  def __enter__(self):
-    return self
+        # Initialized in Reset().
+        self.stats = None
+        self.prev_disk_counters = None
+        self.prev_net_counters = None
+        self.last_record_time = None
 
-  def __exit__(self, exc_type, exc_val, exc_tb):
-    self.Stop()
+        self.Reset()
+        self.start()
 
-  @property
-  def observation_count(self) -> int:
-    return self.stats["observation_count"]
+    def __enter__(self):
+        return self
 
-  def Reset(self) -> None:
-    """"Reset the rolling average counters."""
-    self.stats = {
-      "observation_count": 0,
-      "observation_frequency_sec": self.observation_frequency,
-    }
-    for _ in GPUtil.getGPUs():
-      self.stats.get("gpus", []).append({})
-    self.prev_disk_counters = psutil.disk_io_counters(perdisk=False)
-    self.prev_net_counters = psutil.net_io_counters(pernic=False)
-    self.last_record_time = time.time()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.Stop()
 
-  def Update(self, key, value, default=0, data=None):
-    """Update a rolling average.
+    @property
+    def observation_count(self) -> int:
+        return self.stats["observation_count"]
 
-    Args:
-      key: The name of the metric being updated.
-      value: The newly observed value.
-      default: The default value for the first observation.
-      data: The data dictionary to update.
-    """
-    data = data or self.stats
-    current_average = data.get(key, default)
-    data[key] = (self.observation_count * current_average + value) / (
-      self.observation_count + 1
-    )
+    def Reset(self) -> None:
+        """"Reset the rolling average counters."""
+        self.stats = {
+            "observation_count": 0,
+            "observation_frequency_sec": self.observation_frequency,
+        }
+        for _ in GPUtil.getGPUs():
+            self.stats.get("gpus", []).append({})
+        self.prev_disk_counters = psutil.disk_io_counters(perdisk=False)
+        self.prev_net_counters = psutil.net_io_counters(pernic=False)
+        self.last_record_time = time.time()
 
-  def MakeObservation(self) -> None:
-    """Record a new observation and update internal state."""
-    # CPU.
-    cpu_loads = np.array(psutil.cpu_percent(percpu=True)) / 100
-    self.Update("cpu_load", np.average(cpu_loads))
-    self.Update("cpu_load_max", np.max(cpu_loads))
-    self.Update("cpu_freq_mhz", psutil.cpu_freq().current)
+    def Update(self, key, value, default=0, data=None):
+        """Update a rolling average.
 
-    # Memory.
-    self.Update("memory_util", psutil.virtual_memory().percent / 100)
-    self.Update("swap_util", psutil.swap_memory().percent / 100)
+        Args:
+          key: The name of the metric being updated.
+          value: The newly observed value.
+          default: The default value for the first observation.
+          data: The data dictionary to update.
+        """
+        data = data or self.stats
+        current_average = data.get(key, default)
+        data[key] = (self.observation_count * current_average + value) / (
+            self.observation_count + 1
+        )
 
-    # Counter-based stats.
-    elapsed = time.time() - self.last_record_time
-    disk_counters = psutil.disk_io_counters(perdisk=False)
-    net_counters = psutil.net_io_counters(pernic=False)
+    def MakeObservation(self) -> None:
+        """Record a new observation and update internal state."""
+        # CPU.
+        cpu_loads = np.array(psutil.cpu_percent(percpu=True)) / 100
+        self.Update("cpu_load", np.average(cpu_loads))
+        self.Update("cpu_load_max", np.max(cpu_loads))
+        self.Update("cpu_freq_mhz", psutil.cpu_freq().current)
 
-    # Disk counters.
-    self.Update(
-      "disk_reads_per_sec",
-      (disk_counters.read_count - self.prev_disk_counters.read_count) / elapsed,
-    )
-    self.Update(
-      "disk_writes_per_sec",
-      (disk_counters.write_count - self.prev_disk_counters.write_count)
-      / elapsed,
-    )
+        # Memory.
+        self.Update("memory_util", psutil.virtual_memory().percent / 100)
+        self.Update("swap_util", psutil.swap_memory().percent / 100)
 
-    self.Update(
-      "disk_read_mb_per_sec",
-      (
-        (disk_counters.read_bytes - self.prev_disk_counters.read_bytes)
-        / (1024 * 1024)
-      )
-      / elapsed,
-    )
-    self.Update(
-      "disk_write_mb_per_sec",
-      (
-        (disk_counters.write_bytes - self.prev_disk_counters.write_bytes)
-        / (1024 * 1024)
-      )
-      / elapsed,
-    )
+        # Counter-based stats.
+        elapsed = time.time() - self.last_record_time
+        disk_counters = psutil.disk_io_counters(perdisk=False)
+        net_counters = psutil.net_io_counters(pernic=False)
 
-    # Network counters.
-    self.Update(
-      "net_packets_recv_per_sec",
-      (net_counters.packets_recv - self.prev_net_counters.packets_recv)
-      / elapsed,
-    )
-    self.Update(
-      "net_packets_sent_per_sec",
-      (net_counters.packets_sent - self.prev_net_counters.packets_sent)
-      / elapsed,
-    )
+        # Disk counters.
+        self.Update(
+            "disk_reads_per_sec",
+            (disk_counters.read_count - self.prev_disk_counters.read_count) / elapsed,
+        )
+        self.Update(
+            "disk_writes_per_sec",
+            (disk_counters.write_count - self.prev_disk_counters.write_count) / elapsed,
+        )
 
-    self.Update(
-      "net_data_recv_mb_per_sec",
-      (
-        (net_counters.bytes_recv - self.prev_net_counters.bytes_recv)
-        / (1024 * 1024)
-      )
-      / elapsed,
-    )
-    self.Update(
-      "net_data_sent_mb_per_sec",
-      (
-        (net_counters.bytes_sent - self.prev_net_counters.bytes_sent)
-        / (1024 * 1024)
-      )
-      / elapsed,
-    )
+        self.Update(
+            "disk_read_mb_per_sec",
+            (
+                (disk_counters.read_bytes - self.prev_disk_counters.read_bytes)
+                / (1024 * 1024)
+            )
+            / elapsed,
+        )
+        self.Update(
+            "disk_write_mb_per_sec",
+            (
+                (disk_counters.write_bytes - self.prev_disk_counters.write_bytes)
+                / (1024 * 1024)
+            )
+            / elapsed,
+        )
 
-    # Update counters.
-    self.last_record_time = time.time()
-    self.prev_disk_counters = disk_counters
-    self.prev_net_counters = net_counters
+        # Network counters.
+        self.Update(
+            "net_packets_recv_per_sec",
+            (net_counters.packets_recv - self.prev_net_counters.packets_recv) / elapsed,
+        )
+        self.Update(
+            "net_packets_sent_per_sec",
+            (net_counters.packets_sent - self.prev_net_counters.packets_sent) / elapsed,
+        )
 
-    # GPU stats.
-    for gpu_data, gpu in zip(self.stats.get("gpus", []), GPUtil.getGPUs()):
-      self.Update("load", gpu.load, data=gpu_data)
-      self.Update("memory_util", gpu.memoryUtil, data=gpu_data)
-      self.Update("temperature", gpu.temperature, data=gpu_data)
+        self.Update(
+            "net_data_recv_mb_per_sec",
+            (
+                (net_counters.bytes_recv - self.prev_net_counters.bytes_recv)
+                / (1024 * 1024)
+            )
+            / elapsed,
+        )
+        self.Update(
+            "net_data_sent_mb_per_sec",
+            (
+                (net_counters.bytes_sent - self.prev_net_counters.bytes_sent)
+                / (1024 * 1024)
+            )
+            / elapsed,
+        )
 
-    self.stats["observation_count"] += 1
+        # Update counters.
+        self.last_record_time = time.time()
+        self.prev_disk_counters = disk_counters
+        self.prev_net_counters = net_counters
 
-    # Call the user-provided callback, or list of callbacks.
-    if callable(self.on_observation):
-      self.on_observation(self)
-    else:
-      for callback in self.on_observation:
-        callback(self)
+        # GPU stats.
+        for gpu_data, gpu in zip(self.stats.get("gpus", []), GPUtil.getGPUs()):
+            self.Update("load", gpu.load, data=gpu_data)
+            self.Update("memory_util", gpu.memoryUtil, data=gpu_data)
+            self.Update("temperature", gpu.temperature, data=gpu_data)
 
-  def run(self):
-    """Thread loop. Terminate by calling Stop()."""
-    time.sleep(self.observation_frequency)
-    while not self.stopped:
-      self.MakeObservation()
-      time.sleep(self.observation_frequency)
+        self.stats["observation_count"] += 1
 
-  def WriteJson(self, path: pathlib.Path):
-    """Save monitor stats to file as JSON data."""
-    with open(str(path), "w") as f:
-      json.dump(self.stats, f, indent=2, sort_keys=True)
+        # Call the user-provided callback, or list of callbacks.
+        if callable(self.on_observation):
+            self.on_observation(self)
+        else:
+            for callback in self.on_observation:
+                callback(self)
 
-  def Stop(self):
-    """Stop performance monitor. Returns immediately."""
-    self.stopped = True
+    def run(self):
+        """Thread loop. Terminate by calling Stop()."""
+        time.sleep(self.observation_frequency)
+        while not self.stopped:
+            self.MakeObservation()
+            time.sleep(self.observation_frequency)
+
+    def WriteJson(self, path: pathlib.Path):
+        """Save monitor stats to file as JSON data."""
+        with open(str(path), "w") as f:
+            json.dump(self.stats, f, indent=2, sort_keys=True)
+
+    def Stop(self):
+        """Stop performance monitor. Returns immediately."""
+        self.stopped = True
 
 
 def PrintToStdoutCallback(monitor: PerformanceMonitor):
-  print(
-    datetime.datetime.now(),
-    ": ",
-    json.dumps(monitor.stats, indent=2, sort_keys=True),
-    sep="",
-  )
+    print(
+        datetime.datetime.now(),
+        ": ",
+        json.dumps(monitor.stats, indent=2, sort_keys=True),
+        sep="",
+    )
 
 
 def WriteJsonToFileCallback(
-  json_dir: pathlib.Path,
-  every: int = 1,
-  reset=False,
-  filename_format: str = "%y:%m:%dT%H:%M:%S.json",
+    json_dir: pathlib.Path,
+    every: int = 1,
+    reset=False,
+    filename_format: str = "%y:%m:%dT%H:%M:%S.json",
 ):
-  def _WriteJson(monitor: PerformanceMonitor):
-    if monitor.observation_count % every:
-      return
-    outpath = json_dir / time.strftime(filename_format)
-    monitor.WriteJson(outpath)
-    app.Log(1, "Wrote performance log to %s", outpath)
-    if reset:
-      monitor.Reset()
+    def _WriteJson(monitor: PerformanceMonitor):
+        if monitor.observation_count % every:
+            return
+        outpath = json_dir / time.strftime(filename_format)
+        monitor.WriteJson(outpath)
+        app.Log(1, "Wrote performance log to %s", outpath)
+        if reset:
+            monitor.Reset()
 
-  json_dir = pathlib.Path(json_dir)
-  json_dir.mkdir(parents=True, exist_ok=True)
-  return _WriteJson
+    json_dir = pathlib.Path(json_dir)
+    json_dir.mkdir(parents=True, exist_ok=True)
+    return _WriteJson
 
 
 def Main():
-  PerformanceMonitor(on_observation=PrintToStdoutCallback)
+    PerformanceMonitor(on_observation=PrintToStdoutCallback)
 
 
 if __name__ == "__main__":
-  app.Run(Main)
+    app.Run(Main)

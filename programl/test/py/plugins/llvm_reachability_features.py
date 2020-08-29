@@ -18,5 +18,5 @@ from labm8.py import bazelutil
 # Directory containing ProgramGraphFeatures protocol messages for reachability
 # analysis.
 LLVM_REACHABILITY_FEATURES = bazelutil.DataPath(
-  "programl/programl/test/data/llvm_ir_reachability"
+    "programl/programl/test/data/llvm_ir_reachability"
 )

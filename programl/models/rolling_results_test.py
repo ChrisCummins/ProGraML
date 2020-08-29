@@ -15,35 +15,34 @@
 # limitations under the License.
 """Unit tests for //programl/ml/batch:rolling_results."""
 import numpy as np
-
 from labm8.py import test
+
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
 from programl.models.rolling_results import RollingResults
-
 
 FLAGS = test.FLAGS
 
 
 @test.Parametrize("weight", [1, 0.5, 10])
 def test_RollingResults_iteration_count(weight: float):
-  """Test aggreation of model iteration count and convergence."""
-  rolling_results = RollingResults()
+    """Test aggreation of model iteration count and convergence."""
+    rolling_results = RollingResults()
 
-  data = BatchData(graph_count=1, model_data=None)
-  results = BatchResults.Create(
-    targets=np.array([[0, 1, 2]]),
-    predictions=np.array([[0, 1, 2]]),
-    iteration_count=1,
-    model_converged=True,
-  )
+    data = BatchData(graph_count=1, model_data=None)
+    results = BatchResults.Create(
+        targets=np.array([[0, 1, 2]]),
+        predictions=np.array([[0, 1, 2]]),
+        iteration_count=1,
+        model_converged=True,
+    )
 
-  for _ in range(10):
-    rolling_results.Update(data, results, weight=weight)
+    for _ in range(10):
+        rolling_results.Update(data, results, weight=weight)
 
-  assert rolling_results.iteration_count == 1
-  assert rolling_results.model_converged == 1
+    assert rolling_results.iteration_count == 1
+    assert rolling_results.model_converged == 1
 
 
 if __name__ == "__main__":
-  test.Main()
+    test.Main()

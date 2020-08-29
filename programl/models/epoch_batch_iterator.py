@@ -21,37 +21,37 @@ from programl.models.batch_data import BatchData
 
 
 def _LimitBatchesToTargetGraphCount(
-  batches: Iterable[BatchData], target_graph_count: int
+    batches: Iterable[BatchData], target_graph_count: int
 ):
-  """Return an iterator over the input batches which terminates once the
-  target number of graphs has been reached.
-  """
-  graph_count = 0
-  for batch in batches:
-    yield batch
-    graph_count += batch.graph_count
-    if graph_count >= target_graph_count:
-      break
+    """Return an iterator over the input batches which terminates once the
+    target number of graphs has been reached.
+    """
+    graph_count = 0
+    for batch in batches:
+        yield batch
+        graph_count += batch.graph_count
+        if graph_count >= target_graph_count:
+            break
 
 
 def EpochBatchIterator(
-  batch_builder: BaseBatchBuilder,
-  target_graph_counts: Iterable[int],
-  start_graph_count: int = 0,
+    batch_builder: BaseBatchBuilder,
+    target_graph_counts: Iterable[int],
+    start_graph_count: int = 0,
 ):
-  """Divide a sequence of batches into chunks of the given graph counts.
+    """Divide a sequence of batches into chunks of the given graph counts.
 
-  Args:
-    batch_builder: A batch builder.
-    target_graph_counts: A list of target graph counts.
+    Args:
+      batch_builder: A batch builder.
+      target_graph_counts: A list of target graph counts.
 
-  Returns:
-    A iterable sequence of <target_graph_count, total_graph_count, batches>
-    tuples of length len(target_graph_counts).
-  """
-  total_graph_count = start_graph_count
-  for target_graph_count in target_graph_counts:
-    total_graph_count += target_graph_count
-    batches = _LimitBatchesToTargetGraphCount(batch_builder, target_graph_count)
-    yield target_graph_count, total_graph_count, batches
-  batch_builder.Stop()
+    Returns:
+      A iterable sequence of <target_graph_count, total_graph_count, batches>
+      tuples of length len(target_graph_counts).
+    """
+    total_graph_count = start_graph_count
+    for target_graph_count in target_graph_counts:
+        total_graph_count += target_graph_count
+        batches = _LimitBatchesToTargetGraphCount(batch_builder, target_graph_count)
+        yield target_graph_count, total_graph_count, batches
+    batch_builder.Stop()

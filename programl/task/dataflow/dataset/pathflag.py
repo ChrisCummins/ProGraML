@@ -24,19 +24,19 @@ import pathlib
 from labm8.py import app
 
 app.DEFINE_string(
-  "path",
-  str(pathlib.Path("~/programl/dataflow").expanduser()),
-  "The dataset directory.",
+    "path",
+    str(pathlib.Path("~/programl/dataflow").expanduser()),
+    "The dataset directory.",
 )
 
 
 def path():
-  """Get --path value.
+    """Get --path value.
 
-  In the form of a haiku:
+    In the form of a haiku:
 
-    This is a flag path.
-    You call it to return path.
-    I am computer.
-  """
-  return app.FLAGS.path
+      This is a flag path.
+      You call it to return path.
+      I am computer.
+    """
+    return app.FLAGS.path

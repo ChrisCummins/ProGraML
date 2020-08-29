@@ -13,32 +13,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable
-from typing import Tuple
+from typing import Iterable, Tuple
 
-from labm8.py import bazelutil
-from labm8.py import pbutil
-from labm8.py import test
+from labm8.py import bazelutil, pbutil, test
+
 from programl.proto import program_graph_pb2
 
-LLVM_IR_GRAPHS = bazelutil.DataPath(
-  "programl/programl/test/data/llvm_ir_graphs"
-)
+LLVM_IR_GRAPHS = bazelutil.DataPath("programl/programl/test/data/llvm_ir_graphs")
 
 
 def EnumerateLlvmProgramGraphs() -> Iterable[
-  Tuple[str, program_graph_pb2.ProgramGraph]
+    Tuple[str, program_graph_pb2.ProgramGraph]
 ]:
-  """Enumerate a test set of LLVM IR file paths."""
-  for path in LLVM_IR_GRAPHS.iterdir():
-    yield path.name, pbutil.FromFile(path, program_graph_pb2.ProgramGraph())
+    """Enumerate a test set of LLVM IR file paths."""
+    for path in LLVM_IR_GRAPHS.iterdir():
+        yield path.name, pbutil.FromFile(path, program_graph_pb2.ProgramGraph())
 
 
 @test.Fixture(
-  scope="session",
-  params=list(EnumerateLlvmProgramGraphs()),
-  namer=lambda s: s[0],
+    scope="session",
+    params=list(EnumerateLlvmProgramGraphs()),
+    namer=lambda s: s[0],
 )
 def llvm_program_graph(request) -> str:
-  """A test fixture which yields an LLVM-IR string."""
-  return request.param[1]
+    """A test fixture which yields an LLVM-IR string."""
+    return request.param[1]

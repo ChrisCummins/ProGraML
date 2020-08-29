@@ -13,25 +13,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable
-from typing import Tuple
+from typing import Iterable, Tuple
 
-from labm8.py import bazelutil
-from labm8.py import test
+from labm8.py import bazelutil, test
 
 LLVM_IR = bazelutil.DataPath("programl/programl/test/data/llvm_ir")
 
 
 def EnumerateLlvmIrs() -> Iterable[Tuple[str, str]]:
-  """Enumerate a test set of LLVM IR file paths."""
-  for path in LLVM_IR.iterdir():
-    with open(str(path), "r") as f:
-      yield path.name, f.read()
+    """Enumerate a test set of LLVM IR file paths."""
+    for path in LLVM_IR.iterdir():
+        with open(str(path), "r") as f:
+            yield path.name, f.read()
 
 
-@test.Fixture(
-  scope="session", params=list(EnumerateLlvmIrs()), namer=lambda s: s[0]
-)
+@test.Fixture(scope="session", params=list(EnumerateLlvmIrs()), namer=lambda s: s[0])
 def llvm_ir(request) -> str:
-  """A test fixture which yields an LLVM-IR string."""
-  return request.param[1]
+    """A test fixture which yields an LLVM-IR string."""
+    return request.param[1]

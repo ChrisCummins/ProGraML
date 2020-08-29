@@ -15,23 +15,22 @@
 # limitations under the License.
 """Unit tests for //program/graph/format/py:nx_format."""
 import networkx as nx
-
 from labm8.py import test
+
 from programl.graph.format.py import nx_format
 from programl.proto import program_graph_pb2
-
 
 FLAGS = test.FLAGS
 
 
 def test_ProgramGraphToNetworkX_empty_graph():
-  """Build from an empty proto."""
-  proto = program_graph_pb2.ProgramGraph()
-  g = nx_format.ProgramGraphToNetworkX(proto)
-  assert isinstance(g, nx.MultiDiGraph)
-  assert not g.number_of_nodes()
-  assert not g.number_of_edges()
+    """Build from an empty proto."""
+    proto = program_graph_pb2.ProgramGraph()
+    g = nx_format.ProgramGraphToNetworkX(proto)
+    assert isinstance(g, nx.MultiDiGraph)
+    assert not g.number_of_nodes()
+    assert not g.number_of_edges()
 
 
 if __name__ == "__main__":
-  test.Main()
+    test.Main()

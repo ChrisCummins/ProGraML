@@ -15,10 +15,9 @@
 # limitations under the License.
 """Unit tests for //programl/ir/llvm/py:llvm."""
 from labm8.py import test
+
 from programl.ir.llvm.py import llvm
-from programl.proto import node_pb2
-from programl.proto import program_graph_options_pb2
-from programl.proto import program_graph_pb2
+from programl.proto import node_pb2, program_graph_options_pb2, program_graph_pb2
 
 SIMPLE_IR = """
 source_filename = "foo.c"
@@ -39,63 +38,63 @@ define i32 @A(i32, i32) #0 {
 
 
 def GetStringScalar(proto, name):
-  return proto.features.feature[name].bytes_list.value[0].decode("utf-8")
+    return proto.features.feature[name].bytes_list.value[0].decode("utf-8")
 
 
 def test_simple_ir():
-  """Test equivalence of nodes that pre-process to the same text."""
-  options = program_graph_options_pb2.ProgramGraphOptions(opt_level=3)
-  proto = llvm.BuildProgramGraph(SIMPLE_IR, options)
-  assert isinstance(proto, program_graph_pb2.ProgramGraph)
+    """Test equivalence of nodes that pre-process to the same text."""
+    options = program_graph_options_pb2.ProgramGraphOptions(opt_level=3)
+    proto = llvm.BuildProgramGraph(SIMPLE_IR, options)
+    assert isinstance(proto, program_graph_pb2.ProgramGraph)
 
-  assert len(proto.module) == 1
-  assert proto.module[0].name == "foo.c"
+    assert len(proto.module) == 1
+    assert proto.module[0].name == "foo.c"
 
-  assert len(proto.node) == 6
-  assert proto.node[0].text == "[external]"
-  assert proto.node[0].type == node_pb2.Node.INSTRUCTION
+    assert len(proto.node) == 6
+    assert proto.node[0].text == "[external]"
+    assert proto.node[0].type == node_pb2.Node.INSTRUCTION
 
-  assert proto.node[1].text == "add"
-  assert proto.node[1].type == node_pb2.Node.INSTRUCTION
-  assert (
-    GetStringScalar(proto.node[1], "full_text") == "%3 = add nsw i32 %1, %0"
-  )
+    assert proto.node[1].text == "add"
+    assert proto.node[1].type == node_pb2.Node.INSTRUCTION
+    assert GetStringScalar(proto.node[1], "full_text") == "%3 = add nsw i32 %1, %0"
 
-  assert proto.node[2].text == "ret"
-  assert proto.node[2].type == node_pb2.Node.INSTRUCTION
-  assert GetStringScalar(proto.node[2], "full_text") == "ret i32 %3"
+    assert proto.node[2].text == "ret"
+    assert proto.node[2].type == node_pb2.Node.INSTRUCTION
+    assert GetStringScalar(proto.node[2], "full_text") == "ret i32 %3"
 
-  assert proto.node[3].text == "i32"
-  assert proto.node[3].type == node_pb2.Node.VARIABLE
-  assert GetStringScalar(proto.node[3], "full_text") == "i32 %3"
+    assert proto.node[3].text == "i32"
+    assert proto.node[3].type == node_pb2.Node.VARIABLE
+    assert GetStringScalar(proto.node[3], "full_text") == "i32 %3"
 
-  # Use startswith() to compare names for these last two variables as thier
-  # order may differ.
-  assert proto.node[4].text == "i32"
-  assert proto.node[4].type == node_pb2.Node.VARIABLE
-  assert GetStringScalar(proto.node[4], "full_text").startswith("i32 %")
+    # Use startswith() to compare names for these last two variables as thier
+    # order may differ.
+    assert proto.node[4].text == "i32"
+    assert proto.node[4].type == node_pb2.Node.VARIABLE
+    assert GetStringScalar(proto.node[4], "full_text").startswith("i32 %")
 
-  assert proto.node[5].text == "i32"
-  assert proto.node[5].type == node_pb2.Node.VARIABLE
-  assert GetStringScalar(proto.node[5], "full_text").startswith("i32 %")
+    assert proto.node[5].text == "i32"
+    assert proto.node[5].type == node_pb2.Node.VARIABLE
+    assert GetStringScalar(proto.node[5], "full_text").startswith("i32 %")
 
 
 def test_opt_level():
-  """Test equivalence of nodes that pre-process to the same text."""
-  options = program_graph_options_pb2.ProgramGraphOptions(opt_level=0,)
-  unoptimized = llvm.BuildProgramGraph(SIMPLE_IR)
-  options.opt_level = 3
-  optimized = llvm.BuildProgramGraph(SIMPLE_IR, options)
+    """Test equivalence of nodes that pre-process to the same text."""
+    options = program_graph_options_pb2.ProgramGraphOptions(
+        opt_level=0,
+    )
+    unoptimized = llvm.BuildProgramGraph(SIMPLE_IR)
+    options.opt_level = 3
+    optimized = llvm.BuildProgramGraph(SIMPLE_IR, options)
 
-  assert len(optimized.node) < len(unoptimized.node)
+    assert len(optimized.node) < len(unoptimized.node)
 
 
 def test_invalid_ir():
-  """Test equivalence of nodes that pre-process to the same text."""
-  with test.Raises(ValueError) as e_ctx:
-    llvm.BuildProgramGraph("foo bar")
-  assert "expected top-level entity" in str(e_ctx.value)
+    """Test equivalence of nodes that pre-process to the same text."""
+    with test.Raises(ValueError) as e_ctx:
+        llvm.BuildProgramGraph("foo bar")
+    assert "expected top-level entity" in str(e_ctx.value)
 
 
 if __name__ == "__main__":
-  test.Main()
+    test.Main()
