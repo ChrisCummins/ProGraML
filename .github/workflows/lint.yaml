@@ -1,0 +1,15 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  cpp:
+    name: C++
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: clang-format
+        uses: DoozyX/clang-format-lint-action@v0.8
+        with:
+          clangFormatVersion: 10
