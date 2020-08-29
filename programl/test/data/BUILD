@@ -3090,6 +3090,33 @@ filegroup(
 )
 
 genrule(
+    name = "classifyapp_dataset",
+    testonly = 1,
+    outs = ["classifyapp_dataset.tar.bz2"],
+    cmd = (
+        "$(location :make_classifyapp_dataset) --path=$(@D)/dtmp && " +
+        "tar cjf $(@D)/classifyapp_dataset.tar.bz2 -C $(@D)/dtmp . && " +
+        "rm -rf $(@D)/dtmp"
+    ),
+    tools = [":make_classifyapp_dataset"],
+)
+
+py_binary(
+    name = "make_classifyapp_dataset",
+    testonly = 1,
+    srcs = ["make_classifyapp_dataset.py"],
+    data = [
+        ":llvm_ir",
+        ":llvm_ir_graphs",
+        "//programl/task/dataflow/dataset:create_vocab",
+    ],
+    deps = [
+        "//programl/proto:program_graph_py",
+        "//third_party/py/labm8",
+    ],
+)
+
+genrule(
     name = "reachability_dataflow_dataset",
     testonly = 1,
     outs = ["reachability_dataflow_dataset.tar.bz2"],

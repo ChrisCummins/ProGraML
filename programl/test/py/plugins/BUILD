@@ -19,6 +19,25 @@
 package(default_visibility = ["//programl:__subpackages__"])
 
 py_library(
+    name = "classifyapp_dataset",
+    testonly = 1,
+    srcs = ["classifyapp_dataset.py"],
+    data = ["//programl/test/data:classifyapp_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_test(
+    name = "classifyapp_dataset_test",
+    srcs = ["classifyapp_dataset_test.py"],
+    deps = [
+        ":classifyapp_dataset",
+        "//third_party/py/labm8",
+    ],
+)
+
+py_library(
     name = "llvm_ir",
     testonly = 1,
     srcs = ["llvm_ir.py"],
