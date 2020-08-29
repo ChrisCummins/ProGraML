@@ -22,11 +22,10 @@
 // limitations under the License.
 #pragma once
 
-#include "programl/proto/program_graph.pb.h"
-
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
+#include "programl/proto/program_graph.pb.h"
 
 namespace programl {
 namespace graph {
@@ -65,8 +64,7 @@ class CDFGBuilder {
 
 // Convert a list of node indices into a map from node index to new node index.
 // E.g. [1, 2, 5] returns a map {1: 0, 2: 1, 5: 2}.
-absl::flat_hash_map<int, int> NodeListToTranslationMap(
-    const std::vector<int>& nodeList);
+absl::flat_hash_map<int, int> NodeListToTranslationMap(const std::vector<int>& nodeList);
 
 }  // namespace format
 }  // namespace graph

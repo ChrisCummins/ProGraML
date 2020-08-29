@@ -60,13 +60,13 @@ class TextEncoder {
   // concatenating it with the type.
   //
   // See: https://lists.llvm.org/pipermail/llvm-dev/2010-April/030726.html
-  LlvmTextComponents Encode(const ::llvm::Instruction *instruction);
+  LlvmTextComponents Encode(const ::llvm::Instruction* instruction);
   // Fields set: text, lhs, and lhs_type.
-  LlvmTextComponents Encode(const ::llvm::Constant *constant);
+  LlvmTextComponents Encode(const ::llvm::Constant* constant);
   // Fields set: text, lhs, and lhs_type.
-  LlvmTextComponents Encode(const ::llvm::Argument *argument);
-  LlvmTextComponents Encode(const ::llvm::Value *value);
-  LlvmTextComponents Encode(const ::llvm::Type *type);
+  LlvmTextComponents Encode(const ::llvm::Argument* argument);
+  LlvmTextComponents Encode(const ::llvm::Value* value);
+  LlvmTextComponents Encode(const ::llvm::Type* type);
 
   // Clear the encoded string cache.
   void Clear();
@@ -75,13 +75,11 @@ class TextEncoder {
   // Caches to map LLVM IR objects to their encoded representations. We cache
   // objects since serializing and string manipulation can be expensive, and may
   // need to be performed many times for each object, dependning on its usage.
-  absl::flat_hash_map<const ::llvm::Instruction *, LlvmTextComponents>
-      instruction_cache_;
-  absl::flat_hash_map<const ::llvm::Constant *, LlvmTextComponents>
-      constant_cache_;
-  absl::flat_hash_map<const ::llvm::Argument *, LlvmTextComponents> arg_cache_;
-  absl::flat_hash_map<const ::llvm::Value *, LlvmTextComponents> value_cache_;
-  absl::flat_hash_map<const ::llvm::Type *, LlvmTextComponents> type_cache_;
+  absl::flat_hash_map<const ::llvm::Instruction*, LlvmTextComponents> instruction_cache_;
+  absl::flat_hash_map<const ::llvm::Constant*, LlvmTextComponents> constant_cache_;
+  absl::flat_hash_map<const ::llvm::Argument*, LlvmTextComponents> arg_cache_;
+  absl::flat_hash_map<const ::llvm::Value*, LlvmTextComponents> value_cache_;
+  absl::flat_hash_map<const ::llvm::Type*, LlvmTextComponents> type_cache_;
 };
 
 }  // namespace internal

@@ -155,9 +155,7 @@ int main(int argc, char** argv) {
     const auto featuresList = ReadStdin<programl::ProgramGraphFeaturesList>();
     size_t nodeFeaturesCount = 0;
     for (int i = 0; i < featuresList.graph_size(); ++i) {
-      const auto& it =
-          featuresList.graph(i).node_features().feature_list().find(
-              "data_flow_value");
+      const auto& it = featuresList.graph(i).node_features().feature_list().find("data_flow_value");
       if (it != featuresList.graph(i).node_features().feature_list().end()) {
         nodeFeaturesCount += it->second.feature_size();
       }

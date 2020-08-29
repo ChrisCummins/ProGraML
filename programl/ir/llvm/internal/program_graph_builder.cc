@@ -40,12 +40,10 @@ namespace llvm {
 namespace internal {
 
 labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
-    const ::llvm::BasicBlock& block, const Function* functionMessage,
-    InstructionMap* instructions, ArgumentConsumerMap* argumentConsumers,
-    std::vector<DataEdge>* dataEdgesToAdd) {
+    const ::llvm::BasicBlock& block, const Function* functionMessage, InstructionMap* instructions,
+    ArgumentConsumerMap* argumentConsumers, std::vector<DataEdge>* dataEdgesToAdd) {
   if (!block.size()) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "Basic block contains no instructions");
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "Basic block contains no instructions");
   }
 
   Node* firstNode = nullptr;
@@ -64,15 +62,12 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
     // A basic block consists of a linear sequence of instructions, so we can
     // insert the control edge between instructions as we go.
     if (lastNode) {
-      RETURN_IF_ERROR(
-          AddControlEdge(/*position=*/0, lastNode, instructionMessage)
-              .status());
+      RETURN_IF_ERROR(AddControlEdge(/*position=*/0, lastNode, instructionMessage).status());
     }
 
     // If the instruction is a call, record the call site, which we will use
     // later to create all edges..
-    if (auto* callInstruction =
-            ::llvm::dyn_cast<::llvm::CallInst>(&instruction)) {
+    if (auto* callInstruction = ::llvm::dyn_cast<::llvm::CallInst>(&instruction)) {
       auto calledFunction = callInstruction->getCalledFunction();
       // TODO(github.com/ChrisCummins/ProGraML/issues/46): Should we handle the
       // case when getCalledFunction() is nil?
@@ -92,8 +87,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         // treat them the same way as other constants (i.e. generate data
         // elements for them). Instead we ignore them, as the call edges that
         // will be produced provide the information we want to capture.
-      } else if (const auto* constant =
-                     ::llvm::dyn_cast<::llvm::Constant>(value)) {
+      } else if (const auto* constant = ::llvm::dyn_cast<::llvm::Constant>(value)) {
         if (options().instructions_only()) {
           continue;
         }
@@ -101,8 +95,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         // of constants to node IDs and positions. We defer creating the
         // immediate nodes until we have traversed all
         constants_[constant].push_back({instructionMessage, position});
-      } else if (const auto* operand =
-                     ::llvm::dyn_cast<::llvm::Instruction>(value)) {
+      } else if (const auto* operand = ::llvm::dyn_cast<::llvm::Instruction>(value)) {
         if (options().instructions_only()) {
           continue;
         }
@@ -130,13 +123,11 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
         Node* variable = AddLlvmVariable(operand, functionMessage);
 
         // Connect the data -> consumer.
-        RETURN_IF_ERROR(
-            AddDataEdge(position, variable, instructionMessage).status());
+        RETURN_IF_ERROR(AddDataEdge(position, variable, instructionMessage).status());
 
         // Defer creation of the edge from producer -> data.
         dataEdgesToAdd->push_back({operand, variable});
-      } else if (const auto* operand =
-                     ::llvm::dyn_cast<::llvm::Argument>(value)) {
+      } else if (const auto* operand = ::llvm::dyn_cast<::llvm::Argument>(value)) {
         if (options().instructions_only()) {
           continue;
         }
@@ -154,8 +145,7 @@ labm8::StatusOr<BasicBlockEntryExit> ProgramGraphBuilder::VisitBasicBlock(
                       "Unknown operand {} for instruction:\n\n  "
                       "Instruction:  {}\n",
                       "Operand:      {}\n", "Operand Type: {}\n", position,
-                      textEncoder_.Encode(&instruction).text,
-                      textEncoder_.Encode(value).text,
+                      textEncoder_.Encode(&instruction).text, textEncoder_.Encode(value).text,
                       textEncoder_.Encode(value->getType()).text);
       }
 
@@ -204,14 +194,12 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
   // components.
   for (const ::llvm::BasicBlock& block : function) {
     BasicBlockEntryExit entryExit;
-    ASSIGN_OR_RETURN(entryExit,
-                     VisitBasicBlock(block, functionMessage, &instructions,
-                                     &argumentConsumers, &dataEdgesToAdd));
+    ASSIGN_OR_RETURN(entryExit, VisitBasicBlock(block, functionMessage, &instructions,
+                                                &argumentConsumers, &dataEdgesToAdd));
     blocks.insert({&block, entryExit});
   }
   if (!blocks.size()) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "Function contains no basic blocks: {}",
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "Function contains no basic blocks: {}",
                   string(function.getName()));
   }
 
@@ -222,8 +210,7 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     for (auto argumentConsumer : it.second) {
       Node* argumentConsumerNode = argumentConsumer.first;
       int32_t position = argumentConsumer.second;
-      RETURN_IF_ERROR(
-          AddDataEdge(position, argument, argumentConsumerNode).status());
+      RETURN_IF_ERROR(AddDataEdge(position, argument, argumentConsumerNode).status());
     }
   }
 
@@ -232,20 +219,16 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
   for (auto dataEdgeToAdd : dataEdgesToAdd) {
     auto producer = instructions.find(dataEdgeToAdd.first);
     if (producer == instructions.end()) {
-      return Status(
-          labm8::error::Code::FAILED_PRECONDITION,
-          "Operand references instruction that has not been visited: {}",
-          textEncoder_.Encode(dataEdgeToAdd.first).text);
+      return Status(labm8::error::Code::FAILED_PRECONDITION,
+                    "Operand references instruction that has not been visited: {}",
+                    textEncoder_.Encode(dataEdgeToAdd.first).text);
     }
-    RETURN_IF_ERROR(
-        AddDataEdge(/*position=*/0, producer->second, dataEdgeToAdd.second)
-            .status());
+    RETURN_IF_ERROR(AddDataEdge(/*position=*/0, producer->second, dataEdgeToAdd.second).status());
   }
 
   const ::llvm::BasicBlock* entry = &function.getEntryBlock();
   if (!entry) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "No entry block for function: {}",
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "No entry block for function: {}",
                   string(function.getName()));
   }
 
@@ -277,14 +260,12 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     for (const ::llvm::BasicBlock* successor : ::llvm::successors(current)) {
       auto it = blocks.find(successor);
       if (it == blocks.end()) {
-        return Status(labm8::error::Code::FAILED_PRECONDITION,
-                      "Block not found");
+        return Status(labm8::error::Code::FAILED_PRECONDITION, "Block not found");
       }
       Node* successorEntry = it->second.first;
 
       // TODO: Figure out position.
-      RETURN_IF_ERROR(
-          AddControlEdge(/*position=*/0, currentExit, successorEntry).status());
+      RETURN_IF_ERROR(AddControlEdge(/*position=*/0, currentExit, successorEntry).status());
 
       if (visited.find(successor) == visited.end()) {
         q.push_back(successor);
@@ -309,8 +290,7 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
   return functionEntryExits;
 }
 
-Status ProgramGraphBuilder::AddCallSite(const Node* source,
-                                        const FunctionEntryExits& target) {
+Status ProgramGraphBuilder::AddCallSite(const Node* source, const FunctionEntryExits& target) {
   RETURN_IF_ERROR(AddCallEdge(source, target.first).status());
   if (!options().ignore_call_returns()) {
     for (auto exitNode : target.second) {
@@ -320,8 +300,8 @@ Status ProgramGraphBuilder::AddCallSite(const Node* source,
   return Status::OK;
 }
 
-Node* ProgramGraphBuilder::AddLlvmInstruction(
-    const ::llvm::Instruction* instruction, const Function* function) {
+Node* ProgramGraphBuilder::AddLlvmInstruction(const ::llvm::Instruction* instruction,
+                                              const Function* function) {
   const LlvmTextComponents text = textEncoder_.Encode(instruction);
   Node* node = AddInstruction(text.opcode_name, function);
   node->set_block(blockCount_);
@@ -371,17 +351,14 @@ Node* ProgramGraphBuilder::AddLlvmConstant(const ::llvm::Constant* constant) {
   return node;
 }
 
-labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
-    const ::llvm::Module& module) {
+labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& module) {
   // A map from functions to their entry and exit nodes.
   absl::flat_hash_map<const ::llvm::Function*, FunctionEntryExits> functions;
 
   Module* moduleMessage = AddModule(module.getSourceFileName());
 
-  graph::AddScalarFeature(moduleMessage, "llvm_target_triple",
-                          module.getTargetTriple());
-  graph::AddScalarFeature(moduleMessage, "llvm_data_layout",
-                          module.getDataLayoutStr());
+  graph::AddScalarFeature(moduleMessage, "llvm_target_triple", module.getTargetTriple());
+  graph::AddScalarFeature(moduleMessage, "llvm_data_layout", module.getDataLayoutStr());
 
   for (const ::llvm::Function& function : module) {
     // Create the function message.
@@ -397,8 +374,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
     }
 
     FunctionEntryExits functionEntryExits;
-    ASSIGN_OR_RETURN(functionEntryExits,
-                     VisitFunction(function, functionMessage));
+    ASSIGN_OR_RETURN(functionEntryExits, VisitFunction(function, functionMessage));
 
     functions.insert({&function, functionEntryExits});
   }
@@ -412,8 +388,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
   for (auto callSite : callSites_) {
     const auto& calledFunction = functions.find(callSite.second);
     if (calledFunction == functions.end()) {
-      return Status(labm8::error::Code::FAILED_PRECONDITION,
-                    "Could not resolve call to function");
+      return Status(labm8::error::Code::FAILED_PRECONDITION, "Could not resolve call to function");
     }
     RETURN_IF_ERROR(AddCallSite(callSite.first, calledFunction->second));
   }
@@ -426,19 +401,16 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
     for (auto destination : constant.second) {
       Node* destinationNode = destination.first;
       int32_t position = destination.second;
-      RETURN_IF_ERROR(
-          AddDataEdge(position, constantMessage, destinationNode).status());
+      RETURN_IF_ERROR(AddDataEdge(position, constantMessage, destinationNode).status());
     }
   }
 
   // Add profiling information, if available.
   ::llvm::Metadata* profileMetadata = module.getModuleFlag("ProfileSummary");
   if (profileMetadata) {
-    ::llvm::ProfileSummary* profileSummary =
-        ::llvm::ProfileSummary::getFromMD(profileMetadata);
+    ::llvm::ProfileSummary* profileSummary = ::llvm::ProfileSummary::getFromMD(profileMetadata);
     if (!profileSummary) {
-      return Status(labm8::error::Code::FAILED_PRECONDITION,
-                    "llvm::Module ProfileSymmary is null");
+      return Status(labm8::error::Code::FAILED_PRECONDITION, "llvm::Module ProfileSymmary is null");
     }
     graph::AddScalarFeature(moduleMessage, "llvm_profile_num_functions",
                             profileSummary->getNumFunctions());
@@ -448,8 +420,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(
                             profileSummary->getNumCounts());
     graph::AddScalarFeature(moduleMessage, "llvm_profile_total_count",
                             profileSummary->getTotalCount());
-    graph::AddScalarFeature(moduleMessage, "llvm_profile_max_count",
-                            profileSummary->getMaxCount());
+    graph::AddScalarFeature(moduleMessage, "llvm_profile_max_count", profileSummary->getMaxCount());
     graph::AddScalarFeature(moduleMessage, "llvm_profile_max_internal_count",
                             profileSummary->getMaxInternalCount());
   }

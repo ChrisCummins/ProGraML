@@ -46,8 +46,7 @@ int main(int argc, char** argv) {
   programl::util::ParseStdinOrDie(&graph);
 
   programl::ProgramGraphFeaturesList featuresList;
-  Status status =
-      programl::graph::analysis::RunAnalysis(argv[1], graph, &featuresList);
+  Status status = programl::graph::analysis::RunAnalysis(argv[1], graph, &featuresList);
   if (!status.ok()) {
     LOG(ERROR) << status.error_message();
     return 4;

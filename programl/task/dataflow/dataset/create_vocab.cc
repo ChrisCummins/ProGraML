@@ -23,16 +23,14 @@
 #include <set>
 #include <utility>
 
+#include "absl/container/flat_hash_map.h"
+#include "absl/strings/str_format.h"
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
 #include "labm8/cpp/fsutil.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/strutil.h"
-
 #include "programl/proto/program_graph.pb.h"
-
-#include "absl/container/flat_hash_map.h"
-#include "absl/strings/str_format.h"
 
 const char* usage = R"(Create vocabulary files from node texts.
 
@@ -48,10 +46,8 @@ of total node texts that are described by the current and prior lines.
 those without a text representation. <count> is the number of matching node
 texts, and <node_text> is the unique text value.)";
 
-DEFINE_string(
-    path,
-    (labm8::fsutil::GetHomeDirectoryOrDie() / "programl/dataflow").string(),
-    "The directory to write generated files to.");
+DEFINE_string(path, (labm8::fsutil::GetHomeDirectoryOrDie() / "programl/dataflow").string(),
+              "The directory to write generated files to.");
 DEFINE_int32(limit, 0,
              "If --limit > 0, limit the number of input graphs processed to "
              "this number.");
@@ -81,18 +77,17 @@ inline std::chrono::milliseconds Now() {
       std::chrono::system_clock::now().time_since_epoch());
 }
 
-inline void PrintProgess(const std::chrono::milliseconds& startTime, size_t i,
-                         size_t n) {
+inline void PrintProgess(const std::chrono::milliseconds& startTime, size_t i, size_t n) {
   std::chrono::milliseconds now = Now();
   int msPerGraph = ((now - startTime) / i).count();
-  std::cout << "\r\033[K" << i << " of " << n << " files processed ("
-            << msPerGraph << " ms / file, " << std::setprecision(3)
-            << (i / static_cast<float>(n)) * 100 << "%)" << std::flush;
+  std::cout << "\r\033[K" << i << " of " << n << " files processed (" << msPerGraph
+            << " ms / file, " << std::setprecision(3) << (i / static_cast<float>(n)) * 100 << "%)"
+            << std::flush;
 }
 
 template <typename T>
-void SerializeFrequencyTable(const flat_hash_map<T, size_t>& freq,
-                             size_t totalNodeCount, std::ostream* ostream) {
+void SerializeFrequencyTable(const flat_hash_map<T, size_t>& freq, size_t totalNodeCount,
+                             std::ostream* ostream) {
   size_t totalCount = 0;
   for (const auto& it : freq) {
     totalCount += it.second;
@@ -105,26 +100,24 @@ void SerializeFrequencyTable(const flat_hash_map<T, size_t>& freq,
   };
   set<pair<T, int>, Comparator> ordered(freq.begin(), freq.end(), sortBy);
 
-  (*ostream) << "cumulative_frequency" << '\t' << "cumulative_node_frequency"
-             << '\t' << "count" << '\t' << "text" << std::endl;
+  (*ostream) << "cumulative_frequency" << '\t' << "cumulative_node_frequency" << '\t' << "count"
+             << '\t' << "text" << std::endl;
 
   size_t cumCount = 0;
   for (const auto& it : ordered) {
     cumCount += it.second;
-    (*ostream) << std::setprecision(4)
-               << (cumCount / static_cast<double>(totalCount)) << '\t'
-               << (cumCount / static_cast<double>(totalNodeCount)) << '\t'
-               << it.second << '\t' << it.first << std::endl;
+    (*ostream) << std::setprecision(4) << (cumCount / static_cast<double>(totalCount)) << '\t'
+               << (cumCount / static_cast<double>(totalNodeCount)) << '\t' << it.second << '\t'
+               << it.first << std::endl;
   }
 }
 
 template <typename T>
-void SerializeFrequencyTable(const flat_hash_map<T, size_t>& freq,
-                             size_t totalNodeCount, const string& path) {
+void SerializeFrequencyTable(const flat_hash_map<T, size_t>& freq, size_t totalNodeCount,
+                             const string& path) {
   std::ofstream out(path);
   SerializeFrequencyTable(freq, totalNodeCount, &out);
-  std::cout << "Wrote vocab with " << freq.size() << " elements to " << path
-            << std::endl;
+  std::cout << "Wrote vocab with " << freq.size() << " elements to " << path << std::endl;
 }
 
 void CreateVocabularyFiles(const fs::path& root) {
@@ -139,9 +132,8 @@ void CreateVocabularyFiles(const fs::path& root) {
   flat_hash_map<string, size_t> programl;
   flat_hash_map<string, size_t> cdfg;
 
-  const size_t n = FLAGS_limit
-                       ? std::min(size_t(graphs.size()), size_t(FLAGS_limit))
-                       : graphs.size();
+  const size_t n =
+      FLAGS_limit ? std::min(size_t(graphs.size()), size_t(FLAGS_limit)) : graphs.size();
 
   for (size_t i = 0; i < n; ++i) {
     ProgramGraph graph;
@@ -182,15 +174,11 @@ void CreateVocabularyFiles(const fs::path& root) {
   std::cout << std::endl;
 
   fs::create_directory(root / "vocab");
-  SerializeFrequencyTable(
-      inst2vecPreprocessed, totalNodeCount,
-      (root / "vocab" / "inst2vec_preprocessed.csv").string());
-  SerializeFrequencyTable(inst2vec, totalNodeCount,
-                          (root / "vocab" / "inst2vec.csv").string());
-  SerializeFrequencyTable(programl, totalNodeCount,
-                          (root / "vocab" / "programl.csv").string());
-  SerializeFrequencyTable(cdfg, totalNodeCount,
-                          (root / "vocab" / "cdfg.csv").string());
+  SerializeFrequencyTable(inst2vecPreprocessed, totalNodeCount,
+                          (root / "vocab" / "inst2vec_preprocessed.csv").string());
+  SerializeFrequencyTable(inst2vec, totalNodeCount, (root / "vocab" / "inst2vec.csv").string());
+  SerializeFrequencyTable(programl, totalNodeCount, (root / "vocab" / "programl.csv").string());
+  SerializeFrequencyTable(cdfg, totalNodeCount, (root / "vocab" / "cdfg.csv").string());
 }
 
 }  // namespace dataflow

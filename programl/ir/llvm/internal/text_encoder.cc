@@ -15,12 +15,12 @@
 // limitations under the License.
 #include "programl/ir/llvm/internal/text_encoder.h"
 
+#include <sstream>
+#include <utility>
+
 #include "labm8/cpp/logging.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
-
-#include <sstream>
-#include <utility>
 
 namespace programl {
 namespace ir {
@@ -32,7 +32,7 @@ namespace {
 // Produce the textual representation of an LLVM object.
 // Generic implementation works for values, instructions, etc.
 template <typename T>
-string PrintToString(const T &value) {
+string PrintToString(const T& value) {
   string str;
   ::llvm::raw_string_ostream rso(str);
   value.print(rso);
@@ -45,8 +45,7 @@ string PrintToString(const T &value) {
 // If the type is not a pointer, the type argument is returned.
 // Argument pointerDepth is incremented for every level of pointer
 // dereferencing.
-const ::llvm::Type *GetDereferencedType(const ::llvm::Type *type,
-                                        int *pointerDepth) {
+const ::llvm::Type* GetDereferencedType(const ::llvm::Type* type, int* pointerDepth) {
   CHECK(type) << "nullptr type at pointer depth " << *pointerDepth;
   if (type->isPointerTy()) {
     *pointerDepth = *pointerDepth + 1;
@@ -60,7 +59,7 @@ const ::llvm::Type *GetDereferencedType(const ::llvm::Type *type,
 // struct or pointer to struct types, respectively. All other types are
 // serialized as normal.
 template <>
-string PrintToString(const ::llvm::Type &value) {
+string PrintToString(const ::llvm::Type& value) {
   string str;
 
   int pointerDepth = 0;
@@ -80,8 +79,8 @@ string PrintToString(const ::llvm::Type &value) {
 }
 
 template <typename T>
-LlvmTextComponents EncodeAndCache(
-    const T *value, absl::flat_hash_map<const T *, LlvmTextComponents> *cache) {
+LlvmTextComponents EncodeAndCache(const T* value,
+                                  absl::flat_hash_map<const T*, LlvmTextComponents>* cache) {
   auto it = cache->find(value);
   if (it != cache->end()) {
     return it->second;
@@ -96,7 +95,7 @@ LlvmTextComponents EncodeAndCache(
 
 }  // anonymous namespace
 
-LlvmTextComponents TextEncoder::Encode(const ::llvm::Instruction *instruction) {
+LlvmTextComponents TextEncoder::Encode(const ::llvm::Instruction* instruction) {
   // Return from cache if available.
   auto it = instruction_cache_.find(instruction);
   if (it != instruction_cache_.end()) {
@@ -128,7 +127,7 @@ LlvmTextComponents TextEncoder::Encode(const ::llvm::Instruction *instruction) {
   return encoded;
 }
 
-LlvmTextComponents TextEncoder::Encode(const ::llvm::Constant *constant) {
+LlvmTextComponents TextEncoder::Encode(const ::llvm::Constant* constant) {
   // Return from cache if available.
   auto it = constant_cache_.find(constant);
   if (it != constant_cache_.end()) {
@@ -144,15 +143,15 @@ LlvmTextComponents TextEncoder::Encode(const ::llvm::Constant *constant) {
   return encoded;
 }
 
-LlvmTextComponents TextEncoder::Encode(const ::llvm::Value *value) {
+LlvmTextComponents TextEncoder::Encode(const ::llvm::Value* value) {
   return EncodeAndCache(value, &value_cache_);
 }
 
-LlvmTextComponents TextEncoder::Encode(const ::llvm::Type *type) {
+LlvmTextComponents TextEncoder::Encode(const ::llvm::Type* type) {
   return EncodeAndCache(type, &type_cache_);
 }
 
-LlvmTextComponents TextEncoder::Encode(const ::llvm::Argument *argument) {
+LlvmTextComponents TextEncoder::Encode(const ::llvm::Argument* argument) {
   // Return from cache if available.
   auto it = arg_cache_.find(argument);
   if (it != arg_cache_.end()) {

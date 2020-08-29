@@ -18,9 +18,8 @@
 #pragma once
 
 #include "labm8/cpp/status.h"
-#include "programl/proto/program_graph.pb.h"
-
 #include "nlohmann/json.hpp"
+#include "programl/proto/program_graph.pb.h"
 
 namespace programl {
 namespace graph {
@@ -32,18 +31,15 @@ namespace format {
 //
 // See:
 // https://networkx.github.io/documentation/stable/reference/readwrite/json_graph.html
-[[nodiscard]] labm8::Status ProgramGraphToNodeLinkGraph(
-    const ProgramGraph& graph, nlohmann::json* dict);
+[[nodiscard]] labm8::Status ProgramGraphToNodeLinkGraph(const ProgramGraph& graph,
+                                                        nlohmann::json* dict);
 
 namespace detail {
 
 // Helpers for converting from program graph to JSON node link graph.
-[[nodiscard]] labm8::Status CreateGraphDict(const ProgramGraph& graph,
-                                            nlohmann::json* graphDict);
-[[nodiscard]] labm8::Status CreateNodesList(const ProgramGraph& graph,
-                                            nlohmann::json* nodes);
-[[nodiscard]] labm8::Status CreateLinksList(const ProgramGraph& graph,
-                                            nlohmann::json* links);
+[[nodiscard]] labm8::Status CreateGraphDict(const ProgramGraph& graph, nlohmann::json* graphDict);
+[[nodiscard]] labm8::Status CreateNodesList(const ProgramGraph& graph, nlohmann::json* nodes);
+[[nodiscard]] labm8::Status CreateLinksList(const ProgramGraph& graph, nlohmann::json* links);
 [[nodiscard]] labm8::Status CreateFeaturesDict(const Features& features,
                                                nlohmann::json* featuresDict);
 [[nodiscard]] labm8::Status CreateFeatureArray(const Feature& feature,

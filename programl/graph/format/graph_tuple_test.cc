@@ -13,9 +13,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <vector>
-
 #include "programl/graph/format/graph_tuple.h"
+
+#include <vector>
 
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/test.h"

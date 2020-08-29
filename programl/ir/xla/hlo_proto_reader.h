@@ -17,27 +17,26 @@
 // limitations under the License.
 #pragma once
 
+#include <istream>
+
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 #include "tensorflow/compiler/xla/service/hlo.pb.h"
-
-#include <istream>
 
 namespace programl {
 namespace ir {
 namespace xla {
 
 // Read the contents of a file to string.
-labm8::StatusOr<string> ReadFileOrStdin(const string& path,
-                                        std::istream& stdin = std::cin);
+labm8::StatusOr<string> ReadFileOrStdin(const string& path, std::istream& stdin = std::cin);
 
 // Read a HloProto message from a file.
 //
 // Args:
 //     wireFormat: If true, read wire format proto. Else, read text
 //         format proto.
-labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(
-    const string& path, bool wireFormat = true);
+labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(const string& path,
+                                                            bool wireFormat = true);
 
 }  // namespace xla
 }  // namespace ir

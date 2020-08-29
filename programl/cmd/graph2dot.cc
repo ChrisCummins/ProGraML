@@ -13,11 +13,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include "labm8/cpp/app.h"
 #include "programl/graph/format/graphviz_converter.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
-
-#include "labm8/cpp/app.h"
 
 const char* usage = R"(Convert a ProgramGraph message to GraphViz dot.
 
@@ -63,8 +62,7 @@ int main(int argc, char** argv) {
   ProgramGraph graph;
   util::ParseStdinOrDie(&graph);
 
-  Status status =
-      SerializeGraphVizToString(graph, &std::cout, label, nodeFeatureName);
+  Status status = SerializeGraphVizToString(graph, &std::cout, label, nodeFeatureName);
   if (!status.ok()) {
     std::cerr << "fatal: " << status.error_message() << std::endl;
     return 2;

@@ -18,47 +18,30 @@
 #pragma once
 
 // Read a scalar int64 feature value.
-#define SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures, featureName)          \
-  (*(programGraphFeatures).mutable_features()->mutable_feature())[featureName] \
-      .int64_list()                                                            \
-      .value(0)
+#define SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures, featureName) \
+  (*(programGraphFeatures).mutable_features()->mutable_feature())[featureName].int64_list().value(0)
 
 // Read a scalar int64 node feature value.
-#define SCALAR_INT64_NODE_FEATURE(programGraphFeatures, featureName, \
-                                  nodeIndex)                         \
-  (*(programGraphFeatures)                                           \
-        .mutable_node_features()                                     \
-        ->mutable_feature_list())[featureName]                       \
-      .feature(nodeIndex)                                            \
-      .int64_list()                                                  \
+#define SCALAR_INT64_NODE_FEATURE(programGraphFeatures, featureName, nodeIndex)          \
+  (*(programGraphFeatures).mutable_node_features()->mutable_feature_list())[featureName] \
+      .feature(nodeIndex)                                                                \
+      .int64_list()                                                                      \
       .value(0)
 
-#define EXPECT_STEP_COUNT(programGraphFeatures, val)            \
-  EXPECT_EQ(SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures,    \
-                                       "data_flow_step_count"), \
-            (val))
+#define EXPECT_STEP_COUNT(programGraphFeatures, val) \
+  EXPECT_EQ(SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures, "data_flow_step_count"), (val))
 
-#define EXPECT_ACTIVE_NODE_COUNT(programGraphFeatures, val)            \
-  EXPECT_EQ(SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures,           \
-                                       "data_flow_active_node_count"), \
-            (val))
+#define EXPECT_ACTIVE_NODE_COUNT(programGraphFeatures, val) \
+  EXPECT_EQ(SCALAR_INT64_GRAPH_FEATURE(programGraphFeatures, "data_flow_active_node_count"), (val))
 
-#define EXPECT_NODE_FALSE(programGraphFeatures, nodeIndex)                     \
-  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_value", \
-                                      nodeIndex),                              \
-            0)
+#define EXPECT_NODE_FALSE(programGraphFeatures, nodeIndex) \
+  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_value", nodeIndex), 0)
 
-#define EXPECT_NODE_TRUE(programGraphFeatures, nodeIndex)                      \
-  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_value", \
-                                      nodeIndex),                              \
-            1)
+#define EXPECT_NODE_TRUE(programGraphFeatures, nodeIndex) \
+  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_value", nodeIndex), 1)
 
-#define EXPECT_NOT_ROOT(programGraphFeatures, nodeIndex)                 \
-  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures,              \
-                                      "data_flow_root_node", nodeIndex), \
-            0)
+#define EXPECT_NOT_ROOT(programGraphFeatures, nodeIndex) \
+  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_root_node", nodeIndex), 0)
 
-#define EXPECT_ROOT(programGraphFeatures, nodeIndex)                     \
-  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures,              \
-                                      "data_flow_root_node", nodeIndex), \
-            1)
+#define EXPECT_ROOT(programGraphFeatures, nodeIndex) \
+  EXPECT_EQ(SCALAR_INT64_NODE_FEATURE(programGraphFeatures, "data_flow_root_node", nodeIndex), 1)

@@ -18,6 +18,7 @@
 #include <fstream>
 #include <sstream>
 #include <streambuf>
+
 #include "labm8/cpp/status_macros.h"
 
 namespace programl {
@@ -28,8 +29,7 @@ labm8::StatusOr<string> ReadFileOrStdin(const string& path, std::istream& ins) {
   string str;
 
   if (path == "-") {
-    str.assign((std::istreambuf_iterator<char>(ins)),
-               std::istreambuf_iterator<char>());
+    str.assign((std::istreambuf_iterator<char>(ins)), std::istreambuf_iterator<char>());
   } else {
     std::ifstream file(path, std::ios::ate);
     if (!file) {
@@ -41,23 +41,20 @@ labm8::StatusOr<string> ReadFileOrStdin(const string& path, std::istream& ins) {
     str.reserve(file.tellg());
     file.seekg(0, std::ios::beg);
 
-    str.assign((std::istreambuf_iterator<char>(file)),
-               std::istreambuf_iterator<char>());
+    str.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
   }
 
   return str;
 }
 
-labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(const string& path,
-                                                            bool wireFormat) {
+labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(const string& path, bool wireFormat) {
   string serializedProto;
   ASSIGN_OR_RETURN(serializedProto, ReadFileOrStdin(path));
 
   ::xla::HloProto proto;
   if (wireFormat) {
     if (!proto.ParseFromString(serializedProto)) {
-      return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,
-                           "Failed to parse HloProto\n");
+      return labm8::Status(labm8::error::Code::INVALID_ARGUMENT, "Failed to parse HloProto\n");
     }
   } else {
     // TODO

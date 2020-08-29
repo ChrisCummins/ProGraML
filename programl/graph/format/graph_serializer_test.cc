@@ -15,11 +15,10 @@
 // limitations under the License.
 #include "programl/graph/format/graph_serializer.h"
 
-#include "programl/proto/program_graph.pb.h"
-
 #include <vector>
 
 #include "labm8/cpp/test.h"
+#include "programl/proto/program_graph.pb.h"
 
 namespace programl {
 namespace graph {

@@ -24,12 +24,11 @@
 #include <iostream>
 #include <random>
 
+#include "absl/strings/str_format.h"
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/strutil.h"
-
-#include "absl/strings/str_format.h"
 
 namespace fs = boost::filesystem;
 

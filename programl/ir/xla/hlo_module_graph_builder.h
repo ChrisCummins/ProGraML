@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
-
 #include "labm8/cpp/port.h"
 #include "labm8/cpp/statusor.h"
 #include "programl/graph/program_graph_builder.h"
@@ -50,8 +49,7 @@ class HloModuleGraphBuilder : graph::ProgramGraphBuilder {
       const ::xla::HloComputationProto& computation, const Module* module);
 
   [[nodiscard]] labm8::StatusOr<Node*> VisitInstruction(
-      const ::xla::HloInstructionProto& instruction, Function* function,
-      Node* entryInstruction);
+      const ::xla::HloInstructionProto& instruction, Function* function, Node* entryInstruction);
 
  private:
   // A map from computations to their entry and exit nodes.

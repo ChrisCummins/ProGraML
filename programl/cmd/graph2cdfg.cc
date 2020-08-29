@@ -13,12 +13,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include "labm8/cpp/app.h"
 #include "programl/graph/format/cdfg.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
-
-#include "labm8/cpp/app.h"
 
 const char* usage =
     R"(Convert a ProgramGraph message to a Control and Data Flow Graph (CDFG).

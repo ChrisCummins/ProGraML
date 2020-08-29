@@ -18,6 +18,7 @@
 #pragma once
 
 #include <vector>
+
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/string.h"
 #include "programl/proto/ir.pb.h"
@@ -41,8 +42,7 @@ namespace llvm {
 class Clang {
  public:
   Clang(const string& baseFlags, int timeout = 60)
-      : compileCommands_(
-            BuildCompileCommands(baseFlags, timeout, /*abspath=*/true)),
+      : compileCommands_(BuildCompileCommands(baseFlags, timeout, /*abspath=*/true)),
         compileCommandsWithoutAbspath_(
             BuildCompileCommands(baseFlags, timeout, /*abspath=*/false)) {}
 
@@ -53,8 +53,8 @@ class Clang {
   labm8::Status Compile(const string& src, IrList* irs) const;
 
  private:
-  static std::vector<string> BuildCompileCommands(const string& baseFlags,
-                                                  int timeout, bool abspath);
+  static std::vector<string> BuildCompileCommands(const string& baseFlags, int timeout,
+                                                  bool abspath);
 
   const std::vector<string> compileCommands_;
   const std::vector<string> compileCommandsWithoutAbspath_;

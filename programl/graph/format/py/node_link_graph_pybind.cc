@@ -16,7 +16,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <pybind11/pybind11.h>
+
 #include <sstream>
+
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/string.h"
 #include "nlohmann/json.hpp"
@@ -35,26 +37,27 @@ namespace format {
 PYBIND11_MODULE(node_link_graph_pybind, m) {
   m.doc() = "This module converts program graphs to JSON node link graph";
 
-  m.def("ProgramGraphToNodeLinkGraph",
-        [&](const string& serializedProto) {
-          // De-serialize the input graph.
-          ProgramGraph graph;
-          if (!graph.ParseFromString(serializedProto)) {
-            throw std::runtime_error("Failed to parse input proto");
-          }
+  m.def(
+      "ProgramGraphToNodeLinkGraph",
+      [&](const string& serializedProto) {
+        // De-serialize the input graph.
+        ProgramGraph graph;
+        if (!graph.ParseFromString(serializedProto)) {
+          throw std::runtime_error("Failed to parse input proto");
+        }
 
-          // Convert to a node link graph.
-          json dict;
-          Status status = ProgramGraphToNodeLinkGraph(graph, &dict);
-          if (!status.ok()) {
-            throw std::runtime_error(status.ToString());
-          }
+        // Convert to a node link graph.
+        json dict;
+        Status status = ProgramGraphToNodeLinkGraph(graph, &dict);
+        if (!status.ok()) {
+          throw std::runtime_error(status.ToString());
+        }
 
-          // Serialize JSON string.
-          py::object obj = dict;
-          return std::move(obj);
-        },
-        "Convert a program graph to JSON node link graph.");
+        // Serialize JSON string.
+        py::object obj = dict;
+        return std::move(obj);
+      },
+      "Convert a program graph to JSON node link graph.");
 }
 
 }  // namespace format

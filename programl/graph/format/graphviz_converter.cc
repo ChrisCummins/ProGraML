@@ -19,13 +19,12 @@
 #include <iomanip>
 #include <sstream>
 
-#include "programl/proto/program_graph.pb.h"
-
 #include "absl/container/flat_hash_map.h"
 #include "boost/graph/graphviz.hpp"
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/status_macros.h"
 #include "labm8/cpp/string.h"
+#include "programl/proto/program_graph.pb.h"
 
 namespace error = labm8::error;
 
@@ -39,18 +38,14 @@ static const int kMaximumLabelLen = 32;
 
 using AttributeMap = absl::flat_hash_map<string, string>;
 
-using VertexProperties =
-    boost::property<boost::vertex_attribute_t, AttributeMap>;
-using EdgeProperties =
-    boost::property<boost::edge_index_t, int,
-                    boost::property<boost::edge_attribute_t, AttributeMap>>;
+using VertexProperties = boost::property<boost::vertex_attribute_t, AttributeMap>;
+using EdgeProperties = boost::property<boost::edge_index_t, int,
+                                       boost::property<boost::edge_attribute_t, AttributeMap>>;
 using GraphProperties = boost::property<
     boost::graph_name_t, string,
-    boost::property<
-        boost::graph_graph_attribute_t, AttributeMap,
-        boost::property<
-            boost::graph_vertex_attribute_t, AttributeMap,
-            boost::property<boost::graph_edge_attribute_t, AttributeMap>>>>;
+    boost::property<boost::graph_graph_attribute_t, AttributeMap,
+                    boost::property<boost::graph_vertex_attribute_t, AttributeMap,
+                                    boost::property<boost::graph_edge_attribute_t, AttributeMap>>>>;
 
 // An adjacency list for program graphs. We store the source Edge message as
 // edge properties.
@@ -66,12 +61,9 @@ namespace {
 
 class GraphVizSerializer {
  public:
-  GraphVizSerializer(const ProgramGraph& graph,
-                     const NodeLabel& nodeLabelFormat,
+  GraphVizSerializer(const ProgramGraph& graph, const NodeLabel& nodeLabelFormat,
                      const string& nodeFeatureName)
-      : graph_(graph),
-        nodeLabelFormat_(nodeLabelFormat),
-        nodeFeatureName_(nodeFeatureName) {}
+      : graph_(graph), nodeLabelFormat_(nodeLabelFormat), nodeFeatureName_(nodeFeatureName) {}
 
  private:
   // Set global graphviz properties.
@@ -80,28 +72,24 @@ class GraphVizSerializer {
     boost::get_property(main, boost::graph_graph_attribute)["margin"] = "0";
     boost::get_property(main, boost::graph_graph_attribute)["nodesep"] = "0.4";
     boost::get_property(main, boost::graph_graph_attribute)["ranksep"] = "0.4";
-    boost::get_property(main, boost::graph_graph_attribute)["fontname"] =
-        "Inconsolata";
+    boost::get_property(main, boost::graph_graph_attribute)["fontname"] = "Inconsolata";
     boost::get_property(main, boost::graph_graph_attribute)["fontsize"] = "20";
 
-    boost::get_property(main, boost::graph_vertex_attribute)["fontname"] =
-        "Inconsolata";
+    boost::get_property(main, boost::graph_vertex_attribute)["fontname"] = "Inconsolata";
     boost::get_property(main, boost::graph_vertex_attribute)["fontsize"] = "20";
     boost::get_property(main, boost::graph_vertex_attribute)["penwidth"] = "2";
     boost::get_property(main, boost::graph_vertex_attribute)["width"] = "1";
     boost::get_property(main, boost::graph_vertex_attribute)["margin"] = "0";
 
-    boost::get_property(main, boost::graph_edge_attribute)["fontname"] =
-        "Inconsolata";
+    boost::get_property(main, boost::graph_edge_attribute)["fontname"] = "Inconsolata";
     boost::get_property(main, boost::graph_edge_attribute)["fontsize"] = "20";
     boost::get_property(main, boost::graph_edge_attribute)["penwidth"] = "3";
     boost::get_property(main, boost::graph_edge_attribute)["arrowsize"] = ".8";
   }
 
-  std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>
-  MakeFunctionGraphs(boost::subgraph<GraphvizGraph>* main) {
-    std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>
-        functionGraphs;
+  std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>> MakeFunctionGraphs(
+      boost::subgraph<GraphvizGraph>* main) {
+    std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>> functionGraphs;
     for (int i = 0; i < graph_.function_size(); ++i) {
       const auto& function = graph_.function(i);
 
@@ -111,18 +99,15 @@ class GraphVizSerializer {
       // Set the name of the function.
       string functionName = function.name();
       labm8::TruncateWithEllipsis(functionName, kMaximumLabelLen);
-      boost::get_property(functionGraph,
-                          boost::graph_graph_attribute)["label"] = functionName;
-      boost::get_property(functionGraph,
-                          boost::graph_graph_attribute)["margin"] = "10";
-      boost::get_property(functionGraph,
-                          boost::graph_graph_attribute)["style"] = "dotted";
+      boost::get_property(functionGraph, boost::graph_graph_attribute)["label"] = functionName;
+      boost::get_property(functionGraph, boost::graph_graph_attribute)["margin"] = "10";
+      boost::get_property(functionGraph, boost::graph_graph_attribute)["style"] = "dotted";
 
       // Set the name of the graph. Names must begin with "cluster".
       std::stringstream subgraphName;
       subgraphName << "cluster" << functionName;
-      boost::get_property(functionGraphs[functionGraphs.size() - 1].get(),
-                          boost::graph_name) = subgraphName.str();
+      boost::get_property(functionGraphs[functionGraphs.size() - 1].get(), boost::graph_name) =
+          subgraphName.str();
     }
     return functionGraphs;
   }
@@ -137,9 +122,7 @@ class GraphVizSerializer {
     const Feature& feature = it->second;
 
     // Int array
-    for (int i = 0;
-         i < std::min(feature.int64_list().value_size(), kMaximumLabelLen);
-         ++i) {
+    for (int i = 0; i < std::min(feature.int64_list().value_size(), kMaximumLabelLen); ++i) {
       if (i) {
         os << ", ";
       }
@@ -147,18 +130,14 @@ class GraphVizSerializer {
     }
     // Float array
     os << std::setprecision(4);
-    for (int i = 0;
-         i < std::min(feature.float_list().value_size(), kMaximumLabelLen);
-         ++i) {
+    for (int i = 0; i < std::min(feature.float_list().value_size(), kMaximumLabelLen); ++i) {
       if (i) {
         os << ", ";
       }
       os << feature.float_list().value(i);
     }
     // Bytes array
-    for (int i = 0;
-         i < std::min(feature.bytes_list().value_size(), kMaximumLabelLen);
-         ++i) {
+    for (int i = 0; i < std::min(feature.bytes_list().value_size(), kMaximumLabelLen); ++i) {
       if (i) {
         os << ", ";
       }
@@ -217,8 +196,7 @@ class GraphVizSerializer {
   // Create the vertices.
   void CreateVertices(
       boost::subgraph<GraphvizGraph>* defaultGraph,
-      std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>*
-          functionGraphs) {
+      std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>* functionGraphs) {
     for (int i = 0; i < graph_.node_size(); ++i) {
       const Node& node = graph_.node(i);
       // Determine the subgraph to add this node to.
@@ -255,8 +233,7 @@ class GraphVizSerializer {
       // Position labels for control edge are drawn close to the originating
       // instruction. For data edges, they are drawn closer to the consuming
       // instruction.
-      const string label =
-          edge.flow() == Edge::DATA ? "headlabel" : "taillabel";
+      const string label = edge.flow() == Edge::DATA ? "headlabel" : "taillabel";
       attributes[label] = std::to_string(edge.position());
       attributes["labelfontcolor"] = attributes["color"];
     }
@@ -307,8 +284,7 @@ class GraphVizSerializer {
 
 }  // anonymous namespace
 
-labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
-                                        std::ostream* ostream,
+labm8::Status SerializeGraphVizToString(const ProgramGraph& graph, std::ostream* ostream,
                                         const NodeLabel& nodeLabelFormat,
                                         const string& nodeFeatureName) {
   GraphVizSerializer serializer(graph, nodeLabelFormat, nodeFeatureName);

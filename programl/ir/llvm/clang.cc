@@ -30,14 +30,12 @@ namespace llvm {
 #ifdef __APPLE__
 const char* kClangPath = "clang-llvm-10.0.0-x86_64-apple-darwin/bin/clang++";
 #else
-const char* kClangPath =
-    "clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang++";
+const char* kClangPath = "clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang++";
 #endif
 
 Status Clang::Compile(const string& src, IrList* irs) const {
   for (size_t i = 0; i < compileCommands_.size(); ++i) {
-    auto process = subprocess::Popen(compileCommands_[i],
-                                     subprocess::input{subprocess::PIPE},
+    auto process = subprocess::Popen(compileCommands_[i], subprocess::input{subprocess::PIPE},
                                      subprocess::output{subprocess::PIPE},
                                      subprocess::error{subprocess::PIPE});
     auto stdout = process.communicate(src.c_str(), src.size()).first;
@@ -55,8 +53,8 @@ Status Clang::Compile(const string& src, IrList* irs) const {
   return Status::OK;
 }
 
-std::vector<string> Clang::BuildCompileCommands(const string& baseFlags,
-                                                int timeout, bool abspath) {
+std::vector<string> Clang::BuildCompileCommands(const string& baseFlags, int timeout,
+                                                bool abspath) {
   const string clangPath =
       (abspath ? absl::StrFormat("timeout -s9 %d %s", timeout,
                                  labm8::BazelDataPathOrDie(kClangPath).string())
@@ -76,8 +74,8 @@ std::vector<string> Clang::BuildCompileCommands(const string& baseFlags,
   std::vector<string> commands;
   commands.reserve(opts.size());
   for (const string& opt : opts) {
-    commands.push_back(clangPath + " -emit-llvm -c -S " + baseFlags + " " +
-                       opt + " - -o - -Wno-everything");
+    commands.push_back(clangPath + " -emit-llvm -c -S " + baseFlags + " " + opt +
+                       " - -o - -Wno-everything");
   }
   return commands;
 }

@@ -13,13 +13,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include <iomanip>
+
+#include "labm8/cpp/app.h"
 #include "programl/graph/format/node_link_graph.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
-
-#include "labm8/cpp/app.h"
-
-#include <iomanip>
 
 const char* usage = R"(Convert a ProgramGraph message to JSON node link graph.
 
@@ -43,8 +42,7 @@ int main(int argc, char** argv) {
   programl::util::ParseStdinOrDie(&graph);
 
   auto nodeLinkGraph = json({});
-  Status status = programl::graph::format::ProgramGraphToNodeLinkGraph(
-      graph, &nodeLinkGraph);
+  Status status = programl::graph::format::ProgramGraphToNodeLinkGraph(graph, &nodeLinkGraph);
   if (!status.ok()) {
     std::cerr << "fatal: failed to convert ProgramGraph to node link graph ("
               << status.error_message() << ')' << std::endl;

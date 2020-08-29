@@ -48,9 +48,7 @@ class LivenessGraphBuilder {
     CHECK(builder_.AddDataEdge(/*position=*/0, src, dst).ok());
   }
 
-  void AddCallEdge(const Node* src, const Node* dst) {
-    CHECK(builder_.AddCallEdge(src, dst).ok());
-  }
+  void AddCallEdge(const Node* src, const Node* dst) { CHECK(builder_.AddCallEdge(src, dst).ok()); }
 
   const Node* GetRootNode() const { return builder_.GetRootNode(); }
 

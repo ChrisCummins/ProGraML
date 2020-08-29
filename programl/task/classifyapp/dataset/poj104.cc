@@ -16,6 +16,7 @@
 #include "programl/task/classifyapp/dataset/poj104.h"
 
 #include <stdio.h>
+
 #include <atomic>
 #include <chrono>
 #include <iomanip>
@@ -42,7 +43,6 @@
 #include "programl/proto/repo.pb.h"
 #include "programl/proto/src.pb.h"
 #include "programl/util/filesystem_cache.h"
-
 #include "subprocess/subprocess.hpp"
 #include "tbb/parallel_for.h"
 
@@ -91,8 +91,8 @@ void PreprocessSrc(string* src) {
               "using namespace std;\n");
 }
 
-Status ProcessSourceFile(const fs::path& root, const fs::path& path,
-                         const fs::path& outpath, const uint64_t srcId) {
+Status ProcessSourceFile(const fs::path& root, const fs::path& path, const fs::path& outpath,
+                         const uint64_t srcId) {
   string fileContents;
   CHECK(labm8::fsutil::ReadFile(path, &fileContents).ok());
   string src = labm8::StripNonUtf8(fileContents);
@@ -104,8 +104,8 @@ Status ProcessSourceFile(const fs::path& root, const fs::path& path,
   const string stringLabel = relpath.substr(0, relpath.find('/'));
   const int label = std::stoi(stringLabel);
 
-  std::ofstream srcOut(absl::StrFormat("%s/src/%s.%d.SourceFile.pb",
-                                       outpath.string(), stringLabel, srcId));
+  std::ofstream srcOut(
+      absl::StrFormat("%s/src/%s.%d.SourceFile.pb", outpath.string(), stringLabel, srcId));
   {
     SourceFile srcMessage;
     srcMessage.set_relpath(relpath);
@@ -118,14 +118,14 @@ Status ProcessSourceFile(const fs::path& root, const fs::path& path,
   RETURN_IF_ERROR(compiler.Compile(src, &irs));
 
   {
-    std::ofstream irsOut(absl::StrFormat("%s/ir/%s.%d.IrList.pb",
-                                         outpath.string(), stringLabel, srcId));
+    std::ofstream irsOut(
+        absl::StrFormat("%s/ir/%s.%d.IrList.pb", outpath.string(), stringLabel, srcId));
     irs.SerializeToOstream(&irsOut);
   }
 
   for (int i = 0; i < irs.ir_size(); ++i) {
-    std::ofstream irOut(absl::StrFormat("%s/ir/%s.%d.%d.ll", outpath.string(),
-                                        stringLabel, srcId, i));
+    std::ofstream irOut(
+        absl::StrFormat("%s/ir/%s.%d.%d.ll", outpath.string(), stringLabel, srcId, i));
     irOut << irs.ir(i).text();
 
     // Add program label.
@@ -133,12 +133,10 @@ Status ProcessSourceFile(const fs::path& root, const fs::path& path,
     RETURN_IF_ERROR(ir::llvm::BuildProgramGraph(irs.ir(i).text(), &graph));
     Feature feature;
     feature.mutable_int64_list()->add_value(label);
-    graph.mutable_features()->mutable_feature()->insert(
-        {"poj104_label", feature});
+    graph.mutable_features()->mutable_feature()->insert({"poj104_label", feature});
 
-    std::ofstream graphOut(absl::StrFormat("%s/graphs/%s.%d.%d.ProgramGraph.pb",
-                                           outpath.string(), stringLabel, srcId,
-                                           i));
+    std::ofstream graphOut(absl::StrFormat("%s/graphs/%s.%d.%d.ProgramGraph.pb", outpath.string(),
+                                           stringLabel, srcId, i));
     graph.SerializeToOstream(&graphOut);
   }
 
@@ -166,8 +164,8 @@ std::pair<int, int> GetLabelFromPath(const fs::path& path) {
   return {std::stoi(label), std::stoi(src)};
 }
 
-absl::flat_hash_map<int, absl::flat_hash_map<int, vector<fs::path>>>
-EnumerateFilesByLabelAndSource(const fs::path& path) {
+absl::flat_hash_map<int, absl::flat_hash_map<int, vector<fs::path>>> EnumerateFilesByLabelAndSource(
+    const fs::path& path) {
   const vector<fs::path> files = EnumerateFiles(path);
 
   absl::flat_hash_map<int, absl::flat_hash_map<int, vector<fs::path>>> grouped;
@@ -270,9 +268,8 @@ size_t CreatePoj104Dataset(const string& url, const fs::path& outputPath) {
   fs::path root = tempdir / "ProgramData";
   CHECK(fs::is_directory(root));
 
-  std::chrono::milliseconds startTime =
-      std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::system_clock::now().time_since_epoch());
+  std::chrono::milliseconds startTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::system_clock::now().time_since_epoch());
 
   const vector<fs::path> files = EnumerateFiles(root);
   CHECK(files.size());
@@ -282,22 +279,18 @@ size_t CreatePoj104Dataset(const string& url, const fs::path& outputPath) {
 
   std::atomic_uint64_t fileCount{0};
   tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, files.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
+      tbb::blocked_range<size_t>(0, files.size()), [&](const tbb::blocked_range<size_t>& r) {
         for (size_t index = r.begin(); index != r.end(); ++index) {
           ProcessSourceFile(root, files[index], outputPath, index);
           ++fileCount;
           uint64_t f = fileCount;
           if (f && !(f % 8)) {
-            std::chrono::milliseconds now =
-                std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::system_clock::now().time_since_epoch());
+            std::chrono::milliseconds now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch());
             int msPerGraph = ((now - startTime) / f).count();
-            std::cout << "\r\033[K" << f << " of " << totalFiles
-                      << " files processed (" << msPerGraph << " ms / src, "
-                      << std::setprecision(3)
-                      << (f / static_cast<float>(totalFiles)) * 100 << "%)"
-                      << std::flush;
+            std::cout << "\r\033[K" << f << " of " << totalFiles << " files processed ("
+                      << msPerGraph << " ms / src, " << std::setprecision(3)
+                      << (f / static_cast<float>(totalFiles)) * 100 << "%)" << std::flush;
           }
         }
       });
