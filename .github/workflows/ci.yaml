@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Linux: Mount bazel cache"
+        uses: actions/cache@v2
+        with:
+          path: "/home/runner/.cache/bazel"
+          key: ${{ matrix.os }}-bazel
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: "Linux: Install system dependencies"
+        run: |
+          curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
+          sudo mv bazel.tmp /usr/local/bin/bazel
+          chmod +x /usr/local/bin/bazel
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: "macOS: Mount bazel cache"
+        uses: actions/cache@v2
+        with:
+          path: "/private/var/tmp/_bazel_runner"
+          key: ${{ matrix.os }}-bazel
+        if: matrix.os == 'macos-latest'
+
+      - name: "macOS: Install system dependencies"
+        run: |
+          brew install freetype pkg-config bazelisk mysql-client coreutils findutils gnu-sed zlib
+          echo "::add-path::/usr/local/opt/mysql-client/bin"
+        if: matrix.os == 'macos-latest'
+
+      - name: Install python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          grep numpy requirements.txt | xargs python3 -m pip install
+          python3 -m pip install setuptools
+          echo "::add-path::/home/runner/.local/bin"
+
+      - name: whoami
+        run: ./tools/whoami.sh
+
+      - name: Test
+        run: bazel query --config=ci 'tests(//...) except attr("tags", "notravis", //...)' | xargs bazel test --config=ci
+
+      - name: Install
+        run: |
+          mkdir "${GITHUB_WORKSPACE}/install"
+          bazel run --config=ci //:install "${GITHUB_WORKSPACE}/install"
