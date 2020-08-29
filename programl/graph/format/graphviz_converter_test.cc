@@ -27,20 +27,20 @@ namespace format {
 namespace {
 
 TEST(SerializeGraphVizToString, EmptyGraph) {
-  std::ostream ostream;
+  std::stringstream ostream;
   ProgramGraph graph;
   EXPECT_EQ(SerializeGraphVizToString(graph, &ostream), labm8::Status::OK);
   EXPECT_NE(ostream.str(), "");
 }
 
 TEST(SerializeGraphVizToString, NonEmptyGraph) {
-  std::ostream a;
-  std::ostream b;
+  std::stringstream a;
+  std::stringstream b;
   ProgramGraph graph;
   EXPECT_EQ(SerializeGraphVizToString(graph, &a), labm8::Status::OK);
   graph.add_node();
   EXPECT_EQ(SerializeGraphVizToString(graph, &b), labm8::Status::OK);
-  EXPECT_NE(a.str(), b.str())
+  EXPECT_NE(a.str(), b.str());
 }
 
 }  // namespace
