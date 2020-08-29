@@ -161,6 +161,16 @@ py_binary(
     ],
 )
 
+py_test(
+    name = "train_ggnn_test",
+    srcs = ["train_ggnn_test.py"],
+    data = ["//programl/test/data:reachability_dataflow_dataset"],
+    deps = [
+        ":train_ggnn",
+        "//third_party/py/labm8",
+    ],
+)
+
 py_binary(
     name = "train_lstm",
     srcs = ["train_lstm.py"],
