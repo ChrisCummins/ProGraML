@@ -3,6 +3,7 @@ decorator==4.3.0
 gast==0.2.2. # Dependency of tensorflow.
 GPUtil==1.4.0
 Keras==2.3.1
+keras_preprocessing >= 1.1.1, < 1.2
 kiwisolver==1.0.1  # Needed by matplotlib.
 joblib>=0.16.0  # Needed by scikit-learn
 matplotlib==2.2.0rc1
