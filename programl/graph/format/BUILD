@@ -111,7 +111,7 @@ cc_test(
         "//programl/proto:program_graph_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:test",
-    ]
+    ],
 )
 
 cc_library(
