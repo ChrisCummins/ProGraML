@@ -103,6 +103,17 @@ cc_library(
     ],
 )
 
+cc_test(
+    name = "graphviz_converter_test",
+    srcs = ["graphviz_converter_test.cc"],
+    deps = [
+        ":graphviz_converter",
+        "//programl/proto:program_graph_cc",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:test",
+    ]
+)
+
 cc_library(
     name = "node_link_graph",
     srcs = ["node_link_graph.cc"],
