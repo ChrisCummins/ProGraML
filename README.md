@@ -14,10 +14,10 @@
 </a>
 
 <!-- Build status -->
-| Branch | Travis CI | Better Code |
+| Branch | Test Suite | Code Quality |
 | ------ | --------- | ----------- |
-| [stable](https://github.com/ChrisCummins/ProGraML/tree/stable) | <a href="https://travis-ci.org/ChrisCummins/ProGraML"><img src="https://img.shields.io/travis/ChrisCummins/ProGraML/stable.svg"></a> | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable"></a> |
-| [development](https://github.com/ChrisCummins/ProGraML/tree/development) | <a href="https://travis-ci.org/ChrisCummins/ProGraML"><img src="https://img.shields.io/travis/ChrisCummins/ProGraML/development.svg"></a> | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development"></a> |
+| [stable](https://github.com/ChrisCummins/ProGraML/tree/stable) | [![stable](https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=stable)](https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Astable) | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable"></a> |
+| [development](https://github.com/ChrisCummins/ProGraML/tree/development) | [![development](https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=development)](https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Adevelopment) | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development"></a> |
 
 
 ProGraML is a representation for programs as input to a machine learning model.
