@@ -19,27 +19,27 @@ from torch import nn
 
 
 class Metrics(nn.Module):
-  """Common metrics and info for inspection of results.
-  Args:
-  logits, labels
-  Returns:
-  (accuracy, pred_targets, correct_preds, targets)"""
+    """Common metrics and info for inspection of results.
+    Args:
+    logits, labels
+    Returns:
+    (accuracy, pred_targets, correct_preds, targets)"""
 
-  def __init__(self):
-    super().__init__()
+    def __init__(self):
+        super().__init__()
 
-  def forward(self, logits, labels):
-    # be flexible with 1hot labels vs indices
-    if len(labels.size()) == 2:
-      targets = labels.argmax(dim=1)
-    elif len(labels.size()) == 1:
-      targets = labels
-    else:
-      raise ValueError(
-        f"labels={labels.size()} tensor is is neither 1 nor 2-dimensional. :/"
-      )
+    def forward(self, logits, labels):
+        # be flexible with 1hot labels vs indices
+        if len(labels.size()) == 2:
+            targets = labels.argmax(dim=1)
+        elif len(labels.size()) == 1:
+            targets = labels
+        else:
+            raise ValueError(
+                f"labels={labels.size()} tensor is is neither 1 nor 2-dimensional. :/"
+            )
 
-    pred_targets = logits.argmax(dim=1)
-    correct_preds = targets.eq(pred_targets).float()
-    accuracy = torch.mean(correct_preds)
-    return accuracy, logits, correct_preds, targets
+        pred_targets = logits.argmax(dim=1)
+        correct_preds = targets.eq(pred_targets).float()
+        accuracy = torch.mean(correct_preds)
+        return accuracy, logits, correct_preds, targets

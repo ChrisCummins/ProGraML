@@ -19,30 +19,28 @@ from torch import nn
 
 
 class PositionEmbeddings(nn.Module):
-  def __init__(self):
-    super().__init__()
+    def __init__(self):
+        super().__init__()
 
-  def forward(self, positions, demb, dpad: int = 0):
-    """Transformer-like sinusoidal positional embeddings.
+    def forward(self, positions, demb, dpad: int = 0):
+        """Transformer-like sinusoidal positional embeddings.
 
-    Args:
-      positions: 1d long Tensor of positions.
-      demb: Size of embedding vector.
-      dpad: Padding zeros to concatenate to embedding vectors.
-    """
-    inv_freq = 1 / (10000 ** (torch.arange(0.0, demb, 2.0) / demb))
+        Args:
+          positions: 1d long Tensor of positions.
+          demb: Size of embedding vector.
+          dpad: Padding zeros to concatenate to embedding vectors.
+        """
+        inv_freq = 1 / (10000 ** (torch.arange(0.0, demb, 2.0) / demb))
 
-    sinusoid_inp = torch.ger(positions, inv_freq)
-    pos_emb = torch.cat(
-      (torch.sin(sinusoid_inp), torch.cos(sinusoid_inp)), dim=1
-    )
+        sinusoid_inp = torch.ger(positions, inv_freq)
+        pos_emb = torch.cat((torch.sin(sinusoid_inp), torch.cos(sinusoid_inp)), dim=1)
 
-    if dpad > 0:
-      in_length = positions.size()[0]
-      pad = torch.zeros((in_length, dpad))
-      pos_emb = torch.cat([pos_emb, pad], dim=1)
-      assert torch.all(
-        pos_emb[:, -1] == torch.zeros(in_length)
-      ), f"test failed. pos_emb: \n{pos_emb}"
+        if dpad > 0:
+            in_length = positions.size()[0]
+            pad = torch.zeros((in_length, dpad))
+            pos_emb = torch.cat([pos_emb, pad], dim=1)
+            assert torch.all(
+                pos_emb[:, -1] == torch.zeros(in_length)
+            ), f"test failed. pos_emb: \n{pos_emb}"
 
-    return pos_emb
+        return pos_emb

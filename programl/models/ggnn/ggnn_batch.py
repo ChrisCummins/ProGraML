@@ -14,9 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A batch of GGNN data."""
-from typing import List
-from typing import NamedTuple
-from typing import Optional
+from typing import List, NamedTuple, Optional
 
 import numpy as np
 
@@ -25,21 +23,21 @@ from programl.proto import program_graph_pb2
 
 
 class GgnnBatchData(NamedTuple):
-  """The model-specific data generated for a batch."""
+    """The model-specific data generated for a batch."""
 
-  # A combination of one or more graphs into a single disconnected graph.
-  graph_tuple: GraphTuple
-  vocab_ids: np.array
-  selector_ids: np.array
+    # A combination of one or more graphs into a single disconnected graph.
+    graph_tuple: GraphTuple
+    vocab_ids: np.array
+    selector_ids: np.array
 
-  # A list of graphs that were used to construct the disjoint graph.
-  # This can be useful for debugging, but is not required by the model.
-  graphs: Optional[List[program_graph_pb2.ProgramGraph]] = None
+    # A list of graphs that were used to construct the disjoint graph.
+    # This can be useful for debugging, but is not required by the model.
+    graphs: Optional[List[program_graph_pb2.ProgramGraph]] = None
 
-  # Shape: (node_size, num_classes), dtype np.int32
-  node_labels: Optional[np.array] = None
-  # Shape: (num_classes), dtype np.int32
-  graph_labels: Optional[np.array] = None
+    # Shape: (node_size, num_classes), dtype np.int32
+    node_labels: Optional[np.array] = None
+    # Shape: (num_classes), dtype np.int32
+    graph_labels: Optional[np.array] = None
 
-  # Graph-level feature vectors.
-  graph_features: Optional[np.array] = None
+    # Graph-level feature vectors.
+    graph_features: Optional[np.array] = None

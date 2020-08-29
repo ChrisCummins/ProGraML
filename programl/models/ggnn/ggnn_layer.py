@@ -20,31 +20,31 @@ from torch import nn
 
 
 class GGNNLayer(nn.Module):
-  def __init__(self, hidden_size: int, dropout: float, use_typed_nodes: bool):
-    super().__init__()
-    self.dropout = dropout
+    def __init__(self, hidden_size: int, dropout: float, use_typed_nodes: bool):
+        super().__init__()
+        self.dropout = dropout
 
-    self.gru = nn.GRUCell(input_size=hidden_size, hidden_size=hidden_size)
+        self.gru = nn.GRUCell(input_size=hidden_size, hidden_size=hidden_size)
 
-    # Only admits node types 0 and 1 for statements and identifiers.
-    self.use_typed_nodes = use_typed_nodes
-    if self.use_typed_nodes:
-      self.id_gru = nn.GRUCell(input_size=hidden_size, hidden_size=hidden_size)
+        # Only admits node types 0 and 1 for statements and identifiers.
+        self.use_typed_nodes = use_typed_nodes
+        if self.use_typed_nodes:
+            self.id_gru = nn.GRUCell(input_size=hidden_size, hidden_size=hidden_size)
 
-  def forward(self, messages, node_states, node_types=None):
-    if self.use_typed_nodes:
-      assert (
-        node_types is not None
-      ), "Need to provide node_types <N> if `use_typed_nodes=True`"
-      output = torch.zeros_like(node_states, device=node_states.device)
-      stmt_mask = node_types == 0
-      output[stmt_mask] = self.gru(messages[stmt_mask], node_states[stmt_mask])
-      id_mask = node_types == 1
-      output[id_mask] = self.id_gru(messages[id_mask], node_states[id_mask])
-    else:
-      output = self.gru(messages, node_states)
+    def forward(self, messages, node_states, node_types=None):
+        if self.use_typed_nodes:
+            assert (
+                node_types is not None
+            ), "Need to provide node_types <N> if `use_typed_nodes=True`"
+            output = torch.zeros_like(node_states, device=node_states.device)
+            stmt_mask = node_types == 0
+            output[stmt_mask] = self.gru(messages[stmt_mask], node_states[stmt_mask])
+            id_mask = node_types == 1
+            output[id_mask] = self.id_gru(messages[id_mask], node_states[id_mask])
+        else:
+            output = self.gru(messages, node_states)
 
-    if self.dropout > 0.0:
-      F.dropout(output, p=self.dropout, training=self.training, inplace=True)
+        if self.dropout > 0.0:
+            F.dropout(output, p=self.dropout, training=self.training, inplace=True)
 
-    return output
+        return output

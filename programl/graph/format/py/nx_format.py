@@ -25,20 +25,20 @@ from programl.proto import program_graph_pb2
 
 
 def ProgramGraphToNetworkX(
-  proto: program_graph_pb2.ProgramGraph,
+    proto: program_graph_pb2.ProgramGraph,
 ) -> nx.MultiDiGraph:
-  """Convert a ProgramGraph message to a NetworkX graph.
+    """Convert a ProgramGraph message to a NetworkX graph.
 
-  Args:
-    proto: The program graph to convert.
+    Args:
+      proto: The program graph to convert.
 
-  Returns:
-    A NetworkX MultiDiGraph.
+    Returns:
+      A NetworkX MultiDiGraph.
 
-  Raises:
-    ValueError: If the graph cannot be converted.
-  """
-  node_link_graph = node_link_graph_pybind.ProgramGraphToNodeLinkGraph(
-    proto.SerializeToString()
-  )
-  return nx.readwrite.json_graph.node_link_graph(node_link_graph)
+    Raises:
+      ValueError: If the graph cannot be converted.
+    """
+    node_link_graph = node_link_graph_pybind.ProgramGraphToNodeLinkGraph(
+        proto.SerializeToString()
+    )
+    return nx.readwrite.json_graph.node_link_graph(node_link_graph)

@@ -14,14 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Unit tests for //deeplearning/ml4pl/graphs/xla2graph/py:xla2graph."""
+from labm8.py import app, bazelutil, pbutil, test
 from tensorflow.compiler.xla.service import hlo_pb2
 
-from labm8.py import app
-from labm8.py import bazelutil
-from labm8.py import pbutil
-from labm8.py import test
 from programl.ir.xla.py import xla
-
 
 FLAGS = app.FLAGS
 
@@ -29,21 +25,21 @@ TEST_PROTO = bazelutil.DataPath("programl/programl/test/data/a.hlo.pb")
 
 
 def test_empty_proto():
-  """Build from an empty proto."""
-  proto = hlo_pb2.HloProto()
-  with test.Raises(ValueError) as e_ctx:
-    xla.BuildProgramGraphProto(proto)
+    """Build from an empty proto."""
+    proto = hlo_pb2.HloProto()
+    with test.Raises(ValueError) as e_ctx:
+        xla.BuildProgramGraphProto(proto)
 
-  assert "Failed to locate entry computation" in str(e_ctx.value)
+    assert "Failed to locate entry computation" in str(e_ctx.value)
 
 
 def test_non_empty_proto():
-  """Build a graph proto from an example proto."""
-  proto = pbutil.FromFile(TEST_PROTO, hlo_pb2.HloProto())
-  graph = xla.BuildProgramGraphProto(proto)
-  assert len(graph.node) == 155
-  assert len(graph.function) == 5
+    """Build a graph proto from an example proto."""
+    proto = pbutil.FromFile(TEST_PROTO, hlo_pb2.HloProto())
+    graph = xla.BuildProgramGraphProto(proto)
+    assert len(graph.node) == 155
+    assert len(graph.function) == 5
 
 
 if __name__ == "__main__":
-  test.Main()
+    test.Main()

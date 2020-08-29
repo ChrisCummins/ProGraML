@@ -16,9 +16,7 @@
 """End-to-end test that --strict flag on llvm2graph rejects invalid graphs."""
 import subprocess
 
-from labm8.py import bazelutil
-from labm8.py import test
-
+from labm8.py import bazelutil, test
 
 LLVM2GRAPH = bazelutil.DataPath("programl/programl/cmd/llvm2graph")
 
@@ -31,13 +29,13 @@ INVALID_MODULE = bazelutil.DataPath(
 
 
 def test_invalid_module():
-  subprocess.check_call([str(LLVM2GRAPH), str(INVALID_MODULE)])
+    subprocess.check_call([str(LLVM2GRAPH), str(INVALID_MODULE)])
 
 
 def test_invalid_module_strict():
-  with test.Raises(subprocess.CalledProcessError):
-    subprocess.check_call([str(LLVM2GRAPH), str(INVALID_MODULE), "--strict"])
+    with test.Raises(subprocess.CalledProcessError):
+        subprocess.check_call([str(LLVM2GRAPH), str(INVALID_MODULE), "--strict"])
 
 
-if __name__ == '__main__':
-  test.Main()
+if __name__ == "__main__":
+    test.Main()
