@@ -38,6 +38,25 @@ py_test(
 )
 
 py_library(
+    name = "devmap_dataset",
+    testonly = 1,
+    srcs = ["devmap_dataset.py"],
+    data = ["//programl/test/data:devmap_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_test(
+    name = "devmap_dataset_test",
+    srcs = ["devmap_dataset_test.py"],
+    deps = [
+        ":devmap_dataset",
+        "//third_party/py/labm8",
+    ],
+)
+
+py_library(
     name = "llvm_ir",
     testonly = 1,
     srcs = ["llvm_ir.py"],

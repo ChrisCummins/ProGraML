@@ -3117,6 +3117,18 @@ py_binary(
 )
 
 genrule(
+    name = "devmap_dataset",
+    testonly = 1,
+    outs = ["devmap_dataset.tar.bz2"],
+    cmd = (
+        "$(location //programl/task/devmap/dataset:create) --path=$(@D)/dtmp && " +
+        "tar cjf $(@D)/devmap_dataset.tar.bz2 -C $(@D)/dtmp . && " +
+        "rm -rf $(@D)/dtmp"
+    ),
+    tools = ["//programl/task/devmap/dataset:create"],
+)
+
+genrule(
     name = "reachability_dataflow_dataset",
     testonly = 1,
     outs = ["reachability_dataflow_dataset.tar.bz2"],
