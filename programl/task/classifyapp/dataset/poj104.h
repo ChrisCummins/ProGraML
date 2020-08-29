@@ -22,8 +22,7 @@ namespace programl {
 namespace task {
 namespace classifyapp {
 
-size_t CreatePoj104Dataset(const string& url,
-                           const boost::filesystem::path& outputPath);
+size_t CreatePoj104Dataset(const string& url, const boost::filesystem::path& outputPath);
 
 }  // namespace classifyapp
 }  // namespace task

@@ -15,13 +15,12 @@
 // limitations under the License.
 #pragma once
 
+#include <iostream>
+
+#include "google/protobuf/util/json_util.h"
 #include "labm8/cpp/app.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
-
-#include "google/protobuf/util/json_util.h"
-
-#include <iostream>
 
 DECLARE_string(stdout_fmt);
 
@@ -43,8 +42,7 @@ void WriteStdout(const ProtocolBuffer& message) {
     opts.always_print_enums_as_ints = false;
     opts.preserve_proto_field_names = true;
     std::string json;
-    CHECK(
-        google::protobuf::util::MessageToJsonString(message, &json, opts).ok());
+    CHECK(google::protobuf::util::MessageToJsonString(message, &json, opts).ok());
     std::cout << json << std::endl;
   } else {
     LOG(FATAL) << "unreachable! Unrecognized --stdout_fmt";

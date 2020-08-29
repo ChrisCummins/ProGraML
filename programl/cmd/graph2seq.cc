@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
   programl::util::ParseStdinOrDie(&graph);
 
   programl::NodeIndexList serialized;
-  programl::graph::format::SerializeInstructionsInProgramGraph(
-      graph, &serialized, /*maxNodes=*/1000000);
+  programl::graph::format::SerializeInstructionsInProgramGraph(graph, &serialized,
+                                                               /*maxNodes=*/1000000);
   programl::util::WriteStdout(serialized);
 
   return 0;

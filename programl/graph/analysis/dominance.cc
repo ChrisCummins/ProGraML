@@ -121,12 +121,10 @@ Status DominanceAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
 
   int activeNodeCount = 0;
   for (int i = 0; i < graph().node_size(); ++i) {
-    AddNodeFeature(features, "data_flow_root_node",
-                   i == rootNode ? trueFeature : falseFeature);
+    AddNodeFeature(features, "data_flow_root_node", i == rootNode ? trueFeature : falseFeature);
 
     auto it = dominators.find(i);
-    if (it != dominators.end() &&
-        it->second.find(rootNode) != it->second.end()) {
+    if (it != dominators.end() && it->second.find(rootNode) != it->second.end()) {
       ++activeNodeCount;
       AddNodeFeature(features, "data_flow_value", trueFeature);
     } else {
@@ -134,8 +132,7 @@ Status DominanceAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
     }
   }
 
-  SetFeature(features->mutable_features(), "data_flow_step_count",
-             CreateFeature(stepCount));
+  SetFeature(features->mutable_features(), "data_flow_step_count", CreateFeature(stepCount));
   SetFeature(features->mutable_features(), "data_flow_active_node_count",
              CreateFeature(activeNodeCount));
 

@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "programl/graph/format/node_link_graph.h"
+
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/status_macros.h"

@@ -15,15 +15,14 @@
 // limitations under the License.
 #pragma once
 
+#include <vector>
+
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "labm8/cpp/status.h"
 #include "programl/graph/analysis/data_flow_pass.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
-
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
-
-#include <vector>
 
 namespace programl {
 namespace graph {
@@ -43,13 +42,9 @@ class LivenessAnalysis : public RoodNodeDataFlowAnalysis {
 
   labm8::Status Init() override;
 
-  const std::vector<absl::flat_hash_set<int>>& live_in_sets() const {
-    return liveInSets_;
-  }
+  const std::vector<absl::flat_hash_set<int>>& live_in_sets() const { return liveInSets_; }
 
-  const std::vector<absl::flat_hash_set<int>>& live_out_sets() const {
-    return liveOutSets_;
-  }
+  const std::vector<absl::flat_hash_set<int>>& live_out_sets() const { return liveOutSets_; }
 
  private:
   // Live-in and live-out sets that are computed during Init().

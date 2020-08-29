@@ -17,6 +17,7 @@
 
 #include <cstdlib>
 #include <vector>
+
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/logging.h"
 
@@ -29,8 +30,7 @@ class FilesystemCache {
   FilesystemCache();
 
   // Convert the given key into a local filesystem path.
-  boost::filesystem::path operator[](
-      const std::vector<std::string>& components) const;
+  boost::filesystem::path operator[](const std::vector<std::string>& components) const;
 
  private:
   const boost::filesystem::path root_;

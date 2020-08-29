@@ -19,10 +19,10 @@
 // limitations under the License.
 #pragma once
 
-#include "programl/proto/features.pb.h"
-
 #include <string>
 #include <vector>
+
+#include "programl/proto/features.pb.h"
 
 namespace programl {
 namespace graph {
@@ -41,10 +41,8 @@ void SetFeature(Features* features, const char* label, const Feature& value);
 
 // Convenience function to add a scalar feature value.
 template <typename MessageType, typename FeatureType>
-void AddScalarFeature(MessageType* message, const std::string& key,
-                      const FeatureType& value) {
-  message->mutable_features()->mutable_feature()->insert(
-      {key, CreateFeature(value)});
+void AddScalarFeature(MessageType* message, const std::string& key, const FeatureType& value) {
+  message->mutable_features()->mutable_feature()->insert({key, CreateFeature(value)});
 }
 
 }  // namespace graph

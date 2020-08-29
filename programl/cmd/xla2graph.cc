@@ -15,19 +15,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include <fstream>
+#include <sstream>
+#include <streambuf>
+
 #include "labm8/cpp/app.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/hlo_module_graph_builder.h"
-
 #include "programl/util/stdin_fmt.h"
 #include "tensorflow/compiler/xla/service/hlo.pb.h"
-
-#include <fstream>
-#include <sstream>
-#include <streambuf>
 
 static const char* usage = R"(Generate program graph from a HLO module.
 
@@ -65,8 +64,7 @@ void ParseInputOrDie(const string& filename, ProtocolBuffer* message) {
   str.reserve(file.tellg());
   file.seekg(0, std::ios::beg);
 
-  str.assign((std::istreambuf_iterator<char>(file)),
-             std::istreambuf_iterator<char>());
+  str.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
   if (!message->ParseFromString(str)) {
     LOG(ERROR) << "Failed to parse proto file: " << filename;

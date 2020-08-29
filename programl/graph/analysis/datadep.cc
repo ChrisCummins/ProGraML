@@ -16,13 +16,13 @@
 
 #include "programl/graph/analysis/datadep.h"
 
-#include "labm8/cpp/logging.h"
-#include "labm8/cpp/status.h"
-#include "programl/graph/features.h"
-
 #include <queue>
 #include <utility>
 #include <vector>
+
+#include "labm8/cpp/logging.h"
+#include "labm8/cpp/status.h"
+#include "programl/graph/features.h"
 
 using labm8::Status;
 using std::vector;
@@ -33,24 +33,19 @@ namespace graph {
 namespace analysis {
 
 Status DatadepAnalysis::Init() {
-  ComputeAdjacencies({.control = false,
-                      .reverse_control = false,
-                      .data = false,
-                      .reverse_data = true});
+  ComputeAdjacencies(
+      {.control = false, .reverse_control = false, .data = false, .reverse_data = true});
   return Status::OK;
 }
 
-vector<int> DatadepAnalysis::GetEligibleRootNodes() {
-  return GetVariableNodeIndices(graph());
-}
+vector<int> DatadepAnalysis::GetEligibleRootNodes() { return GetVariableNodeIndices(graph()); }
 
 Status DatadepAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   vector<bool> visited(graph().node_size(), false);
 
   const vector<vector<int>>& rdfg = adjacencies().reverse_data;
-  DCHECK(rdfg.size() == graph().node_size())
-      << "RDFG size: " << rdfg.size() << " != "
-      << " graph size: " << graph().node_size();
+  DCHECK(rdfg.size() == graph().node_size()) << "RDFG size: " << rdfg.size() << " != "
+                                             << " graph size: " << graph().node_size();
 
   int dataFlowStepCount = 1;
   std::queue<std::pair<int, int>> q;
@@ -76,8 +71,7 @@ Status DatadepAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
 
   int activeNodeCount = 0;
   for (int i = 0; i < graph().node_size(); ++i) {
-    AddNodeFeature(features, "data_flow_root_node",
-                   i == rootNode ? trueFeature : falseFeature);
+    AddNodeFeature(features, "data_flow_root_node", i == rootNode ? trueFeature : falseFeature);
     if (visited[i] && graph().node(i).type() == Node::INSTRUCTION) {
       ++activeNodeCount;
       AddNodeFeature(features, "data_flow_value", trueFeature);

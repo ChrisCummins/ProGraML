@@ -15,16 +15,14 @@
 // limitations under the License.
 #pragma once
 
-#include "programl/proto/program_graph.pb.h"
+#include <fstream>
+#include <vector>
 
+#include "boost/filesystem.hpp"
 #include "labm8/cpp/bazelutil.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/strutil.h"
-
-#include "boost/filesystem.hpp"
-
-#include <fstream>
-#include <vector>
+#include "programl/proto/program_graph.pb.h"
 
 namespace programl {
 namespace test {

@@ -17,11 +17,10 @@
 #include <iostream>
 
 #include "labm8/cpp/status.h"
+#include "llvm/Support/SourceMgr.h"
 #include "programl/ir/llvm/llvm.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
-
-#include "llvm/Support/SourceMgr.h"
 
 using labm8::Status;
 
@@ -39,8 +38,7 @@ int main(int argc, char** argv) {
   }
 
   programl::ProgramGraph graph;
-  Status status =
-      programl::ir::llvm::BuildProgramGraph(*buffer.get(), &graph, options);
+  Status status = programl::ir::llvm::BuildProgramGraph(*buffer.get(), &graph, options);
   if (!status.ok()) {
     std::cerr << status.error_message() << std::endl;
     return 2;

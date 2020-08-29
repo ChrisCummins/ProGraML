@@ -42,8 +42,7 @@ DEFINE_string(url,
               "https://drive.google.com/u/0/"
               "uc?id=0B2i-vWnOu7MxVlJwQXN6eVNONUU&export=download",
               "The URL of the author-provided archive.tar.gz file.");
-DEFINE_string(path, "/tmp/programl/poj104",
-              "The directory to write generated files to.");
+DEFINE_string(path, "/tmp/programl/poj104", "The directory to write generated files to.");
 
 int main(int argc, char** argv) {
   labm8::InitApp(&argc, &argv);
@@ -51,7 +50,6 @@ int main(int argc, char** argv) {
     std::cerr << "fatal: Unrecognized arguments" << std::endl;
     return 4;
   }
-  programl::task::classifyapp::CreatePoj104Dataset(FLAGS_url,
-                                                   fs::path(FLAGS_path));
+  programl::task::classifyapp::CreatePoj104Dataset(FLAGS_url, fs::path(FLAGS_path));
   return 0;
 }

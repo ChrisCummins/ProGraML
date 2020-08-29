@@ -39,9 +39,7 @@ class SubexpressionGraphBuilder {
 
   Node* AddVariable() { return builder_.AddVariable("<var>", fn_); }
 
-  Node* AddInstruction(const string& text) {
-    return builder_.AddInstruction(text, fn_);
-  }
+  Node* AddInstruction(const string& text) { return builder_.AddInstruction(text, fn_); }
 
   void AddControlEdge(const Node* src, const Node* dst) {
     CHECK(builder_.AddControlEdge(0, src, dst).ok());

@@ -21,14 +21,13 @@
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/strutil.h"
+#include "llvm/Support/ErrorOr.h"
+#include "llvm/Support/SourceMgr.h"
 #include "programl/ir/llvm/llvm.h"
 #include "programl/proto/ir.pb.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 #include "programl/util/stdout_fmt.h"
-
-#include "llvm/Support/ErrorOr.h"
-#include "llvm/Support/SourceMgr.h"
 
 using labm8::Status;
 using labm8::StatusOr;
@@ -52,8 +51,7 @@ and the IR at position --ir_list_index (zero-based) is used:
 
   $ llvm2graph /path/to/list.IrList.pb --ir_list_index=2)";
 
-DEFINE_bool(instructions_only, false,
-            "Include only instructions in the generated program graph.");
+DEFINE_bool(instructions_only, false, "Include only instructions in the generated program graph.");
 DEFINE_bool(ignore_call_returns, false,
             "Include only instructions in the generated program graph.");
 DEFINE_int32(ir_list_index, 0,
@@ -85,8 +83,7 @@ StatusOr<programl::ProgramGraphOptions> GetProgramGraphOptionsFromFlags() {
 //   * if '.IrList.pb' suffix, read IrList protocol buffer and return index
 //   --ir_list_index;
 //   * else read text file.
-llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> GetInputAsBuffer(
-    const string& filename) {
+llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> GetInputAsBuffer(const string& filename) {
   if (labm8::HasSuffixString(filename, ".IrList.pb")) {
     std::ifstream file(filename);
     programl::IrList irList;
@@ -138,8 +135,8 @@ int main(int argc, char** argv) {
   }
 
   programl::ProgramGraph graph;
-  Status status = programl::ir::llvm::BuildProgramGraph(*buffer.get(), &graph,
-                                                        options.ValueOrDie());
+  Status status =
+      programl::ir::llvm::BuildProgramGraph(*buffer.get(), &graph, options.ValueOrDie());
   if (!status.ok()) {
     LOG(ERROR) << status.error_message();
     return 2;

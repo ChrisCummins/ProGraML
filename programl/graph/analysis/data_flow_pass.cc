@@ -37,8 +37,7 @@ namespace {
 // Example output:
 //    0: [1, 2, 3]
 //    2: [3, 4]
-std::ostream& AdjacencyListToOstream(std::ostream& os,
-                                     const vector<vector<int>>& adjacencies) {
+std::ostream& AdjacencyListToOstream(std::ostream& os, const vector<vector<int>>& adjacencies) {
   for (int i = 0; i < adjacencies.size(); ++i) {
     if (!adjacencies[i].size()) {
       continue;
@@ -82,8 +81,7 @@ std::ostream& operator<<(std::ostream& os, const AdjacencyLists& dt) {
   return os;
 }
 
-const AdjacencyLists& DataFlowPass::ComputeAdjacencies(
-    const AdjacencyListOptions& options) {
+const AdjacencyLists& DataFlowPass::ComputeAdjacencies(const AdjacencyListOptions& options) {
   if (options.control) {
     adjacencies_.control.reserve(graph().node_size());
     for (int i = 0; i < graph().node_size(); ++i) {
@@ -132,8 +130,7 @@ const AdjacencyLists& DataFlowPass::ComputeAdjacencies(
         adjacencies_.reverse_data[edge.target()].push_back(edge.source());
       }
       if (options.reverse_data_positions) {
-        adjacencies_.reverse_data_positions[edge.target()].push_back(
-            edge.position());
+        adjacencies_.reverse_data_positions[edge.target()].push_back(edge.position());
       }
     }
   }
@@ -148,15 +145,13 @@ Status RoodNodeDataFlowAnalysis::Run(ProgramGraphFeaturesList* featuresList) {
 
   vector<int> rootNodes = GetEligibleRootNodes();
   if (!rootNodes.size()) {
-    return Status(error::Code::FAILED_PRECONDITION,
-                  "No eligible root nodes in graph with {} nodes",
+    return Status(error::Code::FAILED_PRECONDITION, "No eligible root nodes in graph with {} nodes",
                   graph().node_size());
   }
-  std::shuffle(rootNodes.begin(), rootNodes.end(),
-               std::default_random_engine(seed()));
+  std::shuffle(rootNodes.begin(), rootNodes.end(), std::default_random_engine(seed()));
 
-  int numRoots = std::min(static_cast<int>(ceil(rootNodes.size() / 10.0)),
-                          max_instances_per_graph());
+  int numRoots =
+      std::min(static_cast<int>(ceil(rootNodes.size() / 10.0)), max_instances_per_graph());
   for (int i = 0; i < numRoots; ++i) {
     ProgramGraphFeatures features;
     RETURN_IF_ERROR(RunOne(rootNodes[i], &features));
@@ -168,10 +163,8 @@ Status RoodNodeDataFlowAnalysis::Run(ProgramGraphFeaturesList* featuresList) {
 
 Status RoodNodeDataFlowAnalysis::Init() { return Status::OK; }
 
-void AddNodeFeature(ProgramGraphFeatures* features, const string& name,
-                    const Feature& value) {
-  (*(*features->mutable_node_features()->mutable_feature_list())[name]
-        .add_feature()) = value;
+void AddNodeFeature(ProgramGraphFeatures* features, const string& name, const Feature& value) {
+  (*(*features->mutable_node_features()->mutable_feature_list())[name].add_feature()) = value;
 }
 
 vector<int> GetInstructionsInFunctionsNodeIndices(const ProgramGraph& graph) {

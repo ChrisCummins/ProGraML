@@ -15,15 +15,14 @@
 // limitations under the License.
 #pragma once
 
+#include <utility>
+
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "labm8/cpp/status.h"
 #include "programl/graph/analysis/data_flow_pass.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
-
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
-
-#include <utility>
 
 namespace programl {
 namespace graph {
@@ -38,17 +37,15 @@ class DominanceAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual labm8::Status RunOne(int rootNode,
-                               ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
 
   virtual std::vector<int> GetEligibleRootNodes() override;
 
   virtual labm8::Status Init() override;
 
  protected:
-  labm8::Status ComputeDominators(
-      const int rootNode, int* dataFlowSteps,
-      absl::flat_hash_map<int, absl::flat_hash_set<int>>* dominators);
+  labm8::Status ComputeDominators(const int rootNode, int* dataFlowSteps,
+                                  absl::flat_hash_map<int, absl::flat_hash_set<int>>* dominators);
 };
 
 }  // namespace analysis

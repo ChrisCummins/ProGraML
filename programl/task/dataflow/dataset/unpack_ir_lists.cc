@@ -21,40 +21,34 @@
 #include <iomanip>
 #include <iostream>
 
+#include "absl/strings/str_format.h"
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
 #include "labm8/cpp/fsutil.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/strutil.h"
-
 #include "programl/proto/ir.pb.h"
 #include "programl/task/dataflow/dataset/parallel_file_map.h"
-
-#include "absl/strings/str_format.h"
 
 namespace fs = boost::filesystem;
 using std::vector;
 
 const char* usage = R"(Unpack IrList protos to Ir protos.)";
 
-DEFINE_string(
-    path,
-    (labm8::fsutil::GetHomeDirectoryOrDie() / "programl/dataflow").string(),
-    "The directory to write generated files to.");
+DEFINE_string(path, (labm8::fsutil::GetHomeDirectoryOrDie() / "programl/dataflow").string(),
+              "The directory to write generated files to.");
 
 namespace programl {
 namespace task {
 namespace dataflow {
 
-inline string GetOutput(const fs::path& root, const string& nameStem,
-                        int index) {
+inline string GetOutput(const fs::path& root, const string& nameStem, int index) {
   return absl::StrFormat("%s/ir/%s%d.Ir.pb", root.string(), nameStem, index);
 }
 
 void ProcessIrList(const fs::path& root, const fs::path& path) {
   const string baseName = path.string().substr(path.string().rfind("/") + 1);
-  const string nameStem =
-      baseName.substr(0, baseName.size() - labm8::StrLen("IrList.pb"));
+  const string nameStem = baseName.substr(0, baseName.size() - labm8::StrLen("IrList.pb"));
 
   std::ifstream file(path.string());
   IrList irList;
@@ -65,8 +59,7 @@ void ProcessIrList(const fs::path& root, const fs::path& path) {
 
   // Write each Ir to its own file.
   for (int i = 0; i < irList.ir_size(); ++i) {
-    const string outPath =
-        absl::StrFormat("%s/ir/%s.%d.Ir.pb", root.string(), nameStem, i);
+    const string outPath = absl::StrFormat("%s/ir/%s.%d.Ir.pb", root.string(), nameStem, i);
     std::ofstream out(outPath);
     irList.ir(i).SerializeToOstream(&out);
   }
@@ -97,11 +90,10 @@ int main(int argc, char** argv) {
   }
 
   const fs::path path(FLAGS_path);
-  const vector<fs::path> files =
-      programl::task::dataflow::EnumerateIrLists(path / "ir");
+  const vector<fs::path> files = programl::task::dataflow::EnumerateIrLists(path / "ir");
 
-  programl::task::dataflow::ParallelFileMap<
-      programl::task::dataflow::ProcessIrList, 128>(path, files);
+  programl::task::dataflow::ParallelFileMap<programl::task::dataflow::ProcessIrList, 128>(path,
+                                                                                          files);
   LOG(INFO) << "done";
 
   return 0;

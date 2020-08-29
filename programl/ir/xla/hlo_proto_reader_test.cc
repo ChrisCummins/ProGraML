@@ -15,9 +15,9 @@
 // limitations under the License.
 #include "programl/ir/xla/hlo_proto_reader.h"
 
-#include "labm8/cpp/test.h"
-
 #include <fstream>
+
+#include "labm8/cpp/test.h"
 
 namespace programl {
 namespace ir {

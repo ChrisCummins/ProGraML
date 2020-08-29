@@ -38,8 +38,7 @@ Status BuildProgramGraph(::llvm::Module& module, ProgramGraph* graph,
 
   // Create a graph builder pass. Ownership of this pointer is transferred to
   // legacy::PassManager on add().
-  internal::ProgramGraphBuilderPass* pass =
-      new internal::ProgramGraphBuilderPass(options);
+  internal::ProgramGraphBuilderPass* pass = new internal::ProgramGraphBuilderPass(options);
   passManager.add(pass);
 
   passManager.run(module);
@@ -47,8 +46,7 @@ Status BuildProgramGraph(::llvm::Module& module, ProgramGraph* graph,
   return Status::OK;
 }
 
-Status BuildProgramGraph(const ::llvm::MemoryBuffer& irBuffer,
-                         ProgramGraph* graph,
+Status BuildProgramGraph(const ::llvm::MemoryBuffer& irBuffer, ProgramGraph* graph,
                          const ProgramGraphOptions& options) {
   ::llvm::SMDiagnostic error;
   ::llvm::LLVMContext ctx;
@@ -61,11 +59,9 @@ Status BuildProgramGraph(const ::llvm::MemoryBuffer& irBuffer,
     // 1:0: error: expected top-level entity
     //     node {
     //     ^
-    return Status(labm8::error::Code::INVALID_ARGUMENT,
-                  "{}:{}: error: {}\n    {}\n    {}^", error.getLineNo(),
-                  error.getColumnNo(), error.getMessage().str(),
-                  error.getLineContents().str(),
-                  string(std::max(error.getColumnNo() - 1, 0), ' '));
+    return Status(labm8::error::Code::INVALID_ARGUMENT, "{}:{}: error: {}\n    {}\n    {}^",
+                  error.getLineNo(), error.getColumnNo(), error.getMessage().str(),
+                  error.getLineContents().str(), string(std::max(error.getColumnNo() - 1, 0), ' '));
   }
 
   return BuildProgramGraph(*module, graph, options);

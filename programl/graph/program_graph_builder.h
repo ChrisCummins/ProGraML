@@ -65,16 +65,13 @@ class ProgramGraphBuilder {
   Node* AddConstant(const string& text);
 
   // Edge factories.
-  [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position,
-                                                      const Node* source,
+  [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position, const Node* source,
                                                       const Node* target);
 
-  [[nodiscard]] labm8::StatusOr<Edge*> AddDataEdge(int32_t position,
-                                                   const Node* source,
+  [[nodiscard]] labm8::StatusOr<Edge*> AddDataEdge(int32_t position, const Node* source,
                                                    const Node* target);
 
-  [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source,
-                                                   const Node* target);
+  [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source, const Node* target);
 
   const Node* GetRootNode() const { return &graph_.node(0); }
 
@@ -99,13 +96,12 @@ class ProgramGraphBuilder {
 
   inline Node* AddNode(const Node::Type& type, const string& text);
 
-  inline Node* AddNode(const Node::Type& type, const string& text,
-                       const Function* function);
+  inline Node* AddNode(const Node::Type& type, const string& text, const Function* function);
 
   // Construct edges.
 
-  inline Edge* AddEdge(const Edge::Flow& flow, int32_t position,
-                       const Node* source, const Node* target);
+  inline Edge* AddEdge(const Edge::Flow& flow, int32_t position, const Node* source,
+                       const Node* target);
 
   // Return a mutable pointer to the graph protocol buffer.
   ProgramGraph* GetMutableProgramGraph() { return &graph_; }

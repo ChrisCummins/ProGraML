@@ -40,46 +40,29 @@ class GraphTuple {
   const std::array<std::vector<std::pair<int, int>>, 3>& adjacencies() const {
     return adjacencies_;
   }
-  const std::array<std::vector<int>, 3>& edge_positions() const {
-    return edge_positions_;
-  }
+  const std::array<std::vector<int>, 3>& edge_positions() const { return edge_positions_; }
 
   inline size_t graph_size() const { return graph_size_; }
   inline size_t node_size() const { return node_size_; }
   inline size_t edge_size() {
-    return adjacencies_[0].size() + adjacencies_[1].size() +
-           adjacencies_[2].size();
+    return adjacencies_[0].size() + adjacencies_[1].size() + adjacencies_[2].size();
   }
-  inline size_t control_edge_size() const {
-    return adjacencies_[Edge::CONTROL].size();
-  }
-  inline size_t data_edge_size() const {
-    return adjacencies_[Edge::DATA].size();
-  }
-  inline size_t call_edge_size() const {
-    return adjacencies_[Edge::CALL].size();
-  }
+  inline size_t control_edge_size() const { return adjacencies_[Edge::CONTROL].size(); }
+  inline size_t data_edge_size() const { return adjacencies_[Edge::DATA].size(); }
+  inline size_t call_edge_size() const { return adjacencies_[Edge::CALL].size(); }
   inline const std::vector<size_t>& node_sizes() const { return node_sizes_; }
   inline const std::vector<size_t>& edge_sizes() const { return edge_sizes_; }
 
  protected:
-  std::array<std::vector<std::pair<int, int>>, 3>* mutable_adjacencies() {
-    return &adjacencies_;
-  }
+  std::array<std::vector<std::pair<int, int>>, 3>* mutable_adjacencies() { return &adjacencies_; }
 
-  std::array<std::vector<int>, 3>* mutable_edge_positions() {
-    return &edge_positions_;
-  }
+  std::array<std::vector<int>, 3>* mutable_edge_positions() { return &edge_positions_; }
 
   inline void set_node_size(size_t node_size) { node_size_ = node_size; }
 
-  inline void add_node_size(size_t node_size) {
-    node_sizes_.push_back(node_size);
-  }
+  inline void add_node_size(size_t node_size) { node_sizes_.push_back(node_size); }
 
-  inline void add_edge_size(size_t edge_size) {
-    edge_sizes_.push_back(edge_size);
-  }
+  inline void add_edge_size(size_t edge_size) { edge_sizes_.push_back(edge_size); }
 
  private:
   size_t graph_size_;

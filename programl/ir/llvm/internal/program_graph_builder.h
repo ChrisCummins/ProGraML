@@ -65,32 +65,26 @@ using ArgumentConsumerMap =
 class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
  public:
   explicit ProgramGraphBuilder(const ProgramGraphOptions& options)
-      : programl::graph::ProgramGraphBuilder(options),
-        blockCount_(0){}
+      : programl::graph::ProgramGraphBuilder(options), blockCount_(0) {}
 
-            [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(
-                const ::llvm::Module& module);
+  [[nodiscard]] labm8::StatusOr<ProgramGraph> Build(const ::llvm::Module& module);
 
   void Clear();
 
  protected:
-  [[nodiscard]] labm8::StatusOr<FunctionEntryExits> VisitFunction(
-      const ::llvm::Function& function, const Function* functionMessage);
+  [[nodiscard]] labm8::StatusOr<FunctionEntryExits> VisitFunction(const ::llvm::Function& function,
+                                                                  const Function* functionMessage);
 
   [[nodiscard]] labm8::StatusOr<BasicBlockEntryExit> VisitBasicBlock(
       const ::llvm::BasicBlock& block, const Function* functionMessage,
       InstructionMap* instructionMap, ArgumentConsumerMap* argumentConsumers,
       std::vector<DataEdge>* dataEdgesToAdd);
 
-  [[nodiscard]] labm8::Status AddCallSite(const Node* source,
-                                          const FunctionEntryExits& target);
+  [[nodiscard]] labm8::Status AddCallSite(const Node* source, const FunctionEntryExits& target);
 
-  Node* AddLlvmInstruction(const ::llvm::Instruction* instruction,
-                           const Function* function);
-  Node* AddLlvmVariable(const ::llvm::Instruction* operand,
-                        const Function* function);
-  Node* AddLlvmVariable(const ::llvm::Argument* argument,
-                        const Function* function);
+  Node* AddLlvmInstruction(const ::llvm::Instruction* instruction, const Function* function);
+  Node* AddLlvmVariable(const ::llvm::Instruction* operand, const Function* function);
+  Node* AddLlvmVariable(const ::llvm::Argument* argument, const Function* function);
   Node* AddLlvmConstant(const ::llvm::Constant* constant);
 
  private:
@@ -105,8 +99,7 @@ class ProgramGraphBuilder : public programl::graph::ProgramGraphBuilder {
   // A map from constant values to <node, position> uses. This map is
   // populated by VisitBasicBlock() and consumed once all functions have been
   // visited.
-  absl::flat_hash_map<const ::llvm::Constant*, std::vector<PositionalNode>>
-      constants_;
+  absl::flat_hash_map<const ::llvm::Constant*, std::vector<PositionalNode>> constants_;
 };
 
 }  // namespace internal

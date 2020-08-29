@@ -15,16 +15,15 @@
 // limitations under the License.
 #pragma once
 
-#include "labm8/cpp/app.h"
-#include "labm8/cpp/logging.h"
-#include "labm8/cpp/status.h"
+#include <iostream>
+#include <sstream>
 
 #include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/json_util.h"
-
-#include <iostream>
-#include <sstream>
+#include "labm8/cpp/app.h"
+#include "labm8/cpp/logging.h"
+#include "labm8/cpp/status.h"
 
 DECLARE_string(stdin_fmt);
 

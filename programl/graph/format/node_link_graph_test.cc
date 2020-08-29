@@ -13,14 +13,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <vector>
-
-#include "nlohmann/json.hpp"
 #include "programl/graph/format/node_link_graph.h"
+
+#include <vector>
 
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/string.h"
 #include "labm8/cpp/test.h"
+#include "nlohmann/json.hpp"
 #include "programl/proto/program_graph.pb.h"
 
 using json = nlohmann::json;

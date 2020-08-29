@@ -48,8 +48,7 @@ Status RunAnalysis(const string& analysisName, const ProgramGraph& graph,
   } else if (analysisName == "subexpressions") {
     return Run<DatadepAnalysis>(graph, featuresList);
   } else {
-    return Status(error::Code::INVALID_ARGUMENT, "Invalid analysis: {}",
-                  analysisName);
+    return Status(error::Code::INVALID_ARGUMENT, "Invalid analysis: {}", analysisName);
   }
 }
 
