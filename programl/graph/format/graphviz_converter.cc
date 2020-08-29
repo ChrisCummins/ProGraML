@@ -21,6 +21,7 @@
 
 #include "absl/container/flat_hash_map.h"
 #include "boost/graph/graphviz.hpp"
+#include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/status_macros.h"
 #include "labm8/cpp/string.h"
@@ -190,6 +191,8 @@ class GraphVizSerializer {
         attributes["color"] = "#990000";
         attributes["fontcolor"] = "#990000";
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
   }
 
@@ -226,6 +229,8 @@ class GraphVizSerializer {
         attributes["color"] = "#65ae4d";
         attributes["weight"] = "1";
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
 
     // Set the edge label.
