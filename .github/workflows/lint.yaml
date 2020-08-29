@@ -29,3 +29,17 @@ jobs:
         run: python3 -m isort . --check-only --diff --profile black
       - name: black
         run: python3 -m black . --check --diff --target-version py36
+
+  bazel:
+    name: Bazel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.13.1'
+      - name: Install buildifier
+        run: go get github.com/bazelbuild/buildtools/buildifier
+      - name: buildifier
+        run: find . \( -name BUILD -o -name WORKSPACE \) -print0 | xargs -0 buildifier -mode=diff
