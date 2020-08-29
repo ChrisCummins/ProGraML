@@ -62,138 +62,134 @@ using GraphvizGraph = boost::adjacency_list<
     /*EdgeProperties=*/EdgeProperties,
     /*GraphProperties=*/GraphProperties>;
 
-labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
-                                        std::ostream* ostream,
-                                        const NodeLabel& nodeLabelFormat,
-                                        const string& nodeFeatureName) {
-  // To construct a graphviz graph, we create a main graph and then produce
-  // a subgraph for each function in the graph. Vertices (nodes) are then added
-  // to the subgraphs, and edges added to the main graph.
+namespace {
 
-  // Create a main graph and pre-allocate the number of nodes in the graph.
-  // The main graph is used to store subgraphs which contain the actual
-  // vertices. Vertices can't be added directly to the main graph.
-  boost::subgraph<GraphvizGraph> main(graph.node_size());
-  boost::get_property(main, boost::graph_name) = "main";
+class GraphVizSerializer {
+ public:
+  GraphVizSerializer(const ProgramGraph& graph,
+                     const NodeLabel& nodeLabelFormat,
+                     const string& nodeFeatureName)
+      : graph_(graph),
+        nodeLabelFormat_(nodeLabelFormat),
+        nodeFeatureName_(nodeFeatureName) {}
 
-  // Set global graph, node, and edge style attributes.
-  boost::get_property(main, boost::graph_graph_attribute)["margin"] = "0";
-  boost::get_property(main, boost::graph_graph_attribute)["nodesep"] = "0.4";
-  boost::get_property(main, boost::graph_graph_attribute)["ranksep"] = "0.4";
-  boost::get_property(main, boost::graph_graph_attribute)["fontname"] =
-      "Inconsolata";
-  boost::get_property(main, boost::graph_graph_attribute)["fontsize"] = "20";
+ private:
+  // Set global graphviz properties.
+  void SetGraphvizProperties(boost::subgraph<GraphvizGraph>& main) const {
+    // Set global graph, node, and edge style attributes.
+    boost::get_property(main, boost::graph_graph_attribute)["margin"] = "0";
+    boost::get_property(main, boost::graph_graph_attribute)["nodesep"] = "0.4";
+    boost::get_property(main, boost::graph_graph_attribute)["ranksep"] = "0.4";
+    boost::get_property(main, boost::graph_graph_attribute)["fontname"] =
+        "Inconsolata";
+    boost::get_property(main, boost::graph_graph_attribute)["fontsize"] = "20";
 
-  boost::get_property(main, boost::graph_vertex_attribute)["fontname"] =
-      "Inconsolata";
-  boost::get_property(main, boost::graph_vertex_attribute)["fontsize"] = "20";
-  boost::get_property(main, boost::graph_vertex_attribute)["penwidth"] = "2";
-  boost::get_property(main, boost::graph_vertex_attribute)["width"] = "1";
-  boost::get_property(main, boost::graph_vertex_attribute)["margin"] = "0";
+    boost::get_property(main, boost::graph_vertex_attribute)["fontname"] =
+        "Inconsolata";
+    boost::get_property(main, boost::graph_vertex_attribute)["fontsize"] = "20";
+    boost::get_property(main, boost::graph_vertex_attribute)["penwidth"] = "2";
+    boost::get_property(main, boost::graph_vertex_attribute)["width"] = "1";
+    boost::get_property(main, boost::graph_vertex_attribute)["margin"] = "0";
 
-  boost::get_property(main, boost::graph_edge_attribute)["fontname"] =
-      "Inconsolata";
-  boost::get_property(main, boost::graph_edge_attribute)["fontsize"] = "20";
-  boost::get_property(main, boost::graph_edge_attribute)["penwidth"] = "3";
-  boost::get_property(main, boost::graph_edge_attribute)["arrowsize"] = ".8";
-
-  // Since we can't add any vertices directly to the main graph, create a
-  // subgraph for all nodes which do not have a function.
-  boost::subgraph<GraphvizGraph>& external = main.create_subgraph();
-  boost::get_property(external, boost::graph_name) = "external";
-
-  // Generate a list of per-function subgraphs.
-  std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>
-      functionGraphs;
-  for (int i = 0; i < graph.function_size(); ++i) {
-    const auto& function = graph.function(i);
-
-    functionGraphs.push_back(main.create_subgraph());
-    auto& functionGraph = functionGraphs[functionGraphs.size() - 1].get();
-
-    // Set the name of the function.
-    string functionName = function.name();
-    labm8::TruncateWithEllipsis(functionName, kMaximumLabelLen);
-    boost::get_property(functionGraph, boost::graph_graph_attribute)["label"] =
-        functionName;
-    boost::get_property(functionGraph, boost::graph_graph_attribute)["margin"] =
-        "10";
-    boost::get_property(functionGraph, boost::graph_graph_attribute)["style"] =
-        "dotted";
-
-    // Set the name of the graph. Names must begin with "cluster".
-    std::stringstream subgraphName;
-    subgraphName << "cluster" << functionName;
-    boost::get_property(functionGraphs[functionGraphs.size() - 1].get(),
-                        boost::graph_name) = subgraphName.str();
+    boost::get_property(main, boost::graph_edge_attribute)["fontname"] =
+        "Inconsolata";
+    boost::get_property(main, boost::graph_edge_attribute)["fontsize"] = "20";
+    boost::get_property(main, boost::graph_edge_attribute)["penwidth"] = "3";
+    boost::get_property(main, boost::graph_edge_attribute)["arrowsize"] = ".8";
   }
 
-  // Create the vertices.
-  for (int i = 0; i < graph.node_size(); ++i) {
-    const Node& node = graph.node(i);
+  std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>
+  MakeFunctionGraphs(boost::subgraph<GraphvizGraph>* main) {
+    std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>
+        functionGraphs;
+    for (int i = 0; i < graph_.function_size(); ++i) {
+      const auto& function = graph_.function(i);
 
-    // Determine the subgraph to add this node to.
-    boost::subgraph<GraphvizGraph>* dst = &external;
-    if (i && node.type() != Node::CONSTANT) {
-      dst = &functionGraphs[node.function()].get();
+      functionGraphs.push_back(main->create_subgraph());
+      auto& functionGraph = functionGraphs[functionGraphs.size() - 1].get();
+
+      // Set the name of the function.
+      string functionName = function.name();
+      labm8::TruncateWithEllipsis(functionName, kMaximumLabelLen);
+      boost::get_property(functionGraph,
+                          boost::graph_graph_attribute)["label"] = functionName;
+      boost::get_property(functionGraph,
+                          boost::graph_graph_attribute)["margin"] = "10";
+      boost::get_property(functionGraph,
+                          boost::graph_graph_attribute)["style"] = "dotted";
+
+      // Set the name of the graph. Names must begin with "cluster".
+      std::stringstream subgraphName;
+      subgraphName << "cluster" << functionName;
+      boost::get_property(functionGraphs[functionGraphs.size() - 1].get(),
+                          boost::graph_name) = subgraphName.str();
     }
+    return functionGraphs;
+  }
 
-    // Create the vertex.
-    auto vertex = add_vertex(i, *dst);
+  string FeaturesToString(const Features& features) {
+    std::stringstream os;
+    const auto& it = features.feature().find(nodeFeatureName_);
+    if (it == features.feature().end()) {
+      // Do nothing if the feature is not found.
+      return "";
+    }
+    const Feature& feature = it->second;
 
-    // Get the attributes dictionary for this vertex.
-    auto& attributes = get(boost::vertex_attribute, *dst)[vertex];
+    // Int array
+    for (int i = 0;
+         i < std::min(feature.int64_list().value_size(), kMaximumLabelLen);
+         ++i) {
+      if (i) {
+        os << ", ";
+      }
+      os << feature.int64_list().value(i);
+    }
+    // Float array
+    os << std::setprecision(4);
+    for (int i = 0;
+         i < std::min(feature.float_list().value_size(), kMaximumLabelLen);
+         ++i) {
+      if (i) {
+        os << ", ";
+      }
+      os << feature.float_list().value(i);
+    }
+    // Bytes array
+    for (int i = 0;
+         i < std::min(feature.bytes_list().value_size(), kMaximumLabelLen);
+         ++i) {
+      if (i) {
+        os << ", ";
+      }
+      string value(feature.bytes_list().value(i));
+      labm8::TruncateWithEllipsis(value, kMaximumLabelLen);
+      os << value;
+    }
+    return os.str();
+  }
 
-    // Set the node text.
-    std::stringstream textStream;
+  // Determine the text label for anode.
+  string GetNodeLabel(const Node& node) {
     string text;
-    switch (nodeLabelFormat) {
+    switch (nodeLabelFormat_) {
       case kNone:
         break;
       case kText:
         text = node.text();
         break;
       case kFeature: {
-        std::stringstream os;
-        const auto& it = node.features().feature().find(nodeFeatureName);
-        if (it == node.features().feature().end()) {
-          // Do nothing if the node is not found.
-          break;
-        }
-        const Feature& feature = it->second;
-
-        // Int array
-        for (int i = 0; i < feature.int64_list().value_size(); ++i) {
-          if (i) {
-            os << ", ";
-          }
-          os << feature.int64_list().value(i);
-        }
-        // Float array
-        os << std::setprecision(4);
-        for (int i = 0; i < feature.float_list().value_size(); ++i) {
-          if (i) {
-            os << ", ";
-          }
-          os << feature.float_list().value(i);
-        }
-        // Bytes array
-        for (int i = 0; i < feature.bytes_list().value_size(); ++i) {
-          if (i) {
-            os << ", ";
-          }
-          string value(feature.bytes_list().value(i));
-          labm8::TruncateWithEllipsis(value, kMaximumLabelLen);
-          os << value;
-        }
-        text = os.str();
+        text = FeaturesToString(node.features());
         break;
       }
     }
     labm8::TruncateWithEllipsis(text, kMaximumLabelLen);
-    attributes["label"] = text;
+    return text;
+  }
 
-    // Set the node shape.
+  template <typename T>
+  void SetVertexAttributes(const Node& node, T& attributes) {
+    attributes["label"] = GetNodeLabel(node);
     switch (node.type()) {
       case Node::INSTRUCTION:
         attributes["shape"] = "box";
@@ -218,17 +214,27 @@ labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
     }
   }
 
-  // Add the edges to the graph.
-  for (int i = 0; i < graph.edge_size(); ++i) {
-    const Edge& edge = graph.edge(i);
-    // Create the edge.
-    auto newEdge = boost::add_edge(edge.source(), edge.target(), main);
+  // Create the vertices.
+  void CreateVertices(
+      boost::subgraph<GraphvizGraph>* defaultGraph,
+      std::vector<std::reference_wrapper<boost::subgraph<GraphvizGraph>>>*
+          functionGraphs) {
+    for (int i = 0; i < graph_.node_size(); ++i) {
+      const Node& node = graph_.node(i);
+      // Determine the subgraph to add this node to.
+      boost::subgraph<GraphvizGraph>* dst = defaultGraph;
+      if (i && node.type() != Node::CONSTANT) {
+        dst = &(*functionGraphs)[node.function()].get();
+      }
+      auto vertex = add_vertex(i, *dst);
+      auto& attributes = get(boost::vertex_attribute, *dst)[vertex];
+      SetVertexAttributes(node, attributes);
+    }
+  }
 
-    // Get the attributes dictionary for this edge.
-    auto& attributes = get(boost::edge_attribute, main)[newEdge.first];
-
+  template <typename T>
+  void SetEdgeAttributes(const Edge& edge, T& attributes) {
     // Set the edge color.
-    string color;
     switch (edge.flow()) {
       case Edge::CONTROL:
         attributes["color"] = "#345393";
@@ -256,9 +262,57 @@ labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
     }
   }
 
-  boost::write_graphviz(*ostream, main);
+  // Add the edges to the graph.
+  void CreateEdges(boost::subgraph<GraphvizGraph>* main) {
+    for (int i = 0; i < graph_.edge_size(); ++i) {
+      const Edge& edge = graph_.edge(i);
+      auto newEdge = boost::add_edge(edge.source(), edge.target(), *main);
+      auto& attributes = get(boost::edge_attribute, *main)[newEdge.first];
+      SetEdgeAttributes(edge, attributes);
+    }
+  }
 
-  return labm8::Status::OK;
+ public:
+  labm8::Status Serialize(std::ostream* ostream) {
+    // To construct a graphviz graph, we create a main graph and then produce
+    // a subgraph for each function in the graph. Vertices (nodes) are then
+    // added to the subgraphs, and edges added to the main graph.
+
+    // Create a main graph and pre-allocate the number of nodes in the graph.
+    // The main graph is used to store subgraphs which contain the actual
+    // vertices. Vertices can't be added directly to the main graph.
+    boost::subgraph<GraphvizGraph> main(graph_.node_size());
+    boost::get_property(main, boost::graph_name) = "main";
+    SetGraphvizProperties(main);
+
+    // Since we can't add any vertices directly to the main graph, create a
+    // subgraph for all nodes which do not have a function.
+    boost::subgraph<GraphvizGraph>& external = main.create_subgraph();
+    boost::get_property(external, boost::graph_name) = "external";
+
+    auto functionGraphs = MakeFunctionGraphs(&main);
+    CreateVertices(&external, &functionGraphs);
+    CreateEdges(&main);
+
+    boost::write_graphviz(*ostream, main);
+
+    return labm8::Status::OK;
+  }
+
+ private:
+  const ProgramGraph& graph_;
+  const NodeLabel& nodeLabelFormat_;
+  const string& nodeFeatureName_;
+};
+
+}  // anonymous namespace
+
+labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
+                                        std::ostream* ostream,
+                                        const NodeLabel& nodeLabelFormat,
+                                        const string& nodeFeatureName) {
+  GraphVizSerializer serializer(graph, nodeLabelFormat, nodeFeatureName);
+  return serializer.Serialize(ostream);
 }
 
 }  // namespace format
