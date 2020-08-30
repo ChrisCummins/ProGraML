@@ -55,6 +55,8 @@ py_library(
     deps = [
         ":graph_loader",
         "//programl/models:async_batch_builder",
+        "//programl/models:base_batch_builder",
+        "//programl/models:model",
         "//programl/models/ggnn",
         "//programl/proto:checkpoint_py",
         "//programl/proto:epoch_py",

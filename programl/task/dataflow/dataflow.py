@@ -21,9 +21,11 @@ import time
 import warnings
 from typing import Tuple
 
-from labm8.py import app, pbutil
+from labm8.py import app, humanize, pbutil
 from sklearn.exceptions import UndefinedMetricWarning
 
+from programl.models.base_batch_builder import BaseBatchBuilder
+from programl.models.model import Model
 from programl.proto import checkpoint_pb2, epoch_pb2
 
 app.DEFINE_string(
@@ -207,4 +209,71 @@ def CreateLoggingDirectories(
     (log_dir / "epochs").mkdir()
     (log_dir / "checkpoints").mkdir()
     (log_dir / "graph_loader").mkdir()
+    return log_dir
+
+
+def run_training_loop(
+    log_dir: pathlib.Path,
+    epochs,
+    val_batches: BaseBatchBuilder,
+    start_epoch_step: int,
+    model: Model,
+    val_graph_count: int,
+) -> pathlib.Path:
+    """
+
+    Args:
+        log_dir: The logging directory.
+        epochs: An epoch batch builder.
+        val_batches: A batch builder for validation.
+        start_epoch_step: The initial step count.
+        model: The model to train.
+        val_graph_count: The number of validation graphs.
+
+    Returns:
+        The log_dir first argument.
+    """
+    for (
+        epoch_step,
+        (train_graph_count, train_graph_cumsum, train_batches),
+    ) in enumerate(epochs, start=start_epoch_step):
+        start_time = time.time()
+        hr_graph_cumsum = f"{humanize.Commas(train_graph_cumsum)} graphs"
+
+        train_results = model.RunBatches(
+            epoch_pb2.TRAIN,
+            train_batches,
+            log_prefix=f"Train to {hr_graph_cumsum}",
+            total_graph_count=train_graph_count,
+        )
+        val_results = model.RunBatches(
+            epoch_pb2.VAL,
+            val_batches.batches,
+            log_prefix=f"Val at {hr_graph_cumsum}",
+            total_graph_count=val_graph_count,
+        )
+
+        # Write the epoch to file as an epoch list. This may seem redundant since
+        # epoch list contains a single item, but it means that we can easily
+        # concatenate a sequence of these epoch protos to produce a valid epoch
+        # list using: `cat *.EpochList.pbtxt > epochs.pbtxt`
+        epoch = epoch_pb2.EpochList(
+            epoch=[
+                epoch_pb2.Epoch(
+                    walltime_seconds=time.time() - start_time,
+                    epoch_num=epoch_step,
+                    train_results=train_results,
+                    val_results=val_results,
+                )
+            ]
+        )
+        print(epoch, end="")
+
+        epoch_path = log_dir / "epochs" / f"{epoch_step:03d}.EpochList.pbtxt"
+        pbutil.ToFile(epoch, epoch_path)
+        app.Log(1, "Wrote %s", epoch_path)
+
+        checkpoint_path = log_dir / "checkpoints" / f"{epoch_step:03d}.Checkpoint.pb"
+        pbutil.ToFile(model.SaveCheckpoint(), checkpoint_path)
+
     return log_dir

@@ -173,50 +173,9 @@ def TrainDataflowGGNN(
         )
     )
 
-    for (
-        epoch_step,
-        (train_graph_count, train_graph_cumsum, train_batches),
-    ) in enumerate(epochs, start=start_epoch_step):
-        start_time = time.time()
-        hr_graph_cumsum = f"{humanize.Commas(train_graph_cumsum)} graphs"
-
-        train_results = model.RunBatches(
-            epoch_pb2.TRAIN,
-            train_batches,
-            log_prefix=f"Train to {hr_graph_cumsum}",
-            total_graph_count=train_graph_count,
-        )
-        val_results = model.RunBatches(
-            epoch_pb2.VAL,
-            val_batches.batches,
-            log_prefix=f"Val at {hr_graph_cumsum}",
-            total_graph_count=val_graph_count,
-        )
-
-        # Write the epoch to file as an epoch list. This may seem redundant since
-        # epoch list contains a single item, but it means that we can easily
-        # concatenate a sequence of these epoch protos to produce a valid epoch
-        # list using: `cat *.EpochList.pbtxt > epochs.pbtxt`
-        epoch = epoch_pb2.EpochList(
-            epoch=[
-                epoch_pb2.Epoch(
-                    walltime_seconds=time.time() - start_time,
-                    epoch_num=epoch_step,
-                    train_results=train_results,
-                    val_results=val_results,
-                )
-            ]
-        )
-        print(epoch, end="")
-
-        epoch_path = log_dir / "epochs" / f"{epoch_step:03d}.EpochList.pbtxt"
-        pbutil.ToFile(epoch, epoch_path)
-        app.Log(1, "Wrote %s", epoch_path)
-
-        checkpoint_path = log_dir / "checkpoints" / f"{epoch_step:03d}.Checkpoint.pb"
-        pbutil.ToFile(model.SaveCheckpoint(), checkpoint_path)
-
-    return log_dir
+    return dataflow.run_training_loop(
+        log_dir, epochs, val_batches, start_epoch_step, model, val_graph_count
+    )
 
 
 def TestDataflowGGNN(
