@@ -13,7 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Prepare the CPU/GPU OpenCL device-mapping dataset."""
+"""Prepare the CPU/GPU OpenCL device-mapping dataset.
+
+This script downloads the necessary datasets and produces the devmap downstream task dataset.
+
+Usage:
+
+    $ bazel run //programl/task/devmap/dataset:create -- --path=/path/to/devmap
+"""
 import io
 import os
 import shutil

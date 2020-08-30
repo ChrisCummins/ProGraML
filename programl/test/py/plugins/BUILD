@@ -19,6 +19,44 @@
 package(default_visibility = ["//programl:__subpackages__"])
 
 py_library(
+    name = "classifyapp_dataset",
+    testonly = 1,
+    srcs = ["classifyapp_dataset.py"],
+    data = ["//programl/test/data:classifyapp_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_test(
+    name = "classifyapp_dataset_test",
+    srcs = ["classifyapp_dataset_test.py"],
+    deps = [
+        ":classifyapp_dataset",
+        "//third_party/py/labm8",
+    ],
+)
+
+py_library(
+    name = "devmap_dataset",
+    testonly = 1,
+    srcs = ["devmap_dataset.py"],
+    data = ["//programl/test/data:devmap_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_test(
+    name = "devmap_dataset_test",
+    srcs = ["devmap_dataset_test.py"],
+    deps = [
+        ":devmap_dataset",
+        "//third_party/py/labm8",
+    ],
+)
+
+py_library(
     name = "llvm_ir",
     testonly = 1,
     srcs = ["llvm_ir.py"],
@@ -45,6 +83,25 @@ py_library(
     srcs = ["llvm_reachability_features.py"],
     data = ["//programl/test/data:llvm_ir_reachability_features"],
     deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_library(
+    name = "reachability_dataflow_dataset",
+    testonly = 1,
+    srcs = ["reachability_dataflow_dataset.py"],
+    data = ["//programl/test/data:reachability_dataflow_dataset"],
+    deps = [
+        "//third_party/py/labm8",
+    ],
+)
+
+py_test(
+    name = "reachability_dataflow_dataset_test",
+    srcs = ["reachability_dataflow_dataset_test.py"],
+    deps = [
+        ":reachability_dataflow_dataset",
         "//third_party/py/labm8",
     ],
 )

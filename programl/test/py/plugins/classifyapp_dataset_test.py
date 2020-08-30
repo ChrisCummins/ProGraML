@@ -13,27 +13,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Unit tests for //programl/test/py/plugins:classifyapp_dataset."""
+from pathlib import Path
 
-py_binary(
-    name = "create",
-    srcs = ["create.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto:features_py",
-        "//programl/task/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
-        "//third_party/py/pandas",
-    ],
-)
+from labm8.py import test
 
-py_test(
-    name = "create_test",
-    timeout = "long",
-    srcs = ["create_test.py"],
-    deps = [
-        ":create",
-        "//third_party/py/labm8",
-    ],
-)
+pytest_plugins = ["programl.test.py.plugins.classifyapp_dataset"]
+
+
+def test_classifyapp_dataset(classifyapp_dataset: Path):
+    assert (classifyapp_dataset / "ir").is_dir()
+    assert (classifyapp_dataset / "graphs").is_dir()
+    assert (classifyapp_dataset / "train").is_dir()
+    assert (classifyapp_dataset / "val").is_dir()
+    assert (classifyapp_dataset / "test").is_dir()
+
+
+if __name__ == "__main__":
+    test.Main()

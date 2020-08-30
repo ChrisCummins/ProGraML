@@ -13,27 +13,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import Path
 
-py_binary(
-    name = "create",
-    srcs = ["create.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto:features_py",
-        "//programl/task/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
-        "//third_party/py/pandas",
-    ],
+from labm8.py import bazelutil
+
+REACHABILITY_DATAFLOW_DATASET = bazelutil.DataArchive(
+    "programl/test/data/reachability_dataflow_dataset.tar.bz2"
 )
 
-py_test(
-    name = "create_test",
-    timeout = "long",
-    srcs = ["create_test.py"],
-    deps = [
-        ":create",
-        "//third_party/py/labm8",
-    ],
-)
+
+@test.Fixture(scope="function")
+def reachability_dataflow_dataset() -> Path:
+    """A test fixture which yields the root of a dataflow dataset."""
+    with REACHABILITY_DATAFLOW_DATASET as d:
+        yield d
