@@ -31,8 +31,8 @@ class LstmBatchData(NamedTuple):
 
     # Shape (batch_size, padded_sequence_length, 1), dtype np.int32
     encoded_sequences: np.array
-    # Shape (batch_size, padded_sequence_length, 2), dtype np.int32
-    selector_vectors: np.array
+    # Shape (batch_size, padded_sequence_length, 1), dtype np.int32
+    selector_ids: np.array
     # Shape (batch_size, padded_sequence_length, node_y_dimensionality),
     # dtype np.float32
     node_labels: np.array

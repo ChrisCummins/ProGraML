@@ -114,6 +114,9 @@ def TrainDataflowLSTM(
         vocabulary=vocab,
         test_only=False,
         node_y_dimensionality=2,
+        graph_y_dimensionality=0,
+        graph_x_dimensionality=0,
+        use_selector_embeddings=True,
     )
 
     if restore_from:
@@ -131,8 +134,6 @@ def TrainDataflowLSTM(
         # Else initialize a new model.
         model.Initialize()
         start_epoch_step, start_graph_cumsum = 1, 0
-
-    model.model.summary()
 
     # Create training batches and split into epochs.
     epochs = EpochBatchIterator(

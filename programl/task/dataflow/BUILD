@@ -117,6 +117,7 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/lstm:lstm_batch",
+        "//third_party/py/keras_preprocessing",
         "//third_party/py/labm8",
         "//third_party/py/numpy",
     ],
@@ -175,6 +176,18 @@ py_binary(
         "//third_party/py/labm8",
         "//third_party/py/ncc:vocabulary",
         "//third_party/py/numpy",
+    ],
+)
+
+py_test(
+    name = "train_lstm_test",
+    srcs = ["train_lstm_test.py"],
+    data = [
+        "//programl/test/data:reachability_dataflow_dataset",
+    ],
+    deps = [
+        ":train_lstm",
+        "//third_party/py/labm8",
     ],
 )
 
