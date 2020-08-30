@@ -36,8 +36,8 @@ py_library(
     data = [":program_graph_builder_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_py",
         "//programl/proto:program_graph_options_py",
+        "//programl/proto:program_graph_py",
     ],
 )
 
@@ -48,8 +48,8 @@ py_test(
         ":program_graph_builder",
         "//programl/proto:edge_py",
         "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
         "//programl/proto:program_graph_options_py",
+        "//programl/proto:program_graph_py",
         "//third_party/py/labm8",
     ],
 )
