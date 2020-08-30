@@ -19,7 +19,6 @@
 
 exports_files([
     ".bettercodehub.yml",
-    ".travis.yml",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",

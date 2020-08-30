@@ -65,5 +65,13 @@ build:ubsan --copt -fno-omit-frame-pointer
 build:ubsan --linkopt -fsanitize=undefined
 build:ubsan --linkopt -lubsan
 
-# Control progress output when invoked by Travis
-build:travis --noshow_progress --noshow_loading_progress --show_task_finish --action_env=PATH
+# --config ci: Continuous Integration tool
+query:ci --noshow_progress
+query:ci --noshow_loading_progress
+build:ci --noshow_progress
+build:ci --noshow_loading_progress
+build:ci --show_task_finish
+build:ci --action_env=PATH
+build:ci --keep_going
+build:ci --verbose_failures
+build:ci --test_output=errors
