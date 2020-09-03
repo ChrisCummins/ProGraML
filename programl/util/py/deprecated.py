@@ -1,5 +1,3 @@
-# Python utility libraries.
-#
 # Copyright 2019-2020 the ProGraML authors.
 #
 # Contact Chris Cummins <chrisc.101@gmail.com>.
@@ -16,28 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-py_library(
-    name = "deprecated",
-    srcs = ["deprecated.py"],
-    visibility = ["//visibility:public"],
-)
+import functools
+from warnings import DeprecationWarning
 
-py_library(
-    name = "stdin_fmt",
-    srcs = ["stdin_fmt.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/labm8",
-        "//third_party/py/protobuf",
-    ],
-)
-
-py_library(
-    name = "stdout_fmt",
-    srcs = ["stdout_fmt.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/labm8",
-        "//third_party/py/protobuf",
-    ],
-)
+def deprecated(func):
+    """Wrap a method as deprecated."""
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
+        warnings.warn("Call to deprecated function {}.".format(func.__name__),
+                      category=DeprecationWarning,
+                      stacklevel=2)
+        warnings.simplefilter('default', DeprecationWarning)  # reset filter
+        return func(*args, **kwargs)
+    return wrapped

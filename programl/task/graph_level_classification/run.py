@@ -1,4 +1,3 @@
-# TODO: decide on default log dir in docstring below.
 """
 Usage:
    run.py [options]

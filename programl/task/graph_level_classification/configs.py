@@ -14,7 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Configs"""
-from .dataset import AblationVocab
+from programl.task.graph_level_classification.dataset import AblationVocab
+from programl.util.py.deprecated import deprecated
 
 
 class ProGraMLBaseConfig(object):
@@ -156,6 +157,7 @@ class GGNN_Devmap_Config(GGNN_POJ104_Config):
 
 
 class GGNN_Threadcoarsening_Config(GGNN_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         # Dataset inherent, don't change!
@@ -165,6 +167,7 @@ class GGNN_Threadcoarsening_Config(GGNN_POJ104_Config):
 
 
 class GGNN_ForPretraining_Config(GGNN_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         # Pretraining Parameters
@@ -181,6 +184,7 @@ class GGNN_ForPretraining_Config(GGNN_POJ104_Config):
 
 
 class GraphTransformer_POJ104_Config(ProGraMLBaseConfig):
+    @deprecated
     def __init__(self):
         super().__init__()
         ###### borrowed for debugging ##########
@@ -225,6 +229,7 @@ class GraphTransformer_POJ104_Config(ProGraMLBaseConfig):
 
 
 class GraphTransformer_Devmap_Config(GraphTransformer_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         # change default
@@ -249,6 +254,7 @@ class GraphTransformer_Devmap_Config(GraphTransformer_POJ104_Config):
 
 
 class GraphTransformer_Threadcoarsening_Config(GraphTransformer_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         self.lr = 5e-5  # 2.5-4?
@@ -260,6 +266,7 @@ class GraphTransformer_Threadcoarsening_Config(GraphTransformer_POJ104_Config):
 
 
 class GraphTransformer_ForPretraining_Config(GraphTransformer_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         self.num_of_splits = 2
@@ -277,6 +284,7 @@ class GraphTransformer_ForPretraining_Config(GraphTransformer_POJ104_Config):
 
 
 class GGNN_BranchPrediction_Config(GGNN_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         self.batch_size = 4
@@ -286,6 +294,7 @@ class GGNN_BranchPrediction_Config(GGNN_POJ104_Config):
 
 
 class GraphTransformer_BranchPrediction_Config(GraphTransformer_POJ104_Config):
+    @deprecated
     def __init__(self):
         super().__init__()
         self.batch_size = 4

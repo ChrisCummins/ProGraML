@@ -1,13 +1,10 @@
-# better dataloader
+"""Data loader for GGNN."""
 import csv
 import enum
 import math
-import os
 import pickle
-import subprocess
-import sys
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -16,73 +13,33 @@ import tqdm
 from sklearn.model_selection import KFold, StratifiedKFold
 from torch_geometric.data import Data, InMemoryDataset
 
+from programl.graph.format.py import cdfg as cdfg_format
 from programl.proto.program_graph_pb2 import ProgramGraph
-
-# make this file executable from anywhere
-
-full_path = os.path.realpath(__file__)
-#print(full_path)
-REPO_ROOT = full_path.rsplit('ProGraML', maxsplit=1)[0] + 'ProGraML'
-#print(REPO_ROOT)
-#insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, REPO_ROOT)
-REPO_ROOT = Path(REPO_ROOT)
+from programl.util.py.deprecated import deprecated
 
 
-# The vocabulary files used in the dataflow experiments.
-PROGRAML_VOCABULARY = REPO_ROOT / "deeplearning/ml4pl/poj104/programl_vocabulary.csv"
-CDFG_VOCABULARY = REPO_ROOT / "deeplearning/ml4pl/poj104/cdfg_vocabulary.csv"
-assert PROGRAML_VOCABULARY.is_file(), f"File not found: {PROGRAML_VOCABULARY}"
-assert CDFG_VOCABULARY.is_file(), f"File not found: {CDFG_VOCABULARY}"
-
-# The path of the graph2cdfg binary which converts ProGraML graphs to the CDFG
-# representation.
-#
-# To build this file, clone the ProGraML repo and build
-# //programl/cmd:graph2cdfg:
-#
-#   1.  git clone https://github.com/ChrisCummins/ProGraML.git
-#   2.  cd ProGraML
-#   3.  git checkout 2d93e5e14bf321336f1928d3364e9d7196cee995
-#   4.  bazel build -c opt //programl/cmd:graph2cdfg
-#   5.  cp -v bazel-bin/programl/cmd/graph2cdfg ${THIS_DIR}
-#
-GRAPH2CDFG = REPO_ROOT / "deeplearning/ml4pl/poj104/graph2cdfg"
-assert GRAPH2CDFG.is_file(), f"File not found: {GRAPH2CDFG}"
-
-
-def load(file: str, cdfg: bool = False) -> ProgramGraph:
+def load(file: Union[str, Path], cdfg: bool = False) -> ProgramGraph:
     """Read a ProgramGraph protocol buffer from file.
 
     Args:
         file: The path of the ProgramGraph protocol buffer to load.
         cdfg: If true, convert the graph to CDFG during load.
+
     Returns:
-        graph: the proto of the programl / CDFG graph
-        orig_graph: the original programl proto (that contains graph level labels)
+        A ProgramGraph proto instance.
     """
     graph = ProgramGraph()
     with open(file, "rb") as f:
         proto = f.read()
-
-    if cdfg:
-        # hotfix missing graph labels in cdfg proto
-        orig_graph = ProgramGraph()
-        orig_graph.ParseFromString(proto)
-
-        graph2cdfg = subprocess.Popen(
-            [str(GRAPH2CDFG), "--stdin_fmt=pb", "--stdout_fmt=pb"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-        )
-        proto, _ = graph2cdfg.communicate(proto)
-        assert not graph2cdfg.returncode, f"CDFG conversion failed: {file}"
-
     graph.ParseFromString(proto)
 
-    if not cdfg:
-        orig_graph = graph
-    return graph, orig_graph
+    if cdfg:
+        # Load CDFG and copy over graph-level features.
+        cdfg_graph = cdfg_format.FromProgramGraphFile(Path(file))
+        cdfg_graph.features.CopyFrom(graph.features)
+        graph = cdfg_graph
+
+    return graph
 
 
 def load_vocabulary(path: Path):
@@ -142,9 +99,8 @@ def nx2data(
     y_feature_name: Optional[str] = None,
     ignore_profile_info=True,
     ablate_vocab=AblationVocab.NONE,
-    orig_graph: ProgramGraph = None,
 ):
-    r"""Converts a program graph protocol buffer to a
+    """Converts a program graph protocol buffer to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
@@ -152,7 +108,6 @@ def nx2data(
         vocabulary      A map from node text to vocabulary indices.
         y_feature_name  The name of the graph-level feature to use as class label.
         ablate_vocab    Whether to use an ablation vocabulary.
-        orig_graph      A program graph protocol buffer that has graph level labels.
     """
 
     # collect edge_index
@@ -194,9 +149,8 @@ def nx2data(
 
     # maybe collect these data too
     if y_feature_name is not None:
-        assert orig_graph is not None, "need orig_graph to retrieve graph level labels!"
         y = torch.tensor(
-            orig_graph.features.feature[y_feature_name].int64_list.value[0]
+            graph.features.feature[y_feature_name].int64_list.value[0]
         ).view(
             1
         )  # <1>
@@ -238,6 +192,7 @@ def nx2data(
 
 
 class BranchPredictionDataset(InMemoryDataset):
+    @deprecated
     def __init__(
         self,
         root="deeplearning/ml4pl/poj104/branch_prediction_data",
@@ -417,6 +372,7 @@ class BranchPredictionDataset(InMemoryDataset):
 
 
 class NCCDataset(InMemoryDataset):
+    @deprecated
     def __init__(
         self,
         root=REPO_ROOT / "deeplearning/ml4pl/poj104/ncc_data",
@@ -582,6 +538,7 @@ class NCCDataset(InMemoryDataset):
 
 
 class LegacyNCCDataset(InMemoryDataset):
+    @deprecated
     def __init__(
         self,
         root="deeplearning/ml4pl/poj104/unsupervised_ncc_data",
@@ -731,6 +688,7 @@ class LegacyNCCDataset(InMemoryDataset):
 
 
 class ThreadcoarseningDataset(InMemoryDataset):
+    @deprecated
     def __init__(
         self,
         root="deeplearning/ml4pl/poj104/threadcoarsening_data",
@@ -1066,13 +1024,8 @@ class DevmapDataset(InMemoryDataset):
         for i in tqdm.tqdm(range(num_files)):
             filename = input_files[i]
 
-            proto, _ = load(filename, cdfg=self.cdfg)
+            proto = load(filename, cdfg=self.cdfg)
             data = nx2data(proto, vocabulary=vocab, ablate_vocab=self.ablation_vocab)
-
-            # graph2cdfg conversion drops the graph features, so we may have to
-            # reload the graph.
-            if self.cdfg:
-                proto = load(filename)
 
             # Add the features and label.
             proto_features = proto.features.feature
@@ -1230,13 +1183,12 @@ class POJ104Dataset(InMemoryDataset):
             # if class_label >= num_classes:
             #    continue
 
-            g, orig_graph = load(file, cdfg=self.cdfg)
+            graph = load(file, cdfg=self.cdfg)
             data = nx2data(
-                graph=g,
+                graph=graph,
                 vocabulary=vocab,
                 ablate_vocab=self.ablation_vocab,
                 y_feature_name="poj104_label",
-                orig_graph=orig_graph,
             )
             data_list.append(data)
 
@@ -1263,6 +1215,7 @@ class POJ104Dataset(InMemoryDataset):
 
 
 class LegacyPOJ104Dataset(InMemoryDataset):
+    @deprecated
     def __init__(
         self,
         root="deeplearning/ml4pl/poj104/classifyapp_data",
@@ -1396,13 +1349,3 @@ class LegacyPOJ104Dataset(InMemoryDataset):
             "test",
         ]:
             self._save_train_subset()
-
-
-if __name__ == "__main__":
-    # d = NewNCCDataset()
-    # print(d.data)
-    root = "/home/zacharias/llvm_datasets/threadcoarsening_data/"
-    a = ThreadcoarseningDataset(root, "Cypress")
-    b = ThreadcoarseningDataset(root, "Tahiti")
-    c = ThreadcoarseningDataset(root, "Fermi")
-    d = ThreadcoarseningDataset(root, "Kepler")
