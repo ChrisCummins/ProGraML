@@ -821,7 +821,7 @@ def get_identifiers_from_line(line):
   """
   # Find label nodes
   m_label = m_label2 = list()
-  if line.find("label") is not -1 or re.match(
+  if line.find("label") != -1 or re.match(
     rgx.local_id_no_perc + r":", line
   ):
     m_label1 = re.findall("label (" + rgx.local_id + ")", line)
@@ -1112,7 +1112,7 @@ def construct_function_dictionary(file):
 
     # If it's a return statement
     elif re.match(r"ret .*", line):
-      if func_name is not "":
+      if func_name != "":
         # add the return statement to the dictionary
         functions_defined_in_file[func_name][2] = line
         func_name = ""
@@ -1156,7 +1156,7 @@ def construct_function_dictionary(file):
   # Make sure all function names have a corresponding return identifier
   for k, v in functions_defined_in_file_DEF.items():
     if k != "main":
-      if v[1] is "no_return":
+      if v[1] == "no_return":
         print("WARNING! Function", k, "has no corresponding return statement")
 
   return functions_defined_in_file_DEF
@@ -1443,8 +1443,8 @@ def add_stmts_to_graph(
     elif re.match(rgx.start_basic_block, line):
       # eg ; <label>:11:                                     ; preds = %8
       # eg .lr.ph.i:
-      assert block_ref is not "", "Empty block reference at line:\n" + line
-      assert func_prefix is not "", "Empty function prefix at line:\n" + line
+      assert block_ref != "", "Empty block reference at line:\n" + line
+      assert func_prefix != "", "Empty function prefix at line:\n" + line
       if all_degrees(G, block_ref) == 0:
         G.remove_node(
           block_ref
@@ -3123,7 +3123,7 @@ def check_sanity(D, G):
   :param G: base graph
   """
   isolated_nodes = [n for n in D.nodes() if D.degree(n) == 0]
-  if len(isolated_nodes) is not 0:
+  if len(isolated_nodes):
     print("WARNING! Isolated nodes found in D-graph")
     for n in isolated_nodes:
       D.remove_node(n)
