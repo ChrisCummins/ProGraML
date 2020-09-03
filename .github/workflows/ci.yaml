@@ -13,7 +13,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python: [3.6, 3.7]
+        python: [3.6, 3.7, 3.8]
+        # TODO(github.com/ChrisCummins/ProGraML/issues/76): TensorFlow install
+        # fails on Ubuntu 20.04 using Python 3.8.
+        exclude:
+          - os: ubuntu-latest
+            python: 3.8
 
     steps:
       - uses: actions/checkout@v2
