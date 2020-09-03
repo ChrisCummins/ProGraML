@@ -11,5 +11,10 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("torch"),
+        requirement("torch_cluster"),
+        requirement("torch_geometric"),
+        requirement("torch_scatter"),
+        requirement("torch_sparse"),
+        requirement("isodate"),
     ],
 )
