@@ -13,6 +13,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+        python: [3.6, 3.7, 3.8]
+        # TODO(github.com/ChrisCummins/ProGraML/issues/76): TensorFlow install
+        # fails on Ubuntu 20.04 using Python 3.8.
+        exclude:
+          - os: ubuntu-latest
+            python: 3.8
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +27,7 @@ jobs:
         uses: pat-s/always-upload-cache@v2.1.0
         with:
           path: "/home/runner/.cache/bazel"
-          key: ${{ matrix.os }}-bazel
+          key: ${{ matrix.os }}-${{ matrix.python }}-bazel
         if: matrix.os == 'ubuntu-latest'
 
       - name: "Linux: Install system dependencies"
@@ -35,7 +41,7 @@ jobs:
         uses: pat-s/always-upload-cache@v2.1.0
         with:
           path: "/private/var/tmp/_bazel_runner"
-          key: ${{ matrix.os }}-bazel
+          key: ${{ matrix.os }}-${{ matrix.python }}-bazel
         if: matrix.os == 'macos-latest'
 
       - name: "macOS: Install system dependencies"
@@ -43,6 +49,11 @@ jobs:
           brew install freetype pkg-config bazelisk mysql-client coreutils findutils gnu-sed zlib
           echo "::add-path::/usr/local/opt/mysql-client/bin"
         if: matrix.os == 'macos-latest'
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
 
       - name: Install python dependencies
         run: |
