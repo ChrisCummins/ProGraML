@@ -62,6 +62,30 @@
 </table>
 
 
+<!-- MarkdownTOC autolink="true" -->
+
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+    - [Step 1: Compiler IR](#step-1-compiler-ir)
+    - [Step 2: Control-flow](#step-2-control-flow)
+    - [Step 3: Data-flow](#step-3-data-flow)
+    - [Step 4: Call graph](#step-4-call-graph)
+- [Datasets](#datasets)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Command-line tools](#command-line-tools)
+  - [Dataflow experiments](#dataflow-experiments)
+  - [Using this project as a dependency](#using-this-project-as-a-dependency)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
+
+<!-- /MarkdownTOC -->
+
+
+## Overview
+
+
 ProGraML is a representation for programs as input to a machine learning model.
 
 Key features are:
@@ -145,7 +169,7 @@ links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
 flow analysis labels.
 
 
-## Running the code
+## Installation
 
 
 ### Requirements
