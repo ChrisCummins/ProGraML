@@ -18,6 +18,7 @@
 #include <deque>
 
 #include "absl/container/flat_hash_set.h"
+#include "labm8/cpp/logging.h"
 
 namespace programl {
 namespace graph {
@@ -51,6 +52,8 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph, std::vector<
         break;
       case Edge::DATA:
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
   }
 

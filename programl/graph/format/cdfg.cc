@@ -16,6 +16,7 @@
 #include "programl/graph/format/cdfg.h"
 
 #include "absl/container/flat_hash_set.h"
+#include "labm8/cpp/logging.h"
 #include "programl/graph/features.h"
 #include "programl/proto/edge.pb.h"
 #include "programl/proto/node.pb.h"
@@ -78,6 +79,8 @@ ProgramGraph CDFGBuilder::Build(const ProgramGraph& graph) {
           defs[edge.target()].insert(nodeMap[edge.source()]);
         }
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
   }
 
