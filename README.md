@@ -1,23 +1,89 @@
 # ProGraML: Program Graphs for Machine Learning
 
-<!-- license -->
-<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
-  <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
-</a>
-<!-- Commit counter -->
-<a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
-  <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
-</a>
-<!-- Repo size -->
-<a href="https://github.com/ChrisCummins/ProGraML">
-  <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
-</a>
-
 <!-- Build status -->
-| Branch | Test Suite | Code Quality |
-| ------ | --------- | ----------- |
-| [stable](https://github.com/ChrisCummins/ProGraML/tree/stable) | [![stable](https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=stable)](https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Astable) | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable"></a> |
-| [development](https://github.com/ChrisCummins/ProGraML/tree/development) | [![development](https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=development)](https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Adevelopment) | <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML"><img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development"></a> |
+<table>
+    <tr>
+      <td>License</td>
+      <td>
+        <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
+          <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>OS</td>
+      <td>GNU/Linux, macOS ≥ 10.15</td>
+    </tr>
+    <tr>
+      <td>Python Versions</td>
+      <td>3.6, 3.7, 3.8</td>
+    </tr>
+    <tr>
+      <td>
+        <a href="https://github.com/ChrisCummins/ProGraML/tree/development">
+          development
+        </a> Branch
+      </td>
+      <td>
+        <a href="https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Adevelopment">
+          <img src="https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=development">
+        </a>
+        <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
+          <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development">
+        </a>
+      </td>
+    </tr>
+      <tr>
+      <td>
+        <a href="https://github.com/ChrisCummins/ProGraML/tree/stable">
+          stable
+        </a> Branch
+      </td>
+      <td>
+        <a href="https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Astable">
+          <img src="https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=stable">
+        </a>
+        <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
+          <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>Development Activity</td>
+      <td>
+        <a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
+          <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
+        </a>
+        <a href="https://github.com/ChrisCummins/ProGraML">
+          <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
+        </a>
+      </td>
+    </tr>
+</table>
+
+
+<!-- MarkdownTOC autolink="true" -->
+
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+    - [Step 1: Compiler IR](#step-1-compiler-ir)
+    - [Step 2: Control-flow](#step-2-control-flow)
+    - [Step 3: Data-flow](#step-3-data-flow)
+    - [Step 4: Call graph](#step-4-call-graph)
+- [Datasets](#datasets)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Command-line tools](#command-line-tools)
+  - [Dataflow experiments](#dataflow-experiments)
+  - [Using this project as a dependency](#using-this-project-as-a-dependency)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
+
+<!-- /MarkdownTOC -->
+
+
+## Overview
 
 
 ProGraML is a representation for programs as input to a machine learning model.
@@ -103,7 +169,7 @@ links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
 flow analysis labels.
 
 
-## Running the code
+## Installation
 
 
 ### Requirements
