@@ -22,6 +22,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install isort+black
         run: |
+          sudo apt-get install python3-setuptools
           python3 -m pip install isort black
           python3 -m isort --version
           python3 -m black --version
