@@ -72,3 +72,9 @@ jobs:
         run: |
           mkdir "${GITHUB_WORKSPACE}/install"
           bazel run --config=ci //:install "${GITHUB_WORKSPACE}/install"
+          echo "::add-path::${GITHUB_WORKSPACE}/install/bin"
+          echo "::set-env name=LD_LIBRARY_PATH::${GITHUB_WORKSPACE}/install/lib"
+
+      - name: Test installed binaries
+        run: |
+          llvm2graph --version
