@@ -69,6 +69,12 @@ main() {
   echo "Installing libraries to $prefix/libs ..."
   rsync -ah --delete --exclude '*.a' "$LLVM_LIBS/" "$prefix/lib/"
 
+  # NOTE(github.com/ChrisCummins/ProGraML/issues/134): Workaround for load-time
+  # errors when systems expect LLVMPolly.so to have the "lib" name prefix.
+  if [[ -f "$prefix/lib/LLVMPolly.so" ]]; then
+    ln -s "$prefix/lib/LLVMPolly.so" "$prefix/lib/libLLVMPolly.so"
+  fi
+
   echo
   echo "===================================================="
   echo "To use them, add the following to your ~/.$(basename $SHELL)rc:"
