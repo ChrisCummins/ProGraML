@@ -254,7 +254,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name="programl",
-    strip_prefix="programl-<stable-commit>",
+    strip_prefix="ProGraML-<stable-commit>",
     urls=["https://github.com/ChrisCummins/ProGraML/archive/<stable-commit>.tar.gz"],
 )
 
