@@ -20,7 +20,7 @@ cc_library(
     name = "cdfg",
     srcs = ["cdfg.cc"],
     hdrs = ["cdfg.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/graph:features",
         "//programl/proto:edge_cc",
@@ -47,7 +47,7 @@ cc_library(
     name = "graph_serializer",
     srcs = ["graph_serializer.cc"],
     hdrs = ["graph_serializer.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
         "@com_google_absl//absl/container:flat_hash_map",
@@ -70,7 +70,7 @@ cc_library(
     name = "graph_tuple",
     srcs = ["graph_tuple.cc"],
     hdrs = ["graph_tuple.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
         "@labm8//labm8/cpp:status",
@@ -93,7 +93,7 @@ cc_library(
     name = "graphviz_converter",
     srcs = ["graphviz_converter.cc"],
     hdrs = ["graphviz_converter.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
         "@boost//:graph",
@@ -121,7 +121,7 @@ cc_library(
     name = "node_link_graph",
     srcs = ["node_link_graph.cc"],
     hdrs = ["node_link_graph.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_cc",
         "@labm8//labm8/cpp:logging",
