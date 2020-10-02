@@ -222,9 +222,13 @@ export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 
 ### Dataflow experiments
 
-Download and unpack our [dataflow
-dataset](/programl/Documentation/DataflowDataset.md), then train and evaluate a
-graph neural network model using:
+1. Download and unpack our [dataflow
+dataset](/programl/Documentation/DataflowDataset.md)
+2. Install the python requirements:
+```sh
+python -m pip install -r requirements.task.txt
+```
+3. Train and evaluate a graph neural network model using:
 
 ```sh
 bazel run //programl/task/dataflow:train_ggnn -- \

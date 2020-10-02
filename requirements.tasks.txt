@@ -1,0 +1,4 @@
+pandas==0.24.1
+python-dateutil==2.6.1
+pytz==2018.3
+tensorflow
