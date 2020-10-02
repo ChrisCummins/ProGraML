@@ -27,7 +27,7 @@ py_library(
         "//programl/proto:epoch_py",
         "//third_party/py/labm8",
         "//third_party/py/numpy",
-        "//third_party/py/tensorflow",
+        # "//third_party/py/tensorflow",
     ],
 )
 

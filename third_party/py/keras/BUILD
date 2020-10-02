@@ -13,6 +13,6 @@ py_library(
         requirement("keras"),
         requirement("PyYAML"),  # Implicit dependency.
         "//third_party/py/scipy",  # Implicit dependency.
-        "//third_party/py/tensorflow",
+        # "//third_party/py/tensorflow",
     ],
 )
