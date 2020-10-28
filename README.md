@@ -164,6 +164,8 @@ clang2graph -O3 fib.c | graph2dot`
 
 ## Datasets
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
+
 Please see [this doc](/programl/Documentation/DataflowDataset.md) for download
 links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
 flow analysis labels.
