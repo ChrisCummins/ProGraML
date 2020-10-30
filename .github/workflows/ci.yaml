@@ -30,13 +30,6 @@ jobs:
           key: ${{ matrix.os }}-${{ matrix.python }}-bazel
         if: matrix.os == 'ubuntu-latest'
 
-      - name: "Linux: Install system dependencies"
-        run: |
-          curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
-          sudo mv bazel.tmp /usr/local/bin/bazel
-          chmod +x /usr/local/bin/bazel
-        if: matrix.os == 'ubuntu-latest'
-
       - name: "macOS: Mount bazel cache"
         uses: pat-s/always-upload-cache@v2.1.0
         with:
@@ -46,21 +39,19 @@ jobs:
 
       - name: "macOS: Install system dependencies"
         run: |
-          brew install freetype pkg-config bazelisk mysql-client coreutils findutils gnu-sed zlib
+          brew install freetype pkg-config mysql-client coreutils findutils gnu-sed zlib
           echo "::add-path::/usr/local/opt/mysql-client/bin"
         if: matrix.os == 'macos-latest'
 
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+      - name: "Install conda"
+        uses: conda-incubator/setup-miniconda@v1
         with:
-          python-version: ${{ matrix.python }}
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install python dependencies
+      - name: "Install conda dependencies"
         run: |
-          python3 -m pip install --upgrade pip
-          grep numpy requirements.txt | xargs python3 -m pip install
-          python3 -m pip install setuptools
-          echo "::add-path::/home/runner/.local/bin"
+          conda install tensorflow pytorch pandas bazel
 
       - name: whoami
         run: ./tools/whoami.sh
