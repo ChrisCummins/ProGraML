@@ -61,27 +61,6 @@ load(
 
 protobuf_pip_install()
 
-load("@build_stack_rules_proto//python:deps.bzl", "python_grpc_library")
-
-python_grpc_library()
-
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
-grpc_deps()
-
-pip3_import(
-    name = "grpc_py_deps",
-    timeout = 3600,
-    requirements = "@build_stack_rules_proto//python:requirements.txt",
-)
-
-load(
-    "@grpc_py_deps//:requirements.bzl",
-    grpc_pip_install = "pip_install",
-)
-
-grpc_pip_install()
-
 # Tensorflow.
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
 
