@@ -9,13 +9,8 @@ package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # BSD
 
+# Requires pandas!
 py_library(
     name = "pandas",
     srcs = ["//third_party/py:empty.py"],
-    deps = [
-        requirement("pandas"),
-        "//third_party/py/numpy",
-        requirement("pytz"),
-        requirement("python-dateutil"),
-    ],
 )

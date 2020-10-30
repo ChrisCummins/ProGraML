@@ -6,14 +6,11 @@ kiwisolver==1.0.1  # Needed by matplotlib.
 joblib>=0.16.0  # Needed by scikit-learn
 matplotlib==2.2.0rc1
 networkx>=2.4
-numpy==1.16.4
-pandas==0.24.1
+numpy==1.19.3
 pathlib==1.0.1
 protobuf==3.6.1
 psutil==5.4.5
 pyparsing==2.2.0
-python-dateutil==2.6.1
-pytz==2018.3
 PyYAML==4.2b4
 scikit-learn>=0.23.2
 scipy>=1.5.2

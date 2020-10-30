@@ -10,7 +10,6 @@ py_library(
     name = "tensorflow",
     srcs = ["//third_party/py:empty.py"],
     deps = [
-        requirement("tensorflow"),
         "//third_party/py/numpy",
         "//third_party/py/protobuf",
     ],
