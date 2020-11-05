@@ -1,46 +1,47 @@
+---
 name: Lint
 
 on: [push, pull_request]
 
 jobs:
-  cpp:
-    name: C++
-    runs-on: ubuntu-latest
+    cpp:
+        name: C++
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: clang-format
-        uses: DoozyX/clang-format-lint-action@v0.8
-        with:
-          clangFormatVersion: 10
+        steps:
+            - uses: actions/checkout@v2
+            - name: clang-format
+              uses: DoozyX/clang-format-lint-action@v0.8
+              with:
+                  clangFormatVersion: 10
 
-  python:
-    name: Python
-    runs-on: ubuntu-latest
+    python:
+        name: Python
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install isort+black
-        run: |
-          sudo apt-get install python3-setuptools
-          python3 -m pip install isort black
-          python3 -m isort --version
-          python3 -m black --version
-      - name: isort
-        run: python3 -m isort . --check-only --diff --profile black
-      - name: black
-        run: python3 -m black . --check --diff --target-version py36
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install isort+black
+              run: |
+                  sudo apt-get install python3-setuptools
+                  python3 -m pip install isort black
+                  python3 -m isort --version
+                  python3 -m black --version
+            - name: isort
+              run: python3 -m isort . --check-only --diff --profile black
+            - name: black
+              run: python3 -m black . --check --diff --target-version py36
 
-  bazel:
-    name: Bazel
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '^1.13.1'
-      - name: Install buildifier
-        run: go get github.com/bazelbuild/buildtools/buildifier
-      - name: buildifier
-        run: find . \( -name BUILD -o -name WORKSPACE \) -print0 | xargs -0 buildifier -mode=diff
+    bazel:
+        name: Bazel
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install go
+              uses: actions/setup-go@v2
+              with:
+                  go-version: ^1.13.1
+            - name: Install buildifier
+              run: go get github.com/bazelbuild/buildtools/buildifier
+            - name: buildifier
+              run: find . \( -name BUILD -o -name WORKSPACE \) -print0 | xargs -0 buildifier -mode=diff
