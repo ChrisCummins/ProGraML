@@ -227,7 +227,7 @@ dataset](/programl/Documentation/DataflowDataset.md), then train and evaluate a
 graph neural network model using:
 
 ```sh
-bazel run //programl/task/dataflow:train_ggnn \
+bazel run //programl/task/dataflow:train_ggnn -- \
     --analysis reachability \
     --path=$HOME/programl
 ```
