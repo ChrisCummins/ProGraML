@@ -11,5 +11,6 @@ py_library(
     srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("labm8"),
+        requirement("absl-py"),
     ],
 )
