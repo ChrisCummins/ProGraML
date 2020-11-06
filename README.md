@@ -209,7 +209,7 @@ Build and install the command line tools to `~/.local/opt/programl` (or a
 directory of your choice) using:
 
 ```sh
-$ bazel run -c opt //:install ~/.local/opt/programl
+$ bazel run -c opt //:install -- ~/.local/opt/programl
 ```
 
 Then to use them, append the following to your `~/.bashrc`:
@@ -227,7 +227,7 @@ dataset](/programl/Documentation/DataflowDataset.md), then train and evaluate a
 graph neural network model using:
 
 ```sh
-bazel run //programl/task/dataflow:train_ggnn \
+bazel run //programl/task/dataflow:train_ggnn -- \
     --analysis reachability \
     --path=$HOME/programl
 ```
