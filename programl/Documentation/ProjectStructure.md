@@ -8,7 +8,7 @@ The key directories of this project are:
 * [`programl/ir`](/programl/ir): Support for specific compiler IRs, e.g. LLVM.
 * [`programl/proto`](/programl/proto): Protocol message definitions. These define the core data structures for this project.
   This is a good starting point for understanding the code.
-* [`programl/task`](/programl/task): Experimental tasks. This contains the code for producing the results of our published
-  experiments.
 * [`programl/test`](/programl/test): Test data and helper libraries.
 * [`programl/util`](/programl/util): Utility code.
+* [`tasks`](/tasks): Experimental tasks. This contains the code for producing the results of our published
+  experiments.

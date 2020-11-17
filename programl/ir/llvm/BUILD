@@ -56,7 +56,7 @@ py_library(
         "//programl/ir/llvm/internal:inst2vec_augmented_dictionary",
         "//programl/ir/llvm/internal:inst2vec_augmented_embeddings",
     ],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/py:program_graph_builder",
         "//programl/proto:node_py",

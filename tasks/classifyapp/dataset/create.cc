@@ -17,7 +17,7 @@
 
 #include "boost/filesystem.hpp"
 #include "labm8/cpp/app.h"
-#include "programl/task/classifyapp/dataset/poj104.h"
+#include "tasks/classifyapp/dataset/poj104.h"
 
 namespace fs = boost::filesystem;
 

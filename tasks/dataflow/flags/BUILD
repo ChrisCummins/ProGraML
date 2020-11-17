@@ -1,3 +1,11 @@
+# Flag files for configuring data flow model jobs.
+#
+# Example Usage:
+#
+#    bazel run -c opt //tasks/dataflow:train_ggnn -- \
+#       --flagfile=/path/to/flagfile.txt \
+#       --analysis=reachability
+#
 # Copyright 2019-2020 the ProGraML authors.
 #
 # Contact Chris Cummins <chrisc.101@gmail.com>.
@@ -14,25 +22,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-py_binary(
-    name = "create",
-    srcs = ["create.py"],
-    deps = [
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto:features_py",
-        "//programl/task/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
-        "//third_party/py/pandas",
+filegroup(
+    name = "flagfiles",
+    srcs = [
+        "cdfg.txt",
+        "inst2vec.txt",
+        "programl.txt",
     ],
-)
-
-py_test(
-    name = "create_test",
-    timeout = "long",
-    srcs = ["create_test.py"],
-    deps = [
-        ":create",
-        "//third_party/py/labm8",
-    ],
+    visibility = ["//tasks/dataflow:__subpackages__"],
 )

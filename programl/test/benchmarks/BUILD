@@ -39,8 +39,8 @@ py_test(
     deps = [
         "//programl/models/ggnn",
         "//programl/proto:epoch_py",
-        "//programl/task/dataflow:ggnn_batch_builder",
-        "//programl/task/dataflow:graph_loader",
+        "//tasks/dataflow:ggnn_batch_builder",
+        "//tasks/dataflow:graph_loader",
         "//programl/test/py/plugins:llvm_program_graph",
         "//programl/test/py/plugins:llvm_reachability_features",
         "//third_party/py/labm8",
@@ -56,8 +56,8 @@ py_test(
     deps = [
         "//programl/models/lstm",
         "//programl/proto:epoch_py",
-        "//programl/task/dataflow:graph_loader",
-        "//programl/task/dataflow:lstm_batch_builder",
+        "//tasks/dataflow:graph_loader",
+        "//tasks/dataflow:lstm_batch_builder",
         "//programl/test/py/plugins:llvm_program_graph",
         "//programl/test/py/plugins:llvm_reachability_features",
         "//third_party/py/labm8",

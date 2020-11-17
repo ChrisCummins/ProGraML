@@ -231,7 +231,7 @@ python -m pip install -r requirements.task.txt
 3. Train and evaluate a graph neural network model using:
 
 ```sh
-bazel run //programl/task/dataflow:train_ggnn -- \
+bazel run //tasks/dataflow:train_ggnn -- \
     --analysis reachability \
     --path=$HOME/programl
 ```

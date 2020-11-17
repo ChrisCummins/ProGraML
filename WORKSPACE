@@ -37,7 +37,7 @@ pip_repositories()
 pip3_import(
     name = "programl_requirements",
     timeout = 3600,
-    requirements = "@programl//:requirements.txt",
+    requirements = "@programl//:programl/requirements.txt",
 )
 
 load(

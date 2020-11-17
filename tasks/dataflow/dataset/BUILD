@@ -20,7 +20,7 @@ py_binary(
     deps = [
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
-        "//programl/task/dataflow/dataset:pathflag",
+        "//tasks/dataflow/dataset:pathflag",
         "//third_party/py/labm8",
     ],
 )
@@ -118,7 +118,7 @@ cc_library(
 py_library(
     name = "pathflag",
     srcs = ["pathflag.py"],
-    visibility = ["//programl/task:__subpackages__"],
+    visibility = ["//tasks:__subpackages__"],
     deps = [
         "//third_party/py/labm8",
     ],

@@ -3,9 +3,7 @@ cycler==0.10.0  # Needed by matplotlib.
 decorator==4.3.0
 GPUtil==1.4.0
 joblib>=0.16.0  # Needed by scikit-learn
-Keras==2.3.1
 kiwisolver==1.0.1  # Needed by matplotlib.
-labm8==2020.06.07
 matplotlib==2.2.0rc1
 networkx>=2.4
 numpy==1.19.3

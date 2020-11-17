@@ -20,7 +20,7 @@ cc_library(
     name = "filesystem_cache",
     srcs = ["filesystem_cache.cc"],
     hdrs = ["filesystem_cache.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@boost//:filesystem",
         "@labm8//labm8/cpp:fsutil",

@@ -19,7 +19,7 @@ Machine learning jobs write log files summarizing the performance of the model
 after each training epoch. The log directory is printed at the start of
 execution of a machine learning job, for example:
 
-  $ bazel run //programl/task/dataflow:train_ggnn
+  $ bazel run //tasks/dataflow:train_ggnn
   Writing logs to ~/programl/dataflow/logs/ggnn/reachability/foo@20:05:16T12:53:42
   ...
 
