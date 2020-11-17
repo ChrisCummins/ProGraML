@@ -38,18 +38,6 @@ cc_library(
     ],
 )
 
-py_binary(
-    name = "perf_monitor",
-    srcs = ["perf_monitor.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/absl",
-        "//third_party/py/gputil",
-        "//third_party/py/numpy",
-        "//third_party/py/psutil",
-    ],
-)
-
 cc_library(
     name = "stdin_fmt",
     srcs = ["stdin_fmt.cc"],

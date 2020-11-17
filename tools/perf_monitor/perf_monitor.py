@@ -18,16 +18,16 @@
 When run as a script, this monitors performance prints to stdout every
 --perf_monitor_frequency seconds.
 """
-import datetime
 import json
-import pathlib
-import threading
-import time
+from datetime import datetime
+from pathlib import Path
+from threading import Thread
+from time import sleep, strftime, time
 
 import GPUtil
 import numpy as np
 import psutil
-from absl import flags
+from absl import app, flags, logging
 
 flags.DEFINE_float(
     "perf_monitor_frequency",
@@ -37,7 +37,7 @@ flags.DEFINE_float(
 FLAGS = flags.FLAGS
 
 
-class PerformanceMonitor(threading.Thread):
+class PerformanceMonitor(Thread):
     """A class for monitoring system performance in a background thread.
 
     An instance of this class runs in a separate thread, passively recording
@@ -68,7 +68,7 @@ class PerformanceMonitor(threading.Thread):
         def SaveStatsAndReset(perf):
           # For every 10 observations, write stats to file and reset averages.
           if not perf.observation_count % 10:
-            with open(f'/tmp/perf_log_{int(time.time())}', 'w' as f:
+            with open(f'/tmp/perf_log_{int(time())}', 'w' as f:
               json.dump(perf.stats)
             perf.Reset()
 
@@ -129,7 +129,7 @@ class PerformanceMonitor(threading.Thread):
             self.stats.get("gpus", []).append({})
         self.prev_disk_counters = psutil.disk_io_counters(perdisk=False)
         self.prev_net_counters = psutil.net_io_counters(pernic=False)
-        self.last_record_time = time.time()
+        self.last_record_time = time()
 
     def Update(self, key, value, default=0, data=None):
         """Update a rolling average.
@@ -159,7 +159,7 @@ class PerformanceMonitor(threading.Thread):
         self.Update("swap_util", psutil.swap_memory().percent / 100)
 
         # Counter-based stats.
-        elapsed = time.time() - self.last_record_time
+        elapsed = time() - self.last_record_time
         disk_counters = psutil.disk_io_counters(perdisk=False)
         net_counters = psutil.net_io_counters(pernic=False)
 
@@ -218,7 +218,7 @@ class PerformanceMonitor(threading.Thread):
         )
 
         # Update counters.
-        self.last_record_time = time.time()
+        self.last_record_time = time()
         self.prev_disk_counters = disk_counters
         self.prev_net_counters = net_counters
 
@@ -239,12 +239,12 @@ class PerformanceMonitor(threading.Thread):
 
     def run(self):
         """Thread loop. Terminate by calling Stop()."""
-        time.sleep(self.observation_frequency)
+        sleep(self.observation_frequency)
         while not self.stopped:
             self.MakeObservation()
-            time.sleep(self.observation_frequency)
+            sleep(self.observation_frequency)
 
-    def WriteJson(self, path: pathlib.Path):
+    def WriteJson(self, path: Path):
         """Save monitor stats to file as JSON data."""
         with open(str(path), "w") as f:
             json.dump(self.stats, f, indent=2, sort_keys=True)
@@ -256,7 +256,7 @@ class PerformanceMonitor(threading.Thread):
 
 def PrintToStdoutCallback(monitor: PerformanceMonitor):
     print(
-        datetime.datetime.now(),
+        datetime.now(),
         ": ",
         json.dumps(monitor.stats, indent=2, sort_keys=True),
         sep="",
@@ -264,7 +264,7 @@ def PrintToStdoutCallback(monitor: PerformanceMonitor):
 
 
 def WriteJsonToFileCallback(
-    json_dir: pathlib.Path,
+    json_dir: Path,
     every: int = 1,
     reset=False,
     filename_format: str = "%y:%m:%dT%H:%M:%S.json",
@@ -272,13 +272,13 @@ def WriteJsonToFileCallback(
     def _WriteJson(monitor: PerformanceMonitor):
         if monitor.observation_count % every:
             return
-        outpath = json_dir / time.strftime(filename_format)
+        outpath = json_dir / strftime(filename_format)
         monitor.WriteJson(outpath)
-        app.Log(1, "Wrote performance log to %s", outpath)
+        logging.info("Wrote performance log to %s", outpath)
         if reset:
             monitor.Reset()
 
-    json_dir = pathlib.Path(json_dir)
+    json_dir = Path(json_dir)
     json_dir.mkdir(parents=True, exist_ok=True)
     return _WriteJson
 

@@ -1,3 +1,5 @@
 -r programl/requirements.txt
 -r requirements.pre_commit.txt
 -r tasks/requirements.txt
+-r tools/requirements.pre_commit.txt
+-r util/perf_monitor/requirements.txt
