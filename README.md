@@ -193,7 +193,7 @@ Once you have the above requirements installed, test that everything is working
 by building and running full test suite:
 
 ```sh
-$ bazel test //programl/...
+$ bazel test //...
 ```
 
 
@@ -300,7 +300,7 @@ py_binary(
 Patches, bug reports, feature requests are welcome! Please use the
 [issue tracker](https://github.com/ChrisCummins/ProGraML/issues) to file a
 bug report or question. Please read the
-[development workflow](/programl/Documentation/Development.md)
+[development workflow](/Documentation/Development.md)
 document before contributing code.
 
 

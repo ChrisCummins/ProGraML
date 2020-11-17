@@ -40,16 +40,3 @@ py_library(
         "//programl/proto:program_graph_py",
     ],
 )
-
-py_test(
-    name = "program_graph_builder_test",
-    srcs = ["program_graph_builder_test.py"],
-    deps = [
-        ":program_graph_builder",
-        "//programl/proto:edge_py",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_options_py",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
-    ],
-)

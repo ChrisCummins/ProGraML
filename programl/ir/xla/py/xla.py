@@ -14,15 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Generate program graphs from XLA HLO modules."""
-from typing import Optional
-
-from labm8.py import app
 from tensorflow.compiler.xla.service import hlo_pb2
 
 from programl.ir.xla.py import xla_pybind
 from programl.proto import program_graph_pb2
-
-FLAGS = app.FLAGS
 
 
 def BuildProgramGraphProto(

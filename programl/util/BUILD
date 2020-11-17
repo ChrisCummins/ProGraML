@@ -43,8 +43,8 @@ py_binary(
     srcs = ["perf_monitor.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//third_party/py/absl",
         "//third_party/py/gputil",
-        "//third_party/py/labm8",
         "//third_party/py/numpy",
         "//third_party/py/psutil",
     ],

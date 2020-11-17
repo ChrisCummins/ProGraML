@@ -23,28 +23,28 @@ import random
 import shutil
 import subprocess
 
-from labm8.py import app, bazelutil, labtypes, pbutil, progress
+from absl import bazelutil, flags, labtypes, pbutil, progress
 from MySQLdb import _mysql
 
 from programl.ir.llvm.py import llvm
 from programl.proto import ir_pb2
-from programl.task.dataflow.dataset import pathflag
-from programl.task.dataflow.dataset.encode_inst2vec import Inst2vecEncodeGraphs
+from tasks.dataflow.dataset import pathflag
+from tasks.dataflow.dataset.encode_inst2vec import Inst2vecEncodeGraphs
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "classifyapp",
     str(pathlib.Path("~/programl/classifyapp").expanduser()),
     "Path of the classifyapp database.",
 )
-app.DEFINE_string("host", None, "The database to export from.")
-app.DEFINE_string("user", None, "The database to export from.")
-app.DEFINE_string("pwd", None, "The database to export from.")
-app.DEFINE_string("db", None, "The database to export from.")
-FLAGS = app.FLAGS
+flags.DEFINE_string("host", None, "The database to export from.")
+flags.DEFINE_string("user", None, "The database to export from.")
+flags.DEFINE_string("pwd", None, "The database to export from.")
+flags.DEFINE_string("db", None, "The database to export from.")
+FLAGS = flags.FLAGS
 
-CREATE_LABELS = bazelutil.DataPath("programl/tasks/dataflow/dataset/create_labels")
-CREATE_VOCAB = bazelutil.DataPath("programl/tasks/dataflow/dataset/create_vocab")
-UNPACK_IR_LISTS = bazelutil.DataPath("programl/tasks/dataflow/dataset/unpack_ir_lists")
+CREATE_LABELS = runfiles_path("programl/tasks/dataflow/dataset/create_labels")
+CREATE_VOCAB = runfiles_path("programl/tasks/dataflow/dataset/create_vocab")
+UNPACK_IR_LISTS = runfiles_path("programl/tasks/dataflow/dataset/unpack_ir_lists")
 
 
 def _ProcessRow(output_directory, row, file_id) -> None:
@@ -238,7 +238,9 @@ def ImportClassifyAppDataset(classifyapp: pathlib.Path, path: pathlib.Path):
     subprocess.check_call([str(UNPACK_IR_LISTS), "--path", str(path)])
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     path = pathlib.Path(pathflag.path())
     db = _mysql.connect(host=FLAGS.host, user=FLAGS.user, passwd=FLAGS.pwd, db=FLAGS.db)
 
@@ -268,4 +270,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

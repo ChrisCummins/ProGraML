@@ -17,9 +17,11 @@
 import sys
 
 import google.protobuf.json_format
-from labm8.py import app, pbutil
+from absl import flags
 
-app.DEFINE_string(
+from programl.util.py import pbutil
+
+flags.DEFINE_string(
     "stdin_fmt",
     "pbtxt",
     "The type of input format to use. Valid options are: "
@@ -27,7 +29,7 @@ app.DEFINE_string(
     '"pb" which reads a binary format protocol buffer, '
     'or "json" which reads a JSON format protocol buffer.',
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def ParseStdinOrDie(proto, exit_code: int = 4):

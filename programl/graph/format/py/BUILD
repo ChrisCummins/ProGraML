@@ -30,7 +30,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -41,18 +41,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_py",
-    ],
-)
-
-py_test(
-    name = "graph_serializer_test",
-    srcs = ["graph_serializer_test.py"],
-    deps = [
-        ":graph_serializer",
-        "//programl/proto:edge_py",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
     ],
 )
 
@@ -95,16 +83,6 @@ pybind_extension(
     ],
 )
 
-py_test(
-    name = "graph_tuple_builder_test",
-    srcs = ["graph_tuple_builder_test.py"],
-    deps = [
-        ":graph_tuple_builder",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
-    ],
-)
-
 pybind_extension(
     "node_link_graph_pybind",
     srcs = ["node_link_graph_pybind.cc"],
@@ -122,20 +100,9 @@ py_library(
     name = "nx_format",
     srcs = ["nx_format.py"],
     data = [":node_link_graph_pybind.so"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_py",
-        "//third_party/py/networkx",
-    ],
-)
-
-py_test(
-    name = "nx_format_test",
-    srcs = ["nx_format_test.py"],
-    deps = [
-        ":nx_format",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
         "//third_party/py/networkx",
     ],
 )

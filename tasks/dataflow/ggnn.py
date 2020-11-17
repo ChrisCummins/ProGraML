@@ -19,15 +19,15 @@ import time
 from typing import Dict, List, Optional
 
 import numpy as np
-from labm8.py import app, humanize, pbutil
+from absl import flags, humanize, pbutil
 
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
-from programl.task.dataflow import dataflow
-from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
-from programl.task.dataflow.graph_loader import DataflowGraphLoader
+from tasks.dataflow import dataflow
+from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from tasks.dataflow.graph_loader import DataflowGraphLoader
 
 
 def MakeBatchBuilder(

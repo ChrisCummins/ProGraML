@@ -20,8 +20,10 @@ py_binary(
     deps = [
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -38,7 +40,7 @@ py_binary(
         ":pathflag",
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:ir_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         # "//third_party/py/mysql",
     ],
 )
@@ -93,7 +95,7 @@ py_binary(
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:ir_py",
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -120,7 +122,7 @@ py_library(
     srcs = ["pathflag.py"],
     visibility = ["//tasks:__subpackages__"],
     deps = [
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 

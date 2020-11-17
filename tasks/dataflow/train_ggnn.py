@@ -20,39 +20,41 @@ classification targets for data flow problems.
 """
 import pathlib
 
-from labm8.py import app
+from absl import flags
 
-from programl.task.dataflow import ggnn, vocabulary
+from tasks.dataflow import ggnn, vocabulary
 
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "batch_size",
     50000,
     "The number of nodes in a graph. "
     "On our system, we observed that a batch size of 50,000 nodes requires "
     "about 5.2GB of GPU VRAM.",
 )
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "limit_max_data_flow_steps",
     True,
     "If set, limit the size of dataflow-annotated graphs used to only those with "
     "data_flow_steps <= message_passing_step_count",
 )
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "cdfg",
     False,
     "If set, use the CDFG representation for programs. Defaults to ProGraML "
     "representations.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "max_vocab_size",
     0,
     "If > 0, limit the size of the vocabulary to this number.",
 )
-app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
-FLAGS = app.FLAGS
+flags.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
+FLAGS = flags.FLAGS
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
 
     path = pathlib.Path(FLAGS.path)
@@ -98,4 +100,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

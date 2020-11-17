@@ -25,22 +25,10 @@ py_library(
     name = "xla",
     srcs = ["xla.py"],
     data = [":xla_pybind.so"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
         "//third_party/py/networkx",
-        "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto_lib_py",
-    ],
-)
-
-py_test(
-    name = "xla_test",
-    srcs = ["xla_test.py"],
-    data = ["//programl/test/data:hlo_protos"],
-    deps = [
-        ":xla",
-        "//third_party/py/labm8",
-        "@org_tensorflow//tensorflow/compiler/xla:xla_data_proto_lib_py",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto_lib_py",
     ],
 )

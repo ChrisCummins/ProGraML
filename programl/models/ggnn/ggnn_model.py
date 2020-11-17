@@ -17,7 +17,7 @@
 from typing import Optional
 
 import torch
-from labm8.py import app, gpu_scheduler
+from absl import flags, gpu_scheduler
 from torch import nn, optim
 
 from programl.models.ggnn.aux_readout import AuxiliaryReadout
@@ -26,9 +26,9 @@ from programl.models.ggnn.loss import Loss
 from programl.models.ggnn.metrics import Metrics
 from programl.models.ggnn.node_embeddings import NodeEmbeddings
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "block_gpu", True, "Prevent model from hitchhiking on an occupied gpu."
 )
 

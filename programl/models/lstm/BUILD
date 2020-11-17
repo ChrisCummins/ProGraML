@@ -25,7 +25,7 @@ py_library(
         "//programl/models:batch_data",
         "//programl/models:model",
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )

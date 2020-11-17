@@ -23,24 +23,24 @@ import time
 from typing import Dict
 
 import numpy as np
-from labm8.py import app, gpu_scheduler, humanize, pbutil
+from absl import flags, gpu_scheduler, humanize, pbutil
 
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
-from programl.task.dataflow import dataflow
-from programl.task.dataflow.graph_loader import DataflowGraphLoader
-from programl.task.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
+from tasks.dataflow import dataflow
+from tasks.dataflow.graph_loader import DataflowGraphLoader
+from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from third_party.py.ncc import vocabulary
 
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "max_data_flow_steps",
     30,
     "If > 0, limit the size of dataflow-annotated graphs used to only those "
     "with data_flow_steps <= --max_data_flow_steps",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def MakeBatchBuilder(
@@ -257,7 +257,9 @@ def TestDataflowLSTM(
     app.Log(1, "Wrote %s", epoch_path)
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
     path = pathlib.Path(FLAGS.path)
 
@@ -285,4 +287,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

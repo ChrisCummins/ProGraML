@@ -18,15 +18,15 @@ import csv
 import pathlib
 from collections import defaultdict
 
-from labm8.py import app, pbutil, progress
+from absl import flags, pbutil, progress
 
 from programl.proto import program_graph_pb2
-from programl.task.dataflow.dataset import pathflag
-from programl.task.dataflow.vocabulary import LoadVocabulary
+from tasks.dataflow.dataset import pathflag
+from tasks.dataflow.vocabulary import LoadVocabulary
 from third_party.py.ncc.vocabulary import VocabularyZipFile
 
-app.DEFINE_integer("limit", 0, "Limit the number of files read.")
-FLAGS = app.FLAGS
+flags.DEFINE_integer("limit", 0, "Limit the number of files read.")
+FLAGS = flags.FLAGS
 
 
 class TestVocab(progress.Progress):
@@ -116,9 +116,11 @@ def ToCsv(
             writer.writerow((cumfreq, node_cumfreq, count, text))
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     progress.Run(TestVocab(pathlib.Path(pathflag.path())))
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

@@ -47,17 +47,17 @@ import sys
 from typing import Optional
 
 import pandas as pd
-from labm8.py import app, google_sheets, humanize, pbutil, pdutil, prof
+from absl import flags, google_sheets, humanize, pbutil, pdutil, prof
 
 from programl.proto import epoch_pb2
 
-app.DEFINE_input_path(
+flags.DEFINE_input_path(
     "path",
     pathlib.Path("~/programl/dataflow").expanduser(),
     "The dataset directory root.",
     is_dir=True,
 )
-app.DEFINE_string(
+flags.DEFINE_string(
     "google_sheet",
     None,
     "The name of a Google Sheets spreadsheet to export tables to. If it does "
@@ -65,9 +65,9 @@ app.DEFINE_string(
     "--google_sheets_default_share_with. See --google_sheets_credentials for "
     "setting the credentials required to use the Google Sheets API.",
 )
-app.DEFINE_string("fmt", "txt", "Stdout format.")
-app.DEFINE_string("worksheet", "Sheet1", "The name of the worksheet to export to")
-FLAGS = app.FLAGS
+flags.DEFINE_string("fmt", "txt", "Stdout format.")
+flags.DEFINE_string("worksheet", "Sheet1", "The name of the worksheet to export to")
+FLAGS = flags.FLAGS
 
 
 def ReadEpochLogs(path: pathlib.Path) -> Optional[epoch_pb2.EpochList]:
@@ -219,7 +219,9 @@ def LogsToDataFrame(path: pathlib.Path) -> Optional[pd.DataFrame]:
     return df
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     path = FLAGS.path
     fmt = FLAGS.fmt
     spreadsheet_name = FLAGS.google_sheet
@@ -253,4 +255,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

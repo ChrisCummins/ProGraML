@@ -18,7 +18,7 @@ import time
 from threading import Thread
 from typing import List
 
-from labm8.py import app, humanize
+from absl import flags, humanize
 
 from programl.models.base_batch_builder import BaseBatchBuilder
 from programl.models.batch_data import BatchData

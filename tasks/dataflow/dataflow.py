@@ -21,26 +21,26 @@ import time
 import warnings
 from typing import Tuple
 
-from labm8.py import app, pbutil
+from absl import flags, pbutil
 from sklearn.exceptions import UndefinedMetricWarning
 
 from programl.proto import checkpoint_pb2, epoch_pb2
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "path",
     str(pathlib.Path("~/programl/dataflow").expanduser()),
     "The path to read from",
 )
-app.DEFINE_string("analysis", "reachability", "The analysis type to use.")
-app.DEFINE_integer(
+flags.DEFINE_string("analysis", "reachability", "The analysis type to use.")
+flags.DEFINE_integer(
     "val_graph_count", 10000, "The number of graphs to use in the validation set."
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "val_seed",
     0xCC,
     "The seed value for randomly sampling validation graphs.",
 )
-app.DEFINE_list(
+flags.DEFINE_list(
     "train_graph_counts",
     [
         10000,
@@ -61,20 +61,20 @@ app.DEFINE_list(
     ],
     "The list of cumulative training graph counts to evaluate at.",
 )
-app.DEFINE_input_path(
+flags.DEFINE_input_path(
     "restore_from",
     None,
     "The log directory of a previous model run to restore",
     is_dir=True,
 )
-app.DEFINE_boolean("test", True, "Whether to test the model after training.")
-app.DEFINE_boolean(
+flags.DEFINE_boolean("test", True, "Whether to test the model after training.")
+flags.DEFINE_boolean(
     "test_only",
     False,
     "Whether to skip training and go straight to testing. "
     "Assumes that --restore_from is set.",
 )
-app.DEFINE_string(
+flags.DEFINE_string(
     "run_id",
     None,
     "Optionally specify a name for the run. This must be unique. If not "
@@ -82,7 +82,7 @@ app.DEFINE_string(
     "is set, the ID of the restored run is used and this flag has no effect.",
 )
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def RecordExperimentalSetup(log_dir: pathlib.Path) -> None:

@@ -105,7 +105,7 @@ py_binary(
         "//programl/graph/format/py:nx_format",
         "//programl/proto:program_graph_py",
         "//programl/util/py:stdin_fmt",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -131,7 +131,7 @@ py_binary(
         "//programl/proto:program_graph_py",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 

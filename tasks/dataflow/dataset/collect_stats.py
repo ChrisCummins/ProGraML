@@ -17,18 +17,19 @@
 import csv
 import pathlib
 
-from labm8.py import app, pbutil, progress
+from absl import flags
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
-from programl.task.dataflow.dataset import pathflag
+from programl.util.py import pbutil, progress
+from tasks.dataflow.dataset import pathflag
 
-app.DEFINE_boolean("graphs", True, "Collect stats on graphs")
-app.DEFINE_list(
+flags.DEFINE_boolean("graphs", True, "Collect stats on graphs")
+flags.DEFINE_list(
     "analysis",
     ["reachability", "dominance", "datadep", "liveness", "subexpressions"],
     "The analyses labels to collect stats over.",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 class CollectGraphStats(progress.Progress):
@@ -133,7 +134,9 @@ class CollectAnalysisStats(progress.Progress):
                 )
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     path = pathlib.Path(pathflag.path())
 
     if FLAGS.graphs:
@@ -154,4 +157,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

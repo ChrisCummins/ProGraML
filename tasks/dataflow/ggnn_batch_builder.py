@@ -17,7 +17,7 @@
 from typing import Dict, Optional
 
 import numpy as np
-from labm8.py import app
+from absl import flags
 
 from programl.graph.format.py.graph_tuple_builder import GraphTupleBuilder
 from programl.models.base_batch_builder import BaseBatchBuilder

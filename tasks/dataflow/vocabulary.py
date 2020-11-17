@@ -17,7 +17,7 @@
 import csv
 import pathlib
 
-from labm8.py import app, humanize
+from absl import flags, humanize
 
 
 def LoadVocabulary(

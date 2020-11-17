@@ -24,20 +24,20 @@ import threading
 from queue import Queue
 from typing import Iterable, Tuple
 
-from labm8.py import app, humanize, pbutil
+from absl import flags, humanize, pbutil
 
 from programl.graph.format.py import cdfg
 from programl.models import base_graph_loader
 from programl.proto import epoch_pb2, program_graph_features_pb2, program_graph_pb2
 
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "max_graph_node_count",
     60000,
     "The maximum node count in a single graph. Graphs with greater than this "
     "many nodes are ignored. Use this to prevent OOM errors when loading very "
     "large graphs.",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):

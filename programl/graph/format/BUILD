@@ -32,17 +32,6 @@ cc_library(
     ],
 )
 
-cc_test(
-    name = "cdfg_test",
-    srcs = ["cdfg_test.cc"],
-    deps = [
-        ":cdfg",
-        "//programl/graph:program_graph_builder",
-        "@labm8//labm8/cpp:logging",
-        "@labm8//labm8/cpp:test",
-    ],
-)
-
 cc_library(
     name = "graph_serializer",
     srcs = ["graph_serializer.cc"],
@@ -56,16 +45,6 @@ cc_library(
     ],
 )
 
-cc_test(
-    name = "graph_serializer_test",
-    srcs = ["graph_serializer_test.cc"],
-    deps = [
-        ":graph_serializer",
-        "//programl/proto:program_graph_cc",
-        "@labm8//labm8/cpp:test",
-    ],
-)
-
 cc_library(
     name = "graph_tuple",
     srcs = ["graph_tuple.cc"],
@@ -74,18 +53,6 @@ cc_library(
     deps = [
         "//programl/proto:program_graph_cc",
         "@labm8//labm8/cpp:status",
-    ],
-)
-
-cc_test(
-    name = "graph_tuple_test",
-    srcs = ["graph_tuple_test.cc"],
-    deps = [
-        ":graph_tuple",
-        "//programl/proto:edge_cc",
-        "//programl/proto:program_graph_cc",
-        "@labm8//labm8/cpp:status",
-        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -106,17 +73,6 @@ cc_library(
     ],
 )
 
-cc_test(
-    name = "graphviz_converter_test",
-    srcs = ["graphviz_converter_test.cc"],
-    deps = [
-        ":graphviz_converter",
-        "//programl/proto:program_graph_cc",
-        "@labm8//labm8/cpp:status",
-        "@labm8//labm8/cpp:test",
-    ],
-)
-
 cc_library(
     name = "node_link_graph",
     srcs = ["node_link_graph.cc"],
@@ -127,19 +83,6 @@ cc_library(
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
-        "@nlohmann_json//:json",
-    ],
-)
-
-cc_test(
-    name = "node_link_graph_test",
-    srcs = ["node_link_graph_test.cc"],
-    deps = [
-        ":node_link_graph",
-        "//programl/proto:program_graph_cc",
-        "@labm8//labm8/cpp:status",
-        "@labm8//labm8/cpp:string",
-        "@labm8//labm8/cpp:test",
         "@nlohmann_json//:json",
     ],
 )

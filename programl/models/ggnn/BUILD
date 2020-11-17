@@ -41,7 +41,7 @@ py_library(
         "//programl/models:batch_results",
         "//programl/models:model",
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/torch",
     ],
@@ -75,7 +75,7 @@ py_library(
         ":loss",
         ":metrics",
         ":node_embeddings",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/torch",
     ],
 )

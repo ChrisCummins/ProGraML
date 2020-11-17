@@ -20,7 +20,7 @@ from typing import Any, Dict, List
 
 import numpy as np
 import tensorflow as tf
-from labm8.py import app
+from absl import flags
 from labm8.py.progress import NullContext, ProgressContext
 
 from programl.models.batch_data import BatchData
@@ -29,35 +29,35 @@ from programl.models.lstm.lstm_batch import LstmBatchData
 from programl.models.model import Model
 from programl.proto import epoch_pb2
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "hidden_size",
     64,
     "The size of hidden layer(s).",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "hidden_dense_layer_count",
     1,
     "The number of hidden dense layers between the final LSTM layer and the " "output.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "batch_size",
     64,
     "The number of padded sequences to concatenate into a batch.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "padded_sequence_length",
     5000,
     "For node-level models, the padded/truncated length of encoded node " "sequences.",
 )
-app.DEFINE_float(
+flags.DEFINE_float(
     "selector_embedding_value",
     1,
     "The value used for the positive class in the 1-hot selector embedding "
     "vectors. Has no effect when selector embeddings are not used.",
 )
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "cudnn_lstm",
     True,
     "If set, use CuDNNLSTM implementation when a GPU is available. Else use "
@@ -65,8 +65,8 @@ app.DEFINE_boolean(
     "incompatible - a model saved using one LSTM type cannot be restored using "
     "the other LSTM type.",
 )
-app.DEFINE_float("learning_rate", 0.001, "The mode learning rate.")
-app.DEFINE_boolean(
+flags.DEFINE_float("learning_rate", 0.001, "The mode learning rate.")
+flags.DEFINE_boolean(
     "trainable_embeddings", True, "Whether the embeddings are trainable."
 )
 

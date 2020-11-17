@@ -28,7 +28,7 @@ py_library(
         "//programl/models/ggnn",
         "//programl/proto:checkpoint_py",
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )
@@ -43,7 +43,7 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/ggnn:ggnn_batch",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )
@@ -58,7 +58,7 @@ py_library(
         "//programl/models/ggnn",
         "//programl/proto:checkpoint_py",
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )
@@ -68,7 +68,7 @@ py_binary(
     srcs = ["export_logs.py"],
     deps = [
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/pandas",
     ],
 )
@@ -84,11 +84,12 @@ py_binary(
         "//programl/proto:epoch_py",
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
+        "//programl/util/py:pbutil",
         "//tasks/dataflow",
         "//tasks/dataflow:ggnn_batch_builder",
         "//tasks/dataflow:vocabulary",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )
@@ -103,7 +104,7 @@ py_library(
         "//programl/proto:epoch_py",
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -117,7 +118,7 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/lstm:lstm_batch",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )
@@ -133,7 +134,7 @@ py_binary(
     deps = [
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -145,7 +146,7 @@ py_binary(
         "//programl/proto:node_py",
         "//programl/proto:program_graph_py",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/ncc:vocabulary",
     ],
 )
@@ -157,7 +158,7 @@ py_binary(
         ":dataflow",
         ":ggnn",
         ":vocabulary",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -172,7 +173,7 @@ py_binary(
         "//programl/models:epoch_batch_iterator",
         "//programl/models/lstm",
         "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/ncc:vocabulary",
         "//third_party/py/numpy",
     ],
@@ -182,6 +183,6 @@ py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
     deps = [
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )

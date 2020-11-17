@@ -16,21 +16,23 @@
 """Enumerate all test graphs and print their data flow step count to stdout."""
 import pathlib
 
-from labm8.py import app, pbutil
+from absl import flags, pbutil
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "path",
     str(pathlib.Path("~/programl/dataflow").expanduser()),
     "The path to read from",
 )
-app.DEFINE_string("analysis", "reachability", "The analysis type to use.")
-app.DEFINE_integer("max_graph_node_count", 40000, "The max size of graph.")
-FLAGS = app.FLAGS
+flags.DEFINE_string("analysis", "reachability", "The analysis type to use.")
+flags.DEFINE_integer("max_graph_node_count", 40000, "The max size of graph.")
+FLAGS = flags.FLAGS
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
     path = pathlib.Path(FLAGS.path)
 
@@ -67,4 +69,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

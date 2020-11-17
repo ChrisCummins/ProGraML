@@ -66,3 +66,16 @@ load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
 
 tf_repositories()
 # === End ProGraML dependencies ===
+
+pip3_import(
+    name = "tests_requirements",
+    timeout = 3600,
+    requirements = "@programl//:tests/requirements.txt",
+)
+
+load(
+    "@tests_requirements//:requirements.bzl",
+    tests_pip_install = "pip_install",
+)
+
+tests_pip_install()

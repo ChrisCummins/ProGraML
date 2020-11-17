@@ -19,7 +19,7 @@ import pathlib
 from typing import Any, Iterable
 
 import numpy as np
-from labm8.py import app, pbutil
+from absl import flags
 
 from programl.models.base_graph_loader import BaseGraphLoader
 from programl.models.batch_results import BatchResults
@@ -30,30 +30,31 @@ from programl.proto import (
     program_graph_features_pb2,
     program_graph_pb2,
 )
-from programl.task.dataflow import dataflow, vocabulary
-from programl.task.dataflow.dataset import pathflag
-from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from programl.util.py import pbutil
+from tasks.dataflow import dataflow, vocabulary
+from tasks.dataflow.dataset import pathflag
+from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "cdfg",
     False,
     "If set, use the CDFG representation for programs. Defaults to ProGraML "
     "representations.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "max_vocab_size",
     0,
     "If > 0, limit the size of the vocabulary to this number.",
 )
-app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
-app.DEFINE_input_path("model", None, "The model checkpoint to restore")
-app.DEFINE_string(
+flags.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
+flags.DEFINE_input_path("model", None, "The model checkpoint to restore")
+flags.DEFINE_string(
     "input",
     None,
     "Path of the input graph features list and index into it, "
     "e.g., /path/to/foo:1 to select the second graph from file /path/to/foo.",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 class SingleGraphLoader(BaseGraphLoader):
@@ -177,7 +178,9 @@ def AnnotateGraphWithBatchResults(
     return graph
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
     dataflow.PatchWarnings()
 
@@ -191,4 +194,4 @@ def Main():
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

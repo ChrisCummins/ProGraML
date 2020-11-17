@@ -40,21 +40,12 @@ cc_library(
     name = "hlo_proto_reader",
     srcs = ["hlo_proto_reader.cc"],
     hdrs = ["hlo_proto_reader.h"],
+    visibility = ["//tests:__subpackages__"],
     deps = [
         "@labm8//labm8/cpp:status_macros",
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
         "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
-    ],
-)
-
-cc_test(
-    name = "hlo_proto_reader_test",
-    srcs = ["hlo_proto_reader_test.cc"],
-    deps = [
-        ":hlo_proto_reader",
-        "@boost//:filesystem",
-        "@labm8//labm8/cpp:test",
     ],
 )
 

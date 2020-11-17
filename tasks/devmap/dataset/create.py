@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Prepare the CPU/GPU OpenCL device-mapping dataset."""
+import hashlib
 import io
 import os
 import shutil
@@ -24,12 +25,13 @@ from zipfile import ZipFile
 import numpy as np
 import pandas as pd
 import requests
-from labm8.py import app, crypto, pbutil
+from absl import flags
 
 from programl.ir.llvm.py import llvm
-from programl.task.dataflow.dataset import pathflag
+from programl.util.py import pbutil
+from tasks.dataflow.dataset import pathflag
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def cachedir() -> Path:
@@ -53,7 +55,9 @@ def download(url: str, checksum: str) -> bytes:
         with open(cachepath, "wb") as f:
             f.write(content)
 
-    actual_checksum = crypto.sha256(content)
+    sha256 = hashlib.sha256()
+    sha256.update(content)
+    actual_checksum = sha256.hexdigest()
     if actual_checksum != checksum:
         raise ValueError(
             f"Checksum mismatch of downloaded file {url}. "

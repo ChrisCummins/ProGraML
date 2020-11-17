@@ -27,14 +27,14 @@ import time
 import GPUtil
 import numpy as np
 import psutil
-from labm8.py import app
+from absl import flags
 
-app.DEFINE_float(
+flags.DEFINE_float(
     "perf_monitor_frequency",
     10,
     "The number of seconds between updates to performance monitor",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 class PerformanceMonitor(threading.Thread):
@@ -283,9 +283,11 @@ def WriteJsonToFileCallback(
     return _WriteJson
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     PerformanceMonitor(on_observation=PrintToStdoutCallback)
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

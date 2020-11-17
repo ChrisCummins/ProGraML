@@ -39,16 +39,6 @@ cc_library(
     ],
 )
 
-cc_test(
-    name = "clang_test",
-    srcs = ["clang_test.cc"],
-    deps = [
-        "//programl/ir/llvm:clang",
-        "//programl/proto:ir_cc",
-        "@labm8//labm8/cpp:test",
-    ],
-)
-
 py_library(
     name = "inst2vec_encoder",
     srcs = ["inst2vec_encoder.py"],
@@ -61,22 +51,13 @@ py_library(
         "//programl/graph/py:program_graph_builder",
         "//programl/proto:node_py",
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//programl/util/py:decorators",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
+        "//programl/util/py:runfiles_path",
+        "//third_party/py/absl",
         "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
         "//third_party/py/numpy",
-    ],
-)
-
-py_test(
-    name = "inst2vec_encoder_test",
-    srcs = ["inst2vec_encoder_test.py"],
-    deps = [
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
-        "//programl/test/py/plugins:llvm_program_graph",
-        "//third_party/py/labm8",
     ],
 )
 

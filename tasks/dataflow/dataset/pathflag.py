@@ -21,9 +21,9 @@ I hope you're having a nice day. :-)
 """
 import pathlib
 
-from labm8.py import app
+from absl import flags
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "path",
     str(pathlib.Path("~/programl/dataflow").expanduser()),
     "The dataset directory.",

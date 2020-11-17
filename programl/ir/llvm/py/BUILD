@@ -20,7 +20,6 @@ load(
     "//third_party/pybind11_bazel:build_defs.bzl",
     "pybind_extension",
 )
-load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
 
 py_library(
     name = "llvm",
@@ -30,19 +29,8 @@ py_library(
     deps = [
         "//programl/proto:program_graph_options_py",
         "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
-    ],
-)
-
-py_test(
-    name = "llvm_test",
-    srcs = ["llvm_test.py"],
-    deps = [
-        ":llvm",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_options_py",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//programl/util/py:runfiles_path",
+        "//third_party/py/absl",
     ],
 )
 

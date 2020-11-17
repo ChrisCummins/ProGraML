@@ -23,13 +23,13 @@ import random
 import time
 from typing import List, Tuple
 
-from labm8.py import app, decorators, labtypes, pbutil, progress
+from absl import decorators, flags, labtypes, pbutil, progress
 
 from programl.ir.llvm.inst2vec_encoder import Inst2vecEncoder
 from programl.proto import ir_pb2, program_graph_pb2
-from programl.task.dataflow.dataset import pathflag
+from tasks.dataflow.dataset import pathflag
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 @decorators.timeout(seconds=60)
@@ -110,10 +110,12 @@ class Inst2vecEncodeGraphs(progress.Progress):
         self.ctx.i = self.ctx.n
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     path = pathlib.Path(pathflag.path())
     progress.Run(Inst2vecEncodeGraphs(path))
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)
