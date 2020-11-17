@@ -1,0 +1,3 @@
+-r programl/requirements.txt
+-r requirements.pre_commit.txt
+-r tasks/requirements.txt
