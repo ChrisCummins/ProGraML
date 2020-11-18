@@ -17,7 +17,9 @@
 import csv
 import pathlib
 
-from absl import flags, humanize
+from absl import logging
+
+from programl.util.py import humanize
 
 
 def LoadVocabulary(
@@ -39,14 +41,15 @@ def LoadVocabulary(
             cumfreq = float(cumfreq)
             vocab[text] = i
             if cumfreq >= target_cumfreq:
-                app.Log(2, "Reached target cumulative frequency: %.3f", target_cumfreq)
+                logging.debug(
+                    "Reached target cumulative frequency: %.3f", target_cumfreq
+                )
                 break
             if max_items and i >= max_items - 1:
-                app.Log(2, "Reached max vocab size: %d", max_items)
+                logging.debug("Reached max vocab size: %d", max_items)
                 break
 
-    app.Log(
-        1,
+    logging.info(
         "Selected %s-element vocabulary achieving %.2f%% node text coverage",
         humanize.Commas(len(vocab)),
         cumfreq * 100,

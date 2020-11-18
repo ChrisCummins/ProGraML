@@ -18,7 +18,7 @@ from typing import Dict, Optional
 
 import numpy as np
 import tensorflow as tf
-from absl import flags
+from absl import flags, logging
 
 from programl.graph.format.py import graph_serializer
 from programl.models.base_batch_builder import BaseBatchBuilder
@@ -166,7 +166,7 @@ class DataflowLstmBatchBuilder(BaseBatchBuilder):
             )
             targets_1hot[np.arange(targets.size), targets] = 1
         except IndexError:
-            app.Log(2, "Encoding error")
+            logging.debug("Encoding error")
             return
 
         self.graph_node_sizes.append(len(node_list))

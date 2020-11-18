@@ -15,6 +15,7 @@
 # limitations under the License.
 """Export LLVM-IR from legacy database."""
 import codecs
+import itertools
 import multiprocessing
 import os
 import pathlib
@@ -23,11 +24,13 @@ import random
 import shutil
 import subprocess
 
-from absl import bazelutil, flags, labtypes, pbutil, progress
+from absl import flags, logging
 from MySQLdb import _mysql
 
 from programl.ir.llvm.py import llvm
 from programl.proto import ir_pb2
+from programl.util.py import pbutil, progress
+from programl.util.py.runfiles_path import runfiles_path
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.dataset.encode_inst2vec import Inst2vecEncodeGraphs
 
@@ -126,6 +129,21 @@ def _ProcessRows(job) -> int:
     return len(rows)
 
 
+def chunkify(iterable, chunk_size: int):
+    """Split an iterable into chunks of a given size.
+    Args:
+      iterable: The iterable to split into chunks.
+      chunk_size: The size of the chunks to return.
+    Returns:
+      An iterator over chunks of the input iterable.
+    """
+    i = iter(iterable)
+    piece = list(itertools.islice(i, chunk_size))
+    while piece:
+        yield piece
+        piece = list(itertools.islice(i, chunk_size))
+
+
 class ImportIrDatabase(progress.Progress):
     """Export non-POJ104 IRs from MySQL database.
 
@@ -182,9 +200,7 @@ OFFSET {j}
                 ]
                 # Update the exported file counter.
                 n += len(rows)
-                jobs = [
-                    (self.path, chunk) for chunk in labtypes.Chunkify(rows, job_size)
-                ]
+                jobs = [(self.path, chunk) for chunk in chunkify(rows, job_size)]
 
                 for exported_count in pool.imap_unordered(_ProcessRows, jobs):
                     self.ctx.i += exported_count
@@ -225,7 +241,7 @@ class CopyPoj104Symlinks(progress.Progress):
 
 
 def ImportClassifyAppDataset(classifyapp: pathlib.Path, path: pathlib.Path):
-    app.Log(1, "Copying files from classifyapp dataset")
+    logging.info("Copying files from classifyapp dataset")
     progress.Run(CopyPoj104Dir(path, classifyapp, "ir"))
     progress.Run(CopyPoj104Dir(path, classifyapp, "graphs"))
     progress.Run(CopyPoj104Symlinks(path, classifyapp, "train"))
@@ -234,7 +250,7 @@ def ImportClassifyAppDataset(classifyapp: pathlib.Path, path: pathlib.Path):
     # classifyapp uses IrList protocol buffers to store multiple IRs in a single
     # file, whereas for dataflow we require one IR per file. Unpack the IrLists
     # and delete them.
-    app.Log(1, "Unpacking IrList protos")
+    logging.info("Unpacking IrList protos")
     subprocess.check_call([str(UNPACK_IR_LISTS), "--path", str(path)])
 
 
@@ -259,13 +275,13 @@ def main(argv):
     ImportClassifyAppDataset(pathlib.Path(FLAGS.classifyapp), path)
 
     # Add inst2vec encoding features to graphs.
-    app.Log(1, "Encoding graphs with inst2vec")
+    logging.info("Encoding graphs with inst2vec")
     progress.Run(Inst2vecEncodeGraphs(path))
 
-    app.Log(1, "Creating vocabularies")
+    logging.info("Creating vocabularies")
     subprocess.check_call([str(CREATE_VOCAB), "--path", str(path)])
 
-    app.Log(1, "Creating data flow analysis labels")
+    logging.info("Creating data flow analysis labels")
     subprocess.check_call([str(CREATE_LABELS), str(path)])
 
 

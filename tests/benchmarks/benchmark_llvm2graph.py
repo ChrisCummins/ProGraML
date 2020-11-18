@@ -18,7 +18,9 @@ import subprocess
 import time
 
 import numpy as np
-from absl import bazelutil, flags, viz
+from absl import app, flags
+
+from programl.util.py.runfiles_path import runfiles_path
 
 flags.DEFINE_float(
     "min_benchmark_time",
@@ -29,6 +31,21 @@ FLAGS = flags.FLAGS
 
 LLVM_IR = runfiles_path("programl/tests/data/llvm_ir")
 LLVM2GRAPH = runfiles_path("programl/programl/cmd/llvm2graph")
+
+
+def SummarizeFloats(floats, nplaces: int = 2, unit: str = "") -> str:
+    """Summarize a sequence of floats."""
+    arr = np.array(list(floats), dtype=np.float32)
+    percs = " ".join(
+        [
+            f"{p}%={np.percentile(arr, p):.{nplaces}f}{unit}"
+            for p in [0, 50, 95, 99, 100]
+        ]
+    )
+    return (
+        f"n={len(arr)}, mean={arr.mean():.{nplaces}f}{unit}, stdev={arr.std():.{nplaces}f}{unit}, "
+        f"percentiles=[{percs}]"
+    )
 
 
 def main(argv):
@@ -46,7 +63,7 @@ def main(argv):
             runtimes.append(time.time() - file_start_time)
     runtimes_ms = np.array(runtimes) * 1000
     print("Runtimes for llvm2graph on test LLVM-IR files:")
-    print(viz.SummarizeFloats(runtimes_ms, unit="ms"))
+    print(SummarizeFloats(runtimes_ms, unit="ms"))
 
 
 if __name__ == "__main__":

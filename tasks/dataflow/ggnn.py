@@ -19,12 +19,13 @@ import time
 from typing import Dict, List, Optional
 
 import numpy as np
-from absl import flags, humanize, pbutil
+from absl import logging
 
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
+from programl.util.py import humanize, pbutil
 from tasks.dataflow import dataflow
 from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 from tasks.dataflow.graph_loader import DataflowGraphLoader
@@ -134,8 +135,7 @@ def TrainDataflowGGNN(
         model.Initialize()
         start_epoch_step, start_graph_cumsum = 1, 0
 
-    app.Log(
-        1,
+    logging.info(
         "GGNN has %s training params",
         humanize.Commas(model.trainable_parameter_count),
     )
@@ -211,7 +211,7 @@ def TrainDataflowGGNN(
 
         epoch_path = log_dir / "epochs" / f"{epoch_step:03d}.EpochList.pbtxt"
         pbutil.ToFile(epoch, epoch_path)
-        app.Log(1, "Wrote %s", epoch_path)
+        logging.info("Wrote %s", epoch_path)
 
         checkpoint_path = log_dir / "checkpoints" / f"{epoch_step:03d}.Checkpoint.pb"
         pbutil.ToFile(model.SaveCheckpoint(), checkpoint_path)
@@ -280,4 +280,4 @@ def TestDataflowGGNN(
 
     epoch_path = log_dir / "epochs" / "TEST.EpochList.pbtxt"
     pbutil.ToFile(epoch, epoch_path)
-    app.Log(1, "Wrote %s", epoch_path)
+    logging.info("Wrote %s", epoch_path)

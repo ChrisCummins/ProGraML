@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A module for encoding LLVM-IR program graphs using inst2vec."""
+import itertools
 import multiprocessing
 import pathlib
 import pickle

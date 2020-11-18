@@ -32,14 +32,6 @@ CSV format can be exported using --fmt=csv:
 
   $ export-ml-logs --path=~/programl/dataflow/ml/logs/foo@20:05:16T12:53:42 \\
       --fmt=csv > stats.csv
-
-Alternatively the summary can be uploaded to Google Sheets using:
-
-  $ export-ml-logs --path=~/programl/dataflow/ml/logs/foo@20:05:16T12:53:42 \\
-      --google_sheet='My Spreadsheet' \\
-      --worksheet='reachability' \\
-      --google_sheets_credentials=/tmp/credentials.json \\
-      --google_sheets_default_share_with=joe@example.com
 """
 import pathlib
 import subprocess
@@ -47,23 +39,17 @@ import sys
 from typing import Optional
 
 import pandas as pd
-from absl import flags, google_sheets, humanize, pbutil, pdutil, prof
+from absl import app, flags, logging
+from tabulate import tabulate
 
 from programl.proto import epoch_pb2
+from programl.util.py import pbutil, progress
 
 flags.DEFINE_input_path(
     "path",
     pathlib.Path("~/programl/dataflow").expanduser(),
     "The dataset directory root.",
     is_dir=True,
-)
-flags.DEFINE_string(
-    "google_sheet",
-    None,
-    "The name of a Google Sheets spreadsheet to export tables to. If it does "
-    "not exist, the spreadsheet is created and shared with "
-    "--google_sheets_default_share_with. See --google_sheets_credentials for "
-    "setting the credentials required to use the Google Sheets API.",
 )
 flags.DEFINE_string("fmt", "txt", "Stdout format.")
 flags.DEFINE_string("worksheet", "Sheet1", "The name of the worksheet to export to")
@@ -199,7 +185,7 @@ def LogsToDataFrame(path: pathlib.Path) -> Optional[pd.DataFrame]:
 
     dfs = []
     for logdir in logdirs:
-        app.Log(2, "%s", logdir)
+        logging.debug("%s", logdir)
         logdir = pathlib.Path(logdir)
         epochs = ReadEpochLogs(logdir)
         if epochs is None:
@@ -222,34 +208,21 @@ def LogsToDataFrame(path: pathlib.Path) -> Optional[pd.DataFrame]:
 def main(argv):
     if len(argv) != 1:
         raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+
     path = FLAGS.path
     fmt = FLAGS.fmt
-    spreadsheet_name = FLAGS.google_sheet
-    worksheet_name = FLAGS.worksheet
 
-    with prof.Profile("loading logs"):
+    with progress.Profile("loading logs"):
         df = LogsToDataFrame(path)
 
     if df is None:
         print("No logs found", file=sys.stderr)
         sys.exit(1)
 
-    if spreadsheet_name:
-        gsheets = google_sheets.GoogleSheets.FromFlagsOrDie()
-        spreadsheet = gsheets.GetOrCreateSpreadsheet(spreadsheet_name)
-        worksheet = gsheets.GetOrCreateWorksheet(spreadsheet, worksheet_name)
-        gsheets.ExportDataFrame(worksheet, df, index=False)
-        app.Log(
-            1,
-            f"Exported %s rows to Google Sheet to %s:%s",
-            humanize.Commas(len(df)),
-            spreadsheet_name,
-            worksheet_name,
-        )
-    elif fmt == "csv":
+    if fmt == "csv":
         df.to_csv(sys.stdout, header=True)
     elif fmt == "txt":
-        print(pdutil.FormatDataFrameAsAsciiTable(df))
+        print(tabulate(df, headers="keys", tablefmt="psql", showindex="never"))
     else:
         raise app.UsageError(f"Unknown --fmt: {fmt}")
 

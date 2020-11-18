@@ -15,11 +15,11 @@
 # limitations under the License.
 """A gated graph neural network classifier."""
 import typing
-from typing import Dict, Tuple
+from typing import Dict
 
 import numpy as np
 import torch
-from absl import flags
+from absl import flags, logging
 from labm8.py.progress import NullContext, ProgressContext
 from torch import nn
 
@@ -454,8 +454,7 @@ class Ggnn(Model):
                 if self.model.scheduler is not None:
                     old_learning_rate = self.model.learning_rate
                     self.model.scheduler.step()
-                    app.Log(
-                        1,
+                    logging.info(
                         "LR Scheduler step. New learning rate is %s (was %s)",
                         self.model.learning_rate,
                         old_learning_rate,
@@ -502,11 +501,11 @@ def GetUnrollSteps(
         max_data_flow_steps = max(
             graph.data_flow_steps for graph in batch.model_data.graphs
         )
-        app.Log(3, "Determined max data flow steps to be %d", max_data_flow_steps)
+        logging.debug("Determined max data flow steps to be %d", max_data_flow_steps)
         return max_data_flow_steps
     elif unroll_strategy == "edge_count":
         max_edge_count = max(graph.edge_count for graph in batch.model_data.graphs)
-        app.Log(3, "Determined max edge count to be %d", max_edge_count)
+        logging.debug("Determined max edge count to be %d", max_edge_count)
         return max_edge_count
     elif unroll_strategy == "label_convergence":
         return 0

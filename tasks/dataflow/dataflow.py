@@ -21,10 +21,11 @@ import time
 import warnings
 from typing import Tuple
 
-from absl import flags, pbutil
+from absl import flags, logging
 from sklearn.exceptions import UndefinedMetricWarning
 
 from programl.proto import checkpoint_pb2, epoch_pb2
+from programl.util.py import pbutil
 
 flags.DEFINE_string(
     "path",
@@ -140,8 +141,7 @@ def SelectTestCheckpoint(
         log_dir / "checkpoints" / f"{best_epoch_num:03d}.Checkpoint.pb",
         checkpoint_pb2.Checkpoint(),
     )
-    app.Log(
-        1,
+    logging.info(
         "Selected best checkpoint %d with val F1 score %.3f",
         epoch.epoch[0].epoch_num,
         epoch.epoch[0].val_results.mean_f1,
@@ -173,8 +173,7 @@ def SelectTrainingCheckpoint(
         log_dir / "checkpoints" / f"{epoch_num:03d}.Checkpoint.pb",
         checkpoint_pb2.Checkpoint(),
     )
-    app.Log(
-        1,
+    logging.info(
         "Resuming training from checkpoint %d with val F1 score %.3f",
         epoch.epoch[0].epoch_num,
         epoch.epoch[0].val_results.mean_f1,
@@ -202,7 +201,7 @@ def CreateLoggingDirectories(
         raise OSError(
             f"Logs directory already exists. Refusing to overwrite: {log_dir}"
         )
-    app.Log(1, "Writing logs to %s", log_dir)
+    logging.info("Writing logs to %s", log_dir)
     log_dir.mkdir(parents=True)
     (log_dir / "epochs").mkdir()
     (log_dir / "checkpoints").mkdir()

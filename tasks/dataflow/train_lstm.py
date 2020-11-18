@@ -23,12 +23,13 @@ import time
 from typing import Dict
 
 import numpy as np
-from absl import flags, gpu_scheduler, humanize, pbutil
+from absl import flags, logging
 
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
+from programl.util.py import humanize, pbutil
 from tasks.dataflow import dataflow
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
@@ -198,7 +199,7 @@ def TrainDataflowLSTM(
 
         epoch_path = log_dir / "epochs" / f"{epoch_step:03d}.EpochList.pbtxt"
         pbutil.ToFile(epoch, epoch_path)
-        app.Log(1, "Wrote %s", epoch_path)
+        logging.info("Wrote %s", epoch_path)
 
         checkpoint_path = log_dir / "checkpoints" / f"{epoch_step:03d}.Checkpoint.pb"
         pbutil.ToFile(model.SaveCheckpoint(), checkpoint_path)
@@ -254,7 +255,7 @@ def TestDataflowLSTM(
 
     epoch_path = log_dir / "epochs" / "TEST.EpochList.pbtxt"
     pbutil.ToFile(epoch, epoch_path)
-    app.Log(1, "Wrote %s", epoch_path)
+    logging.info("Wrote %s", epoch_path)
 
 
 def main(argv):
@@ -262,8 +263,6 @@ def main(argv):
         raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
     path = pathlib.Path(FLAGS.path)
-
-    gpu_scheduler.LockExclusiveProcessGpuAccess()
 
     with vocabulary.VocabularyZipFile.CreateFromPublishedResults() as inst2vec:
         vocab = inst2vec.dictionary

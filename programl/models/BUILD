@@ -22,6 +22,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":base_batch_builder",
+        "//programl/util/py:humanize",
         "//third_party/py/absl",
     ],
 )

@@ -41,6 +41,9 @@ py_binary(
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:ir_py",
         "//third_party/py/absl",
+        "//programl/util/py:runfiles_path",
+        "//programl/util/py:progress",
+        "//programl/util/py:pbutil",
         # "//third_party/py/mysql",
     ],
 )

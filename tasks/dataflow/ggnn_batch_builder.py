@@ -98,7 +98,7 @@ class DataflowGgnnBatchBuilder(BaseBatchBuilder):
                 for n in node_list
             ]
         except IndexError:
-            app.Log(2, "Encoding error")
+            logging.debug("Encoding error")
             return
 
         self.builder.AddProgramGraph(graph)

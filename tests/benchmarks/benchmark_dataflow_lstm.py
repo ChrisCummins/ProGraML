@@ -21,12 +21,13 @@ import sys
 import tempfile
 import warnings
 
-from absl import bazelutil, flags, ppar, prof
+from absl import agg, bazelutil, flags, ppar, prof
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
+from programl.util.py import progress
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from tests.plugins import llvm_program_graph, llvm_reachability_features
@@ -112,7 +113,7 @@ def main(argv):
         Print("=== BENCHMARK 1: Loading graphs from filesystem ===")
         graph_loader = GraphLoader(path)
         graphs = ppar.ThreadedIterator(graph_loader, max_queue_size=100)
-        with prof.Profile("Benchmark graph loader"):
+        with progress.Profile("Benchmark graph loader"):
             for _ in tqdm(graphs, unit=" graphs"):
                 pass
 
@@ -121,7 +122,7 @@ def main(argv):
         batches = BatchBuilder(model, GraphLoader(path), Vocab())
         batches = ppar.ThreadedIterator(batches, max_queue_size=100)
         cached_batches = []
-        with prof.Profile("Benchmark batch construction"):
+        with progress.Profile("Benchmark batch construction"):
             for batch in tqdm(batches, unit=" batches"):
                 cached_batches.append(batch)
 
@@ -130,7 +131,7 @@ def main(argv):
 
         model.model.summary()
 
-        with prof.Profile("Benchmark training (prebuilt batches)"):
+        with progress.Profile("Benchmark training (prebuilt batches)"):
             model.RunBatches(
                 epoch_pb2.TRAIN,
                 cached_batches[: FLAGS.train_batch_count],
@@ -139,7 +140,7 @@ def main(argv):
                     b.graph_count for b in cached_batches[: FLAGS.train_batch_count]
                 ),
             )
-        with prof.Profile("Benchmark training"):
+        with progress.Profile("Benchmark training"):
             model.RunBatches(
                 epoch_pb2.TRAIN,
                 BatchBuilder(
@@ -156,7 +157,7 @@ def main(argv):
         )
         model.Initialize()
 
-        with prof.Profile("Benchmark inference (prebuilt batches)"):
+        with progress.Profile("Benchmark inference (prebuilt batches)"):
             model.RunBatches(
                 epoch_pb2.TEST,
                 cached_batches[: FLAGS.test_batch_count],
@@ -165,7 +166,7 @@ def main(argv):
                     b.graph_count for b in cached_batches[: FLAGS.test_batch_count]
                 ),
             )
-        with prof.Profile("Benchmark inference"):
+        with progress.Profile("Benchmark inference"):
             model.RunBatches(
                 epoch_pb2.TEST,
                 BatchBuilder(model, GraphLoader(path), Vocab(), FLAGS.test_batch_count),

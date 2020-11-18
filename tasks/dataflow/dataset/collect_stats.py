@@ -17,7 +17,7 @@
 import csv
 import pathlib
 
-from absl import flags
+from absl import flags, logging
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
 from programl.util.py import pbutil, progress
@@ -142,7 +142,7 @@ def main(argv):
     if FLAGS.graphs:
         with open(path / "graph_stats.csv", "w") as f:
             writer = csv.writer(f, delimiter=",")
-            app.Log(1, "Aggregating graph stats")
+            logging.info("Aggregating graph stats")
             progress.Run(CollectGraphStats(path, "test", writer, write_header=True))
             progress.Run(CollectGraphStats(path, "val", writer, write_header=True))
             progress.Run(CollectGraphStats(path, "train", writer, write_header=True))
@@ -150,7 +150,7 @@ def main(argv):
     with open(path / "label_stats.csv", "w") as f:
         writer = csv.writer(f, delimiter=",")
         for i, analysis in enumerate(FLAGS.analysis):
-            app.Log(1, "Aggregating %s stats", analysis)
+            logging.info("Aggregating %s stats", analysis)
             progress.Run(
                 CollectAnalysisStats(path, analysis, writer, write_header=not i)
             )

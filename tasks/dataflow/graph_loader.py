@@ -24,11 +24,12 @@ import threading
 from queue import Queue
 from typing import Iterable, Tuple
 
-from absl import flags, humanize, pbutil
+from absl import flags, logging
 
 from programl.graph.format.py import cdfg
 from programl.models import base_graph_loader
 from programl.proto import epoch_pb2, program_graph_features_pb2, program_graph_pb2
+from programl.util.py import humanize, pbutil
 
 flags.DEFINE_integer(
     "max_graph_node_count",
@@ -116,8 +117,8 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
     def _Worker(self):
         """Threaded graph reader."""
         graph_files = list(self.graph_path.iterdir())
-        app.Log(
-            2, "Enumerated %s graph files to load", humanize.Commas(len(graph_files))
+        logging.info(
+            "Enumerated %s graph files to load", humanize.Commas(len(graph_files))
         )
 
         graph_count = 0
@@ -161,7 +162,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
 
                 # Read the graph from disk, maybe performing a cheeky wee conversion
                 # to CDFG format.
-                app.Log(3, "Read %s", features_path)
+                logging.debug("Read %s", features_path)
                 if self.use_cdfg:
                     graph = cdfg.FromProgramGraphFile(graph_path)
                 else:
@@ -170,14 +171,13 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
                     )
 
                 if not graph:
-                    app.Log(2, "Failed to load graph %s", graph_path)
+                    logging.debug("Failed to load graph %s", graph_path)
                     self._excluded_graph_files.add(graph_path)
                     continue
 
                 # Skip empty graphs.
                 if not len(graph.node) or len(graph.node) > FLAGS.max_graph_node_count:
-                    app.Log(
-                        2,
+                    logging.debug(
                         "Graph node count %s is not in range (1,%s]",
                         len(graph.node),
                         FLAGS.max_graph_node_count,
@@ -189,7 +189,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
                 if self.require_inst2vec and not len(
                     graph.features.feature["inst2vec_annotated"].int64_list.value
                 ):
-                    app.Log(2, "Skipping graph without inst2vec annotations")
+                    logging.debug("Skipping graph without inst2vec annotations")
                     continue
 
                 features_list = pbutil.FromFile(
@@ -205,8 +205,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
                     step_count = step_count_feature[0] if len(step_count_feature) else 0
                     if self.data_flow_step_max and step_count > self.data_flow_step_max:
                         self.skip_count += 1
-                        app.Log(
-                            3,
+                        logging.debug(
                             "Skipped graph with data_flow_step_count %d > %d "
                             "(skipped %d / %d, %.2f%%)",
                             step_count,
@@ -222,7 +221,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
                     self._outq.put((graph, features), block=True)
                     skipped_all_features = False
                     if self.max_graph_count and graph_count >= self.max_graph_count:
-                        app.Log(2, "Stopping after reading %d graphs", graph_count)
+                        logging.debug("Stopping after reading %d graphs", graph_count)
                         self._Done(graph_count)
                         return
 
@@ -233,8 +232,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
 
     def _Done(self, graph_count: int) -> None:
         if self._excluded_graph_files:
-            app.Log(
-                2,
+            logging.debug(
                 "Graph loader loaded %s graphs. %s files were ignored",
                 humanize.Commas(graph_count),
                 humanize.Commas(len(self._excluded_graph_files)),

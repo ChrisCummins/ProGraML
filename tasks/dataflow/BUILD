@@ -28,7 +28,8 @@ py_library(
         "//programl/models/ggnn",
         "//programl/proto:checkpoint_py",
         "//programl/proto:epoch_py",
-        "//third_party/py/absl",
+        "//programl/util/py:humanize",
+        "//programl/util/py:pbutil",
         "//third_party/py/numpy",
     ],
 )
@@ -58,6 +59,7 @@ py_library(
         "//programl/models/ggnn",
         "//programl/proto:checkpoint_py",
         "//programl/proto:epoch_py",
+        "//programl/util/py:pbutil",
         "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
@@ -68,6 +70,8 @@ py_binary(
     srcs = ["export_logs.py"],
     deps = [
         "//programl/proto:epoch_py",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
         "//third_party/py/absl",
         "//third_party/py/pandas",
     ],
@@ -104,6 +108,8 @@ py_library(
         "//programl/proto:epoch_py",
         "//programl/proto:program_graph_features_py",
         "//programl/proto:program_graph_py",
+        "//programl/util/py:humanize",
+        "//programl/util/py:pbutil",
         "//third_party/py/absl",
     ],
 )
@@ -173,6 +179,8 @@ py_binary(
         "//programl/models:epoch_batch_iterator",
         "//programl/models/lstm",
         "//programl/proto:epoch_py",
+        "//programl/util/py:humanize",
+        "//programl/util/py:pbutil",
         "//third_party/py/absl",
         "//third_party/py/ncc:vocabulary",
         "//third_party/py/numpy",
@@ -183,6 +191,7 @@ py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
     deps = [
+        "//programl/util/py:humanize",
         "//third_party/py/absl",
     ],
 )

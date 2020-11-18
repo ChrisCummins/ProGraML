@@ -23,6 +23,12 @@ py_library(
 )
 
 py_library(
+    name = "humanize",
+    srcs = ["humanize.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "pbutil",
     srcs = ["pbutil.py"],
     visibility = ["//visibility:public"],
