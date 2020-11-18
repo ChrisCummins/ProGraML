@@ -68,6 +68,19 @@ tf_repositories()
 # === End ProGraML dependencies ===
 
 pip3_import(
+    name = "tasks_requirements",
+    timeout = 3600,
+    requirements = "@programl//:tasks/requirements.txt",
+)
+
+load(
+    "@tasks_requirements//:requirements.bzl",
+    tasks_pip_install = "pip_install",
+)
+
+tasks_pip_install()
+
+pip3_import(
     name = "tests_requirements",
     timeout = 3600,
     requirements = "@programl//:tests/requirements.txt",
