@@ -16,11 +16,6 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest]
                 python: [3.6, 3.7, 3.8]
-        # TODO(github.com/ChrisCummins/ProGraML/issues/76): TensorFlow install
-        # fails on Ubuntu 20.04 using Python 3.8.
-                exclude:
-                    - os: ubuntu-latest
-                      python: 3.8
 
         steps:
             - uses: actions/checkout@v2
@@ -48,8 +43,7 @@ jobs:
 
             - name: 'macOS: Install system dependencies'
               run: |
-                  brew install freetype pkg-config bazelisk mysql-client coreutils findutils gnu-sed zlib
-                  echo "::add-path::/usr/local/opt/mysql-client/bin"
+                  brew install freetype pkg-config bazelisk coreutils findutils gnu-sed zlib
               if: matrix.os == 'macos-latest'
 
             - name: Set up Python ${{ matrix.python }}
@@ -62,7 +56,7 @@ jobs:
                   python3 -m pip install --upgrade pip
                   grep numpy programl/requirements.txt | xargs python3 -m pip install
                   python3 -m pip install setuptools
-                  echo "::add-path::/home/runner/.local/bin"
+                  echo /home/runner/.local/bin >> $GITHUB_PATH
 
             - name: whoami
               run: ./tools/whoami.sh
@@ -74,7 +68,7 @@ jobs:
               run: |
                   mkdir "${GITHUB_WORKSPACE}/install"
                   bazel run --config=ci //:install "${GITHUB_WORKSPACE}/install"
-                  echo "::add-path::${GITHUB_WORKSPACE}/install/bin"
+                  echo "${GITHUB_WORKSPACE}/install/bin" >> $GITHUB_PATH
                   echo "::set-env name=LD_LIBRARY_PATH::${GITHUB_WORKSPACE}/install/lib"
 
             - name: Test installed binaries
