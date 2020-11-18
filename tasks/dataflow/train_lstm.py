@@ -23,7 +23,7 @@ import time
 from typing import Dict
 
 import numpy as np
-from absl import flags, logging
+from absl import app, flags, logging
 
 from programl.models.async_batch_builder import AsyncBatchBuilder
 from programl.models.epoch_batch_iterator import EpochBatchIterator

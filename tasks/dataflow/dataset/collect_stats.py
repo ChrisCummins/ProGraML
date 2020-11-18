@@ -17,7 +17,7 @@
 import csv
 import pathlib
 
-from absl import flags, logging
+from absl import app, flags, logging
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
 from programl.util.py import pbutil, progress
