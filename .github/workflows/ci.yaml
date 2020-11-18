@@ -60,7 +60,7 @@ jobs:
             - name: Install python dependencies
               run: |
                   python3 -m pip install --upgrade pip
-                  grep numpy requirements.txt | xargs python3 -m pip install
+                  grep numpy programl/requirements.txt | xargs python3 -m pip install
                   python3 -m pip install setuptools
                   echo "::add-path::/home/runner/.local/bin"
 
@@ -68,7 +68,7 @@ jobs:
               run: ./tools/whoami.sh
 
             - name: Test
-              run: bazel query --config=ci 'tests(//...) except attr("tags", "notravis", //...)' | xargs bazel test --config=ci
+              run: xargs bazel test --config=ci //...
 
             - name: Install
               run: |
