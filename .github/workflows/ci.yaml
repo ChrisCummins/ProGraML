@@ -69,7 +69,7 @@ jobs:
                   mkdir "${GITHUB_WORKSPACE}/install"
                   bazel run --config=ci //:install "${GITHUB_WORKSPACE}/install"
                   echo "${GITHUB_WORKSPACE}/install/bin" >> $GITHUB_PATH
-                  echo "::set-env name=LD_LIBRARY_PATH::${GITHUB_WORKSPACE}/install/lib"
+                  echo "LD_LIBRARY_PATH::${GITHUB_WORKSPACE}/install/lib" >> $GITHUB_ENV
 
             - name: Test installed binaries
               run: |
