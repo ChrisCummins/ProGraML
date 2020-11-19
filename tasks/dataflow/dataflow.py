@@ -95,9 +95,9 @@ def RecordExperimentalSetup(log_dir: Path) -> None:
       log_dir: The path to write the files in.
     """
     with open(log_dir / "flags.txt", "w") as f:
-        f.write(app.FlagsToString())
+        f.write(FLAGS.flags_into_string())
     with open(log_dir / "build_info.json", "w") as f:
-        json.dump(app.ToJson(), f, sort_keys=True, indent=2, separators=(",", ": "))
+        json.dump({}, f, sort_keys=True, indent=2, separators=(",", ": "))
 
 
 def PatchWarnings():

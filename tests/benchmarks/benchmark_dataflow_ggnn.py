@@ -33,7 +33,7 @@ from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tests.plugins import llvm_program_graph, llvm_reachability_features
 
-flags.DEFINE_integer("graph_count", 500, "The number of graphs to load.")
+flags.DEFINE_integer("graph_count", 250, "The number of graphs to load.")
 flags.DEFINE_integer("batch_size", 200, "The size of batches.")
 flags.DEFINE_integer(
     "train_batch_count", 3, "The number of batches for testing model training"
@@ -148,14 +148,13 @@ def main(argv):
                 for batch in tqdm(batches, unit=" batches"):
                     cached_cdfg_batches.append(batch)
 
-        with benchmark("Model init"):
-            model = Ggnn(
-                vocabulary=Vocab(),
-                node_y_dimensionality=2,
-                graph_y_dimensionality=0,
-                graph_x_dimensionality=0,
-                use_selector_embeddings=True,
-            )
+        model = Ggnn(
+            vocabulary=Vocab(),
+            node_y_dimensionality=2,
+            graph_y_dimensionality=0,
+            graph_x_dimensionality=0,
+            use_selector_embeddings=True,
+        )
 
         with benchmark("Training (prebuilt batches)"):
             model.RunBatches(

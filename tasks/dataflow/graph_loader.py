@@ -144,8 +144,10 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
             random.Random(self.seed).shuffle(graph_files)
 
             for graph_path in graph_files:
+                # Master thread requested a stop.
                 if self._stopped:
-                    break
+                    self._Done(graph_count)
+                    return
 
                 stem = graph_path.name[: -len("ProgramGraph.pb")]
                 name = f"{stem}ProgramGraphFeaturesList.pb"
