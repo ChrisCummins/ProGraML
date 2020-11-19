@@ -19,6 +19,7 @@ import os
 import pathlib
 import tempfile
 import warnings
+from time import time
 
 from absl import app, flags, logging
 from sklearn.exceptions import UndefinedMetricWarning
@@ -26,7 +27,7 @@ from tqdm import tqdm
 
 from programl.models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
-from programl.util.py import progress
+from programl.util.py import humanize, progress
 from programl.util.py.threaded_iterator import ThreadedIterator
 from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 from tasks.dataflow.graph_loader import DataflowGraphLoader
@@ -88,9 +89,21 @@ def Vocab():
     return {"": 0}
 
 
-def Print(msg):
+_benchmark_num = 0
+
+
+@contextlib.contextmanager
+def benchmark(name):
+    global _benchmark_num
+    _benchmark_num += 1
+    start_time = time()
     print()
-    print(msg, flush=True)
+    print(f">>> BENCHMARK {_benchmark_num}: {name}", flush=True)
+    yield
+    print(
+        f"<<< BENCHMARK {_benchmark_num} completed in {humanize.Duration(time() - start_time)}",
+        flush=True,
+    )
 
 
 def main(argv):
@@ -102,52 +115,49 @@ def main(argv):
     warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 
     with data_directory() as path:
-        Print("=== BENCHMARK 1: Loading graphs from filesystem ===")
-        graph_loader = make_graph_loader(path)
-        graphs = ThreadedIterator(graph_loader, max_queue_size=100)
-        with progress.Profile("Benchmark graph loader"):
-            for _ in tqdm(graphs, unit=" graphs"):
-                pass
-        logging.info("Skip count: %s", graph_loader.skip_count)
+        with benchmark("Loading graphs from filesystem"):
+            graph_loader = make_graph_loader(path)
+            graphs = ThreadedIterator(graph_loader, max_queue_size=100)
+            with progress.Profile("Benchmark graph loader"):
+                for _ in tqdm(graphs, unit=" graphs"):
+                    pass
+            logging.info("Skip count: %s", graph_loader.skip_count)
 
-        Print(
-            "=== BENCHMARK 1: Loading graphs from filesystem and converting to CDFG ==="
-        )
-        graph_loader = make_graph_loader(path, use_cdfg=True)
-        graphs = ThreadedIterator(graph_loader, max_queue_size=100)
-        with progress.Profile("Benchmark CDFG graph loader"):
-            for _ in tqdm(graphs, unit=" graphs"):
-                pass
-        logging.info("Skip count: %s", graph_loader.skip_count)
+        with benchmark("Loading graphs from filesystem and converting to CDFG"):
+            graph_loader = make_graph_loader(path, use_cdfg=True)
+            graphs = ThreadedIterator(graph_loader, max_queue_size=100)
+            with progress.Profile("Benchmark CDFG graph loader"):
+                for _ in tqdm(graphs, unit=" graphs"):
+                    pass
+            logging.info("Skip count: %s", graph_loader.skip_count)
 
-        Print("=== BENCHMARK 2: Batch construction ===")
-        batches = make_batch_builder(make_graph_loader(path), Vocab())
-        batches = ThreadedIterator(batches, max_queue_size=100)
-        cached_batches = []
-        with progress.Profile("Benchmark batch construction"):
+        with benchmark("Batch construction"):
+            batches = make_batch_builder(make_graph_loader(path), Vocab())
+            batches = ThreadedIterator(batches, max_queue_size=100)
+            cached_batches = []
             for batch in tqdm(batches, unit=" batches"):
                 cached_batches.append(batch)
 
-        Print("=== BENCHMARK 2: CDFG batch construction ===")
-        batches = make_batch_builder(
-            make_graph_loader(path, use_cdfg=True), Vocab(), use_cdfg=True
-        )
-        batches = ThreadedIterator(batches, max_queue_size=100)
-        cached_batches = []
-        with progress.Profile("Benchmark batch construction"):
-            for batch in tqdm(batches, unit=" batches"):
-                cached_batches.append(batch)
+        with benchmark("CDFG batch construction"):
+            batches = make_batch_builder(
+                make_graph_loader(path, use_cdfg=True), Vocab(), use_cdfg=True
+            )
+            batches = ThreadedIterator(batches, max_queue_size=100)
+            cached_cdfg_batches = []
+            with progress.Profile("Benchmark batch construction"):
+                for batch in tqdm(batches, unit=" batches"):
+                    cached_cdfg_batches.append(batch)
 
-        Print("=== BENCHMARK 3: Model training ===")
-        model = Ggnn(
-            vocabulary=Vocab(),
-            node_y_dimensionality=2,
-            graph_y_dimensionality=0,
-            graph_x_dimensionality=0,
-            use_selector_embeddings=True,
-        )
+        with benchmark("Model init"):
+            model = Ggnn(
+                vocabulary=Vocab(),
+                node_y_dimensionality=2,
+                graph_y_dimensionality=0,
+                graph_x_dimensionality=0,
+                use_selector_embeddings=True,
+            )
 
-        with progress.Profile("Benchmark training (prebuilt batches)"):
+        with benchmark("Training (prebuilt batches)"):
             model.RunBatches(
                 epoch_pb2.TRAIN,
                 cached_batches[: FLAGS.train_batch_count],
@@ -156,7 +166,8 @@ def main(argv):
                     b.graph_count for b in cached_batches[: FLAGS.train_batch_count]
                 ),
             )
-        with progress.Profile("Benchmark training"):
+
+        with benchmark("Training"):
             model.RunBatches(
                 epoch_pb2.TRAIN,
                 make_batch_builder(
@@ -165,7 +176,6 @@ def main(argv):
                 log_prefix="Train",
             )
 
-        Print("=== BENCHMARK 4: Model inference ===")
         model = Ggnn(
             vocabulary=Vocab(),
             test_only=True,
@@ -175,7 +185,7 @@ def main(argv):
             use_selector_embeddings=True,
         )
 
-        with progress.Profile("Benchmark inference (prebuilt batches)"):
+        with benchmark("Inference (prebuilt batches)"):
             model.RunBatches(
                 epoch_pb2.TEST,
                 cached_batches[: FLAGS.test_batch_count],
@@ -184,7 +194,7 @@ def main(argv):
                     b.graph_count for b in cached_batches[: FLAGS.test_batch_count]
                 ),
             )
-        with progress.Profile("Benchmark inference"):
+        with benchmark("Inference"):
             model.RunBatches(
                 epoch_pb2.TEST,
                 make_batch_builder(

@@ -38,6 +38,7 @@ py_test(
     deps = [
         "//programl/models/ggnn",
         "//programl/proto:programl_py",
+        "//programl/util/py:humanize",
         "//programl/util/py:progress",
         "//programl/util/py:threaded_iterator",
         "//tasks/dataflow:ggnn_batch_builder",
