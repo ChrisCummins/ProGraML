@@ -117,7 +117,7 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
     def _Worker(self):
         """Threaded graph reader."""
         graph_files = list(self.graph_path.iterdir())
-        logging.info(
+        logging.debug(
             "Enumerated %s graph files to load", humanize.Commas(len(graph_files))
         )
 

@@ -42,8 +42,8 @@ py_library(
     srcs = ["progress.py"],
     visibility = ["//visibility:public"],
     deps = [
+        ":humanize",
         "//third_party/py/absl",
-        "//third_party/py/humanize",
         "//third_party/py/tqdm",
     ],
 )
@@ -76,4 +76,10 @@ py_library(
         "//third_party/py/absl",
         "//third_party/py/protobuf",
     ],
+)
+
+py_library(
+    name = "threaded_iterator",
+    srcs = ["threaded_iterator.py"],
+    visibility = ["//visibility:public"],
 )

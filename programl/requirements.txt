@@ -1,7 +1,6 @@
 absl-py==0.11.0
 decorator==4.3.0
 grpcio==1.33.2
-humanize==3.1.0
 joblib>=0.16.0  # Needed by scikit-learn
 networkx>=2.4
 numpy==1.19.3

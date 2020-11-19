@@ -19,7 +19,6 @@ import multiprocessing
 import pathlib
 import pickle
 import random
-import sys
 import time
 from typing import Any, Iterable, List, Optional, Tuple
 
@@ -28,14 +27,7 @@ import numpy as np
 from programl.proto import node_pb2, program_graph_pb2
 from programl.util.py import decorators, pbutil, progress
 from programl.util.py.runfiles_path import runfiles_path
-
-# NOTE(cec): Workaround to prevent third_party package name shadowing from
-# labm8.third_party.
-sys.path.insert(0, str(runfiles_path("programl")))
 from third_party.py.ncc.inst2vec import inst2vec_preprocess
-
-del sys.path[0]
-
 
 DICTIONARY = runfiles_path(
     "programl/programl/ir/llvm/internal/inst2vec_augmented_dictionary.pickle"

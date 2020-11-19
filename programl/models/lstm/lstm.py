@@ -21,13 +21,13 @@ from typing import Any, Dict, List
 import numpy as np
 import tensorflow as tf
 from absl import flags
-from labm8.py.progress import NullContext, ProgressContext
 
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
 from programl.models.lstm.lstm_batch import LstmBatchData
 from programl.models.model import Model
 from programl.proto import epoch_pb2
+from programl.util.py.progress import NullContext, ProgressContext
 
 FLAGS = flags.FLAGS
 

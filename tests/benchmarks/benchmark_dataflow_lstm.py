@@ -17,28 +17,21 @@
 import contextlib
 import os
 import pathlib
-import sys
 import tempfile
 import warnings
 
-from absl import agg, bazelutil, flags, ppar, prof
+from absl import agg, flags
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
 from programl.util.py import progress
+from programl.util.py.threaded_iterator import ThreadedIterator
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from tests.plugins import llvm_program_graph, llvm_reachability_features
-
-# NOTE(cec): Workaround to prevent third_party package name shadowing from
-# labm8.
-sys.path.insert(0, str(runfiles_path("programl")))
 from third_party.py.ncc import vocabulary
-
-del sys.path[0]
-
 
 flags.DEFINE_integer("graph_count", None, "The number of graphs to load.")
 flags.DEFINE_integer("batch_count", None, "The number of batches.")
@@ -97,8 +90,7 @@ def Vocab():
 
 def Print(msg):
     print()
-    print(msg)
-    sys.stdout.flush()
+    print(msg, flush=True)
 
 
 def main(argv):
@@ -112,7 +104,7 @@ def main(argv):
     with data_directory() as path:
         Print("=== BENCHMARK 1: Loading graphs from filesystem ===")
         graph_loader = GraphLoader(path)
-        graphs = ppar.ThreadedIterator(graph_loader, max_queue_size=100)
+        graphs = ThreadedIterator(graph_loader, max_queue_size=100)
         with progress.Profile("Benchmark graph loader"):
             for _ in tqdm(graphs, unit=" graphs"):
                 pass
@@ -120,7 +112,7 @@ def main(argv):
         Print("=== BENCHMARK 2: Batch construction ===")
         model = Lstm(vocabulary=Vocab(), node_y_dimensionality=2)
         batches = BatchBuilder(model, GraphLoader(path), Vocab())
-        batches = ppar.ThreadedIterator(batches, max_queue_size=100)
+        batches = ThreadedIterator(batches, max_queue_size=100)
         cached_batches = []
         with progress.Profile("Benchmark batch construction"):
             for batch in tqdm(batches, unit=" batches"):

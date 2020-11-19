@@ -21,9 +21,10 @@ import typing
 from contextlib import contextmanager
 from typing import Callable, Optional, Union
 
-import humanize
 import tqdm
 from absl import flags, logging
+
+from programl.util.py import humanize
 
 FLAGS = flags.FLAGS
 

@@ -20,7 +20,6 @@ from typing import Dict
 import numpy as np
 import torch
 from absl import flags, logging
-from labm8.py.progress import NullContext, ProgressContext
 from torch import nn
 
 from programl.graph.format.py.graph_tuple import GraphTuple
@@ -35,6 +34,7 @@ from programl.models.ggnn.node_embeddings import NodeEmbeddings
 from programl.models.ggnn.readout import Readout
 from programl.models.model import Model
 from programl.proto import epoch_pb2
+from programl.util.py.progress import NullContext, ProgressContext
 
 FLAGS = flags.FLAGS
 

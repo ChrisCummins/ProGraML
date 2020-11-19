@@ -17,12 +17,8 @@
 import contextlib
 import os
 import pathlib
-import queue
-import sys
 import tempfile
-import threading
 import warnings
-from typing import Any, NamedTuple
 
 from absl import app, flags, logging
 from sklearn.exceptions import UndefinedMetricWarning
@@ -31,12 +27,13 @@ from tqdm import tqdm
 from programl.models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
 from programl.util.py import progress
+from programl.util.py.threaded_iterator import ThreadedIterator
 from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tests.plugins import llvm_program_graph, llvm_reachability_features
 
-flags.DEFINE_integer("graph_count", None, "The number of graphs to load.")
-flags.DEFINE_integer("batch_size", 10000, "The size of batches.")
+flags.DEFINE_integer("graph_count", 500, "The number of graphs to load.")
+flags.DEFINE_integer("batch_size", 200, "The size of batches.")
 flags.DEFINE_integer(
     "train_batch_count", 3, "The number of batches for testing model training"
 )
@@ -44,63 +41,6 @@ flags.DEFINE_integer(
     "test_batch_count", 3, "The number of batches for testing model training"
 )
 FLAGS = flags.FLAGS
-
-
-class ThreadedIterator:
-    """An iterator that computes its elements in a parallel thread to be ready to
-    be consumed.
-    Exceptions raised by the threaded iterator are propagated to consumer.
-    """
-
-    def __init__(
-        self,
-        iterator,
-        max_queue_size: int = 2,
-        start: bool = True,
-    ):
-        self._queue = queue.Queue(maxsize=max_queue_size)
-        self._thread = threading.Thread(target=lambda: self.worker(iterator))
-        if start:
-            self.Start()
-
-    def Start(self):
-        self._thread.start()
-
-    def worker(self, iterator):
-        try:
-            for element in iterator:
-                self._queue.put(self._ValueOrError(value=element), block=True)
-        except Exception as e:
-            # Propagate an error in the iterator.
-            self._queue.put(self._ValueOrError(error=e))
-        # Mark that the iterator is done.
-        self._queue.put(self._EndOfIterator(), block=True)
-
-    def __iter__(self):
-        next_element = self._queue.get(block=True)
-        while not isinstance(next_element, self._EndOfIterator):
-            value = next_element.GetOrRaise()
-            yield value
-            next_element = self._queue.get(block=True)
-        self._thread.join()
-
-    class _EndOfIterator(object):
-        """Tombstone marker object for iterators."""
-
-        pass
-
-    class _ValueOrError(NamedTuple):
-        """A tuple which represents the union of either a value or an error."""
-
-        value: Any = None
-        error: Exception = None
-
-        def GetOrRaise(self) -> Any:
-            """Return the value or raise the exception."""
-            if self.error is None:
-                return self.value
-            else:
-                raise self.error
 
 
 @contextlib.contextmanager
@@ -120,7 +60,7 @@ def data_directory() -> pathlib.Path:
         yield d
 
 
-def GraphLoader(path, use_cdfg: bool = False):
+def make_graph_loader(path, use_cdfg: bool = False):
     return DataflowGraphLoader(
         path=path,
         epoch_type=epoch_pb2.TRAIN,
@@ -132,7 +72,9 @@ def GraphLoader(path, use_cdfg: bool = False):
     )
 
 
-def BatchBuilder(graph_loader, vocab, max_batch_count=None, use_cdfg: bool = False):
+def make_batch_builder(
+    graph_loader, vocab, max_batch_count=None, use_cdfg: bool = False
+):
     return DataflowGgnnBatchBuilder(
         graph_loader=graph_loader,
         vocabulary=vocab,
@@ -148,8 +90,7 @@ def Vocab():
 
 def Print(msg):
     print()
-    print(msg)
-    sys.stdout.flush()
+    print(msg, flush=True)
 
 
 def main(argv):
@@ -162,7 +103,7 @@ def main(argv):
 
     with data_directory() as path:
         Print("=== BENCHMARK 1: Loading graphs from filesystem ===")
-        graph_loader = GraphLoader(path)
+        graph_loader = make_graph_loader(path)
         graphs = ThreadedIterator(graph_loader, max_queue_size=100)
         with progress.Profile("Benchmark graph loader"):
             for _ in tqdm(graphs, unit=" graphs"):
@@ -172,7 +113,7 @@ def main(argv):
         Print(
             "=== BENCHMARK 1: Loading graphs from filesystem and converting to CDFG ==="
         )
-        graph_loader = GraphLoader(path, use_cdfg=True)
+        graph_loader = make_graph_loader(path, use_cdfg=True)
         graphs = ThreadedIterator(graph_loader, max_queue_size=100)
         with progress.Profile("Benchmark CDFG graph loader"):
             for _ in tqdm(graphs, unit=" graphs"):
@@ -180,7 +121,7 @@ def main(argv):
         logging.info("Skip count: %s", graph_loader.skip_count)
 
         Print("=== BENCHMARK 2: Batch construction ===")
-        batches = BatchBuilder(GraphLoader(path), Vocab())
+        batches = make_batch_builder(make_graph_loader(path), Vocab())
         batches = ThreadedIterator(batches, max_queue_size=100)
         cached_batches = []
         with progress.Profile("Benchmark batch construction"):
@@ -188,7 +129,9 @@ def main(argv):
                 cached_batches.append(batch)
 
         Print("=== BENCHMARK 2: CDFG batch construction ===")
-        batches = BatchBuilder(GraphLoader(path, use_cdfg=True), Vocab(), use_cdfg=True)
+        batches = make_batch_builder(
+            make_graph_loader(path, use_cdfg=True), Vocab(), use_cdfg=True
+        )
         batches = ThreadedIterator(batches, max_queue_size=100)
         cached_batches = []
         with progress.Profile("Benchmark batch construction"):
@@ -216,7 +159,9 @@ def main(argv):
         with progress.Profile("Benchmark training"):
             model.RunBatches(
                 epoch_pb2.TRAIN,
-                BatchBuilder(GraphLoader(path), Vocab(), FLAGS.train_batch_count),
+                make_batch_builder(
+                    make_graph_loader(path), Vocab(), FLAGS.train_batch_count
+                ),
                 log_prefix="Train",
             )
 
@@ -242,7 +187,9 @@ def main(argv):
         with progress.Profile("Benchmark inference"):
             model.RunBatches(
                 epoch_pb2.TEST,
-                BatchBuilder(GraphLoader(path), Vocab(), FLAGS.test_batch_count),
+                make_batch_builder(
+                    make_graph_loader(path), Vocab(), FLAGS.test_batch_count
+                ),
                 log_prefix="Val",
             )
 

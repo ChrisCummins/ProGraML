@@ -17,7 +17,7 @@
 from typing import Optional
 
 import torch
-from absl import flags, gpu_scheduler
+from absl import flags
 from torch import nn, optim
 
 from programl.models.ggnn.aux_readout import AuxiliaryReadout
@@ -59,7 +59,7 @@ class GGNNModel(nn.Module):
         if FLAGS.block_gpu:
             self.dev = (
                 torch.device("cuda")
-                if gpu_scheduler.LockExclusiveProcessGpuAccess()
+                if torch.cuda.is_available()
                 else torch.device("cpu")
             )
         else:

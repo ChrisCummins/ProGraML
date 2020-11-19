@@ -17,12 +17,11 @@
 import pickle
 from typing import Any, Dict, Iterable
 
-from labm8.py.progress import NullContext, ProgressContext
-
 from programl.models.batch_data import BatchData
 from programl.models.batch_results import BatchResults
 from programl.models.rolling_results_builder import RollingResultsBuilder
 from programl.proto import checkpoint_pb2, epoch_pb2
+from programl.util.py.progress import NullContext, ProgressContext
 
 
 class Model(object):

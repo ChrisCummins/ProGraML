@@ -79,6 +79,7 @@ py_library(
         "//programl/models:batch_results",
         "//programl/models:rolling_results_builder",
         "//programl/proto:programl_py",
+        "//programl/util/py:progress",
         "//third_party/py/absl",
     ],
 )
