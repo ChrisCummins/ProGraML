@@ -90,12 +90,22 @@ def programl_deps():
   )
 
   http_archive(
-    name="build_stack_rules_proto",
-    sha256 = "d456a22a6a8d577499440e8408fc64396486291b570963f7b157f775be11823e",
-    strip_prefix="rules_proto-b2913e6340bcbffb46793045ecac928dcf1b34a5",
-    urls=[
-      "https://github.com/stackb/rules_proto/archive/b2913e6340bcbffb46793045ecac928dcf1b34a5.tar.gz"
-    ],
+      name = "rules_proto",
+      sha256 = "8e7d59a5b12b233be5652e3d29f42fba01c7cbab09f6b3a8d0a57ed6d1e9a0da",
+      strip_prefix = "rules_proto-7e4afce6fe62dbff0a4a03450143146f9f2d7488",
+      urls = [
+          "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/7e4afce6fe62dbff0a4a03450143146f9f2d7488.tar.gz",
+          "https://github.com/bazelbuild/rules_proto/archive/7e4afce6fe62dbff0a4a03450143146f9f2d7488.tar.gz",
+      ],
+  )
+
+  http_archive(
+      name = "com_github_grpc_grpc",
+      sha256 = "7e287b23cede28770bba58581a1d5683fd619fb748c4c2df8fcc3363957b1127",
+      strip_prefix = "grpc-014a2a0d54849fff795efbcb96b18416cbd7e189",
+      urls = [
+          "https://github.com/grpc/grpc/archive/014a2a0d54849fff795efbcb96b18416cbd7e189.tar.gz",
+      ],
   )
 
   http_archive(

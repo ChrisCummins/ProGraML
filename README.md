@@ -264,9 +264,9 @@ http_archive(
     urls=["https://github.com/ChrisCummins/ProGraML/archive/<stable-commit>.tar.gz"],
 )
 
-# === Begin ProGraML dependencies ===
+# ----------------- Begin ProGraML dependencies -----------------
 <WORKSPACE dependencies>
-# === End ProGraML dependencies ===
+# ----------------- End ProGraML dependencies -----------------
 ```
 
 Where `<WORKSPACE dependencies>` is the block of delimited code in

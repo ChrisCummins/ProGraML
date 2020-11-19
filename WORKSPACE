@@ -1,31 +1,36 @@
 workspace(name = "programl")
 
-# === Begin ProGraML dependencies ===
+# ----------------- Begin ProGraML dependencies -----------------
 load("@programl//tools:bzl/deps.bzl", "programl_deps")
 
 programl_deps()
 
-# Boost.
+# === Boost ===
+
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 
 boost_deps()
 
-# Python config. Needed by pybind11_bazel.
+# === Python config. Needed by pybind11_bazel. ===
+
 load("@programl//third_party/py:python_configure.bzl", programl_python_configure = "python_configure")
 
 programl_python_configure(name = "local_config_python")
 
-# LLVM.
+# === LLVM ===
+
 load("@llvm//tools/bzl:deps.bzl", "llvm_deps")
 
 llvm_deps()
 
-# Bats.
+# === Bats ===
+
 load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
 
 bats_deps()
 
-# Python requirements.
+# === Python requirements ===
+
 load(
     "@rules_python//python:pip.bzl",
     "pip3_import",
@@ -33,6 +38,8 @@ load(
 )
 
 pip_repositories()
+
+# //programl:requirements.txt
 
 pip3_import(
     name = "programl_requirements",
@@ -47,25 +54,33 @@ load(
 
 programl_pip_install()
 
-# Protobuf.
-pip3_import(
-    name = "protobuf_py_deps",
-    timeout = 3600,
-    requirements = "@build_stack_rules_proto//python/requirements:protobuf.txt",
-)
+# === Protocol buffers ===
 
-load(
-    "@protobuf_py_deps//:requirements.bzl",
-    protobuf_pip_install = "pip_install",
-)
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
-protobuf_pip_install()
+rules_proto_dependencies()
 
-# Tensorflow.
+rules_proto_toolchains()
+
+# === GRPC ===
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
+
+grpc_extra_deps()
+
+# === Tensorflow ===
+
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
 
 tf_repositories()
-# === End ProGraML dependencies ===
+
+# ----------------- End ProGraML dependencies -----------------
+
+# //tasks:requirements.txt
 
 pip3_import(
     name = "tasks_requirements",
@@ -79,6 +94,8 @@ load(
 )
 
 tasks_pip_install()
+
+# //tests:requirements.txt
 
 pip3_import(
     name = "tests_requirements",

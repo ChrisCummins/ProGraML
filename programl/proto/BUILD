@@ -16,10 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load(
-    "@build_stack_rules_proto//python:python_proto_library.bzl",
-    "python_proto_library",
-)
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_proto_library")
+load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 
 proto_library(
     name = "checkpoint",
@@ -27,7 +26,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "checkpoint_py",
     visibility = ["//visibility:public"],
     deps = [":checkpoint"],
@@ -46,7 +45,7 @@ proto_library(
     deps = [":features"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "edge_py",
     visibility = ["//visibility:public"],
     deps = [":edge"],
@@ -64,7 +63,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "epoch_py",
     visibility = ["//visibility:public"],
     deps = [":epoch"],
@@ -76,7 +75,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "features_py",
     visibility = ["//visibility:public"],
     deps = [":features"],
@@ -95,7 +94,7 @@ proto_library(
     deps = [":features"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "function_py",
     visibility = ["//visibility:public"],
     deps = [":function"],
@@ -113,7 +112,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "ir_py",
     visibility = ["//visibility:public"],
     deps = [":ir"],
@@ -131,7 +130,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "program_graph_options_py",
     visibility = ["//visibility:public"],
     deps = [":program_graph_options"],
@@ -156,7 +155,7 @@ proto_library(
     deps = [":features"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "module_py",
     visibility = ["//visibility:public"],
     deps = [":module"],
@@ -175,7 +174,7 @@ proto_library(
     deps = [":features"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "node_py",
     visibility = ["//visibility:public"],
     deps = [":node"],
@@ -200,7 +199,7 @@ proto_library(
     ],
 )
 
-python_proto_library(
+py_proto_library(
     name = "program_graph_py",
     visibility = ["//visibility:public"],
     deps = [":program_graph"],
@@ -224,7 +223,7 @@ proto_library(
     ],
 )
 
-python_proto_library(
+py_proto_library(
     name = "program_graph_features_py",
     visibility = ["//visibility:public"],
     deps = [":program_graph_features"],
@@ -242,7 +241,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "repo_py",
     visibility = ["//visibility:public"],
     deps = [":repo"],
@@ -260,7 +259,7 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "src_py",
     visibility = ["//visibility:public"],
     deps = [":src"],
