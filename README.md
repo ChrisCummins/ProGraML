@@ -226,12 +226,12 @@ export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 dataset](/Documentation/DataflowDataset.md)
 2. Install the python requirements:
 ```sh
-python -m pip install -r requirements.task.txt
+python -m pip install -r requirements.txt
 ```
 3. Train and evaluate a graph neural network model using:
 
 ```sh
-bazel run //tasks/dataflow:train_ggnn -- \
+bazel run -c opt //tasks/dataflow:train_ggnn -- \
     --analysis reachability \
     --path=$HOME/programl
 ```
