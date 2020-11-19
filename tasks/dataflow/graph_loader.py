@@ -94,9 +94,9 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
         if self._stopped:
             return
         self._stopped = True
-        # Read whatever's left in the
+        # Read whatever's left from the graph loader.
         while self._thread.is_alive():
-            if self._outq.get(block=True) is not None:
+            if self._outq.get(block=True, timeout=60) is None:
                 break
         self._thread.join()
 

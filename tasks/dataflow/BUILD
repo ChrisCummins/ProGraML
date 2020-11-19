@@ -43,7 +43,6 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/ggnn:ggnn_batch",
-        "//third_party/py/absl",
         "//third_party/py/numpy",
     ],
 )

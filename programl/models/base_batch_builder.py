@@ -81,7 +81,7 @@ class BaseBatchBuilder(object):
         while value is not None:
             yield value
             value = self._outq.get(block=True)
-        self._worker.join()
+        self._worker.join(timeout=45)
 
     def Stop(self) -> None:
         """Signal that no more batches are required, and any batch building
@@ -89,7 +89,7 @@ class BaseBatchBuilder(object):
         """
         self._stopped = True
         while self._worker.is_alive():
-            if self._outq.get(block=True) is None:
+            if self._outq.get(block=True, timeout=60) is None:
                 break
         self._worker.join()
 
