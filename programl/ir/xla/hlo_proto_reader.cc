@@ -57,7 +57,7 @@ labm8::StatusOr<::xla::HloProto> GetHloProtoFromFileOrStdin(const string& path, 
       return labm8::Status(labm8::error::Code::INVALID_ARGUMENT, "Failed to parse HloProto\n");
     }
   } else {
-    return labm8::Status(labm8::error::Code::NOT_IMPLEMENTED,
+    return labm8::Status(labm8::error::Code::UNIMPLEMENTED,
                          "Only wire format is supported");
   }
 
