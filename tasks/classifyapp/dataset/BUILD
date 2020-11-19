@@ -33,9 +33,7 @@ cc_library(
     deps = [
         "//programl/ir/llvm",
         "//programl/ir/llvm:clang",
-        "//programl/proto:ir_cc",
-        "//programl/proto:repo_cc",
-        "//programl/proto:src_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:filesystem_cache",
         "//third_party/tbb",
         "@boost//:filesystem",

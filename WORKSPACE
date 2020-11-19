@@ -72,12 +72,6 @@ load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 
 grpc_extra_deps()
 
-# === Tensorflow ===
-
-load("@org_tensorflow//tensorflow:workspace.bzl", "tf_repositories")
-
-tf_repositories()
-
 # ----------------- End ProGraML dependencies -----------------
 
 # //tasks:requirements.txt

@@ -19,9 +19,7 @@ py_test(
     srcs = ["llvm_test.py"],
     deps = [
         "//programl/ir/llvm/py:llvm",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_options_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//tests:test_main",
         "//third_party/py/absl",
         "//third_party/py/pytest",

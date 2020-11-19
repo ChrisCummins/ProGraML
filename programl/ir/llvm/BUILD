@@ -30,7 +30,7 @@ cc_library(
     }),
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:ir_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/strings:str_format",
         "@labm8//labm8/cpp:bazelutil",
         "@labm8//labm8/cpp:status",
@@ -49,8 +49,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/py:program_graph_builder",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//programl/util/py:decorators",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
@@ -69,8 +68,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm/internal:program_graph_builder_pass",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
         "@llvm//10.0.0",

@@ -27,8 +27,7 @@ cc_library(
         ":liveness",
         ":reachability",
         ":subexpressions",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
     ],
 )
@@ -38,8 +37,7 @@ cc_library(
     srcs = ["data_flow_pass.cc"],
     hdrs = ["data_flow_pass.h"],
     deps = [
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
     ],
@@ -53,8 +51,7 @@ cc_library(
     deps = [
         ":data_flow_pass",
         "//programl/graph:features",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:status",
     ],
@@ -68,8 +65,7 @@ cc_library(
     deps = [
         ":data_flow_pass",
         "//programl/graph:features",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",
@@ -86,8 +82,7 @@ cc_library(
     deps = [
         ":data_flow_pass",
         "//programl/graph:features",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",
@@ -103,8 +98,7 @@ cc_library(
     deps = [
         ":data_flow_pass",
         "//programl/graph:features",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:status",
     ],
@@ -118,8 +112,7 @@ cc_library(
     deps = [
         ":data_flow_pass",
         "//programl/graph:features",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",

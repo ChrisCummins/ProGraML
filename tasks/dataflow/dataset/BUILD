@@ -18,8 +18,7 @@ py_binary(
     name = "collect_stats",
     srcs = ["collect_stats.py"],
     deps = [
-        "//programl/proto:program_graph_features_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
@@ -39,7 +38,7 @@ py_binary(
         ":encode_inst2vec",
         ":pathflag",
         "//programl/ir/llvm/py:llvm",
-        "//programl/proto:ir_py",
+        "//programl/proto:programl_py",
         "//third_party/py/absl",
         "//programl/util/py:runfiles_path",
         "//programl/util/py:progress",
@@ -79,7 +78,7 @@ cc_binary(
     name = "create_vocab",
     srcs = ["create_vocab.cc"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@boost//:filesystem",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings:str_format",
@@ -96,8 +95,7 @@ py_binary(
     deps = [
         ":pathflag",
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:ir_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//third_party/py/absl",
     ],
 )
@@ -109,8 +107,7 @@ cc_library(
     deps = [
         "//programl/graph/analysis:dominance",
         "//programl/graph/analysis:reachability",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "//third_party/tbb",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
@@ -135,7 +132,7 @@ cc_binary(
     deps = [
         ":parallel_file_map",
         "//programl/graph/format:cdfg",
-        "//programl/proto:ir_cc",
+        "//programl/proto:programl_cc",
         "@boost//:filesystem",
         "@com_google_absl//absl/strings:str_format",
         "@labm8//labm8/cpp:app",

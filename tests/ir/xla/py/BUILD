@@ -27,7 +27,6 @@ py_test(
         "//tests:test_main",
         "//third_party/py/absl",
         "//third_party/py/pytest",
-        "@org_tensorflow//tensorflow/compiler/xla:xla_data_proto_lib_py",
-        "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto_lib_py",
+        "//third_party/tensorflow:xla_protos_py",
     ],
 )

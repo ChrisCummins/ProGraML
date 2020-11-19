@@ -24,7 +24,7 @@ py_library(
         ":lstm_batch",
         "//programl/models:batch_data",
         "//programl/models:model",
-        "//programl/proto:epoch_py",
+        "//programl/proto:programl_py",
         "//third_party/py/absl",
         "//third_party/py/numpy",
     ],

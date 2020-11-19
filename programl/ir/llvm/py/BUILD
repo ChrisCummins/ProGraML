@@ -27,8 +27,7 @@ py_library(
     data = [":graph_builder_bin"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_options_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//programl/util/py:runfiles_path",
         "//third_party/py/absl",
     ],
@@ -39,8 +38,7 @@ cc_binary(
     srcs = ["graph_builder_bin.cc"],
     deps = [
         "//programl/ir/llvm",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
     ],

@@ -26,7 +26,7 @@ pybind_extension(
     srcs = ["program_graph_builder_pybind.cc"],
     deps = [
         "//programl/graph:program_graph_builder",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
     ],
 )
 
@@ -36,7 +36,6 @@ py_library(
     data = [":program_graph_builder_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_options_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
     ],
 )

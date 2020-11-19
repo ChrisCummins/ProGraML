@@ -26,7 +26,7 @@
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/hlo_module_graph_builder.h"
 #include "programl/util/stdin_fmt.h"
-#include "tensorflow/compiler/xla/service/hlo.pb.h"
+#include "third_party/tensorflow/compiler/xla/service/hlo.pb.h"
 
 static const char* usage = R"(Generate program graph from a HLO module.
 

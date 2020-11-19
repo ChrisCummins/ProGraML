@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@build_stack_rules_proto//python:python_proto_library.bzl", "python_proto_library")
+load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -3096,7 +3096,7 @@ proto_library(
     srcs = ["test_protos.proto"],
 )
 
-python_proto_library(
+py_proto_library(
     name = "test_protos_py",
     deps = [":test_protos"],
 )

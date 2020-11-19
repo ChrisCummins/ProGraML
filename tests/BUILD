@@ -41,7 +41,7 @@ cc_library(
     data = ["//tests/data:llvm_ir_graphs"],
     visibility = ["//tests:__subpackages__"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@boost//:filesystem",
         "@labm8//labm8/cpp:bazelutil",
         "@labm8//labm8/cpp:logging",

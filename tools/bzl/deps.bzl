@@ -167,15 +167,6 @@ def programl_deps():
   )
 
   http_archive(
-    name="org_tensorflow",
-    sha256="92116bfea188963a0e215e21e67c3494f6e1e6959f44dfbcc315f66eb70b5f83",
-    strip_prefix="tensorflow-f13f807c83c0d8d4d1ef290a17f26fe884ccfe2f",
-    urls=[
-      "https://github.com/ChrisCummins/tensorflow/archive/f13f807c83c0d8d4d1ef290a17f26fe884ccfe2f.tar.gz"
-    ],
-  )
-
-  http_archive(
     name="io_bazel_rules_closure",
     sha256="5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
     strip_prefix="rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",

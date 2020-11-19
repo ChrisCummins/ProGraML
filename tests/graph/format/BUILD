@@ -30,7 +30,7 @@ cc_test(
     srcs = ["graph_serializer_test.cc"],
     deps = [
         "//programl/graph/format:graph_serializer",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:test",
     ],
 )
@@ -40,8 +40,7 @@ cc_test(
     srcs = ["graph_tuple_test.cc"],
     deps = [
         "//programl/graph/format:graph_tuple",
-        "//programl/proto:edge_cc",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:test",
     ],
@@ -52,7 +51,7 @@ cc_test(
     srcs = ["graphviz_converter_test.cc"],
     deps = [
         "//programl/graph/format:graphviz_converter",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:test",
     ],
@@ -63,7 +62,7 @@ cc_test(
     srcs = ["node_link_graph_test.cc"],
     deps = [
         "//programl/graph/format:node_link_graph",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:string",
         "@labm8//labm8/cpp:test",

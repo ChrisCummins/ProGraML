@@ -29,7 +29,7 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//third_party/py/absl",
     ],
 )
@@ -40,7 +40,7 @@ py_library(
     data = [":graph_serializer_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
     ],
 )
 
@@ -49,7 +49,7 @@ pybind_extension(
     srcs = ["graph_serializer_pybind.cc"],
     deps = [
         "//programl/graph/format:graph_serializer",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:string",
     ],
@@ -70,7 +70,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_tuple",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//third_party/py/numpy",
     ],
 )
@@ -88,7 +88,7 @@ pybind_extension(
     srcs = ["node_link_graph_pybind.cc"],
     deps = [
         "//programl/graph/format:node_link_graph",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:string",
         "@nlohmann_json//:json",
@@ -102,7 +102,7 @@ py_library(
     data = [":node_link_graph_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//third_party/py/networkx",
     ],
 )

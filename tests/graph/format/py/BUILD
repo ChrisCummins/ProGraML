@@ -19,9 +19,7 @@ py_test(
     srcs = ["graph_serializer_test.py"],
     deps = [
         "//programl/graph/format/py:graph_serializer",
-        "//programl/proto:edge_py",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//tests:test_main",
     ],
 )
@@ -31,7 +29,7 @@ py_test(
     srcs = ["graph_tuple_builder_test.py"],
     deps = [
         "//programl/graph/format/py:graph_tuple_builder",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//tests:test_main",
         "//third_party/py/pytest",
     ],
@@ -42,7 +40,7 @@ py_test(
     srcs = ["nx_format_test.py"],
     deps = [
         "//programl/graph/format/py:nx_format",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//tests:test_main",
         "//third_party/py/networkx",
     ],

@@ -37,7 +37,7 @@ py_test(
 #    srcs = ["benchmark_dataflow_ggnn.py"],
 #    deps = [
 #        "//programl/models/ggnn",
-#        "//programl/proto:epoch_py",
+#        "//programl/proto:programl_py",
 #        "//programl/util/py:progress",
 #        "//tests/plugins:llvm_program_graph",
 #        "//tests/plugins:llvm_reachability_features",
@@ -54,7 +54,7 @@ py_test(
 #    srcs = ["benchmark_dataflow_lstm.py"],
 #    deps = [
 #        "//programl/models/lstm",
-#        "//programl/proto:epoch_py",
+#        "//programl/proto:programl_py",
 #        "//programl/util/py:progress",
 #        "//tests/plugins:llvm_program_graph",
 #        "//tests/plugins:llvm_reachability_features",

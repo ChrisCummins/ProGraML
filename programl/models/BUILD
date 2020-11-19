@@ -78,8 +78,7 @@ py_library(
         "//programl/models:batch_data",
         "//programl/models:batch_results",
         "//programl/models:rolling_results_builder",
-        "//programl/proto:checkpoint_py",
-        "//programl/proto:epoch_py",
+        "//programl/proto:programl_py",
         "//third_party/py/absl",
     ],
 )
@@ -91,7 +90,7 @@ py_library(
     deps = [
         ":batch_data",
         ":batch_results",
-        "//programl/proto:epoch_py",
+        "//programl/proto:programl_py",
     ],
 )
 

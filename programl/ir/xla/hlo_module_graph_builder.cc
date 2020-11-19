@@ -21,7 +21,7 @@
 #include "labm8/cpp/status_macros.h"
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/xla_stringifier.h"
-#include "tensorflow/compiler/xla/xla_data.pb.h"
+#include "third_party/tensorflow/compiler/xla/xla_data.pb.h"
 
 namespace programl {
 namespace ir {

@@ -19,7 +19,7 @@ cc_test(
     srcs = ["clang_test.cc"],
     deps = [
         "//programl/ir/llvm:clang",
-        "//programl/proto:ir_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:test",
     ],
 )
@@ -30,8 +30,7 @@ py_test(
     deps = [
         "//programl/graph/py:program_graph_builder",
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//tests:test_main",
         "//tests/plugins:llvm_program_graph",
         "//third_party/py/absl",

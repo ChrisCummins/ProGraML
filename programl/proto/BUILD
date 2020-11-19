@@ -21,246 +21,33 @@ load("@rules_cc//cc:defs.bzl", "cc_proto_library")
 load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 
 proto_library(
-    name = "checkpoint",
-    srcs = ["checkpoint.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "checkpoint_py",
-    visibility = ["//visibility:public"],
-    deps = [":checkpoint"],
-)
-
-cc_proto_library(
-    name = "checkpoint_cc",
-    visibility = ["//visibility:public"],
-    deps = [":checkpoint"],
-)
-
-proto_library(
-    name = "edge",
-    srcs = ["edge.proto"],
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-py_proto_library(
-    name = "edge_py",
-    visibility = ["//visibility:public"],
-    deps = [":edge"],
-)
-
-cc_proto_library(
-    name = "edge_cc",
-    visibility = ["//visibility:public"],
-    deps = [":edge"],
-)
-
-proto_library(
-    name = "epoch",
-    srcs = ["epoch.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "epoch_py",
-    visibility = ["//visibility:public"],
-    deps = [":epoch"],
-)
-
-proto_library(
-    name = "features",
-    srcs = ["features.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "features_py",
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-cc_proto_library(
-    name = "features_cc",
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-proto_library(
-    name = "function",
-    srcs = ["function.proto"],
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-py_proto_library(
-    name = "function_py",
-    visibility = ["//visibility:public"],
-    deps = [":function"],
-)
-
-cc_proto_library(
-    name = "function_cc",
-    visibility = ["//visibility:public"],
-    deps = [":function"],
-)
-
-proto_library(
-    name = "ir",
-    srcs = ["ir.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "ir_py",
-    visibility = ["//visibility:public"],
-    deps = [":ir"],
-)
-
-cc_proto_library(
-    name = "ir_cc",
-    visibility = ["//visibility:public"],
-    deps = [":ir"],
-)
-
-proto_library(
-    name = "program_graph_options",
-    srcs = ["program_graph_options.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "program_graph_options_py",
-    visibility = ["//visibility:public"],
-    deps = [":program_graph_options"],
-)
-
-cc_proto_library(
-    name = "program_graph_options_cc",
-    visibility = ["//visibility:public"],
-    deps = [":program_graph_options"],
-)
-
-cc_proto_library(
-    name = "src_cc",
-    visibility = ["//visibility:public"],
-    deps = [":src"],
-)
-
-proto_library(
-    name = "module",
-    srcs = ["module.proto"],
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-py_proto_library(
-    name = "module_py",
-    visibility = ["//visibility:public"],
-    deps = [":module"],
-)
-
-cc_proto_library(
-    name = "module_cc",
-    visibility = ["//visibility:public"],
-    deps = [":module"],
-)
-
-proto_library(
-    name = "node",
-    srcs = ["node.proto"],
-    visibility = ["//visibility:public"],
-    deps = [":features"],
-)
-
-py_proto_library(
-    name = "node_py",
-    visibility = ["//visibility:public"],
-    deps = [":node"],
-)
-
-cc_proto_library(
-    name = "node_cc",
-    visibility = ["//visibility:public"],
-    deps = [":node"],
-)
-
-proto_library(
-    name = "program_graph",
-    srcs = ["program_graph.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":edge",
-        ":features",
-        ":function",
-        ":module",
-        ":node",
+    name = "programl",
+    srcs = [
+        "checkpoint.proto",
+        "edge.proto",
+        "epoch.proto",
+        "features.proto",
+        "function.proto",
+        "ir.proto",
+        "module.proto",
+        "node.proto",
+        "program_graph.proto",
+        "program_graph_features.proto",
+        "program_graph_options.proto",
+        "repo.proto",
+        "src.proto",
     ],
+    visibility = ["//visibility:public"],
 )
 
 py_proto_library(
-    name = "program_graph_py",
+    name = "programl_py",
     visibility = ["//visibility:public"],
-    deps = [":program_graph"],
+    deps = [":programl"],
 )
 
 cc_proto_library(
-    name = "program_graph_cc",
+    name = "programl_cc",
     visibility = ["//visibility:public"],
-    deps = [":program_graph"],
-)
-
-proto_library(
-    name = "program_graph_features",
-    srcs = ["program_graph_features.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":edge",
-        ":features",
-        ":function",
-        ":node",
-    ],
-)
-
-py_proto_library(
-    name = "program_graph_features_py",
-    visibility = ["//visibility:public"],
-    deps = [":program_graph_features"],
-)
-
-cc_proto_library(
-    name = "program_graph_features_cc",
-    visibility = ["//visibility:public"],
-    deps = [":program_graph_features"],
-)
-
-proto_library(
-    name = "repo",
-    srcs = ["repo.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "repo_py",
-    visibility = ["//visibility:public"],
-    deps = [":repo"],
-)
-
-cc_proto_library(
-    name = "repo_cc",
-    visibility = ["//visibility:public"],
-    deps = [":repo"],
-)
-
-proto_library(
-    name = "src",
-    srcs = ["src.proto"],
-    visibility = ["//visibility:public"],
-)
-
-py_proto_library(
-    name = "src_py",
-    visibility = ["//visibility:public"],
-    deps = [":src"],
+    deps = [":programl"],
 )

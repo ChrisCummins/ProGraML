@@ -23,9 +23,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph:features",
-        "//programl/proto:edge_cc",
-        "//programl/proto:node_cc",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",
@@ -38,7 +36,7 @@ cc_library(
     hdrs = ["graph_serializer.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",
@@ -51,7 +49,7 @@ cc_library(
     hdrs = ["graph_tuple.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
     ],
 )
@@ -62,7 +60,7 @@ cc_library(
     hdrs = ["graphviz_converter.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@boost//:graph",
         "@com_google_absl//absl/container:flat_hash_map",
         "@labm8//labm8/cpp:logging",
@@ -79,7 +77,7 @@ cc_library(
     hdrs = ["node_link_graph.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
