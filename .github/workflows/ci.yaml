@@ -32,7 +32,6 @@ jobs:
                   curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
                   sudo mv bazel.tmp /usr/local/bin/bazel
                   chmod +x /usr/local/bin/bazel
-                  python -m pip install typing_requirements
               if: matrix.os == 'ubuntu-latest'
 
             - name: 'macOS: Mount bazel cache'
