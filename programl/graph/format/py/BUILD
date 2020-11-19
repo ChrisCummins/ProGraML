@@ -30,6 +30,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:programl_py",
+        "//programl/util/py:runfiles_path",
         "//third_party/py/absl",
     ],
 )

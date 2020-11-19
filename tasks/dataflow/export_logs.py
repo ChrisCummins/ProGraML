@@ -33,9 +33,9 @@ CSV format can be exported using --fmt=csv:
   $ export-ml-logs --path=~/programl/dataflow/ml/logs/foo@20:05:16T12:53:42 \\
       --fmt=csv > stats.csv
 """
-import pathlib
 import subprocess
 import sys
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -45,18 +45,17 @@ from tabulate import tabulate
 from programl.proto import epoch_pb2
 from programl.util.py import pbutil, progress
 
-flags.DEFINE_input_path(
+flags.DEFINE_str(
     "path",
-    pathlib.Path("~/programl/dataflow").expanduser(),
+    Path("~/programl/dataflow").expanduser(),
     "The dataset directory root.",
-    is_dir=True,
 )
 flags.DEFINE_string("fmt", "txt", "Stdout format.")
 flags.DEFINE_string("worksheet", "Sheet1", "The name of the worksheet to export to")
 FLAGS = flags.FLAGS
 
 
-def ReadEpochLogs(path: pathlib.Path) -> Optional[epoch_pb2.EpochList]:
+def ReadEpochLogs(path: Path) -> Optional[epoch_pb2.EpochList]:
     if not (path / "epochs").is_dir():
         return None
     epochs = []
@@ -163,7 +162,7 @@ def EpochsToDataFrame(epochs: epoch_pb2.EpochList) -> Optional[pd.DataFrame]:
     ]
 
 
-def LogsToDataFrame(path: pathlib.Path) -> Optional[pd.DataFrame]:
+def LogsToDataFrame(path: Path) -> Optional[pd.DataFrame]:
     logdirs = (
         subprocess.check_output(
             [
@@ -186,7 +185,7 @@ def LogsToDataFrame(path: pathlib.Path) -> Optional[pd.DataFrame]:
     dfs = []
     for logdir in logdirs:
         logging.debug("%s", logdir)
-        logdir = pathlib.Path(logdir)
+        logdir = Path(logdir)
         epochs = ReadEpochLogs(logdir)
         if epochs is None:
             continue
@@ -209,7 +208,7 @@ def main(argv):
     if len(argv) != 1:
         raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
 
-    path = FLAGS.path
+    path = Path(FLAGS.path)
     fmt = FLAGS.fmt
 
     with progress.Profile("loading logs"):

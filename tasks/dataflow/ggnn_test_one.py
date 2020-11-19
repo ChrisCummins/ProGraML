@@ -15,7 +15,7 @@
 # limitations under the License.
 """Run inference of a trained GGNN model on a single graph input.
 """
-import pathlib
+from pathlib import Path
 from typing import Any, Iterable
 
 import numpy as np
@@ -47,7 +47,7 @@ flags.DEFINE_integer(
     "If > 0, limit the size of the vocabulary to this number.",
 )
 flags.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
-flags.DEFINE_input_path("model", None, "The model checkpoint to restore")
+flags.DEFINE_string("model", None, "The model checkpoint to restore")
 flags.DEFINE_string(
     "input",
     None,
@@ -82,11 +82,11 @@ class SingleGraphLoader(BaseGraphLoader):
 
 
 def TestOne(
-    features_list_path: pathlib.Path,
+    features_list_path: Path,
     features_list_index: int,
-    checkpoint_path: pathlib.Path,
+    checkpoint_path: Path,
 ) -> BatchResults:
-    path = pathlib.Path(pathflag.path())
+    path = Path(pathflag.path())
 
     features_list = pbutil.FromFile(
         features_list_path,
@@ -186,9 +186,9 @@ def main(argv):
 
     features_list_path, features_list_index = FLAGS.input.split(":")
     graph = TestOne(
-        features_list_path=pathlib.Path(features_list_path),
+        features_list_path=Path(features_list_path),
         features_list_index=int(features_list_index),
-        checkpoint_path=FLAGS.model,
+        checkpoint_path=Path(FLAGS.model),
     )
     print(graph)
 

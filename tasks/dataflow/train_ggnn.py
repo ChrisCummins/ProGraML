@@ -20,7 +20,7 @@ classification targets for data flow problems.
 """
 import pathlib
 
-from absl import flags
+from absl import app, flags
 
 from tasks.dataflow import ggnn, vocabulary
 

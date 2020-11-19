@@ -16,9 +16,9 @@
 """This module defines functions for training and testing GGNN dataflow models.
 """
 import json
-import pathlib
 import time
 import warnings
+from pathlib import Path
 from typing import Tuple
 
 from absl import flags, logging
@@ -29,7 +29,7 @@ from programl.util.py import pbutil
 
 flags.DEFINE_string(
     "path",
-    str(pathlib.Path("~/programl/dataflow").expanduser()),
+    str(Path("~/programl/dataflow").expanduser()),
     "The path to read from",
 )
 flags.DEFINE_string("analysis", "reachability", "The analysis type to use.")
@@ -62,11 +62,10 @@ flags.DEFINE_list(
     ],
     "The list of cumulative training graph counts to evaluate at.",
 )
-flags.DEFINE_input_path(
+flags.DEFINE_string(
     "restore_from",
     None,
     "The log directory of a previous model run to restore",
-    is_dir=True,
 )
 flags.DEFINE_boolean("test", True, "Whether to test the model after training.")
 flags.DEFINE_boolean(
@@ -86,7 +85,7 @@ flags.DEFINE_string(
 FLAGS = flags.FLAGS
 
 
-def RecordExperimentalSetup(log_dir: pathlib.Path) -> None:
+def RecordExperimentalSetup(log_dir: Path) -> None:
     """Create flags.txt and build_info.json files.
 
     These two files record a snapshot of the configuration and build information,
@@ -113,7 +112,7 @@ def PatchWarnings():
 
 
 def SelectTestCheckpoint(
-    log_dir: pathlib.Path,
+    log_dir: Path,
 ) -> Tuple[epoch_pb2.Epoch, checkpoint_pb2.Checkpoint]:
     """Select a checkpoint to load for testing.
 
@@ -150,7 +149,7 @@ def SelectTestCheckpoint(
 
 
 def SelectTrainingCheckpoint(
-    log_dir: pathlib.Path,
+    log_dir: Path,
 ) -> Tuple[epoch_pb2.Epoch, checkpoint_pb2.Checkpoint]:
     """Select a checkpoint to load to resume training.
 
@@ -182,8 +181,8 @@ def SelectTrainingCheckpoint(
 
 
 def CreateLoggingDirectories(
-    dataset_root: pathlib.Path, model_name: str, analysis: str, run_id: str = None
-) -> pathlib.Path:
+    dataset_root: Path, model_name: str, analysis: str, run_id: str = None
+) -> Path:
     """Create the logging directories for an ML model.
 
     Args:
