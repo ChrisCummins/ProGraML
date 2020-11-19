@@ -23,7 +23,7 @@
 #include "programl/proto/src.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
-#include "third_party/tensorflow/compiler/xla/service/hlo.pb.h"
+#include "third_party/tensorflow/xla.pb.h"
 
 const char* usage = R"(Query properties of a protocol buffer.
 

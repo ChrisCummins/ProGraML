@@ -29,7 +29,7 @@ py_library(
     deps = [
         "//programl/proto:programl_py",
         "//third_party/py/networkx",
-        "//third_party/tensorflow:xla_protos_py",
+        "//third_party/tensorflow:xla_py",
     ],
 )
 
@@ -38,7 +38,7 @@ pybind_extension(
     srcs = ["xla_pybind.cc"],
     deps = [
         "//programl/ir/xla:hlo_module_graph_builder",
-        "//third_party/tensorflow:xla_protos_cc",
+        "//third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
     ],

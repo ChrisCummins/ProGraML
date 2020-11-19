@@ -16,12 +16,12 @@
 """Unit tests for //deeplearning/ml4pl/graphs/xla2graph/py:xla2graph."""
 import pytest
 from absl import flags
-from tensorflow.compiler.xla.service import hlo_pb2
 
 from programl.ir.xla.py import xla
 from programl.util.py import pbutil
 from programl.util.py.runfiles_path import runfiles_path
 from tests.test_main import main
+from third_party.tensorflow import xla_pb2
 
 FLAGS = flags.FLAGS
 
@@ -30,7 +30,7 @@ TEST_PROTO = runfiles_path("programl/tests/data/a.hlo.pb")
 
 def test_empty_proto():
     """Build from an empty proto."""
-    proto = hlo_pb2.HloProto()
+    proto = xla_pb2.HloProto()
     with pytest.raises(ValueError) as e_ctx:
         xla.BuildProgramGraphProto(proto)
 
@@ -39,7 +39,7 @@ def test_empty_proto():
 
 def test_non_empty_proto():
     """Build a graph proto from an example proto."""
-    proto = pbutil.FromFile(TEST_PROTO, hlo_pb2.HloProto())
+    proto = pbutil.FromFile(TEST_PROTO, xla_pb2.HloProto())
     graph = xla.BuildProgramGraphProto(proto)
     assert len(graph.node) == 155
     assert len(graph.function) == 5

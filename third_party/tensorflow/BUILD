@@ -9,25 +9,19 @@ licenses(["notice"])  # Apache 2.0
 exports_files(["LICENSE"])
 
 proto_library(
-    name = "xla_data",
-    srcs = ["compiler/xla/xla_data.proto"],
-)
-
-proto_library(
-    name = "xla_protos",
-    srcs = ["compiler/xla/service/hlo.proto"],
+    name = "xla",
+    srcs = ["xla.proto"],
     visibility = ["//visibility:public"],
-    deps = [":xla_data"],
 )
 
 py_proto_library(
-    name = "xla_protos_py",
+    name = "xla_py",
     visibility = ["//visibility:public"],
-    deps = [":xla_protos"],
+    deps = [":xla"],
 )
 
 cc_proto_library(
-    name = "xla_protos_cc",
+    name = "xla_cc",
     visibility = ["//visibility:public"],
-    deps = [":xla_protos"],
+    deps = [":xla"],
 )

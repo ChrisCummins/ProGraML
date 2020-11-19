@@ -4,10 +4,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def programl_deps():
   http_archive(
     name="labm8",
-    sha256="e4bc669322533e7615f689e5e8a810446d0c803be2e3b21e99a4e0135709755e",
-    strip_prefix="labm8-b98301dec615465a6567bed4ec4131753d1f8b32",
+    sha256 = "5ff95b37ab82cbe03d3bcc5f82d5b36ce73f4d58eacd07f4c96514874a61d11f",
+    strip_prefix="labm8-f02be45874a39448371b4f187c259153f6bae42a",
     urls=[
-      "https://github.com/ChrisCummins/labm8/archive/b98301dec615465a6567bed4ec4131753d1f8b32.tar.gz"
+      "https://github.com/ChrisCummins/labm8/archive/f02be45874a39448371b4f187c259153f6bae42a.tar.gz"
     ],
   )
 
@@ -30,12 +30,12 @@ def programl_deps():
   )
 
   http_archive(
-    name="rules_python",
-    sha256="64a3c26f95db470c32ad86c924b23a821cd16c3879eed732a7841779a32a60f8",
-    strip_prefix="rules_python-748aa53d7701e71101dfd15d800e100f6ff8e5d1",
-    urls=[
-      "https://github.com/bazelbuild/rules_python/archive/748aa53d7701e71101dfd15d800e100f6ff8e5d1.tar.gz"
-    ],
+      name = "rules_python",
+      sha256 = "b5668cde8bb6e3515057ef465a35ad712214962f0b3a314e551204266c7be90c",
+      strip_prefix = "rules_python-0.0.2",
+      urls = [
+          "https://github.com/bazelbuild/rules_python/releases/download/0.0.2/rules_python-0.0.2.tar.gz",
+      ],
   )
 
   http_archive(
@@ -164,14 +164,4 @@ def programl_deps():
     sha256="616f252f37d61b15037e3c2ef956905baf9c9eecfeab400cb3ad25bae714e214",
     strip_prefix="benchmark-1.4.0",
     url="https://github.com/google/benchmark/archive/v1.4.0.tar.gz",
-  )
-
-  http_archive(
-    name="io_bazel_rules_closure",
-    sha256="5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
-    strip_prefix="rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
-    urls=[
-      "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-      "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
-    ],
   )

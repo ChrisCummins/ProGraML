@@ -25,7 +25,7 @@
 #include "labm8/cpp/statusor.h"
 #include "programl/graph/program_graph_builder.h"
 #include "programl/proto/program_graph.pb.h"
-#include "third_party/tensorflow/compiler/xla/service/hlo.pb.h"
+#include "third_party/tensorflow/xla.pb.h"
 
 namespace programl {
 namespace ir {
