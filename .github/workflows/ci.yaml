@@ -32,6 +32,7 @@ jobs:
                   curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
                   sudo mv bazel.tmp /usr/local/bin/bazel
                   chmod +x /usr/local/bin/bazel
+                  python -m pip install typing_requirements
               if: matrix.os == 'ubuntu-latest'
 
             - name: 'macOS: Mount bazel cache'
@@ -54,7 +55,8 @@ jobs:
             - name: Install python dependencies
               run: |
                   python3 -m pip install --upgrade pip
-                  grep numpy programl/requirements.txt | xargs python3 -m pip install
+                  # Install python dependencies that fail with bazel pip import.
+                  grep -E '(numpy|torch)' programl/requirements.txt | xargs python3 -m pip install
                   python3 -m pip install setuptools
                   echo /home/runner/.local/bin >> $GITHUB_PATH
 

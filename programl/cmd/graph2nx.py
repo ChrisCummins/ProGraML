@@ -17,7 +17,7 @@
 import pickle
 import sys
 
-from absl import flags
+from absl import app, flags
 
 from programl.graph.format.py import nx_format
 from programl.proto import program_graph_pb2

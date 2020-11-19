@@ -455,7 +455,6 @@ def RunProcessMessage(
     # Send the input proto to the C++ worker process.
     stdout, _ = process.communicate(input_proto.SerializeToString())
 
-    # TODO: Check signal value, not hardcoded a hardcoded kill signal.
     if process.returncode == -9 or process.returncode == 9:
         raise ProtoWorkerTimeoutError(
             cmd=cmd,

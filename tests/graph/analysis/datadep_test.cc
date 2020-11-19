@@ -33,12 +33,12 @@ class DatadepAnalysisTest : public labm8::Test {
  public:
   DatadepAnalysisTest() {
     ProgramGraphBuilder builder;
-    //  A
-    //  | \
+    //  A -+
+    //  |  |
     //  v  v1
-    //  B /
-    //  | \
-    //  v  \
+    //  B -++
+    //  |   |
+    //  v   |
     //  C   v2
     //  |  /
     //  v /

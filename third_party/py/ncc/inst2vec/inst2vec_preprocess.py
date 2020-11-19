@@ -2702,9 +2702,6 @@ def CheckGraphOrDie(G, filename):
     :return: multi-edges: list of edges for which parallel edges exist
              G
     """
-    # TODO(cec): Should this raise exception or assertion? Currently it's a
-    # mixture of both.
-
     # Make sure each node has an id
     for n in sorted(list(G.nodes(data=True))):
         assert n[1], 'Node "' + n[0] + '" has no id (file ' + filename + ")"
@@ -3586,13 +3583,6 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
                         G_diff = disambiguate_stmts(G)
                         D = build_dual_graph(G_diff)  # dual-XFG
                         check_sanity(D, G)  # check the sanity of the produced graph
-                        # TODO(cec): In my unit tests, nodes in 'D' contain non-ASCII
-                        # values, which causes this text serialization to fail. For now I'm
-                        # disabling printing DXFGs, but will investigate further if the
-                        # files are deemed necessary (I think they're just for debugging).
-                        #
-                        # PrintDualXfgToFile(D, dual_graph_folder,
-                        #                    file_name)  # print data to external file
 
                         # Write dual graphs to file
                         print("Writing dual graphs to file ", dual_graphs_filename)
