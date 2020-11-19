@@ -15,6 +15,8 @@
 # limitations under the License.
 """Base class for implementing classifier models."""
 import pickle
+from queue import Empty, Queue
+from threading import Thread
 from typing import Any, Dict, Iterable
 
 from programl.models.batch_data import BatchData
@@ -22,6 +24,22 @@ from programl.models.batch_results import BatchResults
 from programl.models.rolling_results_builder import RollingResultsBuilder
 from programl.proto import checkpoint_pb2, epoch_pb2
 from programl.util.py.progress import NullContext, ProgressContext
+
+
+class BatchQueue(Thread):
+    """A thread which reads batches onto a queue. That is all it does.
+    c.f. https://youtu.be/X7HmltUWXgs
+    """
+
+    def __init__(self, batches: Iterable[BatchData], queue: Queue):
+        super().__init__()
+        self.batches = batches
+        self.queue = queue
+
+    def run(self) -> None:
+        for i, batch_data in enumerate(self.batches, start=1):
+            self.queue.put((i, batch_data))
+        self.queue.put((None, None))
 
 
 class Model(object):
@@ -86,12 +104,34 @@ class Model(object):
         self,
         epoch_type: epoch_pb2.EpochType,
         batches: Iterable[BatchData],
+        timeout: float = 60,
         **rolling_results_builder_opts,
     ) -> epoch_pb2.EpochResults:
+        # Read batches into a queue so that we can use the blocking Queue.get()
+        # to wait for a batch with a timeout. Using a timeout is useful for
+        # catching cases where a dead iterator will lead to data starvation and
+        # a non-terminating process.
+        # See <https://github.com/ChrisCummins/ProGraML/issues/140>.
+        queue = Queue(maxsize=128)
+        batches = BatchQueue(batches, queue)
+        batches.start()
+
         with RollingResultsBuilder(**rolling_results_builder_opts) as results_builder:
-            for i, batch_data in enumerate(batches):
+            while True:
+                try:
+                    i, batch_data = queue.get(timeout=timeout)
+                except Empty as e:
+                    raise ValueError(
+                        f"Model received no batches within {timeout:.1f}s timeout, "
+                        "did your batch generator die?"
+                    ) from e
+                # Done.
+                if not batch_data:
+                    break
                 batch_results = self.RunBatch(epoch_type, batch_data)
                 results_builder.AddBatch(batch_data, batch_results, weight=None)
+
+        batches.join()
         return results_builder.results.ToEpochResults()
 
     def RestoreCheckpoint(self, checkpoint: checkpoint_pb2.Checkpoint):
