@@ -104,7 +104,7 @@ class Model(object):
         self,
         epoch_type: epoch_pb2.EpochType,
         batches: Iterable[BatchData],
-        timeout: float = 60,
+        timeout: float = 600,
         **rolling_results_builder_opts,
     ) -> epoch_pb2.EpochResults:
         # Read batches into a queue so that we can use the blocking Queue.get()
