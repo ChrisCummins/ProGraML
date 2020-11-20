@@ -4,10 +4,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def programl_deps():
   http_archive(
     name="labm8",
-    sha256 = "5ff95b37ab82cbe03d3bcc5f82d5b36ce73f4d58eacd07f4c96514874a61d11f",
-    strip_prefix="labm8-f02be45874a39448371b4f187c259153f6bae42a",
+    sha256 = "d31d9e6850552967bae128dc466a378a0476bfd3c53ab05533ac1206e8f43b3e",
+    strip_prefix="labm8-913d67f4f454cedc61220a210113bbf0460bb4d5",
     urls=[
-      "https://github.com/ChrisCummins/labm8/archive/f02be45874a39448371b4f187c259153f6bae42a.tar.gz"
+      "https://github.com/ChrisCummins/labm8/archive/913d67f4f454cedc61220a210113bbf0460bb4d5.tar.gz"
     ],
   )
 
