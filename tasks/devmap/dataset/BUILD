@@ -26,5 +26,6 @@ py_binary(
         "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/pandas",
+        "//third_party/py/requests",
     ],
 )
