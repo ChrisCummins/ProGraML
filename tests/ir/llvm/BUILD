@@ -26,6 +26,7 @@ cc_test(
 
 py_test(
     name = "inst2vec_encoder_test",
+    timeout = "long",
     srcs = ["inst2vec_encoder_test.py"],
     deps = [
         "//programl/graph/py:program_graph_builder",
