@@ -11,7 +11,7 @@ Example usage:
 
 flags:
 
-programl/cmd/inst2vec.py:
+bin/inst2vec.py:
   --dataset: The path of a directory to process. When set, this changes the
     behavior to instead iterate over all *.PrographGraph.pb protocol buffer
     files in the given directory, and adding inst2vec labels in-place. For each

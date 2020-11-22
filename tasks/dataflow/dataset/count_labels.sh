@@ -42,7 +42,7 @@ f=
 set -euo pipefail
 
 # Paths to binaries.
-PBQ="$(DataPath programl/programl/cmd/pbq)"
+PBQ="$(DataPath programl/bin/pbq)"
 if [[ -f /usr/local/opt/findutils/libexec/gnubin/find ]]; then
   FIND=/usr/local/opt/findutils/libexec/gnubin/find
 else

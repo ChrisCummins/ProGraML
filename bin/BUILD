@@ -7,7 +7,7 @@
 #      it to the //:install target so that it is installed
 #      into the user path.
 #
-#   2) Run ./programl/cmd/update_docs.sh and commit any
+#   2) Run ./bin/update_docs.sh and commit any
 #      changes.
 # #####################################################
 #

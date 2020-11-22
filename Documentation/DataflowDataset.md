@@ -104,7 +104,7 @@ directory with the structure:
 
 To save disk space, most of the protocol buffers are stored in binary
 wire format, indicated by the `.pb` file extension. The
-[pbq](cmd/pbq.txt) program can used to decode binary protocol buffers
+[pbq](bin/pbq.txt) program can used to decode binary protocol buffers
 into a human-readable text format. To do so, you must specify the type
 of the message, indicated using a `.<type>.pb` suffix on the
 filename. For example, to decode the ProgramGraph protocol buffer

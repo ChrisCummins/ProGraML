@@ -18,7 +18,7 @@ py_test(
     name = "llvm2graph_strict_mode",
     srcs = ["llvm2graph_strict_mode.py"],
     data = [
-        "//programl/cmd:llvm2graph",
+        "//bin:llvm2graph",
         "//tests/data:module_with_unreachable_instructions",
     ],
     deps = [

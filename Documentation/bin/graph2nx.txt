@@ -1,7 +1,7 @@
 Convert a ProgramGraph to NetworkX.
 flags:
 
-programl/cmd/graph2nx.py:
+bin/graph2nx.py:
   --stdin_fmt: The format for stdin. One of {pb,pbtxt}
     (default: 'pbtxt')
 

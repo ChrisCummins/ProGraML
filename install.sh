@@ -29,14 +29,14 @@ f=
 set -euo pipefail
 
 BINARIES=(
-  "$(DataPath programl/programl/cmd/analyze)"
-  "$(DataPath programl/programl/cmd/clang2graph-10)"
-  "$(DataPath programl/programl/cmd/graph2cdfg)"
-  "$(DataPath programl/programl/cmd/graph2dot)"
-  "$(DataPath programl/programl/cmd/graph2json)"
-  "$(DataPath programl/programl/cmd/llvm2graph-10)"
-  "$(DataPath programl/programl/cmd/pbq)"
-  "$(DataPath programl/programl/cmd/xla2graph)"
+  "$(DataPath programl/bin/analyze)"
+  "$(DataPath programl/bin/clang2graph-10)"
+  "$(DataPath programl/bin/graph2cdfg)"
+  "$(DataPath programl/bin/graph2dot)"
+  "$(DataPath programl/bin/graph2json)"
+  "$(DataPath programl/bin/llvm2graph-10)"
+  "$(DataPath programl/bin/pbq)"
+  "$(DataPath programl/bin/xla2graph)"
 )
 
 if [[ $(uname) == Darwin ]]; then

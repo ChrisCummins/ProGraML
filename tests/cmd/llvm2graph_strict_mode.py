@@ -21,7 +21,7 @@ import pytest
 from programl.util.py.runfiles_path import runfiles_path
 from tests.test_main import main
 
-LLVM2GRAPH = runfiles_path("programl/programl/cmd/llvm2graph")
+LLVM2GRAPH = runfiles_path("programl/bin/llvm2graph")
 
 
 # This IR file contains unreachable instructions, which will be rejected if

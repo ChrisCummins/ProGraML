@@ -19,76 +19,76 @@
 genrule(
     name = "analyze",
     outs = ["analyze.txt"],
-    cmd = "$(location //programl/cmd:analyze) --helpfull > $@ || true",
-    tools = ["//programl/cmd:analyze"],
+    cmd = "$(location //bin:analyze) --helpfull > $@ || true",
+    tools = ["//bin:analyze"],
 )
 
 genrule(
     name = "clang2graph",
     outs = ["clang2graph.txt"],
-    cmd = "$(location //programl/cmd:clang2graph-latest) -help > $@ || true",
-    tools = ["//programl/cmd:clang2graph-latest"],
+    cmd = "$(location //bin:clang2graph-latest) -help > $@ || true",
+    tools = ["//bin:clang2graph-latest"],
 )
 
 genrule(
     name = "graph2cdfg",
     outs = ["graph2cdfg.txt"],
-    cmd = "$(location //programl/cmd:graph2cdfg) --helpfull > $@ || true",
-    tools = ["//programl/cmd:graph2cdfg"],
+    cmd = "$(location //bin:graph2cdfg) --helpfull > $@ || true",
+    tools = ["//bin:graph2cdfg"],
 )
 
 genrule(
     name = "graph2dot",
     outs = ["graph2dot.txt"],
-    cmd = "$(location //programl/cmd:graph2dot) --helpfull > $@ || true",
-    tools = ["//programl/cmd:graph2dot"],
+    cmd = "$(location //bin:graph2dot) --helpfull > $@ || true",
+    tools = ["//bin:graph2dot"],
 )
 
 genrule(
     name = "graph2json",
     outs = ["graph2json.txt"],
-    cmd = "$(location //programl/cmd:graph2json) --helpfull > $@ || true",
-    tools = ["//programl/cmd:graph2json"],
+    cmd = "$(location //bin:graph2json) --helpfull > $@ || true",
+    tools = ["//bin:graph2json"],
 )
 
 genrule(
     name = "graph2nx",
     outs = ["graph2nx.txt"],
-    cmd = "$(location //programl/cmd:graph2nx) --helpfull > $@ || true",
-    tools = ["//programl/cmd:graph2nx"],
+    cmd = "$(location //bin:graph2nx) --helpfull > $@ || true",
+    tools = ["//bin:graph2nx"],
 )
 
 genrule(
     name = "graph2seq",
     outs = ["graph2seq.txt"],
-    cmd = "$(location //programl/cmd:graph2seq) --helpfull > $@ || true",
-    tools = ["//programl/cmd:graph2seq"],
+    cmd = "$(location //bin:graph2seq) --helpfull > $@ || true",
+    tools = ["//bin:graph2seq"],
 )
 
 genrule(
     name = "inst2vec",
     outs = ["inst2vec.txt"],
-    cmd = "$(location //programl/cmd:inst2vec) --helpfull > $@ || true",
-    tools = ["//programl/cmd:inst2vec"],
+    cmd = "$(location //bin:inst2vec) --helpfull > $@ || true",
+    tools = ["//bin:inst2vec"],
 )
 
 genrule(
     name = "llvm2graph",
     outs = ["llvm2graph.txt"],
-    cmd = "$(location //programl/cmd:llvm2graph-latest) --helpfull > $@ || true",
-    tools = ["//programl/cmd:llvm2graph-latest"],
+    cmd = "$(location //bin:llvm2graph-latest) --helpfull > $@ || true",
+    tools = ["//bin:llvm2graph-latest"],
 )
 
 genrule(
     name = "pbq",
     outs = ["pbq.txt"],
-    cmd = "$(location //programl/cmd:pbq) --helpfull > $@ || true",
-    tools = ["//programl/cmd:pbq"],
+    cmd = "$(location //bin:pbq) --helpfull > $@ || true",
+    tools = ["//bin:pbq"],
 )
 
 genrule(
     name = "xla2graph",
     outs = ["xla2graph.txt"],
-    cmd = "$(location //programl/cmd:xla2graph) --helpfull > $@ || true",
-    tools = ["//programl/cmd:xla2graph"],
+    cmd = "$(location //bin:xla2graph) --helpfull > $@ || true",
+    tools = ["//bin:xla2graph"],
 )

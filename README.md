@@ -97,8 +97,8 @@ Key features are:
 * **Portability:** ProGraML is derived from compiler IRs, making it independent
   of the source language (e.g. we have trained models to reason across five
   different source languages at a time). It is easy to target new IRs (we
-  currently support [LLVM](/Documentation/cmd/llvm2graph.txt) and
-  [XLA](/Documentation/cmd/xla2graph.txt)).
+  currently support [LLVM](/Documentation/bin/llvm2graph.txt) and
+  [XLA](/Documentation/bin/xla2graph.txt)).
 * **Extensibility:** Features and labels can easily be added at the
   whole-program level, per-instruction level, or for individual relations.
 
@@ -157,8 +157,8 @@ function (the `switch`). The `external` node is used to represent a call from an
 external site.
 
 The process described above can be run locally using our
-[`clang2graph`](/Documentation/cmd/clang2graph.txt) and
-[`graph2dot`](/Documentation/cmd/graph2dot.txt) tools: `clang
+[`clang2graph`](/Documentation/bin/clang2graph.txt) and
+[`graph2dot`](/Documentation/bin/graph2dot.txt) tools: `clang
 clang2graph -O3 fib.c | graph2dot`
 
 
@@ -200,7 +200,7 @@ $ bazel test //...
 ### Command-line tools
 
 In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
-using [command-line tools](/Documentation/cmd) which act as filters,
+using [command-line tools](/Documentation/bin) which act as filters,
 reading in graphs from stdin and emitting graphs to stdout. The structure for
 graphs is described through a series of [protocol
 buffers](/Documentation/ProtocolBuffers.md).
