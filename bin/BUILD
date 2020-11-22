@@ -32,6 +32,7 @@ cc_binary(
     srcs = ["analyze.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/analysis",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -71,6 +72,7 @@ cc_binary(
     srcs = ["graph2cdfg.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:cdfg",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -84,6 +86,7 @@ cc_binary(
     srcs = ["graph2dot.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:graphviz_converter",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -96,6 +99,7 @@ cc_binary(
     srcs = ["graph2json.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:node_link_graph",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -120,6 +124,7 @@ cc_binary(
     srcs = ["graph2seq.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:graph_serializer",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -154,6 +159,7 @@ cc_binary(
     copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/ir/llvm",
         "//programl/proto:programl_cc",
         "//programl/util:stdout_fmt",
@@ -170,6 +176,7 @@ cc_binary(
     srcs = ["pbq.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
@@ -184,6 +191,7 @@ cc_binary(
     srcs = ["xla2graph.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/ir/xla:hlo_module_graph_builder",
         "//programl/util:stdin_fmt",
         "//third_party/tensorflow:xla_cc",

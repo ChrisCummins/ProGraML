@@ -18,6 +18,7 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
 const char* usage = R"(Serialize the instruction nodes in a program graph.
 
@@ -29,6 +30,7 @@ Read a ProgramGraph message from stdin and print a serialized list
 of instruction node indices to stdout.)";
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
 
   programl::ProgramGraph graph;

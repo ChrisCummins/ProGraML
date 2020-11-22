@@ -26,6 +26,7 @@
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/hlo_module_graph_builder.h"
 #include "programl/util/stdin_fmt.h"
+#include "programl/version.h"
 #include "third_party/tensorflow/xla.pb.h"
 
 static const char* usage = R"(Generate program graph from a HLO module.
@@ -73,6 +74,7 @@ void ParseInputOrDie(const string& filename, ProtocolBuffer* message) {
 }
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
   if (argc > 2) {
     std::cerr << usage;

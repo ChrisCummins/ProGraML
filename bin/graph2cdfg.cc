@@ -18,6 +18,7 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
 const char* usage =
     R"(Convert a ProgramGraph message to a Control and Data Flow Graph (CDFG).
@@ -34,6 +35,7 @@ between defining instructions and users. The format is described in:
   Representations for Deep Learning Models of Code. CC.)";
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
   if (argc != 1) {
     std::cerr << usage;

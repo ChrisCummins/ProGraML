@@ -24,6 +24,7 @@
 #include "programl/proto/program_graph_features.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
 using labm8::Status;
 namespace error = labm8::error;
@@ -35,6 +36,7 @@ Usage:
     analyze <analysis> < /path/to/program_graph.pb)";
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
 
   if (argc != 2) {

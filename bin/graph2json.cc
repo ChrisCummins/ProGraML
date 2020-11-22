@@ -19,6 +19,7 @@
 #include "programl/graph/format/node_link_graph.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
+#include "programl/version.h"
 
 const char* usage = R"(Convert a ProgramGraph message to JSON node link graph.
 
@@ -32,6 +33,7 @@ using json = nlohmann::json;
 using labm8::Status;
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
   if (argc != 1) {
     std::cerr << usage;
