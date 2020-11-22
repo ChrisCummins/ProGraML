@@ -54,8 +54,16 @@ main() {
   set -u
 
   local prefix=${1:-~/.local/opt/programl}
+  local version="$(cat $(DataPath programl/version.txt))"
   mkdir -p "$prefix/bin" "$prefix/lib"
 
+  # Create README and LICENSE files.
+  cat <<EOF > "$prefix/README"
+ProGraML $version <http://github.com/ChrisCummins/ProGraML>
+EOF
+  cp "$(DataPath programl/LICENSE)" "$prefix/LICENSE"
+
+  # Copy the binaries.
   echo "Installing ProGraML command line tools ..."
   echo
   for bin in "${BINARIES[@]}"; do

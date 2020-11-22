@@ -47,6 +47,8 @@ sh_binary(
         "//bin:llvm2graph-10",
         "//bin:pbq",
         "//bin:xla2graph",
+        ":LICENSE",
+        ":version.txt",
     ] + select({
         "//:darwin": [
             "@clang-llvm-10.0.0-x86_64-apple-darwin//:libs",
