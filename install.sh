@@ -30,11 +30,11 @@ set -euo pipefail
 
 BINARIES=(
   "$(DataPath programl/programl/cmd/analyze)"
-  "$(DataPath programl/programl/cmd/clang2graph)"
+  "$(DataPath programl/programl/cmd/clang2graph-10)"
   "$(DataPath programl/programl/cmd/graph2cdfg)"
   "$(DataPath programl/programl/cmd/graph2dot)"
   "$(DataPath programl/programl/cmd/graph2json)"
-  "$(DataPath programl/programl/cmd/llvm2graph)"
+  "$(DataPath programl/programl/cmd/llvm2graph-10)"
   "$(DataPath programl/programl/cmd/pbq)"
   "$(DataPath programl/programl/cmd/xla2graph)"
 )
@@ -64,6 +64,13 @@ main() {
     rm -f "$dst"
     cp $bin "$dst"
   done
+
+  # Create symlinks from $bin-$vesion versioned binaries to $bin.
+  rm -f "$prefix/bin/clang2graph" "$prefix/bin/llvm2graph"
+  echo "    $prefix/bin/clang2graph"
+  ln -s clang2graph-10 "$prefix/bin/clang2graph"
+  echo "    $prefix/bin/llvm2graph"
+  ln -s llvm2graph-10 "$prefix/bin/llvm2graph"
 
   echo
   echo "Installing libraries to $prefix/libs ..."

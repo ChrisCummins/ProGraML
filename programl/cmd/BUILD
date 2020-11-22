@@ -41,8 +41,16 @@ cc_binary(
     ],
 )
 
+genrule(
+    name = "clang2graph-latest",
+    srcs = [":clang2graph-10"],
+    outs = ["clang2graph"],
+    cmd = "ln -s $$(basename $<) $@",
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "clang2graph",
+    name = "clang2graph-10",
     srcs = ["clang2graph.cc"],
     copts = [
         "-std=c++14",
@@ -132,8 +140,16 @@ py_binary(
     ],
 )
 
+genrule(
+    name = "llvm2graph-latest",
+    srcs = [":llvm2graph-10"],
+    outs = ["llvm2graph"],
+    cmd = "ln -s $$(basename $<) $@",
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "llvm2graph",
+    name = "llvm2graph-10",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
