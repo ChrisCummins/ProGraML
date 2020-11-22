@@ -21,14 +21,14 @@ from absl import app, flags
 
 from programl.graph.format.py import nx_format
 from programl.proto import program_graph_pb2
+from programl.util.py.init_app import init_app
 from programl.util.py.stdin_fmt import ParseStdinOrDie
 
 FLAGS = flags.FLAGS
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+    init_app(argv)
     proto = ParseStdinOrDie(program_graph_pb2.ProgramGraph())
     pickle.dump(nx_format.ProgramGraphToNetworkX(proto), sys.stdout.buffer)
 

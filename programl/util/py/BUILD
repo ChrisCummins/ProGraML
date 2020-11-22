@@ -29,6 +29,16 @@ py_library(
 )
 
 py_library(
+    name = "init_app",
+    srcs = ["init_app.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//programl",
+        "//third_party/py/absl",
+    ],
+)
+
+py_library(
     name = "pbutil",
     srcs = ["pbutil.py"],
     visibility = ["//visibility:public"],

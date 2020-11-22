@@ -30,6 +30,7 @@ from absl import app, flags
 
 from programl.ir.llvm import inst2vec_encoder
 from programl.proto import program_graph_pb2
+from programl.util.py.init_app import init_app
 from programl.util.py.stdin_fmt import ParseStdinOrDie
 from programl.util.py.stdout_fmt import WriteStdout
 
@@ -62,8 +63,7 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+    init_app(argv)
     encoder = inst2vec_encoder.Inst2vecEncoder()
 
     if FLAGS.dataset:

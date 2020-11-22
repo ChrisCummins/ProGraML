@@ -19,6 +19,7 @@ import pathlib
 from absl import flags, pbutil
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
+from programl.util.py.init_app import init_app
 
 flags.DEFINE_string(
     "path",
@@ -31,9 +32,8 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
+    init_app(argv)
     path = pathlib.Path(FLAGS.path)
 
     graphs_path = path / "test"

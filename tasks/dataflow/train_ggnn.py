@@ -22,6 +22,7 @@ import pathlib
 
 from absl import app, flags
 
+from programl.util.py.init_app import init_app
 from tasks.dataflow import ggnn, vocabulary
 
 flags.DEFINE_integer(
@@ -53,9 +54,8 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
+    init_app(argv)
 
     path = pathlib.Path(FLAGS.path)
 

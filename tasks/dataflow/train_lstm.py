@@ -30,6 +30,7 @@ from programl.models.epoch_batch_iterator import EpochBatchIterator
 from programl.models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
 from programl.util.py import humanize, pbutil
+from programl.util.py.init_app import init_app
 from tasks.dataflow import dataflow
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
@@ -259,9 +260,8 @@ def TestDataflowLSTM(
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
+    init_app(argv)
     path = pathlib.Path(FLAGS.path)
 
     with vocabulary.VocabularyZipFile.CreateFromPublishedResults() as inst2vec:

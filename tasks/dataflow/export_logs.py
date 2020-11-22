@@ -44,6 +44,7 @@ from tabulate import tabulate
 
 from programl.proto import epoch_pb2
 from programl.util.py import pbutil, progress
+from programl.util.py.init_app import init_app
 
 flags.DEFINE_str(
     "path",
@@ -205,8 +206,7 @@ def LogsToDataFrame(path: Path) -> Optional[pd.DataFrame]:
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+    init_app(argv)
 
     path = Path(FLAGS.path)
     fmt = FLAGS.fmt
