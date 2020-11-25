@@ -480,10 +480,9 @@ def print_structure_dictionary(dic, folder, filename):
 def PrintDualXfgToFile(D, folder, filename):
     """Print dual-XFG graph to file.
 
-    Args:
-      D: dual-XFG graphs
-      folder: name of folder in which to print dictionary
-      filename: name of file in which to print dictionary
+    :param D: dual-XFG graphs
+    :param folder: name of folder in which to print dictionary
+    :param filename: name of file in which to print dictionary
     """
     # Print to file
     graph_filename = os.path.join(folder, filename[:-3] + ".txt")
@@ -821,7 +820,7 @@ def get_identifiers_from_line(line):
     """
     # Find label nodes
     m_label = m_label2 = list()
-    if line.find("label") is not -1 or re.match(rgx.local_id_no_perc + r":", line):
+    if line.find("label") != -1 or re.match(rgx.local_id_no_perc + r":", line):
         m_label1 = re.findall("label (" + rgx.local_id + ")", line)
         if re.match(r"; <label>:" + rgx.local_id_no_perc + ":\s+", line):
             m_label2 = re.findall("<label>:(" + rgx.local_id_no_perc + "):", line)
@@ -1112,7 +1111,7 @@ def construct_function_dictionary(file):
 
         # If it's a return statement
         elif re.match(r"ret .*", line):
-            if func_name is not "":
+            if func_name:
                 # add the return statement to the dictionary
                 functions_defined_in_file[func_name][2] = line
                 func_name = ""
@@ -1156,7 +1155,7 @@ def construct_function_dictionary(file):
     # Make sure all function names have a corresponding return identifier
     for k, v in functions_defined_in_file_DEF.items():
         if k != "main":
-            if v[1] is "no_return":
+            if v[1] == "no_return":
                 print("WARNING! Function", k, "has no corresponding return statement")
 
     return functions_defined_in_file_DEF
@@ -1439,8 +1438,8 @@ def add_stmts_to_graph(G, file, functions_defined_in_file, functions_declared_in
         elif re.match(rgx.start_basic_block, line):
             # eg ; <label>:11:                                     ; preds = %8
             # eg .lr.ph.i:
-            assert block_ref is not "", "Empty block reference at line:\n" + line
-            assert func_prefix is not "", "Empty function prefix at line:\n" + line
+            assert block_ref, "Empty block reference at line:\n" + line
+            assert func_prefix, "Empty function prefix at line:\n" + line
             if all_degrees(G, block_ref) == 0:
                 G.remove_node(
                     block_ref
@@ -2326,7 +2325,7 @@ def add_stmts_to_graph(G, file, functions_defined_in_file, functions_declared_in
                     # - function pointer
                     # - intrinsic
 
-                    #  Connect arguments
+                    #  Connect arguments
                     no_parent = True
                     a_connected = ""
                     if assignee is None:
@@ -2703,9 +2702,6 @@ def CheckGraphOrDie(G, filename):
     :return: multi-edges: list of edges for which parallel edges exist
              G
     """
-    # TODO(cec): Should this raise exception or assertion? Currently it's a
-    # mixture of both.
-
     # Make sure each node has an id
     for n in sorted(list(G.nodes(data=True))):
         assert n[1], 'Node "' + n[0] + '" has no id (file ' + filename + ")"
@@ -2800,18 +2796,15 @@ def BuildContextualFlowGraph(llvm_lines, functions_declared_in_file, filename):
     Given a file of source code, construct a context graph
     This function is called once for each file
 
-    Args:
-      llvm_lines: LLVM-IR source file (list of strings containing lines of LLVM
+    :param llvm_lines: LLVM-IR source file (list of strings containing lines of LLVM
         IR).
-      functions_declared_in_file:
-      filename: name of file
-
-    Returns:
-      A <digraph, multi_edge_list> tuple, where <digraph> is a directed graph in
-      which nodes are identifiers or ad-hoc and edges are statements which is
-      meant as a representation of both data and flow control of the code
-      capturing the notion of context; and <multi_edge_list> is a list of edges
-      that have parallel edges.
+    :param functions_declared_in_file:
+    :param filename: name of file
+    :return: A <digraph, multi_edge_list> tuple, where <digraph> is a directed
+      graph in which nodes are identifiers or ad-hoc and edges are statements
+      which is meant as a representation of both data and flow control of the
+      code capturing the notion of context; and <multi_edge_list> is a list of
+      edges that have parallel edges.
     """
     # Create a graph
     graph = nx.MultiDiGraph()
@@ -3142,11 +3135,8 @@ def inline_struct_types_in_file(G, dic, specific_struct_name_pattern):
 def GetStructTypes(ir: str) -> Dict[str, str]:
     """Extract a dictionary of struct definitions from the given IR.
 
-    Args:
-      ir: A string of LLVM IR.
-
-    Returns:
-      A dictionary of <name, def> entries, where <name> is the name of a struct
+    :param ir: A string of LLVM IR.
+    :return: A dictionary of <name, def> entries, where <name> is the name of a struct
       definition (e.g. "%struct.foo"), and <def> is the definition of the member
       types, e.g. "{ i32 }".
     """
@@ -3300,7 +3290,7 @@ def check_sanity(D, G):
     :param G: base graph
     """
     isolated_nodes = [n for n in D.nodes() if D.degree(n) == 0]
-    if len(isolated_nodes) is not 0:
+    if len(isolated_nodes) != 0:
         print("WARNING! Isolated nodes found in D-graph")
         for n in isolated_nodes:
             D.remove_node(n)
@@ -3337,12 +3327,9 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
         data_folder/*_preprocessed/xfg/
         data_folder/*_preprocessed/xfg_dual/
 
-    Args:
-      data_folder: the path to the parent directory of the subfolders containing
+    :param data_folder: the path to the parent directory of the subfolders containing
         raw LLVM IR code.
-
-    Returns:
-      List of subfolders containing raw LLVM IR code.
+    :return: List of subfolders containing raw LLVM IR code.
     """
     # Get raw data sub-folders
     assert os.path.exists(data_folder), "Folder " + data_folder + " does not exist"
@@ -3596,13 +3583,6 @@ def CreateContextualFlowGraphsFromBytecodes(data_folder):
                         G_diff = disambiguate_stmts(G)
                         D = build_dual_graph(G_diff)  # dual-XFG
                         check_sanity(D, G)  # check the sanity of the produced graph
-                        # TODO(cec): In my unit tests, nodes in 'D' contain non-ASCII
-                        # values, which causes this text serialization to fail. For now I'm
-                        # disabling printing DXFGs, but will investigate further if the
-                        # files are deemed necessary (I think they're just for debugging).
-                        #
-                        # PrintDualXfgToFile(D, dual_graph_folder,
-                        #                    file_name)  # print data to external file
 
                         # Write dual graphs to file
                         print("Writing dual graphs to file ", dual_graphs_filename)

@@ -15,12 +15,11 @@
 # limitations under the License.
 """A gated graph neural network classifier."""
 import typing
-from typing import Dict, Tuple
+from typing import Dict
 
 import numpy as np
 import torch
-from labm8.py import app
-from labm8.py.progress import NullContext, ProgressContext
+from absl import flags, logging
 from torch import nn
 
 from programl.graph.format.py.graph_tuple import GraphTuple
@@ -35,122 +34,123 @@ from programl.models.ggnn.node_embeddings import NodeEmbeddings
 from programl.models.ggnn.readout import Readout
 from programl.models.model import Model
 from programl.proto import epoch_pb2
+from programl.util.py.progress import NullContext, ProgressContext
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 # Graph unrolling flags.
-app.DEFINE_string(
+flags.DEFINE_string(
     "unroll_strategy",
     "constant",
     "The unroll strategy to use. One of: "
     "{none, constant, edge_count, data_flow_max_steps, label_convergence} "
     "constant: Unroll by a constant number of steps.",
 )
-app.DEFINE_float(
+flags.DEFINE_float(
     "unroll_convergence_threshold",
     0.995,
     "convergence interval: fraction of labels that need to be stable",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "unroll_convergence_steps",
     1,
     "required number of consecutive steps within the convergence interval",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "unroll_max_steps",
     1000,
     "The maximum number of iterations to attempt to reach label convergence. "
     "No effect when --unroll_strategy is not label_convergence.",
 )
 
-app.DEFINE_list(
+flags.DEFINE_list(
     "layer_timesteps",
     ["30"],
     "A list of layers, and the number of steps for each layer.",
 )
-app.DEFINE_float("learning_rate", 0.00025, "The initial learning rate.")
-app.DEFINE_float(
+flags.DEFINE_float("learning_rate", 0.00025, "The initial learning rate.")
+flags.DEFINE_float(
     "lr_decay_rate",
     0.95,
     "Learning rate decay; multiplicative factor for lr after every epoch.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "lr_decay_steps",
     1000,
     "Steps until next LR decay.",
 )
 
-app.DEFINE_float("clip_gradient_norm", 0.0, "Clip gradients to L-2 norm.")
+flags.DEFINE_float("clip_gradient_norm", 0.0, "Clip gradients to L-2 norm.")
 
 # Edge and message flags.
-app.DEFINE_boolean("use_backward_edges", True, "Add backward edges.")
-app.DEFINE_boolean("use_edge_bias", True, "")
-app.DEFINE_boolean(
+flags.DEFINE_boolean("use_backward_edges", True, "Add backward edges.")
+flags.DEFINE_boolean("use_edge_bias", True, "")
+flags.DEFINE_boolean(
     "msg_mean_aggregation",
     True,
     "If true, normalize incoming messages by the number of incoming messages.",
 )
 # Embeddings options.
-app.DEFINE_string(
+flags.DEFINE_string(
     "text_embedding_type",
     "random",
     "The type of node embeddings to use. One of "
     "{constant_zero, constant_random, random}.",
 )
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "text_embedding_dimensionality",
     32,
     "The dimensionality of node text embeddings.",
 )
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "use_position_embeddings",
     True,
     "Whether to use position embeddings as signals for edge order. "
     "False may be a good default for small datasets.",
 )
-app.DEFINE_float(
+flags.DEFINE_float(
     "selector_embedding_value",
     50,
     "The value used for the positive class in the 1-hot selector embedding "
     "vectors. Has no effect when selector embeddings are not used.",
 )
 # Loss.
-app.DEFINE_float(
+flags.DEFINE_float(
     "intermediate_loss_weight",
     0.2,
     "The true loss is computed as loss + factor * intermediate_loss. Only "
     "applicable when graph_x_dimensionality > 0.",
 )
 # Graph features flags.
-app.DEFINE_integer(
+flags.DEFINE_integer(
     "graph_x_layer_size",
     32,
     "Size for MLP that combines graph_features and aux_in features",
 )
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "log1p_graph_x",
     True,
     "If set, apply a log(x + 1) transformation to incoming auxiliary graph-level features.",
 )
 # Dropout flags.
-app.DEFINE_float(
+flags.DEFINE_float(
     "graph_state_dropout",
     0.2,
     "Graph state dropout rate.",
 )
-app.DEFINE_float(
+flags.DEFINE_float(
     "edge_weight_dropout",
     0.0,
     "Edge weight dropout rate.",
 )
-app.DEFINE_float(
+flags.DEFINE_float(
     "output_layer_dropout",
     0.0,
     "Dropout rate on the output layer.",
 )
 
 # Loss flags
-app.DEFINE_float(
+flags.DEFINE_float(
     "loss_weighting",
     0.5,
     "Weight loss contribution in batch by inverse class prevalence"
@@ -160,13 +160,13 @@ app.DEFINE_float(
 )
 
 # not implemented yet
-# app.DEFINE_boolean("loss_masking",
+# flags.DEFINE_boolean("loss_masking",
 #                   False,
 #                   "Mask loss computation on nodes chosen at random from each class"
 #                   "such that balanced class distributions (per batch) remain")
 
 # Debug flags.
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "debug_nan_hooks",
     False,
     "If set, add hooks to model execution to trap on NaNs.",
@@ -454,8 +454,7 @@ class Ggnn(Model):
                 if self.model.scheduler is not None:
                     old_learning_rate = self.model.learning_rate
                     self.model.scheduler.step()
-                    app.Log(
-                        1,
+                    logging.info(
                         "LR Scheduler step. New learning rate is %s (was %s)",
                         self.model.learning_rate,
                         old_learning_rate,
@@ -502,11 +501,11 @@ def GetUnrollSteps(
         max_data_flow_steps = max(
             graph.data_flow_steps for graph in batch.model_data.graphs
         )
-        app.Log(3, "Determined max data flow steps to be %d", max_data_flow_steps)
+        logging.debug("Determined max data flow steps to be %d", max_data_flow_steps)
         return max_data_flow_steps
     elif unroll_strategy == "edge_count":
         max_edge_count = max(graph.edge_count for graph in batch.model_data.graphs)
-        app.Log(3, "Determined max edge count to be %d", max_edge_count)
+        logging.debug("Determined max edge count to be %d", max_edge_count)
         return max_edge_count
     elif unroll_strategy == "label_convergence":
         return 0

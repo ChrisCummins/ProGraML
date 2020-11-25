@@ -18,10 +18,11 @@ import time
 from threading import Thread
 from typing import List
 
-from labm8.py import app, humanize
+from absl import logging
 
 from programl.models.base_batch_builder import BaseBatchBuilder
 from programl.models.batch_data import BatchData
+from programl.util.py import humanize
 
 
 class AsyncBatchBuilder(object):
@@ -55,8 +56,7 @@ class AsyncBatchBuilder(object):
     def _Worker(self, batch_builder: BaseBatchBuilder):
         start = time.time()
         self._batches = list(batch_builder)
-        app.Log(
-            2,
+        logging.debug(
             "Async batch loader completed. %s batches loaded in %s",
             humanize.Commas(len(self._batches)),
             humanize.Duration(time.time() - start),

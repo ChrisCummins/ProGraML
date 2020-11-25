@@ -17,7 +17,7 @@
 from typing import Optional
 
 import torch
-from labm8.py import app, gpu_scheduler
+from absl import flags
 from torch import nn, optim
 
 from programl.models.ggnn.aux_readout import AuxiliaryReadout
@@ -26,9 +26,9 @@ from programl.models.ggnn.loss import Loss
 from programl.models.ggnn.metrics import Metrics
 from programl.models.ggnn.node_embeddings import NodeEmbeddings
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
-app.DEFINE_boolean(
+flags.DEFINE_boolean(
     "block_gpu", True, "Prevent model from hitchhiking on an occupied gpu."
 )
 
@@ -59,7 +59,7 @@ class GGNNModel(nn.Module):
         if FLAGS.block_gpu:
             self.dev = (
                 torch.device("cuda")
-                if gpu_scheduler.LockExclusiveProcessGpuAccess()
+                if torch.cuda.is_available()
                 else torch.device("cpu")
             )
         else:
@@ -83,7 +83,7 @@ class GGNNModel(nn.Module):
         if self.scheduler is None:
             return 0.0
         else:
-            return self.scheduler.get_lr()[0]
+            return self.scheduler.get_last_lr()[0]
 
     def GetOptimizer(self, learning_rate: float):
         return optim.AdamW(self.parameters(), lr=learning_rate)

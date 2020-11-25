@@ -21,7 +21,7 @@ exposes the issue and submit it as a PR. If you can do this, continue reading.
 
 ## Contributing Code
 
-Please see the [Development](/programl/Documentation/Development.md) guide.
+Please see the [Development](/Documentation/Development.md) guide.
 To summarize:
 
 1. Always write tests to cover new code.

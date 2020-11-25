@@ -24,10 +24,10 @@ py_library(
         ":lstm_batch",
         "//programl/models:batch_data",
         "//programl/models:model",
-        "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//programl/proto:programl_py",
+        "//programl/util/py:progress",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
-        "//third_party/py/tensorflow",
     ],
 )
 

@@ -17,11 +17,10 @@
 import subprocess
 import tempfile
 
-from labm8.py import bazelutil
-
 from programl.proto import program_graph_options_pb2, program_graph_pb2
+from programl.util.py.runfiles_path import runfiles_path
 
-GRAPH_BUILDER_BIN = bazelutil.DataPath("programl/programl/ir/llvm/py/graph_builder_bin")
+GRAPH_BUILDER_BIN = runfiles_path("programl/programl/ir/llvm/py/graph_builder_bin")
 
 DefaultOptions = program_graph_options_pb2.ProgramGraphOptions()
 

@@ -18,11 +18,11 @@ import subprocess
 from typing import Optional
 
 import google.protobuf.message
-from labm8.py import bazelutil
 
 from programl.proto import program_graph_pb2
+from programl.util.py.runfiles_path import runfiles_path
 
-GRAPH2CDFG = bazelutil.DataPath("programl/programl/cmd/graph2cdfg")
+GRAPH2CDFG = runfiles_path("programl/programl/cmd/graph2cdfg")
 
 
 def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:

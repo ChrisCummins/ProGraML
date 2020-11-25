@@ -20,7 +20,7 @@ cc_library(
     name = "filesystem_cache",
     srcs = ["filesystem_cache.cc"],
     hdrs = ["filesystem_cache.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@boost//:filesystem",
         "@labm8//labm8/cpp:fsutil",
@@ -35,18 +35,6 @@ cc_library(
     visibility = ["//programl:__subpackages__"],
     deps = [
         "@subprocess",
-    ],
-)
-
-py_binary(
-    name = "perf_monitor",
-    srcs = ["perf_monitor.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/gputil",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
-        "//third_party/py/psutil",
     ],
 )
 

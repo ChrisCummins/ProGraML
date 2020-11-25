@@ -30,22 +30,12 @@ cc_library(
     }),
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:ir_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/strings:str_format",
         "@labm8//labm8/cpp:bazelutil",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:string",
         "@subprocess",
-    ],
-)
-
-cc_test(
-    name = "clang_test",
-    srcs = ["clang_test.cc"],
-    deps = [
-        "//programl/ir/llvm:clang",
-        "//programl/proto:ir_cc",
-        "@labm8//labm8/cpp:test",
     ],
 )
 
@@ -56,27 +46,17 @@ py_library(
         "//programl/ir/llvm/internal:inst2vec_augmented_dictionary",
         "//programl/ir/llvm/internal:inst2vec_augmented_embeddings",
     ],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/py:program_graph_builder",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
-        "//third_party/py/labm8",
+        "//programl/proto:programl_py",
+        "//programl/util/py:decorators",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
+        "//programl/util/py:runfiles_path",
+        "//third_party/py/absl",
         "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
         "//third_party/py/numpy",
-    ],
-)
-
-py_test(
-    name = "inst2vec_encoder_test",
-    srcs = ["inst2vec_encoder_test.py"],
-    deps = [
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:node_py",
-        "//programl/proto:program_graph_py",
-        "//programl/test/py/plugins:llvm_program_graph",
-        "//third_party/py/labm8",
     ],
 )
 
@@ -88,8 +68,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm/internal:program_graph_builder_pass",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
         "@llvm//10.0.0",

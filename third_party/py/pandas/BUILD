@@ -4,18 +4,21 @@
 # (i.e. //third_party/py/pandas), instead of requirement("pandas").
 
 load("@programl_requirements//:requirements.bzl", "requirement")
+load("@tasks_requirements//:requirements.bzl", task_requirement = "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # BSD
 
+# Requires pandas!
 py_library(
     name = "pandas",
     srcs = ["//third_party/py:empty.py"],
     deps = [
-        requirement("pandas"),
-        "//third_party/py/numpy",
-        requirement("pytz"),
-        requirement("python-dateutil"),
+        task_requirement("pandas"),
+        task_requirement("python-dateutil"),
+        task_requirement("pytz"),
+        requirement("six"),
+        requirement("numpy"),
     ],
 )

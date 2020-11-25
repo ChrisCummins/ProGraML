@@ -18,9 +18,9 @@ from typing import NamedTuple, Optional
 
 import numpy as np
 import sklearn.metrics
-from labm8.py import app
+from absl import flags
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "batch_results_averaging_method",
     "weighted",
     "Selects the averaging method to use when computing recall/precision/F1 "
@@ -28,7 +28,7 @@ app.DEFINE_string(
     ".metrics.f1_score.html>",
 )
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 class BatchResults(NamedTuple):

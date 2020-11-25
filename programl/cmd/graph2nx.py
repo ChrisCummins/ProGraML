@@ -17,19 +17,21 @@
 import pickle
 import sys
 
-from labm8.py import app
+from absl import app, flags
 
 from programl.graph.format.py import nx_format
 from programl.proto import program_graph_pb2
 from programl.util.py.stdin_fmt import ParseStdinOrDie
 
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
-def Main():
+def main(argv):
+    if len(argv) != 1:
+        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     proto = ParseStdinOrDie(program_graph_pb2.ProgramGraph())
     pickle.dump(nx_format.ProgramGraphToNetworkX(proto), sys.stdout.buffer)
 
 
 if __name__ == "__main__":
-    app.Run(Main)
+    app.run(main)

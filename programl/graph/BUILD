@@ -22,7 +22,7 @@ cc_library(
     hdrs = ["features.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:features_cc",
+        "//programl/proto:programl_cc",
     ],
 )
 
@@ -32,8 +32,7 @@ cc_library(
     hdrs = ["program_graph_builder.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:logging",

@@ -40,8 +40,9 @@ py_library(
         "//programl/models:batch_data",
         "//programl/models:batch_results",
         "//programl/models:model",
-        "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//programl/proto:programl_py",
+        "//programl/util/py:progress",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/torch",
     ],
@@ -53,7 +54,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format/py:graph_tuple",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//third_party/py/numpy",
     ],
 )
@@ -75,7 +76,7 @@ py_library(
         ":loss",
         ":metrics",
         ":node_embeddings",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/torch",
     ],
 )

@@ -27,8 +27,7 @@ py_library(
     data = [":analysis_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:program_graph_features_py",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
     ],
 )
 
@@ -38,8 +37,7 @@ pybind_extension(
     deps = [
         "//programl/graph:program_graph_builder",
         "//programl/graph/analysis",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:string",
     ],

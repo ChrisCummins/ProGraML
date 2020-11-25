@@ -17,9 +17,9 @@
 import sys
 
 import google.protobuf.json_format
-from labm8.py import app
+from absl import flags
 
-app.DEFINE_string(
+flags.DEFINE_string(
     "stdout_fmt",
     "pbtxt",
     "The format of output. Valid options are: "
@@ -31,7 +31,7 @@ app.DEFINE_string(
     "processing "
     "with third-party tools such as `jq`.",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def WriteStdout(proto) -> None:

@@ -14,31 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A module for encoding LLVM-IR program graphs using inst2vec."""
+import itertools
 import multiprocessing
 import pathlib
 import pickle
 import random
-import sys
 import time
-from typing import List, Optional, Tuple
+from typing import Any, Iterable, List, Optional, Tuple
 
 import numpy as np
-from labm8.py import bazelutil, decorators, labtypes, pbutil, progress
 
 from programl.proto import node_pb2, program_graph_pb2
-
-# NOTE(cec): Workaround to prevent third_party package name shadowing from
-# labm8.third_party.
-sys.path.insert(0, str(bazelutil.DataPath("programl")))
+from programl.util.py import decorators, pbutil, progress
+from programl.util.py.runfiles_path import runfiles_path
 from third_party.py.ncc.inst2vec import inst2vec_preprocess
 
-del sys.path[0]
-
-
-DICTIONARY = bazelutil.DataPath(
+DICTIONARY = runfiles_path(
     "programl/programl/ir/llvm/internal/inst2vec_augmented_dictionary.pickle"
 )
-AUGMENTED_INST2VEC_EMBEDDINGS = bazelutil.DataPath(
+AUGMENTED_INST2VEC_EMBEDDINGS = runfiles_path(
     "programl/programl/ir/llvm/internal/inst2vec_augmented_embeddings.pickle"
 )
 
@@ -189,6 +183,21 @@ def _ProcessRows(job) -> Tuple[int, int, float]:
     return len(paths), encoded_count, time.time() - start_time
 
 
+def chunkify(iterable: Iterable[Any], chunk_size: int) -> Iterable[List[Any]]:
+    """Split an iterable into chunks of a given size.
+    Args:
+      iterable: The iterable to split into chunks.
+      chunk_size: The size of the chunks to return.
+    Returns:
+      An iterator over chunks of the input iterable.
+    """
+    i = iter(iterable)
+    piece = list(itertools.islice(i, chunk_size))
+    while piece:
+        yield piece
+        piece = list(itertools.islice(i, chunk_size))
+
+
 class _Inst2vecEncodeJob(progress.Progress):
     """Run inst2vec encoder on all graphs in the dataset."""
 
@@ -211,8 +220,7 @@ class _Inst2vecEncodeJob(progress.Progress):
 
     def Run(self):
         jobs = [
-            (self.encoder, chunk)
-            for chunk in list(labtypes.Chunkify(self.graph_ir_paths, 128))
+            (self.encoder, chunk) for chunk in list(chunkify(self.graph_ir_paths, 128))
         ]
         logfile = None
         if self.logfile:

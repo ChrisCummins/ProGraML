@@ -33,8 +33,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/analysis",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
         "@labm8//labm8/cpp:app",
@@ -53,8 +52,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
     ],
@@ -66,7 +64,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format:cdfg",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
         "@labm8//labm8/cpp:app",
@@ -79,7 +77,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format:graphviz_converter",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "@labm8//labm8/cpp:app",
     ],
@@ -91,7 +89,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format:node_link_graph",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "@labm8//labm8/cpp:app",
     ],
@@ -103,9 +101,9 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format/py:nx_format",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//programl/util/py:stdin_fmt",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -115,8 +113,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format:graph_serializer",
-        "//programl/proto:node_cc",
-        "//programl/proto:program_graph_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
     ],
@@ -128,10 +125,10 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:program_graph_py",
+        "//programl/proto:programl_py",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
     ],
 )
 
@@ -142,9 +139,7 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm",
-        "//programl/proto:ir_cc",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdout_fmt",
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:status",
@@ -159,16 +154,12 @@ cc_binary(
     srcs = ["pbq.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:checkpoint_cc",
-        "//programl/proto:ir_cc",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_features_cc",
-        "//programl/proto:src_cc",
+        "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
+        "//third_party/tensorflow:xla_cc",
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",
-        "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )
 
@@ -179,10 +170,10 @@ cc_binary(
     deps = [
         "//programl/ir/xla:hlo_module_graph_builder",
         "//programl/util:stdin_fmt",
+        "//third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
-        "@org_tensorflow//tensorflow/compiler/xla/service:hlo_proto",
     ],
 )

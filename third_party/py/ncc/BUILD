@@ -31,7 +31,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":rgx_utils",
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
     ],
 )

@@ -105,7 +105,8 @@ class GraphTupleBuilder(object):
                 np.array(self._adjacencies[0], dtype=np.int32).reshape((-1, 2)),
                 np.array(self._adjacencies[1], dtype=np.int32).reshape((-1, 2)),
                 np.array(self._adjacencies[2], dtype=np.int32).reshape((-1, 2)),
-            ]
+            ],
+            dtype=np.object,
         )
 
     @property
@@ -115,5 +116,6 @@ class GraphTupleBuilder(object):
                 np.array(self._edge_positions[0], dtype=np.int32),
                 np.array(self._edge_positions[1], dtype=np.int32),
                 np.array(self._edge_positions[2], dtype=np.int32),
-            ]
+            ],
+            dtype=np.object,
         )

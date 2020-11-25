@@ -21,7 +21,7 @@
 
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
-#include "tensorflow/compiler/xla/service/hlo.pb.h"
+#include "third_party/tensorflow/xla.pb.h"
 
 namespace programl {
 namespace ir {
