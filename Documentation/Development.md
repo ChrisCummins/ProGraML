@@ -78,7 +78,7 @@ networkx:
 
     $ bazel test //programl/ir/llvm:inst2vec_test
 
-    ${bazelroot}/bin/programl/cmd/inst2vec.runfiles/programl_requirements_pypi__networkx_2_2/networkx/drawing/nx_pydot.py:210: SyntaxWarning: "is" with a literal. Did you mean "=="?
+    ${bazelroot}/bin/bin/inst2vec.runfiles/programl_requirements_pypi__networkx_2_2/networkx/drawing/nx_pydot.py:210: SyntaxWarning: "is" with a literal. Did you mean "=="?
 
 This patch updates those packages to the versions to maintain support on
 Python 3.8. Tested on macOS 10.15, python 3.8.

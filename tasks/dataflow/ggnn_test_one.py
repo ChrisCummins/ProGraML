@@ -31,6 +31,7 @@ from programl.proto import (
     program_graph_pb2,
 )
 from programl.util.py import pbutil
+from programl.util.py.init_app import init_app
 from tasks.dataflow import dataflow, vocabulary
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
@@ -179,9 +180,8 @@ def AnnotateGraphWithBatchResults(
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
     """Main entry point."""
+    init_app(argv)
     dataflow.PatchWarnings()
 
     features_list_path, features_list_index = FLAGS.input.split(":")

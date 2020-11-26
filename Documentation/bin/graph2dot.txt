@@ -1,8 +1,14 @@
-graph2json: Convert a ProgramGraph message to JSON node link graph.
+graph2dot: Convert a ProgramGraph message to GraphViz dot.
 
 Usage:
 
-    graph2json < program_graph.pbtxt
+    graph2dot [--node_label={,text,<feature>] [--stdin_fmt={pb,pbtxt}] < program_graph.pbtxt)
+
+Where --node_label is the attribute to use for producing node labels. Possible values:
+  --node_label=           No node labels
+  --node_label=text       Use the Node.text field as node labels.
+  --node_label=<feature>  Use the given Node.features.feature. If the feature is not found,
+                          an error is raised.
 
   Flags from external/com_github_gflags_gflags/src/gflags.cc:
     -flagfile (load flags from file) type: string default: ""
@@ -40,8 +46,9 @@ Usage:
 
 
 
-  Flags from programl/cmd/graph2json.cc:
-    -pretty_print (Pretty-print the generated JSON.) type: bool default: false
+  Flags from bin/graph2dot.cc:
+    -node_label (The node attribute to use for node labels.) type: string
+      default: "text"
 
 
 

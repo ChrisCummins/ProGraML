@@ -7,7 +7,7 @@
 #      it to the //:install target so that it is installed
 #      into the user path.
 #
-#   2) Run ./programl/cmd/update_docs.sh and commit any
+#   2) Run ./bin/update_docs.sh and commit any
 #      changes.
 # #####################################################
 #
@@ -32,6 +32,7 @@ cc_binary(
     srcs = ["analyze.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/analysis",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -41,8 +42,16 @@ cc_binary(
     ],
 )
 
+genrule(
+    name = "clang2graph-latest",
+    srcs = [":clang2graph-10"],
+    outs = ["clang2graph"],
+    cmd = "ln -s $$(basename $<) $@",
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "clang2graph",
+    name = "clang2graph-10",
     srcs = ["clang2graph.cc"],
     copts = [
         "-std=c++14",
@@ -63,6 +72,7 @@ cc_binary(
     srcs = ["graph2cdfg.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:cdfg",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -76,6 +86,7 @@ cc_binary(
     srcs = ["graph2dot.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:graphviz_converter",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -88,6 +99,7 @@ cc_binary(
     srcs = ["graph2json.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:node_link_graph",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -102,6 +114,7 @@ py_binary(
     deps = [
         "//programl/graph/format/py:nx_format",
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//programl/util/py:stdin_fmt",
         "//third_party/py/absl",
     ],
@@ -112,6 +125,7 @@ cc_binary(
     srcs = ["graph2seq.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/graph/format:graph_serializer",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
@@ -126,18 +140,28 @@ py_binary(
     deps = [
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",
         "//third_party/py/absl",
     ],
 )
 
+genrule(
+    name = "llvm2graph-latest",
+    srcs = [":llvm2graph-10"],
+    outs = ["llvm2graph"],
+    cmd = "ln -s $$(basename $<) $@",
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "llvm2graph",
+    name = "llvm2graph-10",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/ir/llvm",
         "//programl/proto:programl_cc",
         "//programl/util:stdout_fmt",
@@ -154,6 +178,7 @@ cc_binary(
     srcs = ["pbq.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/proto:programl_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
@@ -168,6 +193,7 @@ cc_binary(
     srcs = ["xla2graph.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl:version_header",
         "//programl/ir/xla:hlo_module_graph_builder",
         "//programl/util:stdin_fmt",
         "//third_party/tensorflow:xla_cc",

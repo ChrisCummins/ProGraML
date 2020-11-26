@@ -30,6 +30,7 @@ from MySQLdb import _mysql
 from programl.ir.llvm.py import llvm
 from programl.proto import ir_pb2
 from programl.util.py import pbutil, progress
+from programl.util.py.init_app import init_app
 from programl.util.py.runfiles_path import runfiles_path
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.dataset.encode_inst2vec import Inst2vecEncodeGraphs
@@ -255,8 +256,7 @@ def ImportClassifyAppDataset(classifyapp: pathlib.Path, path: pathlib.Path):
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+    init_app(argv)
     path = pathlib.Path(pathflag.path())
     db = _mysql.connect(host=FLAGS.host, user=FLAGS.user, passwd=FLAGS.pwd, db=FLAGS.db)
 

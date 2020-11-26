@@ -13,31 +13,41 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "programl/graph/format/graph_serializer.h"
-#include "programl/proto/node.pb.h"
+#include "labm8/cpp/app.h"
+#include "programl/graph/format/cdfg.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
-const char* usage = R"(Serialize the instruction nodes in a program graph.
+const char* usage =
+    R"(Convert a ProgramGraph message to a Control and Data Flow Graph (CDFG).
 
 Usage:
 
-    graph2seq [--stdin_fmt={pb,pbtxt}] < program_graph.pbtxt
+    graph2cdfg [--stdin_fmt={pb,pbtxt}]
 
-Read a ProgramGraph message from stdin and print a serialized list
-of instruction node indices to stdout.)";
+The CDFG format is a subset of a ProgramGraph which excludes data elements
+from the graph representation. Instead, data edges are connected directly
+between defining instructions and users. The format is described in:
+
+  Brauckmann, A., Ertel, S., Goens, A., & Castrillon, J. (2020). Compiler-Based Graph
+  Representations for Deep Learning Models of Code. CC.)";
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
+  if (argc != 1) {
+    std::cerr << usage;
+    return 4;
+  }
 
   programl::ProgramGraph graph;
   programl::util::ParseStdinOrDie(&graph);
 
-  programl::NodeIndexList serialized;
-  programl::graph::format::SerializeInstructionsInProgramGraph(graph, &serialized,
-                                                               /*maxNodes=*/1000000);
-  programl::util::WriteStdout(serialized);
+  programl::graph::format::CDFGBuilder builder;
+  programl::ProgramGraph cdfg = builder.Build(graph);
+  programl::util::WriteStdout(cdfg);
 
   return 0;
 }

@@ -53,7 +53,7 @@ and the IR at position --ir_list_index (zero-based) is used:
 
 
 
-  Flags from programl/cmd/llvm2graph.cc:
+  Flags from bin/llvm2graph.cc:
     -ignore_call_returns (Include only instructions in the generated program
       graph.) type: bool default: false
     -instructions_only (Include only instructions in the generated program

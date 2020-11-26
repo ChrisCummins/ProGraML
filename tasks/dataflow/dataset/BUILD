@@ -36,6 +36,7 @@ py_binary(
     ],
     deps = [
         ":encode_inst2vec",
+        "//programl/util/py:init_app",
         ":pathflag",
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:programl_py",
@@ -51,7 +52,7 @@ sh_binary(
     name = "count_instances",
     srcs = ["count_instances.sh"],
     data = [
-        "//programl/cmd:pbq",
+        "//bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -60,7 +61,7 @@ sh_binary(
     name = "count_labels",
     srcs = ["count_labels.sh"],
     data = [
-        "//programl/cmd:pbq",
+        "//bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -69,7 +70,7 @@ sh_binary(
     name = "create_labels",
     srcs = ["create_labels.sh"],
     data = [
-        "//programl/cmd:analyze",
+        "//bin:analyze",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -146,7 +147,7 @@ sh_binary(
     name = "unpack_ir_text",
     srcs = ["unpack_ir_text.sh"],
     data = [
-        "//programl/cmd:pbq",
+        "//bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )

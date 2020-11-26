@@ -28,6 +28,7 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
 using labm8::Status;
 using labm8::StatusOr;
@@ -112,6 +113,7 @@ llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> GetInputAsBuffer(const string
 }
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
 
   string filename("-");

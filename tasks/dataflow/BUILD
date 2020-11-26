@@ -67,6 +67,7 @@ py_binary(
     srcs = ["export_logs.py"],
     deps = [
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//third_party/py/absl",
@@ -82,6 +83,7 @@ py_binary(
         "//programl/models:batch_results",
         "//programl/models/ggnn",
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//tasks/dataflow",
         "//tasks/dataflow:ggnn_batch_builder",
@@ -131,6 +133,7 @@ py_binary(
     srcs = ["test_step_counts.py"],
     deps = [
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//third_party/py/absl",
     ],
 )
@@ -141,6 +144,7 @@ py_binary(
     deps = [
         ":vocabulary",
         "//programl/proto:programl_py",
+        "//programl/util/py:init_app",
         "//tasks/dataflow/dataset:pathflag",
         "//third_party/py/absl",
         "//third_party/py/ncc:vocabulary",
@@ -154,6 +158,7 @@ py_binary(
         ":dataflow",
         ":ggnn",
         ":vocabulary",
+        "//programl/util/py:init_app",
         "//third_party/py/absl",
     ],
 )
@@ -170,6 +175,7 @@ py_binary(
         "//programl/models/lstm",
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
+        "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//third_party/py/absl",
         "//third_party/py/ncc:vocabulary",

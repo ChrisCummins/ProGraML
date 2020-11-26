@@ -42,7 +42,7 @@ cc_library(
     name = "stdin_fmt",
     srcs = ["stdin_fmt.cc"],
     hdrs = ["stdin_fmt.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",
@@ -55,7 +55,7 @@ cc_library(
     name = "stdout_fmt",
     srcs = ["stdout_fmt.cc"],
     hdrs = ["stdout_fmt.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",

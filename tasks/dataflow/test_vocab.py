@@ -21,6 +21,7 @@ from collections import defaultdict
 from absl import flags, pbutil, progress
 
 from programl.proto import program_graph_pb2
+from programl.util.py.init_app import init_app
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.vocabulary import LoadVocabulary
 from third_party.py.ncc.vocabulary import VocabularyZipFile
@@ -117,8 +118,7 @@ def ToCsv(
 
 
 def main(argv):
-    if len(argv) != 1:
-        raise app.UsageError(f"Unrecognized arguments: {argv[1:]}")
+    init_app(argv)
     progress.Run(TestVocab(pathlib.Path(pathflag.path())))
 
 

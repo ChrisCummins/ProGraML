@@ -14,26 +14,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <iomanip>
+#include <iostream>
 
 #include "labm8/cpp/app.h"
-#include "programl/graph/format/node_link_graph.h"
+#include "labm8/cpp/logging.h"
+#include "labm8/cpp/status.h"
+#include "programl/graph/analysis/analysis.h"
 #include "programl/proto/program_graph.pb.h"
+#include "programl/proto/program_graph_features.pb.h"
 #include "programl/util/stdin_fmt.h"
+#include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 
-const char* usage = R"(Convert a ProgramGraph message to JSON node link graph.
+using labm8::Status;
+namespace error = labm8::error;
+
+const char* usage = R"(Run a data-flow analysis on a program graph.
 
 Usage:
 
-    graph2json < program_graph.pbtxt)";
-
-DEFINE_bool(pretty_print, false, "Pretty-print the generated JSON.");
-
-using json = nlohmann::json;
-using labm8::Status;
+    analyze <analysis> < /path/to/program_graph.pb)";
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
-  if (argc != 1) {
+
+  if (argc != 2) {
     std::cerr << usage;
     return 4;
   }
@@ -41,19 +47,14 @@ int main(int argc, char** argv) {
   programl::ProgramGraph graph;
   programl::util::ParseStdinOrDie(&graph);
 
-  auto nodeLinkGraph = json({});
-  Status status = programl::graph::format::ProgramGraphToNodeLinkGraph(graph, &nodeLinkGraph);
+  programl::ProgramGraphFeaturesList featuresList;
+  Status status = programl::graph::analysis::RunAnalysis(argv[1], graph, &featuresList);
   if (!status.ok()) {
-    std::cerr << "fatal: failed to convert ProgramGraph to node link graph ("
-              << status.error_message() << ')' << std::endl;
-    return 2;
+    LOG(ERROR) << status.error_message();
+    return 4;
   }
 
-  if (FLAGS_pretty_print) {
-    std::cout << std::setw(2) << nodeLinkGraph << std::endl;
-  } else {
-    std::cout << nodeLinkGraph << std::endl;
-  }
+  programl::util::WriteStdout(featuresList);
 
   return 0;
 }

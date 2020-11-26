@@ -11,39 +11,20 @@ Installs the command line tools to [prefix]/bin. [prefix] defaults to ~/.local/o
 EOF
 }
 
-# --- begin labm8 init ---
-f=programl/external/labm8/labm8/sh/app.sh
-# shellcheck disable=SC1090
-source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null ||
-  source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null ||
-  source "$0.runfiles/$f" 2>/dev/null ||
-  source "$(grep -sm1 "^$f " "$0.runfiles_manifest" | cut -f2- -d' ')" 2>/dev/null ||
-  source "$(grep -sm1 "^$f " "$0.exe.runfiles_manifest" | cut -f2- -d' ')" 2>/dev/null ||
-  {
-    echo >&2 "ERROR: cannot find $f"
-    exit 1
-  }
-f=
-# --- end app init ---
+# --- begin runfiles.bash initialization v2 ---
+# Copy-pasted from the Bazel Bash runfiles library v2.
+set -uo pipefail; f=bazel_tools/tools/bash/runfiles/runfiles.bash
+source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
+ source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null || \
+ source "$0.runfiles/$f" 2>/dev/null || \
+ source "$(grep -sm1 "^$f " "$0.runfiles_manifest" | cut -f2- -d' ')" 2>/dev/null || \
+ source "$(grep -sm1 "^$f " "$0.exe.runfiles_manifest" | cut -f2- -d' ')" 2>/dev/null || \
+ { echo>&2 "ERROR: cannot find $f"; exit 1; }; f=; set -e
+# --- end runfiles.bash initialization v2 ---
 
 set -euo pipefail
 
-BINARIES=(
-  "$(DataPath programl/programl/cmd/analyze)"
-  "$(DataPath programl/programl/cmd/clang2graph)"
-  "$(DataPath programl/programl/cmd/graph2cdfg)"
-  "$(DataPath programl/programl/cmd/graph2dot)"
-  "$(DataPath programl/programl/cmd/graph2json)"
-  "$(DataPath programl/programl/cmd/llvm2graph)"
-  "$(DataPath programl/programl/cmd/pbq)"
-  "$(DataPath programl/programl/cmd/xla2graph)"
-)
-
-if [[ $(uname) == Darwin ]]; then
-  LLVM_LIBS="$(DataPath clang-llvm-10.0.0-x86_64-apple-darwin/lib)"
-else
-  LLVM_LIBS="$(DataPath clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/lib)"
-fi
+PACKAGE="$(rlocation programl/package.tar.bz2)"
 
 main() {
   set +u
@@ -54,30 +35,15 @@ main() {
   set -u
 
   local prefix=${1:-~/.local/opt/programl}
-  mkdir -p "$prefix/bin" "$prefix/lib"
+  mkdir -p "$prefix"
 
-  echo "Installing ProGraML command line tools ..."
+  echo "Installing ProGraML to $prefix"
   echo
-  for bin in "${BINARIES[@]}"; do
-    dst="$prefix/bin/$(basename $bin)"
-    echo "    $dst"
-    rm -f "$dst"
-    cp $bin "$dst"
-  done
-
-  echo
-  echo "Installing libraries to $prefix/libs ..."
-  rsync -ah --delete --exclude '*.a' "$LLVM_LIBS/" "$prefix/lib/"
-
-  # NOTE(github.com/ChrisCummins/ProGraML/issues/134): Workaround for load-time
-  # errors when systems expect LLVMPolly.so to have the "lib" name prefix.
-  if [[ -f "$prefix/lib/LLVMPolly.so" ]]; then
-    ln -s "$prefix/lib/LLVMPolly.so" "$prefix/lib/libLLVMPolly.so"
-  fi
-
+  tar xjvf "$PACKAGE" -C "$prefix" | sed 's/^/    /'
   echo
   echo "===================================================="
-  echo "To use them, add the following to your ~/.$(basename $SHELL)rc:"
+  echo "ProGraML is now installed."
+  echo "Add the following to your ~/.$(basename $SHELL)rc:"
   echo
   echo "export PATH=$prefix/bin:\$PATH"
   echo "export LD_LIBRARY_PATH=$prefix/lib:\$LD_LIBRARY_PATH"

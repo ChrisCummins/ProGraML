@@ -23,6 +23,7 @@
 #include "programl/proto/src.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
+#include "programl/version.h"
 #include "third_party/tensorflow/xla.pb.h"
 
 const char* usage = R"(Query properties of a protocol buffer.
@@ -103,6 +104,7 @@ void DecodeAndPrint() {
 }
 
 int main(int argc, char** argv) {
+  gflags::SetVersionString(PROGRAML_VERSION);
   labm8::InitApp(&argc, &argv, usage);
 
   if (argc != 2) {

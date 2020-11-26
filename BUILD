@@ -36,21 +36,59 @@ sh_binary(
     name = "install",
     srcs = ["install.sh"],
     data = [
-        "@labm8//labm8/sh:app",
-        "//programl/cmd:analyze",
-        "//programl/cmd:graph2cdfg",
-        "//programl/cmd:clang2graph",
-        "//programl/cmd:graph2dot",
-        "//programl/cmd:graph2json",
-        "//programl/cmd:llvm2graph",
-        "//programl/cmd:pbq",
-        "//programl/cmd:xla2graph",
+        ":package",
+        "@bazel_tools//tools/bash/runfiles",
+    ],
+)
+
+genrule(
+    name = "package",
+    srcs = [
+        "//bin:analyze",
+        "//bin:graph2cdfg",
+        "//bin:clang2graph-10",
+        "//bin:graph2dot",
+        "//bin:graph2json",
+        "//bin:llvm2graph-10",
+        "//bin:pbq",
+        "//bin:xla2graph",
+        ":LICENSE",
+        ":version.txt",
     ] + select({
         "//:darwin": [
             "@clang-llvm-10.0.0-x86_64-apple-darwin//:libs",
+            "@clang-llvm-10.0.0-x86_64-apple-darwin//:libdir",
         ],
         "//conditions:default": [
             "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:lib",
+            "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir",
         ],
     }),
+    outs = ["package.tar.bz2"],
+    cmd = (
+              # Create the LICENSE and README files.
+              "mkdir package && " +
+              "cp $(location :LICENSE) package && " +
+              "echo \"ProGraML version $$(tr -d '\n' < $(location :version.txt)) <http://github.com/ChrisCummins/ProGraML>\" > package/README &&"
+          ) + (
+              # Copy the binaries to package/bin.
+              "rsync -ah --copy-links $$(dirname $(location //bin:graph2dot)) package &&"
+          ) + (
+              # Create the clang2graph and llvm2graph symlinks in package/bin.
+              "ln -s clang2graph-10 package/bin/clang2graph &&" +
+              "ln -s llvm2graph-10 package/bin/llvm2graph &&"
+          ) +
+          select({
+              # Copy the LLVM libraries to package/llvm.
+              "//:darwin": "rsync -ah --copy-links --exclude '*.a' --exclude '*.cmake' --exclude '*.h' $(location @clang-llvm-10.0.0-x86_64-apple-darwin//:libdir) package &&",
+              "//conditions:default": "rsync -ah --copy-links --exclude '*.a' --exclude '*.cmake' --exclude '*.h' $(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir) package &&",
+          }) + (
+              # NOTE(github.com/ChrisCummins/ProGraML/issues/134): Workaround for load-time errors
+              # when systems expect LLVMPolly.so to have the "lib" name prefix.
+              "ln -s LLVMPolly.so package/lib/libLLVMPolly.so &&"
+          ) +
+          (
+              # Create the package archive.
+              "tar cjf $@ -C package ."
+          ),
 )
