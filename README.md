@@ -64,21 +64,21 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-    - [Step 1: Compiler IR](#step-1-compiler-ir)
-    - [Step 2: Control-flow](#step-2-control-flow)
-    - [Step 3: Data-flow](#step-3-data-flow)
-    - [Step 4: Call graph](#step-4-call-graph)
-- [Datasets](#datasets)
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Command-line tools](#command-line-tools)
-  - [Dataflow experiments](#dataflow-experiments)
-  - [Using this project as a dependency](#using-this-project-as-a-dependency)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
+1. [Overview](#overview)
+1. [Getting Started](#getting-started)
+1. [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+    1. [Step 1: Compiler IR](#step-1-compiler-ir)
+    1. [Step 2: Control-flow](#step-2-control-flow)
+    1. [Step 3: Data-flow](#step-3-data-flow)
+    1. [Step 4: Call graph](#step-4-call-graph)
+1. [Datasets](#datasets)
+1. [Installation](#installation)
+  1. [Requirements](#requirements)
+  1. [Command-line tools](#command-line-tools)
+  1. [Dataflow experiments](#dataflow-experiments)
+  1. [Using this project as a dependency](#using-this-project-as-a-dependency)
+1. [Contributing](#contributing)
+1. [Acknowledgements](#acknowledgements)
 
 <!-- /MarkdownTOC -->
 
@@ -181,13 +181,6 @@ flow analysis labels.
   [bazelisk](https://github.com/bazelbuild/bazelisk) to automatically
   download and use the correct bazel version).
 * Python ≥ 3.6
-* MySQL client (N.B. this is not the full MySQL server, just the connector)
-  * On macOS: `brew install mysql-client`
-  * On Ubuntu: `sudo apt-get install libmysqlclient-dev`
-* A Fortran compiler:
-  * On macOS: `brew cask install gfortran`
-  * (Ubuntu has one by default)
-* (Optional) NVIDIA GPU with CUDA drivers for TensorFlow and PyTorch
 
 Once you have the above requirements installed, test that everything is working
 by building and running full test suite:
