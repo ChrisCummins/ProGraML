@@ -64,21 +64,23 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-1. [Overview](#overview)
-1. [Getting Started](#getting-started)
-1. [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-    1. [Step 1: Compiler IR](#step-1-compiler-ir)
-    1. [Step 2: Control-flow](#step-2-control-flow)
-    1. [Step 3: Data-flow](#step-3-data-flow)
-    1. [Step 4: Call graph](#step-4-call-graph)
-1. [Datasets](#datasets)
-1. [Installation](#installation)
-  1. [Requirements](#requirements)
-  1. [Command-line tools](#command-line-tools)
-  1. [Dataflow experiments](#dataflow-experiments)
-  1. [Using this project as a dependency](#using-this-project-as-a-dependency)
-1. [Contributing](#contributing)
-1. [Acknowledgements](#acknowledgements)
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+    - [Step 1: Compiler IR](#step-1-compiler-ir)
+    - [Step 2: Control-flow](#step-2-control-flow)
+    - [Step 3: Data-flow](#step-3-data-flow)
+    - [Step 4: Call graph](#step-4-call-graph)
+- [Datasets](#datasets)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Command-line tools](#command-line-tools)
+  - [Dataflow experiments](#dataflow-experiments)
+  - [Using this project as a dependency](#using-this-project-as-a-dependency)
+- [Usage](#usage)
+  - [End-to-end C++ example](#end-to-end-c-example)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
 
 <!-- /MarkdownTOC -->
 
@@ -116,8 +118,9 @@ Or if papers are more your ☕, have a read of ours:
 
 ## Constructing the ProGraML Representation
 
-Here's a little example of producing the ProGraML representation for a simple
-recursive Fibonacci implementation in C.
+The ProGraML representation is constructed in multiple stages. Here we describe
+the process for a simple recursive Fibonacci implementation in C. For
+instructions on how to run this process, see [Usage](#usage) below.
 
 #### Step 1: Compiler IR
 
@@ -287,14 +290,55 @@ py_binary(
 )
 ```
 
+## Usage
+
+### End-to-end C++ example
+
+This section provides an example step-by-step guide for generating a program
+graph from a C++ application.
+
+1. Install LLVM-10 and the ProGraML [command line tools](#command-line-tools).
+2. Compile your C++ code to LLVM-IR. The way to do this to modify your build
+   system so that clang is passed the `-emit-llvm -S` flags. For a
+   single-source application, the command line invocation would be:
+```
+$ clang-10 -emit-llvm -S -c my_app.cpp -o my_app.ll
+```
+   For a multi-source application, you can compile each file to LLVM-IR
+   separately and then link the results. For example:
+```
+$ clang-10 -emit-llvm -S -c foo.cpp -o foo.ll
+$ clang-10 -emit-llvm -S -c bar.cpp -o bar.ll
+$ llvm-link foo.ll bar.ll -S -o my_app.ll
+```
+3. Generate a ProGraML graph protocol buffer from the LLVM-IR using the
+   [llvm2graph](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/llvm2graph.txt)
+   commnand:
+```
+$ llvm2graph < my_app.ll > my_app.pbtxt
+```
+   The generated file `my_app.pbtxt` uses a human-readable
+   [ProgramGraph](https://github.com/ChrisCummins/ProGraML/blob/development/programl/proto/program_graph.proto)
+   format which you can inspect using a text editor. In this case, we will
+   render it to an image file using Graphviz.
+
+4. Generate a Graphviz dotfile from the ProGraML graph using
+   [graph2dot](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/graph2dot.txt):
+```
+$ graph2dot < my_app.pbtxt > my_app.dot
+```
+5. Render the dotfile to a PNG image using Graphviz:
+```
+$ dot -Tpng my_app.dot -o my_app.png
+```
+
 
 ## Contributing
 
 Patches, bug reports, feature requests are welcome! Please use the
 [issue tracker](https://github.com/ChrisCummins/ProGraML/issues) to file a
-bug report or question. Please read the
-[development workflow](/Documentation/Development.md)
-document before contributing code.
+bug report or question. If you would like to help out with the code, please
+read [this document](CONTRIBUTING.md).
 
 
 ## Acknowledgements
