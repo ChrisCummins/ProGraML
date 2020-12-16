@@ -23,9 +23,5 @@ py_binary(
         "//programl/proto:programl_py",
         "//programl/util/py:pbutil",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
-        "//third_party/py/pandas",
-        "//third_party/py/requests",
     ],
 )

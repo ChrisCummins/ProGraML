@@ -31,7 +31,6 @@ py_library(
     deps = [
         "//programl/proto:programl_py",
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
     ],
 )
 
@@ -61,7 +60,6 @@ py_library(
     srcs = ["graph_tuple.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/numpy",
     ],
 )
 
@@ -72,7 +70,6 @@ py_library(
     deps = [
         ":graph_tuple",
         "//programl/proto:programl_py",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -104,6 +101,5 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:programl_py",
-        "//third_party/py/networkx",
     ],
 )

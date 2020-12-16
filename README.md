@@ -185,6 +185,12 @@ flow analysis labels.
   download and use the correct bazel version).
 * Python ≥ 3.6
 
+Install the python dependencies using:
+
+```
+$ python -m pip install -r requirements.txt
+```
+
 Once you have the above requirements installed, test that everything is working
 by building and running full test suite:
 

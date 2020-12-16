@@ -7,15 +7,15 @@ import tempfile
 import typing
 import zipfile
 
-from absl import bazelutil, decorators, flags
+from absl import decorators, flags
 
-from third_party.py.ncc import rgx_utils
-from third_party.py.ncc.inst2vec import inst2vec_preprocess as i2v_prep
+from third_party.ncc import rgx_utils
+from third_party.ncc.inst2vec import inst2vec_preprocess as i2v_prep
 
 FLAGS = flags.FLAGS
 
 PUBLISHED_VOCABULARY = runfiles_path(
-    "programl/third_party/py/ncc/published_results/vocabulary.zip"
+    "programl/third_party/ncc/published_results/vocabulary.zip"
 )
 
 

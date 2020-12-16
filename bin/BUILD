@@ -116,7 +116,6 @@ py_binary(
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
         "//programl/util/py:stdin_fmt",
-        "//third_party/py/absl",
     ],
 )
 
@@ -143,7 +142,6 @@ py_binary(
         "//programl/util/py:init_app",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",
-        "//third_party/py/absl",
     ],
 )
 

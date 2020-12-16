@@ -23,7 +23,5 @@ py_test(
         "//programl/models:rolling_results",
         "//programl/util/py:runfiles_path",
         "//tests:test_main",
-        "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )

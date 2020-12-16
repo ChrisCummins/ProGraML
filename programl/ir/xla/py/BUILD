@@ -28,7 +28,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:programl_py",
-        "//third_party/py/networkx",
         "//third_party/tensorflow:xla_py",
     ],
 )

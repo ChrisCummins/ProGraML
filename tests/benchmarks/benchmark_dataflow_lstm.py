@@ -20,7 +20,7 @@ import pathlib
 import tempfile
 import warnings
 
-from absl import agg, flags
+from absl import flags
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
@@ -31,7 +31,7 @@ from programl.util.py.threaded_iterator import ThreadedIterator
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from tests.plugins import llvm_program_graph, llvm_reachability_features
-from third_party.py.ncc import vocabulary
+from third_party.ncc import vocabulary
 
 flags.DEFINE_integer("graph_count", None, "The number of graphs to load.")
 flags.DEFINE_integer("batch_count", None, "The number of batches.")

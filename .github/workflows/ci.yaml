@@ -58,10 +58,7 @@ jobs:
 
             - name: Install python dependencies
               run: |
-                  python3 -m pip install --upgrade pip
-                  # Install python dependencies that fail with bazel pip import.
-                  grep -E '(numpy|torch)' programl/requirements.txt | xargs python3 -m pip install
-                  python3 -m pip install setuptools
+                  python3 -m pip install -r requirements.txt
                   echo /home/runner/.local/bin >> $GITHUB_PATH
 
             - name: whoami

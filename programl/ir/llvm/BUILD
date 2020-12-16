@@ -54,9 +54,7 @@ py_library(
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
-        "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
-        "//third_party/py/numpy",
+        "//third_party/ncc/inst2vec:inst2vec_preprocess",
     ],
 )
 

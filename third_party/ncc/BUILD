@@ -27,11 +27,10 @@ py_library(
 py_library(
     name = "vocabulary",
     srcs = ["vocabulary.py"],
-    data = ["//third_party/py/ncc/published_results:vocabulary"],
+    data = ["//third_party/ncc/published_results:vocabulary"],
     visibility = ["//visibility:public"],
     deps = [
         ":rgx_utils",
-        "//third_party/py/absl",
-        "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
+        "//third_party/ncc/inst2vec:inst2vec_preprocess",
     ],
 )

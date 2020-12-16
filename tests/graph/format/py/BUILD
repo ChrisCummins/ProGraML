@@ -31,7 +31,6 @@ py_test(
         "//programl/graph/format/py:graph_tuple_builder",
         "//programl/proto:programl_py",
         "//tests:test_main",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -42,6 +41,5 @@ py_test(
         "//programl/graph/format/py:nx_format",
         "//programl/proto:programl_py",
         "//tests:test_main",
-        "//third_party/py/networkx",
     ],
 )

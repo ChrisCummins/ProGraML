@@ -25,7 +25,6 @@ py_library(
     data = ["//tests/data:llvm_ir"],
     deps = [
         "//programl/util/py:runfiles_path",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -38,7 +37,6 @@ py_library(
         "//programl/proto:programl_py",
         "//programl/util/py:pbutil",
         "//programl/util/py:runfiles_path",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -57,6 +55,5 @@ py_library(
     testonly = 1,
     srcs = ["tempdir.py"],
     deps = [
-        "//third_party/py/pytest",
     ],
 )

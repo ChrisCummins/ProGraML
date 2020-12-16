@@ -24,7 +24,7 @@ from programl.proto import program_graph_pb2
 from programl.util.py.init_app import init_app
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.vocabulary import LoadVocabulary
-from third_party.py.ncc.vocabulary import VocabularyZipFile
+from third_party.ncc.vocabulary import VocabularyZipFile
 
 flags.DEFINE_integer("limit", 0, "Limit the number of files read.")
 FLAGS = flags.FLAGS
