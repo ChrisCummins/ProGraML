@@ -26,8 +26,6 @@ py_test(
     ],
     deps = [
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -45,8 +43,6 @@ py_test(
         "//tasks/dataflow:graph_loader",
         "//tests/plugins:llvm_program_graph",
         "//tests/plugins:llvm_reachability_features",
-        "//third_party/py/absl",
-        "//third_party/py/tqdm",
     ],
 )
 
@@ -63,9 +59,7 @@ py_test(
 #        "//tests/plugins:llvm_reachability_features",
 #        "//tasks/dataflow:graph_loader",
 #        "//tasks/dataflow:lstm_batch_builder",
-#        "//third_party/py/absl",
-#        "//third_party/py/ncc:vocabulary",
-#        "//third_party/py/tqdm",
+#        "//third_party/ncc:vocabulary",
 #    ],
 #)
 
@@ -79,7 +73,5 @@ py_test(
     ],
     deps = [
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )

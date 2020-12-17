@@ -21,7 +21,5 @@ py_test(
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:programl_py",
         "//tests:test_main",
-        "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )

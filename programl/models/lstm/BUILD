@@ -26,8 +26,6 @@ py_library(
         "//programl/models:model",
         "//programl/proto:programl_py",
         "//programl/util/py:progress",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 

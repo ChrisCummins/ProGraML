@@ -34,6 +34,5 @@ py_test(
         "//programl/proto:programl_py",
         "//tests:test_main",
         "//tests/plugins:llvm_program_graph",
-        "//third_party/py/absl",
     ],
 )

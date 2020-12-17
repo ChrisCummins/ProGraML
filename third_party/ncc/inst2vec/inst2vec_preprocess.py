@@ -29,8 +29,8 @@ from typing import Dict
 
 import networkx as nx
 
-from third_party.py.ncc import rgx_utils as rgx
-from third_party.py.ncc.inst2vec import inst2vec_utils as i2v_utils
+from third_party.ncc import rgx_utils as rgx
+from third_party.ncc.inst2vec import inst2vec_utils as i2v_utils
 
 
 ########################################################################################################################

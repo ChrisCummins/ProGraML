@@ -29,31 +29,6 @@ load("@com_github_chriscummins_rules_bats//:bats.bzl", "bats_deps")
 
 bats_deps()
 
-# === Python requirements ===
-
-load(
-    "@rules_python//python:pip.bzl",
-    "pip3_import",
-    "pip_repositories",
-)
-
-pip_repositories()
-
-# //programl:requirements.txt
-
-pip3_import(
-    name = "programl_requirements",
-    timeout = 3600,
-    requirements = "@programl//:programl/requirements.txt",
-)
-
-load(
-    "@programl_requirements//:requirements.bzl",
-    programl_pip_install = "pip_install",
-)
-
-programl_pip_install()
-
 # === Protocol buffers ===
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
@@ -73,33 +48,3 @@ load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 grpc_extra_deps()
 
 # ----------------- End ProGraML dependencies -----------------
-
-# //tasks:requirements.txt
-
-pip3_import(
-    name = "tasks_requirements",
-    timeout = 3600,
-    requirements = "@programl//:tasks/requirements.txt",
-)
-
-load(
-    "@tasks_requirements//:requirements.bzl",
-    tasks_pip_install = "pip_install",
-)
-
-tasks_pip_install()
-
-# //tests:requirements.txt
-
-pip3_import(
-    name = "tests_requirements",
-    timeout = 3600,
-    requirements = "@programl//:tests/requirements.txt",
-)
-
-load(
-    "@tests_requirements//:requirements.bzl",
-    tests_pip_install = "pip_install",
-)
-
-tests_pip_install()

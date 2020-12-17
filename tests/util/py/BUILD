@@ -20,7 +20,6 @@ py_test(
     deps = [
         "//programl/util/py:decorators",
         "//tests:test_main",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -32,7 +31,6 @@ py_test(
         "//tests:test_main",
         "//tests/data:test_protos_py",
         "//tests/plugins:tempdir",
-        "//third_party/py/pytest",
     ],
 )
 
@@ -43,6 +41,5 @@ py_test(
     deps = [
         "//programl/util/py:progress",
         "//tests:test_main",
-        "//third_party/py/pytest",
     ],
 )

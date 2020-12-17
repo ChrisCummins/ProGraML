@@ -29,7 +29,6 @@ py_library(
     srcs = ["test_main.py"],
     visibility = ["//tests:__subpackages__"],
     deps = [
-        "//third_party/py/pytest",
     ],
 )
 

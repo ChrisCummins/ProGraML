@@ -29,7 +29,6 @@ py_library(
     deps = [
         "//programl/proto:programl_py",
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
     ],
 )
 

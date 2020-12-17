@@ -25,8 +25,6 @@ py_test(
         "//programl/util/py:pbutil",
         "//programl/util/py:runfiles_path",
         "//tests:test_main",
-        "//third_party/py/absl",
-        "//third_party/py/pytest",
         "//third_party/tensorflow:xla_py",
     ],
 )

@@ -29,7 +29,6 @@ py_library(
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
         "//programl/util/py:pbutil",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -43,7 +42,6 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/ggnn:ggnn_batch",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -57,8 +55,6 @@ py_library(
         "//programl/models/ggnn",
         "//programl/proto:programl_py",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -70,8 +66,6 @@ py_binary(
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
-        "//third_party/py/absl",
-        "//third_party/py/pandas",
     ],
 )
 
@@ -89,8 +83,6 @@ py_binary(
         "//tasks/dataflow:ggnn_batch_builder",
         "//tasks/dataflow:vocabulary",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -104,7 +96,6 @@ py_library(
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
     ],
 )
 
@@ -118,8 +109,6 @@ py_library(
         "//programl/models:base_graph_loader",
         "//programl/models:batch_data",
         "//programl/models/lstm:lstm_batch",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -134,7 +123,6 @@ py_binary(
     deps = [
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
-        "//third_party/py/absl",
     ],
 )
 
@@ -146,8 +134,7 @@ py_binary(
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
-        "//third_party/py/ncc:vocabulary",
+        "//third_party/ncc:vocabulary",
     ],
 )
 
@@ -159,7 +146,6 @@ py_binary(
         ":ggnn",
         ":vocabulary",
         "//programl/util/py:init_app",
-        "//third_party/py/absl",
     ],
 )
 
@@ -177,9 +163,7 @@ py_binary(
         "//programl/util/py:humanize",
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/ncc:vocabulary",
-        "//third_party/py/numpy",
+        "//third_party/ncc:vocabulary",
     ],
 )
 
@@ -188,6 +172,5 @@ py_library(
     srcs = ["vocabulary.py"],
     deps = [
         "//programl/util/py:humanize",
-        "//third_party/py/absl",
     ],
 )

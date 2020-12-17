@@ -34,7 +34,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl",
-        "//third_party/py/absl",
     ],
 )
 
@@ -43,7 +42,6 @@ py_library(
     srcs = ["pbutil.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/protobuf",
     ],
 )
 
@@ -53,8 +51,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":humanize",
-        "//third_party/py/absl",
-        "//third_party/py/tqdm",
     ],
 )
 
@@ -73,8 +69,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/protobuf",
     ],
 )
 
@@ -83,8 +77,6 @@ py_library(
     srcs = ["stdout_fmt.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/absl",
-        "//third_party/py/protobuf",
     ],
 )
 

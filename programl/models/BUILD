@@ -23,7 +23,6 @@ py_library(
     deps = [
         ":base_batch_builder",
         "//programl/util/py:humanize",
-        "//third_party/py/absl",
     ],
 )
 
@@ -53,11 +52,6 @@ py_library(
     name = "batch_results",
     srcs = ["batch_results.py"],
     visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
-        "//third_party/py/scikit_learn",
-    ],
 )
 
 py_library(
@@ -80,7 +74,6 @@ py_library(
         "//programl/models:rolling_results_builder",
         "//programl/proto:programl_py",
         "//programl/util/py:progress",
-        "//third_party/py/absl",
     ],
 )
 
@@ -103,6 +96,5 @@ py_library(
         ":batch_data",
         ":batch_results",
         ":rolling_results",
-        "//third_party/py/tqdm",
     ],
 )

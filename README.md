@@ -75,10 +75,10 @@
 - [Installation](#installation)
   - [Requirements](#requirements)
   - [Command-line tools](#command-line-tools)
-  - [Dataflow experiments](#dataflow-experiments)
   - [Using this project as a dependency](#using-this-project-as-a-dependency)
 - [Usage](#usage)
-  - [End-to-end C++ example](#end-to-end-c-example)
+  - [End-to-end C++ flow](#end-to-end-c-flow)
+  - [Dataflow experiments](#dataflow-experiments)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 
@@ -185,6 +185,12 @@ flow analysis labels.
   download and use the correct bazel version).
 * Python ≥ 3.6
 
+Install the python dependencies using:
+
+```
+$ python -m pip install -r requirements.txt
+```
+
 Once you have the above requirements installed, test that everything is working
 by building and running full test suite:
 
@@ -214,36 +220,6 @@ Then to use them, append the following to your `~/.bashrc`:
 export PATH=~/.local/opt/programl/bin:$PATH
 export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 ```
-
-
-### Dataflow experiments
-
-1. Download and unpack our [dataflow
-dataset](/Documentation/DataflowDataset.md)
-2. Install the python requirements:
-```sh
-python -m pip install -r requirements.txt
-```
-3. Train and evaluate a graph neural network model using:
-
-```sh
-bazel run -c opt //tasks/dataflow:train_ggnn -- \
-    --analysis reachability \
-    --path=$HOME/programl
-```
-
-where `--analysis` is the name of the analysis you want to evaluate, and
-`--path` is the root of the unpacked dataset. There are a lot of options that
-you can use to control the behavior of the experiment, see `--helpfull` for a
-full list. Some useful ones include:
-
-* `--batch_size` controls the number of nodes in each batch of graphs.
-* `--layer_timesteps` defines the layers of the GGNN model, and the number of timesteps used for
-  each.
-* `--learning_rate` sets the initial learning rate of the optimizer.
-* `--lr_decay_rate` the rate at which learning rate decays.
-* `--lr_decay_steps` number of gradient steps until the lr is decayed.
-* `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
 
 
 ### Using this project as a dependency
@@ -292,7 +268,7 @@ py_binary(
 
 ## Usage
 
-### End-to-end C++ example
+### End-to-end C++ flow
 
 This section provides an example step-by-step guide for generating a program
 graph from a C++ application.
@@ -332,6 +308,39 @@ $ graph2dot < my_app.pbtxt > my_app.dot
 $ dot -Tpng my_app.dot -o my_app.png
 ```
 
+### Dataflow experiments
+
+1. Download and unpack our [dataflow
+dataset](/Documentation/DataflowDataset.md)
+2. Install the python requirements:
+```sh
+python -m pip install -r requirements.txt
+```
+3. Train and evaluate a graph neural network model using:
+
+```sh
+bazel run -c opt //tasks/dataflow:train_ggnn -- \
+    --analysis reachability \
+    --path=$HOME/programl
+```
+
+where `--analysis` is the name of the analysis you want to evaluate, and
+`--path` is the root of the unpacked dataset. There are a lot of options that
+you can use to control the behavior of the experiment, see `--helpfull` for a
+full list. Some useful ones include:
+
+* `--batch_size` controls the number of nodes in each batch of graphs.
+* `--layer_timesteps` defines the layers of the GGNN model, and the number of timesteps used for
+  each.
+* `--learning_rate` sets the initial learning rate of the optimizer.
+* `--lr_decay_rate` the rate at which learning rate decays.
+* `--lr_decay_steps` number of gradient steps until the lr is decayed.
+* `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
+
+🏗️ **Under construction** We are in the process of refactoring the dataflow
+experiments with a revamped API.  There are currently bugs in the data loader
+which may affect training jobs, see
+[#147](https://github.com/ChrisCummins/ProGraML/issues/147).
 
 ## Contributing
 

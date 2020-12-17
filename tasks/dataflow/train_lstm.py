@@ -34,7 +34,7 @@ from programl.util.py.init_app import init_app
 from tasks.dataflow import dataflow
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
-from third_party.py.ncc import vocabulary
+from third_party.ncc import vocabulary
 
 flags.DEFINE_integer(
     "max_data_flow_steps",

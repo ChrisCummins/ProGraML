@@ -6,8 +6,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":inst2vec_utils",
-        "//third_party/py/ncc:rgx_utils",
-        "//third_party/py/networkx",
+        "//third_party/ncc:rgx_utils",
     ],
 )
 

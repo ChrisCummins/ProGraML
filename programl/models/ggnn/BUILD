@@ -20,7 +20,6 @@ py_library(
     name = "aux_readout",
     srcs = ["aux_readout.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -42,9 +41,6 @@ py_library(
         "//programl/models:model",
         "//programl/proto:programl_py",
         "//programl/util/py:progress",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
-        "//third_party/py/torch",
     ],
 )
 
@@ -55,7 +51,6 @@ py_library(
     deps = [
         "//programl/graph/format/py:graph_tuple",
         "//programl/proto:programl_py",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -63,7 +58,6 @@ py_library(
     name = "ggnn_layer",
     srcs = ["ggnn_layer.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -76,8 +70,6 @@ py_library(
         ":loss",
         ":metrics",
         ":node_embeddings",
-        "//third_party/py/absl",
-        "//third_party/py/torch",
     ],
 )
 
@@ -88,7 +80,6 @@ py_library(
         ":ggnn_layer",
         ":messaging_layer",
         ":readout",
-        "//third_party/py/torch",
     ],
 )
 
@@ -96,7 +87,6 @@ py_library(
     name = "linear_net",
     srcs = ["linear_net.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -104,7 +94,6 @@ py_library(
     name = "loss",
     srcs = ["loss.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -114,7 +103,6 @@ py_library(
     deps = [
         ":linear_net",
         ":position_embeddings",
-        "//third_party/py/torch",
     ],
 )
 
@@ -122,7 +110,6 @@ py_library(
     name = "metrics",
     srcs = ["metrics.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -130,8 +117,6 @@ py_library(
     name = "node_embeddings",
     srcs = ["node_embeddings.py"],
     deps = [
-        "//third_party/py/numpy",
-        "//third_party/py/torch",
     ],
 )
 
@@ -139,7 +124,6 @@ py_library(
     name = "position_embeddings",
     srcs = ["position_embeddings.py"],
     deps = [
-        "//third_party/py/torch",
     ],
 )
 
@@ -148,6 +132,5 @@ py_library(
     srcs = ["readout.py"],
     deps = [
         ":linear_net",
-        "//third_party/py/torch",
     ],
 )
