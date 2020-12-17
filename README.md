@@ -66,19 +66,19 @@
 
 - [Overview](#overview)
 - [Getting Started](#getting-started)
+- [Installation](#installation)
+    - [Command-line tools](#command-line-tools)
+    - [Building from source](#building-from-source)
+    - [Datasets](#datasets)
+    - [Using this project as a dependency](#using-this-project-as-a-dependency)
 - [Constructing the ProGraML Representation](#constructing-the-programl-representation)
     - [Step 1: Compiler IR](#step-1-compiler-ir)
     - [Step 2: Control-flow](#step-2-control-flow)
     - [Step 3: Data-flow](#step-3-data-flow)
     - [Step 4: Call graph](#step-4-call-graph)
-- [Datasets](#datasets)
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Command-line tools](#command-line-tools)
-  - [Using this project as a dependency](#using-this-project-as-a-dependency)
 - [Usage](#usage)
-  - [End-to-end C++ flow](#end-to-end-c-flow)
-  - [Dataflow experiments](#dataflow-experiments)
+    - [End-to-end C++ flow](#end-to-end-c-flow)
+    - [Dataflow experiments](#dataflow-experiments)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 
@@ -116,68 +116,25 @@ Or if papers are more your ☕, have a read of ours:
 [![Preprint](/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
 
 
-## Constructing the ProGraML Representation
-
-The ProGraML representation is constructed in multiple stages. Here we describe
-the process for a simple recursive Fibonacci implementation in C. For
-instructions on how to run this process, see [Usage](#usage) below.
-
-#### Step 1: Compiler IR
-
-<img src="/Documentation/assets/llvm2graph-1-ir.png" width=300>
-
-We start by lowering the program to a compiler IR. In this case, we'll use
-LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
-
-#### Step 2: Control-flow
-
-<img src="/Documentation/assets/llvm2graph-2-cfg.png" width=300>
-
-We begin building a graph by constructing a full-flow graph of the program. In a
-full-flow graph, every instruction is a node and the edges are control-flow.
-Note that edges are positional so that we can differentiate the branching
-control flow in that `switch` instruction.
-
-#### Step 3: Data-flow
-
-<img src="/Documentation/assets/llvm2graph-3-dfg.png" width=300>
-
-Then we add a graph node for every variable and constant. In the drawing above,
-the diamonds are constants and the variables are ovals. We add data-flow edges
-to describe the relations between constants and the instructions that use them,
-and variables and the constants which define/use them. Like control edges, data
-edges have positions. In the case of data edges, the position encodes the order
-of a data element in the list of instruction operands.
-
-#### Step 4: Call graph
-
-<img src="/Documentation/assets/llvm2graph-4-cg.png" width=300>
-
-Finally, we add call edges (green) from callsites to the function entry
-instruction, and return edges from function exits to the callsite. Since this is
-a graph of a recursive function, the callsites refer back to the entry of the
-function (the `switch`). The `external` node is used to represent a call from an
-external site.
-
-The process described above can be run locally using our
-[`clang2graph`](/Documentation/bin/clang2graph.txt) and
-[`graph2dot`](/Documentation/bin/graph2dot.txt) tools: `clang
-clang2graph -O3 fib.c | graph2dot`
-
-
-## Datasets
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
-
-Please see [this doc](/Documentation/DataflowDataset.md) for download
-links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
-flow analysis labels.
-
-
 ## Installation
 
 
-### Requirements
+#### Command-line tools
+
+1. Download the latest macOS or Linux release archive from the [releases page](https://github.com/ChrisCummins/ProGraML/releases).
+2. Unpack the release archive to `~/.local/opt/programl` (or a directory of your choice) using:
+```sh
+tar xjvf ~/Downloads/programl-*.tar.bz2 -C ~/.local/opt/programl
+```
+3. Add the installed files to your paths. You may want to add this to your `~/.bashrc`:
+```sh
+export PATH=$HOME/.local/opt/programl/bin:$PATH
+export LD_LIBRARY_PATH=$HOME/.local/opt/programl/lib:$LD_LIBRARY_PATH
+```
+
+#### Building from source
+
+Requirements:
 
 * macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
 * bazel ≥ 2.0 (we recommend using
@@ -198,20 +155,11 @@ by building and running full test suite:
 $ bazel test //...
 ```
 
-
-### Command-line tools
-
-In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
-using [command-line tools](/Documentation/bin) which act as filters,
-reading in graphs from stdin and emitting graphs to stdout. The structure for
-graphs is described through a series of [protocol
-buffers](/Documentation/ProtocolBuffers.md).
-
-Build and install the command line tools to `~/.local/opt/programl` (or a
+Build and install the command line tools to `~/.local` (or a
 directory of your choice) using:
 
 ```sh
-$ bazel run -c opt //:install -- ~/.local/opt/programl
+$ bazel run -c opt //:install -- ~/.local
 ```
 
 Then to use them, append the following to your `~/.bashrc`:
@@ -222,7 +170,16 @@ export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 ```
 
 
-### Using this project as a dependency
+#### Datasets
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
+
+Please see [this doc](/Documentation/DataflowDataset.md) for download
+links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
+flow analysis labels.
+
+
+#### Using this project as a dependency
 
 If you are using bazel you can add ProGraML as an external dependency. Add to
 your WORKSPACE file:
@@ -266,12 +223,73 @@ py_binary(
 )
 ```
 
+
+## Constructing the ProGraML Representation
+
+The ProGraML representation is constructed in multiple stages. Here we describe
+the process for a simple recursive Fibonacci implementation in C. For
+instructions on how to run this process, see [Usage](#usage) below.
+
+
+#### Step 1: Compiler IR
+
+<img src="/Documentation/assets/llvm2graph-1-ir.png" width=300>
+
+We start by lowering the program to a compiler IR. In this case, we'll use
+LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
+
+
+#### Step 2: Control-flow
+
+<img src="/Documentation/assets/llvm2graph-2-cfg.png" width=300>
+
+We begin building a graph by constructing a full-flow graph of the program. In a
+full-flow graph, every instruction is a node and the edges are control-flow.
+Note that edges are positional so that we can differentiate the branching
+control flow in that `switch` instruction.
+
+
+#### Step 3: Data-flow
+
+<img src="/Documentation/assets/llvm2graph-3-dfg.png" width=300>
+
+Then we add a graph node for every variable and constant. In the drawing above,
+the diamonds are constants and the variables are ovals. We add data-flow edges
+to describe the relations between constants and the instructions that use them,
+and variables and the constants which define/use them. Like control edges, data
+edges have positions. In the case of data edges, the position encodes the order
+of a data element in the list of instruction operands.
+
+
+#### Step 4: Call graph
+
+<img src="/Documentation/assets/llvm2graph-4-cg.png" width=300>
+
+Finally, we add call edges (green) from callsites to the function entry
+instruction, and return edges from function exits to the callsite. Since this is
+a graph of a recursive function, the callsites refer back to the entry of the
+function (the `switch`). The `external` node is used to represent a call from an
+external site.
+
+The process described above can be run locally using our
+[`clang2graph`](/Documentation/bin/clang2graph.txt) and
+[`graph2dot`](/Documentation/bin/graph2dot.txt) tools: `clang
+clang2graph -O3 fib.c | graph2dot`
+
+
 ## Usage
 
-### End-to-end C++ flow
+
+#### End-to-end C++ flow
+
+In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
+using [command-line tools](/Documentation/bin) which act as filters,
+reading in graphs from stdin and emitting graphs to stdout. The structure for
+graphs is described through a series of [protocol
+buffers](/Documentation/ProtocolBuffers.md).
 
 This section provides an example step-by-step guide for generating a program
-graph from a C++ application.
+graph for a C++ application.
 
 1. Install LLVM-10 and the ProGraML [command line tools](#command-line-tools).
 2. Compile your C++ code to LLVM-IR. The way to do this to modify your build
@@ -308,14 +326,12 @@ $ graph2dot < my_app.pbtxt > my_app.dot
 $ dot -Tpng my_app.dot -o my_app.png
 ```
 
-### Dataflow experiments
 
-1. Download and unpack our [dataflow
+#### Dataflow experiments
+
+1. Follow the instructions for [building from source](#building-from-source)
+2. Download and unpack our [dataflow
 dataset](/Documentation/DataflowDataset.md)
-2. Install the python requirements:
-```sh
-python -m pip install -r requirements.txt
-```
 3. Train and evaluate a graph neural network model using:
 
 ```sh
@@ -341,6 +357,7 @@ full list. Some useful ones include:
 experiments with a revamped API.  There are currently bugs in the data loader
 which may affect training jobs, see
 [#147](https://github.com/ChrisCummins/ProGraML/issues/147).
+
 
 ## Contributing
 
