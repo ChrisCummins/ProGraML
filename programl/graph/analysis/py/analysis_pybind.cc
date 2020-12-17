@@ -16,6 +16,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <sstream>
+
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/string.h"
 #include "programl/graph/analysis/analysis.h"
@@ -33,18 +34,17 @@ namespace analysis {
 PYBIND11_MODULE(analysis_pybind, m) {
   m.doc() = "Python bindings for analysis passes";
 
-  m.def("RunAnalysis",
-        [](const string& analysis, const string& serializedProgramGraph) {
-          ProgramGraph graph;
-          graph.ParseFromString(serializedProgramGraph);
+  m.def("RunAnalysis", [](const string& analysis, const string& serializedProgramGraph) {
+    ProgramGraph graph;
+    graph.ParseFromString(serializedProgramGraph);
 
-          ProgramGraphFeaturesList featuresList;
-          RunAnalysis(analysis, graph, &featuresList).RaiseException();
+    ProgramGraphFeaturesList featuresList;
+    RunAnalysis(analysis, graph, &featuresList).RaiseException();
 
-          std::stringstream str;
-          featuresList.SerializeToOstream(&str);
-          return py::bytes(str.str());
-        });
+    std::stringstream str;
+    featuresList.SerializeToOstream(&str);
+    return py::bytes(str.str());
+  });
 }
 
 }  // namespace analysis

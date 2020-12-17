@@ -15,12 +15,11 @@
 // limitations under the License.
 #pragma once
 
-#include "programl/proto/node.pb.h"
-#include "programl/proto/program_graph.pb.h"
+#include <vector>
 
 #include "absl/container/flat_hash_map.h"
-
-#include <vector>
+#include "programl/proto/node.pb.h"
+#include "programl/proto/program_graph.pb.h"
 
 namespace programl {
 namespace graph {
@@ -29,23 +28,20 @@ namespace format {
 // Produce a serialized list of node indices for the instructions in a graph.
 // Order is determined by a depth first traversal of the instructions in each
 // function.
-void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         std::vector<int>* serialized,
+void SerializeInstructionsInProgramGraph(const ProgramGraph& graph, std::vector<int>* serialized,
                                          int maxNodes);
 
 // Produce a serialized list of node indices for the instructions in a graph.
 // Order is determined by a depth first traversal of the instructions in each
 // function.
-void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         NodeIndexList* serialized,
+void SerializeInstructionsInProgramGraph(const ProgramGraph& graph, NodeIndexList* serialized,
                                          int maxNodes);
 
 // Produce a serialized list of node indices for the instructions in a graph.
 // Order is determined by a depth first traversal of the instructions in each
 // function.
 bool SerializeInstructionsInFunction(
-    const int& root,
-    const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
+    const int& root, const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
     std::vector<int>* serialized, int maxNodes);
 
 }  // namespace format

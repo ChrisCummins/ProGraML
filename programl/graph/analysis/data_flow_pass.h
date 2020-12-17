@@ -49,11 +49,9 @@ struct AdjacencyLists {
 // Base class for implementing data flow analysis passes.
 class DataFlowPass {
  public:
-  explicit DataFlowPass(const ProgramGraph& graph)
-      : graph_(graph){}
+  explicit DataFlowPass(const ProgramGraph& graph) : graph_(graph) {}
 
-            [[nodiscard]] virtual labm8::Status
-        Run(ProgramGraphFeaturesList * featuresList) = 0;
+  [[nodiscard]] virtual labm8::Status Run(ProgramGraphFeaturesList* featuresList) = 0;
 
   const ProgramGraph& graph() const { return graph_; }
 
@@ -72,8 +70,7 @@ class DataFlowPass {
 // selecting different root nodes from the set of elligible roots.
 class RoodNodeDataFlowAnalysis : public DataFlowPass {
  public:
-  RoodNodeDataFlowAnalysis(const ProgramGraph& graph)
-      : RoodNodeDataFlowAnalysis(graph, 10) {}
+  RoodNodeDataFlowAnalysis(const ProgramGraph& graph) : RoodNodeDataFlowAnalysis(graph, 10) {}
 
   RoodNodeDataFlowAnalysis(const ProgramGraph& graph, int maxInstancesPerGraph)
       : DataFlowPass(graph),
@@ -87,8 +84,7 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
   // GetVariableNodeIndices() to implement this.
   virtual std::vector<int> GetEligibleRootNodes() = 0;
 
-  [[nodiscard]] virtual labm8::Status Run(
-      ProgramGraphFeaturesList* featuresList) override;
+  [[nodiscard]] virtual labm8::Status Run(ProgramGraphFeaturesList* featuresList) override;
 
   [[nodiscard]] virtual labm8::Status Init();
 
@@ -98,8 +94,7 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
   void seed(unsigned seed) { seed_ = seed; }
 
  protected:
-  virtual labm8::Status RunOne(int rootNode,
-                               ProgramGraphFeatures* features) = 0;
+  virtual labm8::Status RunOne(int rootNode, ProgramGraphFeatures* features) = 0;
 
  private:
   const int maxInstancesPerGraph_;
@@ -107,11 +102,9 @@ class RoodNodeDataFlowAnalysis : public DataFlowPass {
 };
 
 // Utility function to add a new node feature a list of node features.
-void AddNodeFeature(ProgramGraphFeatures* features, const string& name,
-                    const Feature& value);
+void AddNodeFeature(ProgramGraphFeatures* features, const string& name, const Feature& value);
 
-std::vector<int> GetInstructionsInFunctionsNodeIndices(
-    const ProgramGraph& graph);
+std::vector<int> GetInstructionsInFunctionsNodeIndices(const ProgramGraph& graph);
 
 std::vector<int> GetVariableNodeIndices(const ProgramGraph& graph);
 

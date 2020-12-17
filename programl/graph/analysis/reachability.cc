@@ -16,13 +16,13 @@
 
 #include "programl/graph/analysis/reachability.h"
 
-#include "labm8/cpp/logging.h"
-#include "labm8/cpp/status.h"
-#include "programl/graph/features.h"
-
 #include <queue>
 #include <utility>
 #include <vector>
+
+#include "labm8/cpp/logging.h"
+#include "labm8/cpp/status.h"
+#include "programl/graph/features.h"
 
 using labm8::Status;
 using std::vector;
@@ -41,8 +41,7 @@ vector<int> ReachabilityAnalysis::GetEligibleRootNodes() {
   return GetInstructionsInFunctionsNodeIndices(graph());
 }
 
-Status ReachabilityAnalysis::RunOne(int rootNode,
-                                    ProgramGraphFeatures* features) {
+Status ReachabilityAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   vector<bool> visited(graph().node_size(), false);
 
   int dataFlowStepCount = 0;
@@ -50,9 +49,8 @@ Status ReachabilityAnalysis::RunOne(int rootNode,
   q.push({rootNode, 1});
 
   const vector<vector<int>>& cfg = adjacencies().control;
-  DCHECK(cfg.size() == graph().node_size())
-      << "CFG size: " << cfg.size() << " != "
-      << " graph size: " << graph().node_size();
+  DCHECK(cfg.size() == graph().node_size()) << "CFG size: " << cfg.size() << " != "
+                                            << " graph size: " << graph().node_size();
 
   int activeNodeCount = 0;
   while (!q.empty()) {
@@ -75,10 +73,8 @@ Status ReachabilityAnalysis::RunOne(int rootNode,
   Feature trueFeature = CreateFeature(1);
 
   for (int i = 0; i < graph().node_size(); ++i) {
-    AddNodeFeature(features, "data_flow_root_node",
-                   i == rootNode ? trueFeature : falseFeature);
-    AddNodeFeature(features, "data_flow_value",
-                   visited[i] ? trueFeature : falseFeature);
+    AddNodeFeature(features, "data_flow_root_node", i == rootNode ? trueFeature : falseFeature);
+    AddNodeFeature(features, "data_flow_value", visited[i] ? trueFeature : falseFeature);
   }
 
   SetFeature(features->mutable_features(), "data_flow_step_count",

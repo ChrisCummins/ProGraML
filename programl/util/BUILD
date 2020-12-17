@@ -20,7 +20,7 @@ cc_library(
     name = "filesystem_cache",
     srcs = ["filesystem_cache.cc"],
     hdrs = ["filesystem_cache.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@boost//:filesystem",
         "@labm8//labm8/cpp:fsutil",
@@ -38,23 +38,11 @@ cc_library(
     ],
 )
 
-py_binary(
-    name = "perf_monitor",
-    srcs = ["perf_monitor.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/py/gputil",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
-        "//third_party/py/psutil",
-    ],
-)
-
 cc_library(
     name = "stdin_fmt",
     srcs = ["stdin_fmt.cc"],
     hdrs = ["stdin_fmt.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",
@@ -67,7 +55,7 @@ cc_library(
     name = "stdout_fmt",
     srcs = ["stdout_fmt.cc"],
     hdrs = ["stdout_fmt.h"],
-    visibility = ["//programl:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",

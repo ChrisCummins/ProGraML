@@ -17,49 +17,48 @@
 import sys
 
 import google.protobuf.json_format
+from absl import flags
 
-from labm8.py import app
-from labm8.py import pbutil
+from programl.util.py import pbutil
 
-
-app.DEFINE_string(
-  "stdin_fmt",
-  "pbtxt",
-  "The type of input format to use. Valid options are: "
-  '"pbtxt" which reads a text format protocol buffer, '
-  '"pb" which reads a binary format protocol buffer, '
-  'or "json" which reads a JSON format protocol buffer.',
+flags.DEFINE_string(
+    "stdin_fmt",
+    "pbtxt",
+    "The type of input format to use. Valid options are: "
+    '"pbtxt" which reads a text format protocol buffer, '
+    '"pb" which reads a binary format protocol buffer, '
+    'or "json" which reads a JSON format protocol buffer.',
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def ParseStdinOrDie(proto, exit_code: int = 4):
-  """Read the entire stdin and parse as a protocol buffer of the given type.
+    """Read the entire stdin and parse as a protocol buffer of the given type.
 
-  The format is determined by the --stdin_fmt flag.
+    The format is determined by the --stdin_fmt flag.
 
-  Args:
-    proto: A protocol buffer instance to set the parsed input to.
-    exit_code: The exit code if parsing fails.
+    Args:
+      proto: A protocol buffer instance to set the parsed input to.
+      exit_code: The exit code if parsing fails.
 
-  Returns:
-    The proto argument.
-  """
-  try:
-    if FLAGS.stdin_fmt == "pb":
-      proto.ParseFromString(sys.stdin.buffer.read())
-    elif FLAGS.stdin_fmt == "pbtxt":
-      pbutil.FromString(sys.stdin.buffer.read().decode("utf-8"), proto)
-    elif FLAGS.stdin_fmt == "json":
-      google.protobuf.json_format.Parse(sys.stdin.buffer.read(), proto)
-    else:
-      print(
-        f"Unknown --stdin_fmt={FLAGS.stdin_fmt}. "
-        "Supported formats: pb,pbtxt,json",
-        file=sys.stderr,
-      )
-      sys.exit(exit_code)
-  except (pbutil.DecodeError, google.protobuf.json_format.ParseError) as e:
-    print(f"Failed to parse stdin: {e}", file=sys.stderr)
-    sys.exit(exit_code)
-  return proto
+    Returns:
+      The proto argument.
+    """
+    try:
+        if FLAGS.stdin_fmt == "pb":
+            proto.ParseFromString(sys.stdin.buffer.read())
+        elif FLAGS.stdin_fmt == "pbtxt":
+            pbutil.FromString(sys.stdin.buffer.read().decode("utf-8"), proto)
+        elif FLAGS.stdin_fmt == "json":
+            google.protobuf.json_format.Parse(sys.stdin.buffer.read(), proto)
+        else:
+            print(
+                f"Unknown --stdin_fmt={FLAGS.stdin_fmt}. "
+                "Supported formats: pb,pbtxt,json",
+                file=sys.stderr,
+            )
+            sys.exit(exit_code)
+    except (pbutil.DecodeError, google.protobuf.json_format.ParseError) as e:
+        print(f"Failed to parse stdin: {e}", file=sys.stderr)
+        sys.exit(exit_code)
+    return proto

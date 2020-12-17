@@ -4,10 +4,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def programl_deps():
   http_archive(
     name="labm8",
-    sha256="e4bc669322533e7615f689e5e8a810446d0c803be2e3b21e99a4e0135709755e",
-    strip_prefix="labm8-b98301dec615465a6567bed4ec4131753d1f8b32",
+    sha256 = "d31d9e6850552967bae128dc466a378a0476bfd3c53ab05533ac1206e8f43b3e",
+    strip_prefix="labm8-913d67f4f454cedc61220a210113bbf0460bb4d5",
     urls=[
-      "https://github.com/ChrisCummins/labm8/archive/b98301dec615465a6567bed4ec4131753d1f8b32.tar.gz"
+      "https://github.com/ChrisCummins/labm8/archive/913d67f4f454cedc61220a210113bbf0460bb4d5.tar.gz"
     ],
   )
 
@@ -22,20 +22,20 @@ def programl_deps():
 
   http_archive(
     name="llvm",
-    sha256="ea0dbab56d11e78006c68c39bc99da672bb6adc7ca03237ba4eb88887bf91a93",
-    strip_prefix="bazel_llvm-ae9ef2a711c5744fe52c5666d76976a3c6a3128b",
+    sha256 = "02ca111816345d76d7d7687f2d6ed5eaaa0d30f297f3a286171b8409e4502282",
+    strip_prefix="bazel_llvm-a0bffdcbbcb551acda57832d817aef6571b911ee",
     urls=[
-      "https://github.com/ChrisCummins/bazel_llvm/archive/ae9ef2a711c5744fe52c5666d76976a3c6a3128b.tar.gz"
+      "https://github.com/ChrisCummins/bazel_llvm/archive/a0bffdcbbcb551acda57832d817aef6571b911ee.tar.gz"
     ],
   )
 
   http_archive(
-    name="rules_python",
-    sha256="64a3c26f95db470c32ad86c924b23a821cd16c3879eed732a7841779a32a60f8",
-    strip_prefix="rules_python-748aa53d7701e71101dfd15d800e100f6ff8e5d1",
-    urls=[
-      "https://github.com/bazelbuild/rules_python/archive/748aa53d7701e71101dfd15d800e100f6ff8e5d1.tar.gz"
-    ],
+      name = "rules_python",
+      sha256 = "b5668cde8bb6e3515057ef465a35ad712214962f0b3a314e551204266c7be90c",
+      strip_prefix = "rules_python-0.0.2",
+      urls = [
+          "https://github.com/bazelbuild/rules_python/releases/download/0.0.2/rules_python-0.0.2.tar.gz",
+      ],
   )
 
   http_archive(
@@ -90,12 +90,22 @@ def programl_deps():
   )
 
   http_archive(
-    name="build_stack_rules_proto",
-    sha256="85ccc69a964a9fe3859b1190a7c8246af2a4ead037ee82247378464276d4262a",
-    strip_prefix="rules_proto-d9a123032f8436dbc34069cfc3207f2810a494ee",
-    urls=[
-      "https://github.com/stackb/rules_proto/archive/d9a123032f8436dbc34069cfc3207f2810a494ee.tar.gz"
-    ],
+      name = "rules_proto",
+      sha256 = "8e7d59a5b12b233be5652e3d29f42fba01c7cbab09f6b3a8d0a57ed6d1e9a0da",
+      strip_prefix = "rules_proto-7e4afce6fe62dbff0a4a03450143146f9f2d7488",
+      urls = [
+          "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/7e4afce6fe62dbff0a4a03450143146f9f2d7488.tar.gz",
+          "https://github.com/bazelbuild/rules_proto/archive/7e4afce6fe62dbff0a4a03450143146f9f2d7488.tar.gz",
+      ],
+  )
+
+  http_archive(
+      name = "com_github_grpc_grpc",
+      sha256 = "7e287b23cede28770bba58581a1d5683fd619fb748c4c2df8fcc3363957b1127",
+      strip_prefix = "grpc-014a2a0d54849fff795efbcb96b18416cbd7e189",
+      urls = [
+          "https://github.com/grpc/grpc/archive/014a2a0d54849fff795efbcb96b18416cbd7e189.tar.gz",
+      ],
   )
 
   http_archive(
@@ -154,23 +164,4 @@ def programl_deps():
     sha256="616f252f37d61b15037e3c2ef956905baf9c9eecfeab400cb3ad25bae714e214",
     strip_prefix="benchmark-1.4.0",
     url="https://github.com/google/benchmark/archive/v1.4.0.tar.gz",
-  )
-
-  http_archive(
-    name="org_tensorflow",
-    sha256="92116bfea188963a0e215e21e67c3494f6e1e6959f44dfbcc315f66eb70b5f83",
-    strip_prefix="tensorflow-f13f807c83c0d8d4d1ef290a17f26fe884ccfe2f",
-    urls=[
-      "https://github.com/ChrisCummins/tensorflow/archive/f13f807c83c0d8d4d1ef290a17f26fe884ccfe2f.tar.gz"
-    ],
-  )
-
-  http_archive(
-    name="io_bazel_rules_closure",
-    sha256="5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
-    strip_prefix="rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
-    urls=[
-      "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-      "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
-    ],
   )

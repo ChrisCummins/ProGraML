@@ -16,13 +16,13 @@
 
 #include "programl/graph/analysis/subexpressions.h"
 
-#include "labm8/cpp/logging.h"
-#include "labm8/cpp/status.h"
-#include "programl/graph/features.h"
-
 #include <sstream>
 #include <utility>
 #include <vector>
+
+#include "labm8/cpp/logging.h"
+#include "labm8/cpp/status.h"
+#include "programl/graph/features.h"
 
 using labm8::Status;
 using std::vector;
@@ -94,14 +94,11 @@ Status SubexpressionsAnalysis::Init() {
         opcodeName == "or" || opcodeName == "and" || opcodeName == "xor") {
       // Commutative statement, order by identifier name.
       std::sort(positionOrderedPairs.begin(), positionOrderedPairs.end(),
-                [](const Operand& a, const Operand& b) {
-                  return a.second < b.second;
-                });
+                [](const Operand& a, const Operand& b) { return a.second < b.second; });
     } else {
       // Non-commutative statement, order by position.
-      std::sort(
-          positionOrderedPairs.begin(), positionOrderedPairs.end(),
-          [](const Operand& a, const Operand& b) { return a.first < b.first; });
+      std::sort(positionOrderedPairs.begin(), positionOrderedPairs.end(),
+                [](const Operand& a, const Operand& b) { return a.first < b.first; });
     }
 
     // Now that we have ordered the list, strip the order key to make a list
@@ -138,22 +135,19 @@ vector<int> SubexpressionsAnalysis::GetEligibleRootNodes() {
   return rootNodes;
 }
 
-Status SubexpressionsAnalysis::RunOne(int rootNode,
-                                      ProgramGraphFeatures* features) {
+Status SubexpressionsAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   for (const auto& expressionSet : subexpressionSets_) {
     if (expressionSet.contains(rootNode)) {
       Feature falseFeature = CreateFeature(0);
       Feature trueFeature = CreateFeature(1);
 
       for (int i = 0; i < graph().node_size(); ++i) {
-        AddNodeFeature(features, "data_flow_root_node",
-                       i == rootNode ? trueFeature : falseFeature);
+        AddNodeFeature(features, "data_flow_root_node", i == rootNode ? trueFeature : falseFeature);
         AddNodeFeature(features, "data_flow_value",
                        expressionSet.contains(i) ? trueFeature : falseFeature);
       }
 
-      SetFeature(features->mutable_features(), "data_flow_step_count",
-                 CreateFeature(2));
+      SetFeature(features->mutable_features(), "data_flow_step_count", CreateFeature(2));
       SetFeature(features->mutable_features(), "data_flow_active_node_count",
                  CreateFeature(expressionSet.size()));
 
@@ -172,8 +166,7 @@ string SubexpressionsAnalysis::ToString() const {
 
 std::ostream& operator<<(std::ostream& os, const SubexpressionsAnalysis& s) {
   os << "Adjacencies:" << std::endl
-     << s.adjacencies()
-     << "#. expression sets: " << s.subexpression_sets().size() << std::endl;
+     << s.adjacencies() << "#. expression sets: " << s.subexpression_sets().size() << std::endl;
   for (int i = 0; i < s.subexpression_sets().size(); ++i) {
     os << "Expression set " << i << ": {";
     int j = 0;

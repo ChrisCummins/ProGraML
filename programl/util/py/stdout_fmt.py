@@ -17,45 +17,44 @@
 import sys
 
 import google.protobuf.json_format
+from absl import flags
 
-from labm8.py import app
-
-
-app.DEFINE_string(
-  "stdout_fmt",
-  "pbtxt",
-  "The format of output. Valid options are: "
-  '"pbtxt" for a text-format protocol buffer, '
-  '"pb" for a binary format protocol buffer, '
-  'or "json" for JSON. '
-  "Text format protocol buffers are recommended for human-readable output, "
-  "binary-format for efficient and fast file storage, and JSON for "
-  "processing "
-  "with third-party tools such as `jq`.",
+flags.DEFINE_string(
+    "stdout_fmt",
+    "pbtxt",
+    "The format of output. Valid options are: "
+    '"pbtxt" for a text-format protocol buffer, '
+    '"pb" for a binary format protocol buffer, '
+    'or "json" for JSON. '
+    "Text format protocol buffers are recommended for human-readable output, "
+    "binary-format for efficient and fast file storage, and JSON for "
+    "processing "
+    "with third-party tools such as `jq`.",
 )
-FLAGS = app.FLAGS
+FLAGS = flags.FLAGS
 
 
 def WriteStdout(proto) -> None:
-  """Write the given protocol buffer to stdout.
+    """Write the given protocol buffer to stdout.
 
-  The format is determined by the --stdout_fmt flag.
+    The format is determined by the --stdout_fmt flag.
 
-  Args:
-    proto: The protocol buffer instance to write to stdout.
-  """
-  if FLAGS.stdout_fmt == "pb":
-    sys.stdout.buffer.write(proto.SerializeToString())
-  elif FLAGS.stdout_fmt == "pbtxt":
-    print(proto)
-  elif FLAGS.stdout_fmt == "json":
-    print(
-      google.protobuf.json_format.MessageToJson(
-        proto, preserving_proto_field_name=True,
-      )
-    )
-  else:
-    raise app.UsageError(
-      f"Unknown --stdout_fmt={FLAGS.stdout_fmt}. "
-      "Supported formats: pb,pbtxt,json"
-    )
+    Args:
+      proto: The protocol buffer instance to write to stdout.
+    """
+    if FLAGS.stdout_fmt == "pb":
+        sys.stdout.buffer.write(proto.SerializeToString())
+    elif FLAGS.stdout_fmt == "pbtxt":
+        print(proto)
+    elif FLAGS.stdout_fmt == "json":
+        print(
+            google.protobuf.json_format.MessageToJson(
+                proto,
+                preserving_proto_field_name=True,
+            )
+        )
+    else:
+        raise app.UsageError(
+            f"Unknown --stdout_fmt={FLAGS.stdout_fmt}. "
+            "Supported formats: pb,pbtxt,json"
+        )

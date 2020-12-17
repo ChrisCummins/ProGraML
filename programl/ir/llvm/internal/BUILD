@@ -37,8 +37,7 @@ cc_library(
         ":text_encoder",
         "//programl/graph:features",
         "//programl/graph:program_graph_builder",
-        "//programl/proto:program_graph_cc",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:status_macros",
@@ -60,7 +59,7 @@ cc_library(
     visibility = ["//programl/ir/llvm:__subpackages__"],
     deps = [
         ":program_graph_builder",
-        "//programl/proto:program_graph_options_cc",
+        "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:statusor",
         "@llvm//10.0.0",
     ],

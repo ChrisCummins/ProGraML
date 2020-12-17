@@ -2,5 +2,7 @@
 /bazel-*
 /bootstrap.sh
 /env
+/.clwb/
+/.idea/
 
 __pycache__/

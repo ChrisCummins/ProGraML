@@ -15,9 +15,10 @@
 // limitations under the License.
 #include "programl/graph/format/graph_serializer.h"
 
-#include "absl/container/flat_hash_set.h"
-
 #include <deque>
+
+#include "absl/container/flat_hash_set.h"
+#include "labm8/cpp/logging.h"
 
 namespace programl {
 namespace graph {
@@ -27,8 +28,7 @@ namespace format {
 // outgoing call edges as functions to visit.
 static const int ROOT_NODE = 0;
 
-void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         std::vector<int>* serialized,
+void SerializeInstructionsInProgramGraph(const ProgramGraph& graph, std::vector<int>* serialized,
                                          int maxNodes) {
   // An array of function entries to visit, where each function entry is a node
   // that is the destination of an outgoing call edge from the root node.
@@ -52,19 +52,20 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
         break;
       case Edge::DATA:
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
   }
 
   for (const auto& function_entry : function_entries_to_visit) {
-    if (SerializeInstructionsInFunction(function_entry, forward_control_edges,
-                                        serialized, maxNodes)) {
+    if (SerializeInstructionsInFunction(function_entry, forward_control_edges, serialized,
+                                        maxNodes)) {
       return;
     }
   }
 }
 
-void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
-                                         NodeIndexList* serialized,
+void SerializeInstructionsInProgramGraph(const ProgramGraph& graph, NodeIndexList* serialized,
                                          int maxNodes) {
   std::vector<int> vec;
   SerializeInstructionsInProgramGraph(graph, &vec, maxNodes);
@@ -74,8 +75,7 @@ void SerializeInstructionsInProgramGraph(const ProgramGraph& graph,
 }
 
 bool SerializeInstructionsInFunction(
-    const int& root,
-    const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
+    const int& root, const absl::flat_hash_map<int, std::vector<int>>& forward_control_edges,
     std::vector<int>* serialized, int maxNodes) {
   // A set of visited nodes.
   absl::flat_hash_set<int> visited;

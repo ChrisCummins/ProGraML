@@ -40,8 +40,7 @@ class ProgramGraphBuilderPass : public ::llvm::ModulePass {
 
   explicit ProgramGraphBuilderPass(const ProgramGraphOptions& options)
       : ModulePass(ID),
-        graph_(labm8::Status(labm8::error::Code::FAILED_PRECONDITION,
-                             "runOnModule() not called")),
+        graph_(labm8::Status(labm8::error::Code::FAILED_PRECONDITION, "runOnModule() not called")),
         graphBuilder_(options) {}
 
   bool runOnModule(::llvm::Module& module) override;

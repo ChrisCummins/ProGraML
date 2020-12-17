@@ -1,0 +1,82 @@
+---
+name: CI
+
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: 0 0 * * 0 # weekly
+
+jobs:
+    test:
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python: [3.6, 3.7, 3.8]
+                exclude:
+                    # Only test recent python versions on macOS.
+                    - os: macos-latest
+                      python: 3.6
+                    - os: macos-latest
+                      python: 3.7
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: 'Linux: Mount bazel cache'
+              uses: pat-s/always-upload-cache@v2.1.0
+              with:
+                  path: /home/runner/.cache/bazel
+                  key: ${{ matrix.os }}-${{ matrix.python }}-bazel
+              if: matrix.os == 'ubuntu-latest'
+
+            - name: 'Linux: Install system dependencies'
+              run: |
+                  curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
+                  sudo mv bazel.tmp /usr/local/bin/bazel
+                  chmod +x /usr/local/bin/bazel
+              if: matrix.os == 'ubuntu-latest'
+
+            - name: 'macOS: Mount bazel cache'
+              uses: pat-s/always-upload-cache@v2.1.0
+              with:
+                  path: /private/var/tmp/_bazel_runner
+                  key: ${{ matrix.os }}-${{ matrix.python }}-bazel
+              if: matrix.os == 'macos-latest'
+
+            - name: 'macOS: Install system dependencies'
+              run: |
+                  brew install freetype pkg-config bazelisk coreutils findutils gnu-sed zlib
+              if: matrix.os == 'macos-latest'
+
+            - name: Set up Python ${{ matrix.python }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python }}
+
+            - name: Install python dependencies
+              run: |
+                  python3 -m pip install --upgrade pip
+                  # Install python dependencies that fail with bazel pip import.
+                  grep -E '(numpy|torch)' programl/requirements.txt | xargs python3 -m pip install
+                  python3 -m pip install setuptools
+                  echo /home/runner/.local/bin >> $GITHUB_PATH
+
+            - name: whoami
+              run: ./tools/whoami.sh
+
+            - name: Test
+              run: xargs bazel test --config=ci //...
+
+            - name: Install
+              run: |
+                  mkdir "${GITHUB_WORKSPACE}/install"
+                  bazel run --config=ci //:install "${GITHUB_WORKSPACE}/install"
+                  echo "${GITHUB_WORKSPACE}/install/bin" >> $GITHUB_PATH
+                  echo "LD_LIBRARY_PATH=${GITHUB_WORKSPACE}/install/lib" >> $GITHUB_ENV
+
+            - name: Test installed binaries
+              run: |
+                  llvm2graph --version

@@ -32,19 +32,16 @@ namespace llvm {
 const static ProgramGraphOptions defaultOptions;
 
 // Construct a program graph from the given module.
-labm8::Status BuildProgramGraph(
-    ::llvm::Module& module, ProgramGraph* graph,
-    const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(::llvm::Module& module, ProgramGraph* graph,
+                                const ProgramGraphOptions& options = defaultOptions);
 
 // Construct a program graph from a buffer for a module.
-labm8::Status BuildProgramGraph(
-    const ::llvm::MemoryBuffer& irBuffer, ProgramGraph* graph,
-    const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(const ::llvm::MemoryBuffer& irBuffer, ProgramGraph* graph,
+                                const ProgramGraphOptions& options = defaultOptions);
 
 // Construct a program graph from a string of IR.
-labm8::Status BuildProgramGraph(
-    const string& irString, ProgramGraph* graph,
-    const ProgramGraphOptions& options = defaultOptions);
+labm8::Status BuildProgramGraph(const string& irString, ProgramGraph* graph,
+                                const ProgramGraphOptions& options = defaultOptions);
 
 }  // namespace llvm
 }  // namespace ir

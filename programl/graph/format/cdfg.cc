@@ -15,12 +15,12 @@
 // limitations under the License.
 #include "programl/graph/format/cdfg.h"
 
+#include "absl/container/flat_hash_set.h"
+#include "labm8/cpp/logging.h"
 #include "programl/graph/features.h"
 #include "programl/proto/edge.pb.h"
 #include "programl/proto/node.pb.h"
 #include "programl/proto/program_graph.pb.h"
-
-#include "absl/container/flat_hash_set.h"
 
 namespace programl {
 namespace graph {
@@ -79,6 +79,8 @@ ProgramGraph CDFGBuilder::Build(const ProgramGraph& graph) {
           defs[edge.target()].insert(nodeMap[edge.source()]);
         }
         break;
+      default:
+        LOG(FATAL) << "unreachable";
     }
   }
 
@@ -117,8 +119,7 @@ const std::vector<int>& CDFGBuilder::GetNodeList() const { return nodeList_; }
 
 void CDFGBuilder::Clear() { nodeList_.clear(); }
 
-absl::flat_hash_map<int, int> NodeListToTranslationMap(
-    const std::vector<int>& nodeList) {
+absl::flat_hash_map<int, int> NodeListToTranslationMap(const std::vector<int>& nodeList) {
   absl::flat_hash_map<int, int> map;
   map.reserve(nodeList.size());
   for (size_t i = 0; i < nodeList.size(); ++i) {

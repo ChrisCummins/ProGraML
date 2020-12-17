@@ -16,7 +16,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <pybind11/pybind11.h>
+
 #include <sstream>
+
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/hlo_module_graph_builder.h"
@@ -26,19 +28,20 @@ namespace py = pybind11;
 PYBIND11_MODULE(xla_pybind, m) {
   m.doc() = "Generate program graphs from XLA HLO modules.";
 
-  m.def("BuildProgramGraphProto",
-        [&](const string& serializedProto) {
-          programl::ir::xla::HloModuleGraphBuilder builder;
-          ::xla::HloProto proto;
-          if (!proto.ParseFromString(serializedProto)) {
-            throw std::runtime_error("Failed to parse input proto");
-          }
+  m.def(
+      "BuildProgramGraphProto",
+      [&](const string& serializedProto) {
+        programl::ir::xla::HloModuleGraphBuilder builder;
+        ::xla::HloProto proto;
+        if (!proto.ParseFromString(serializedProto)) {
+          throw std::runtime_error("Failed to parse input proto");
+        }
 
-          auto graph = builder.Build(proto).ValueOrException();
+        auto graph = builder.Build(proto).ValueOrException();
 
-          std::stringstream out;
-          graph.SerializeToOstream(&out);
-          return py::bytes(out.str());
-        },
-        "Build a serialized ProgramGraph from a serialized HloProto.");
+        std::stringstream out;
+        graph.SerializeToOstream(&out);
+        return py::bytes(out.str());
+      },
+      "Build a serialized ProgramGraph from a serialized HloProto.");
 }

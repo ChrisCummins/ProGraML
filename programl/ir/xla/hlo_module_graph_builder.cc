@@ -15,35 +15,31 @@
 // limitations under the License.
 #include "programl/ir/xla/hlo_module_graph_builder.h"
 
+#include <sstream>
+
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status_macros.h"
 #include "labm8/cpp/string.h"
 #include "programl/ir/xla/xla_stringifier.h"
-
-#include "tensorflow/compiler/xla/xla_data.pb.h"
-
-#include <sstream>
+#include "third_party/tensorflow/xla.pb.h"
 
 namespace programl {
 namespace ir {
 namespace xla {
 
-labm8::StatusOr<ProgramGraph> HloModuleGraphBuilder::Build(
-    const ::xla::HloProto& proto) {
+labm8::StatusOr<ProgramGraph> HloModuleGraphBuilder::Build(const ::xla::HloProto& proto) {
   RETURN_IF_ERROR(VisitModule(proto.hlo_module()));
   return GetProgramGraph();
 }
 
-labm8::Status HloModuleGraphBuilder::VisitModule(
-    const ::xla::HloModuleProto& module) {
+labm8::Status HloModuleGraphBuilder::VisitModule(const ::xla::HloModuleProto& module) {
   Module* mod = AddModule(module.name());
 
   // Instantiate the "functions" from HloComputations. Functions are defined in
   // the order of dependencies.
   for (int i = 0; i < module.computations_size(); ++i) {
     FunctionEntryExits computation;
-    ASSIGN_OR_RETURN(computation,
-                     VisitComputation(module.computations(i), mod));
+    ASSIGN_OR_RETURN(computation, VisitComputation(module.computations(i), mod));
     computations_.insert({module.computations(i).id(), computation});
   }
 
@@ -53,8 +49,7 @@ labm8::Status HloModuleGraphBuilder::VisitModule(
     return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,
                          "Failed to locate entry computation");
   }
-  RETURN_IF_ERROR(
-      AddCallEdge(GetRootNode(), entryComputation->second.first).status());
+  RETURN_IF_ERROR(AddCallEdge(GetRootNode(), entryComputation->second.first).status());
   for (const auto& exit : entryComputation->second.second) {
     RETURN_IF_ERROR(AddCallEdge(exit, GetRootNode()).status());
   }
@@ -75,9 +70,8 @@ labm8::StatusOr<FunctionEntryExits> HloModuleGraphBuilder::VisitComputation(
   // producers appear before consumers.
   Node* lastInstruction = entryInstruction;
   for (int i = 0; i < computation.instructions_size(); ++i) {
-    ASSIGN_OR_RETURN(
-        lastInstruction,
-        VisitInstruction(computation.instructions(i), fn, entryInstruction));
+    ASSIGN_OR_RETURN(lastInstruction,
+                     VisitInstruction(computation.instructions(i), fn, entryInstruction));
   }
 
   // Since instructions are in a valid execution order, the last instruction
@@ -86,8 +80,7 @@ labm8::StatusOr<FunctionEntryExits> HloModuleGraphBuilder::VisitComputation(
 }
 
 labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
-    const ::xla::HloInstructionProto& instruction, Function* function,
-    Node* entryInstruction) {
+    const ::xla::HloInstructionProto& instruction, Function* function, Node* entryInstruction) {
   bool isParam = instruction.opcode() == "parameter";
   const string name = isParam ? "<param>" : HloInstructionToText(instruction);
 
@@ -102,15 +95,11 @@ labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
 
   if (instruction.opcode() == "parameter") {
     // Add the implicit control edge from computation entry point to parameters.
-    RETURN_IF_ERROR(
-        AddControlEdge(/*position=*/0, entryInstruction, instructionNode)
-            .status());
+    RETURN_IF_ERROR(AddControlEdge(/*position=*/0, entryInstruction, instructionNode).status());
   } else if (instruction.opcode() == "constant") {
     // Generate the immediate value nodes for constants.
     Node* literal = AddConstant(LiteralProtoToText(instruction.literal()));
-    RETURN_IF_ERROR(
-        AddDataEdge(instruction.operand_ids_size(), literal, instructionNode)
-            .status());
+    RETURN_IF_ERROR(AddDataEdge(instruction.operand_ids_size(), literal, instructionNode).status());
   }
 
   // Add data and control edges from consumer to producer..
@@ -122,17 +111,14 @@ labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
           << instruction.operand_ids(i);
       return labm8::Status(labm8::error::Code::INVALID_ARGUMENT, err.str());
     }
-    RETURN_IF_ERROR(
-        AddDataEdge(/*position=*/i, operandData->second, instructionNode)
-            .status());
+    RETURN_IF_ERROR(AddDataEdge(/*position=*/i, operandData->second, instructionNode).status());
 
     auto pred = instructions_.find(instruction.operand_ids(i));
     if (pred == instructions_.end()) {
       return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,
                            "Failed to find operand instruction");
     }
-    RETURN_IF_ERROR(
-        AddControlEdge(/*position=*/i, pred->second, instructionNode).status());
+    RETURN_IF_ERROR(AddControlEdge(/*position=*/i, pred->second, instructionNode).status());
   }
 
   // Add explicit control dependencies.
@@ -142,8 +128,7 @@ labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
       return labm8::Status(labm8::error::Code::INVALID_ARGUMENT,
                            "Failed to find control predecessor");
     }
-    RETURN_IF_ERROR(
-        AddControlEdge(/*position=*/0, pred->second, instructionNode).status());
+    RETURN_IF_ERROR(AddControlEdge(/*position=*/0, pred->second, instructionNode).status());
   }
 
   // Add call edges from instructions to computations.
@@ -156,8 +141,7 @@ labm8::StatusOr<Node*> HloModuleGraphBuilder::VisitInstruction(
                            "Failed to locate called computation");
     }
     RETURN_IF_ERROR(
-        AddCallEdge(instructionNode, calledComputationEntryExits->second.first)
-            .status());
+        AddCallEdge(instructionNode, calledComputationEntryExits->second.first).status());
     for (const auto& exit : calledComputationEntryExits->second.second) {
       RETURN_IF_ERROR(AddCallEdge(exit, instructionNode).status());
     }

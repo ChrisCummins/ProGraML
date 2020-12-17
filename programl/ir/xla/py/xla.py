@@ -14,37 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Generate program graphs from XLA HLO modules."""
-from typing import Optional
-
-from tensorflow.compiler.xla.service import hlo_pb2
-
-from labm8.py import app
 from programl.ir.xla.py import xla_pybind
 from programl.proto import program_graph_pb2
-
-FLAGS = app.FLAGS
+from third_party.tensorflow import xla_pb2
 
 
 def BuildProgramGraphProto(
-  hlo_proto: hlo_pb2.HloProto,
+    hlo_proto: xla_pb2.HloProto,
 ) -> program_graph_pb2.ProgramGraph:
-  """Construct a program graph for the given LLVM IR.
+    """Construct a program graph for the given LLVM IR.
 
-  Args:
-    hlo_proto: The LLVM IR string for a module.
+    Args:
+      hlo_proto: The LLVM IR string for a module.
 
-  Returns:
-    A ProgramGraph message instance.
+    Returns:
+      A ProgramGraph message instance.
 
-  Raises:
-    ValueError: If graph construction fails.
-  """
-  # This requires a round trip serialized to / from strings, since I can't
-  # figure out a way to get pybind11 to auto-generate bindings for protocol
-  # buffers.
-  graph = program_graph_pb2.ProgramGraph()
-  serialized_graph = xla_pybind.BuildProgramGraphProto(
-    hlo_proto.SerializeToString()
-  )
-  graph.ParseFromString(serialized_graph)
-  return graph
+    Raises:
+      ValueError: If graph construction fails.
+    """
+    # This requires a round trip serialized to / from strings, since I can't
+    # figure out a way to get pybind11 to auto-generate bindings for protocol
+    # buffers.
+    graph = program_graph_pb2.ProgramGraph()
+    serialized_graph = xla_pybind.BuildProgramGraphProto(hlo_proto.SerializeToString())
+    graph.ParseFromString(serialized_graph)
+    return graph

@@ -15,16 +15,15 @@
 // limitations under the License.
 #include "programl/util/stdout_fmt.h"
 
-DEFINE_string(
-    stdout_fmt, "pbtxt",
-    "The format of output. Valid options are: "
-    "\"pbtxt\" for a text-format protocol buffer, "
-    "\"pb\" for a binary format protocol buffer, "
-    "or \"json\" for JSON. "
-    "Text format protocol buffers are recommended for human-readable output, "
-    "binary-format for efficient and fast file storage, and JSON for "
-    "processing "
-    "with third-party tools such as `jq`.");
+DEFINE_string(stdout_fmt, "pbtxt",
+              "The format of output. Valid options are: "
+              "\"pbtxt\" for a text-format protocol buffer, "
+              "\"pb\" for a binary format protocol buffer, "
+              "or \"json\" for JSON. "
+              "Text format protocol buffers are recommended for human-readable output, "
+              "binary-format for efficient and fast file storage, and JSON for "
+              "processing "
+              "with third-party tools such as `jq`.");
 
 // Assert that the stdout format is legal.
 static bool ValidateStdoutFormat(const char* flagname, const string& value) {

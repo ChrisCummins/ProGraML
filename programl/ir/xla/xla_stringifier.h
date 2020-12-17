@@ -18,18 +18,17 @@
 #pragma once
 
 #include "labm8/cpp/string.h"
-#include "tensorflow/compiler/xla/service/hlo.pb.h"
-#include "tensorflow/compiler/xla/xla_data.pb.h"
+#include "third_party/tensorflow/xla.pb.h"
 
 namespace programl {
 namespace ir {
 namespace xla {
 
-string ShapeProtoToString(const ::xla::ShapeProto &shape);
+string ShapeProtoToString(const ::xla::ShapeProto& shape);
 
-string HloInstructionToText(const ::xla::HloInstructionProto &instruction);
+string HloInstructionToText(const ::xla::HloInstructionProto& instruction);
 
-string LiteralProtoToText(const ::xla::LiteralProto &literal);
+string LiteralProtoToText(const ::xla::LiteralProto& literal);
 
 }  // namespace xla
 }  // namespace ir

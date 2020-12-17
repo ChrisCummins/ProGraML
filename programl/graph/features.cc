@@ -25,7 +25,7 @@ Feature CreateFeature(int64_t value) {
   return feature;
 }
 
-Feature CreateFeature(const std::vector<int64_t> &value) {
+Feature CreateFeature(const std::vector<int64_t>& value) {
   Feature feature;
   for (auto v : value) {
     feature.mutable_int64_list()->add_value(v);
@@ -33,13 +33,13 @@ Feature CreateFeature(const std::vector<int64_t> &value) {
   return feature;
 }
 
-Feature CreateFeature(const std::string &value) {
+Feature CreateFeature(const std::string& value) {
   Feature feature;
   feature.mutable_bytes_list()->add_value(value);
   return feature;
 }
 
-void SetFeature(Features *features, const char *label, const Feature &value) {
+void SetFeature(Features* features, const char* label, const Feature& value) {
   (*features->mutable_feature())[label] = value;
 }
 

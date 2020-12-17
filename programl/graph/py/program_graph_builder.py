@@ -14,27 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This file defines a class for constructing program graphs."""
+from typing import Optional
+
+from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
+
 from programl.graph.py import program_graph_builder_pybind
 from programl.proto import program_graph_pb2
 
 
 class ProgramGraphBuilder(program_graph_builder_pybind.ProgramGraphBuilder):
-  """A module for constructing a single program graph.
+    """A module for constructing a single program graph.
 
-  Uses the builder pattern. Example usage:
+    Uses the builder pattern. Example usage:
 
-      builder = ProgramGraphBuilder();
-      mod = builder.AddModule("foo")
-      fn = builder.AddFunction("A", mod)
-      add = builder.AddInstruction("add", fn)
-      builder.AddControlEdge(builder.root, a, position=0)
+        builder = ProgramGraphBuilder();
+        mod = builder.AddModule("foo")
+        fn = builder.AddFunction("A", mod)
+        add = builder.AddInstruction("add", fn)
+        builder.AddControlEdge(builder.root, a, position=0)
 
-      graph = builder.Build().
+        graph = builder.Build().
 
     After calling Build(), the object may be re-used.
     """
 
-  def Build(self) -> program_graph_pb2.ProgramGraph:
-    proto = program_graph_pb2.ProgramGraph()
-    proto.ParseFromString(self._Build())
-    return proto
+    def __init__(self, options: Optional[ProgramGraphOptions] = None):
+        options = options or ProgramGraphOptions()
+        super().__init__(options.SerializeToString())
+
+    def Build(self) -> program_graph_pb2.ProgramGraph:
+        proto = program_graph_pb2.ProgramGraph()
+        proto.ParseFromString(self._Build())
+        return proto

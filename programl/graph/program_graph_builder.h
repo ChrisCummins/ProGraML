@@ -25,6 +25,7 @@
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 #include "programl/proto/program_graph.pb.h"
+#include "programl/proto/program_graph_options.pb.h"
 
 namespace programl {
 namespace graph {
@@ -46,7 +47,9 @@ namespace graph {
 //
 class ProgramGraphBuilder {
  public:
-  ProgramGraphBuilder();
+  ProgramGraphBuilder() : ProgramGraphBuilder(ProgramGraphOptions{}) {}
+
+  explicit ProgramGraphBuilder(const ProgramGraphOptions& options);
 
   // Construct a new function and return its number.
   Module* AddModule(const string& name);
@@ -62,47 +65,50 @@ class ProgramGraphBuilder {
   Node* AddConstant(const string& text);
 
   // Edge factories.
-  [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position,
-                                                      const Node* source,
+  [[nodiscard]] labm8::StatusOr<Edge*> AddControlEdge(int32_t position, const Node* source,
                                                       const Node* target);
 
-  [[nodiscard]] labm8::StatusOr<Edge*> AddDataEdge(int32_t position,
-                                                   const Node* source,
+  [[nodiscard]] labm8::StatusOr<Edge*> AddDataEdge(int32_t position, const Node* source,
                                                    const Node* target);
 
-  [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source,
-                                                   const Node* target);
+  [[nodiscard]] labm8::StatusOr<Edge*> AddCallEdge(const Node* source, const Node* target);
 
   const Node* GetRootNode() const { return &graph_.node(0); }
 
   // Return the graph protocol buffer.
   const ProgramGraph& GetProgramGraph() const { return graph_; }
 
-  // Validate the program graph and return it. Call Clear() if you wish to
+  // Return the program graph, and validate it first if strict option is set.
   [[nodiscard]] labm8::StatusOr<ProgramGraph> Build();
+
+  // Validate the program graph.
+  [[nodiscard]] labm8::Status ValidateGraph() const;
 
   // Reset builder state.
   void Clear();
 
  protected:
+  inline const ProgramGraphOptions& options() const { return options_; }
+
   // Construct nodes.
 
   inline Node* AddNode(const Node::Type& type);
 
   inline Node* AddNode(const Node::Type& type, const string& text);
 
-  inline Node* AddNode(const Node::Type& type, const string& text,
-                       const Function* function);
+  inline Node* AddNode(const Node::Type& type, const string& text, const Function* function);
 
   // Construct edges.
 
-  inline Edge* AddEdge(const Edge::Flow& flow, int32_t position,
-                       const Node* source, const Node* target);
+  inline Edge* AddEdge(const Edge::Flow& flow, int32_t position, const Node* source,
+                       const Node* target);
 
   // Return a mutable pointer to the graph protocol buffer.
   ProgramGraph* GetMutableProgramGraph() { return &graph_; }
 
  private:
+  const ProgramGraphOptions options_;
+
   ProgramGraph graph_;
 
   // Get the index of an object in a repeated field lists.

@@ -16,10 +16,10 @@
 
 #include "programl/graph/analysis/liveness.h"
 
+#include <queue>
+
 #include "labm8/cpp/logging.h"
 #include "programl/graph/features.h"
-
-#include <queue>
 
 using absl::flat_hash_set;
 using labm8::Status;
@@ -31,22 +31,16 @@ namespace graph {
 namespace analysis {
 
 Status LivenessAnalysis::Init() {
-  ComputeAdjacencies({.control = true,
-                      .reverse_control = true,
-                      .data = true,
-                      .reverse_data = true});
+  ComputeAdjacencies(
+      {.control = true, .reverse_control = true, .data = true, .reverse_data = true});
   const auto& cfg = adjacencies().control;
-  DCHECK(cfg.size() == graph().node_size())
-      << cfg.size() << " != " << graph().node_size();
+  DCHECK(cfg.size() == graph().node_size()) << cfg.size() << " != " << graph().node_size();
   const auto& rcfg = adjacencies().reverse_control;
-  DCHECK(rcfg.size() == graph().node_size())
-      << rcfg.size() << " != " << graph().node_size();
+  DCHECK(rcfg.size() == graph().node_size()) << rcfg.size() << " != " << graph().node_size();
   const auto& dfg = adjacencies().data;
-  DCHECK(dfg.size() == graph().node_size())
-      << dfg.size() << " != " << graph().node_size();
+  DCHECK(dfg.size() == graph().node_size()) << dfg.size() << " != " << graph().node_size();
   const auto& rdfg = adjacencies().reverse_data;
-  DCHECK(rdfg.size() == graph().node_size())
-      << rdfg.size() << " != " << graph().node_size();
+  DCHECK(rdfg.size() == graph().node_size()) << rdfg.size() << " != " << graph().node_size();
 
   // Pre-compute all live-out sets.
   liveInSets_.reserve(graph().node_size());
@@ -95,8 +89,8 @@ Status LivenessAnalysis::Init() {
     // LiveOut(n) = U {LiveIn(p) for p in succ(n)}
     flat_hash_set<int> newOutSet{};
     for (const auto& successor : successors) {
-      newOutSet.merge(flat_hash_set<int>(liveInSets_[successor].begin(),
-                                         liveInSets_[successor].end()));
+      newOutSet.merge(
+          flat_hash_set<int>(liveInSets_[successor].begin(), liveInSets_[successor].end()));
     }
 
     // LiveIn(n) = Gen(n) U {LiveOut(n) - Kill(n)}
@@ -157,8 +151,7 @@ Status LivenessAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   const auto& outSet = liveOutSets_[rootNode];
   int dataFlowActiveNodeCount = 0;
   for (int i = 0; i < graph().node_size(); ++i) {
-    AddNodeFeature(features, "data_flow_root_node",
-                   i == rootNode ? trueFeature : falseFeature);
+    AddNodeFeature(features, "data_flow_root_node", i == rootNode ? trueFeature : falseFeature);
     if (outSet.contains(i)) {
       ++dataFlowActiveNodeCount;
       AddNodeFeature(features, "data_flow_value", trueFeature);
@@ -196,8 +189,7 @@ Status LivenessAnalysis::RunOne(int rootNode, ProgramGraphFeatures* features) {
   }
 
   AddScalarFeature(features, "data_flow_step_count", maxDistance);
-  AddScalarFeature(features, "data_flow_active_node_count",
-                   dataFlowActiveNodeCount);
+  AddScalarFeature(features, "data_flow_active_node_count", dataFlowActiveNodeCount);
 
   return Status::OK;
 }

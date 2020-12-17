@@ -35,14 +35,13 @@ enum NodeLabel {
 };
 
 // Get the named node feature or return an error status if not found.
-labm8::StatusOr<Feature> GetNodeFeature(const Node& node,
-                                        const string& feature);
+labm8::StatusOr<Feature> GetNodeFeature(const Node& node, const string& feature);
 
 // Serialize the given program graph to an output stream.
-[[nodiscard]] labm8::Status SerializeGraphVizToString(
-    const ProgramGraph& graph, std::ostream* ostream,
-    const NodeLabel& nodeLabelFormat = kText,
-    const string& nodeFeatureName = "");
+[[nodiscard]] labm8::Status SerializeGraphVizToString(const ProgramGraph& graph,
+                                                      std::ostream* ostream,
+                                                      const NodeLabel& nodeLabelFormat = kText,
+                                                      const string& nodeFeatureName = "");
 
 }  // namespace format
 }  // namespace graph

@@ -15,13 +15,12 @@
 // limitations under the License.
 #pragma once
 
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "labm8/cpp/status.h"
 #include "programl/graph/analysis/data_flow_pass.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
-
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
 
 namespace programl {
 namespace graph {
@@ -35,8 +34,7 @@ class SubexpressionsAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual labm8::Status RunOne(int rootNode,
-                               ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
 
   virtual std::vector<int> GetEligibleRootNodes() override;
 
@@ -44,8 +42,7 @@ class SubexpressionsAnalysis : public RoodNodeDataFlowAnalysis {
 
   string ToString() const;
 
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const SubexpressionsAnalysis& dt);
+  friend std::ostream& operator<<(std::ostream& os, const SubexpressionsAnalysis& dt);
 
   // Return a list of instruction node indices which compute the same
   // subexpression.

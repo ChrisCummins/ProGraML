@@ -32,8 +32,7 @@ class DatadepAnalysis : public RoodNodeDataFlowAnalysis {
  public:
   using RoodNodeDataFlowAnalysis::RoodNodeDataFlowAnalysis;
 
-  virtual labm8::Status RunOne(int rootNode,
-                               ProgramGraphFeatures* features) override;
+  virtual labm8::Status RunOne(int rootNode, ProgramGraphFeatures* features) override;
 
   virtual std::vector<int> GetEligibleRootNodes() override;
 

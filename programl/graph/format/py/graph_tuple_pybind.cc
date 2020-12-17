@@ -15,9 +15,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "programl/graph/format/graph_tuple.h"
-
 #include "labm8/cpp/string.h"
+#include "programl/graph/format/graph_tuple.h"
 #include "programl/proto/program_graph.pb.h"
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
@@ -47,8 +46,7 @@ PYBIND11_MODULE(graph_tuple_pybind, m) {
       .def_property_readonly("node_sizes", &GraphTuple::node_size)
       .def_property_readonly("edge_sizes", &GraphTuple::edge_size)
       .def_property_readonly("graph_size", &GraphTuple::graph_size)
-      .def_property_readonly("control_edge_size",
-                             &GraphTuple::control_edge_size)
+      .def_property_readonly("control_edge_size", &GraphTuple::control_edge_size)
       .def_property_readonly("data_edge_size", &GraphTuple::data_edge_size)
       .def_property_readonly("call_edge_size", &GraphTuple::call_edge_size);
 }

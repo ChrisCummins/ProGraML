@@ -15,8 +15,10 @@
 // limitations under the License.
 
 #include "programl/graph/program_graph_builder.h"
+
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
+#include "labm8/cpp/status_macros.h"
 
 using labm8::Status;
 namespace error = labm8::error;
@@ -24,9 +26,9 @@ namespace error = labm8::error;
 namespace programl {
 namespace graph {
 
-ProgramGraphBuilder::ProgramGraphBuilder() {
+ProgramGraphBuilder::ProgramGraphBuilder(const ProgramGraphOptions& options) : options_(options) {
   // Create the graph root node.
-  AddNode(Node::INSTRUCTION, "<root>");
+  AddNode(Node::INSTRUCTION, "[external]");
 }
 
 Module* ProgramGraphBuilder::AddModule(const string& name) {
@@ -38,8 +40,7 @@ Module* ProgramGraphBuilder::AddModule(const string& name) {
   return module;
 }
 
-Function* ProgramGraphBuilder::AddFunction(const string& name,
-                                           const Module* module) {
+Function* ProgramGraphBuilder::AddFunction(const string& name, const Module* module) {
   DCHECK(module) << "nullptr argument";
   int32_t index = GetProgramGraph().function_size();
   Function* function = GetMutableProgramGraph()->add_function();
@@ -51,24 +52,19 @@ Function* ProgramGraphBuilder::AddFunction(const string& name,
   return function;
 }
 
-Node* ProgramGraphBuilder::AddInstruction(const string& text,
-                                          const Function* function) {
+Node* ProgramGraphBuilder::AddInstruction(const string& text, const Function* function) {
   DCHECK(function) << "nullptr argument";
   return AddNode(Node::INSTRUCTION, text, function);
 }
 
-Node* ProgramGraphBuilder::AddVariable(const string& text,
-                                       const Function* function) {
+Node* ProgramGraphBuilder::AddVariable(const string& text, const Function* function) {
   DCHECK(function) << "nullptr argument";
   return AddNode(Node::VARIABLE, text, function);
 }
 
-Node* ProgramGraphBuilder::AddConstant(const string& text) {
-  return AddNode(Node::CONSTANT, text);
-}
+Node* ProgramGraphBuilder::AddConstant(const string& text) { return AddNode(Node::CONSTANT, text); }
 
-labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
-                                                           const Node* source,
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position, const Node* source,
                                                            const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
@@ -85,10 +81,8 @@ labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
   }
   int32_t sourceIndex = GetIndex(source);
   if (sourceIndex && source->function() != target->function()) {
-    const string& sourceFunction =
-        GetProgramGraph().function(source->function()).name();
-    const string& targetFunction =
-        GetProgramGraph().function(target->function()).name();
+    const string& sourceFunction = GetProgramGraph().function(source->function()).name();
+    const string& targetFunction = GetProgramGraph().function(target->function()).name();
     return Status(labm8::error::Code::INVALID_ARGUMENT,
                   "Source and target instructions must belong to the same "
                   "function. Source instruction has function `{}`, "
@@ -99,33 +93,27 @@ labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position,
   return AddEdge(Edge::CONTROL, position, source, target);
 }
 
-labm8::StatusOr<Edge*> ProgramGraphBuilder::AddDataEdge(int32_t position,
-                                                        const Node* source,
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddDataEdge(int32_t position, const Node* source,
                                                         const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
-  bool sourceIsData =
-      (source->type() == Node::VARIABLE || source->type() == Node::CONSTANT);
-  bool targetIsData =
-      (target->type() == Node::VARIABLE || target->type() == Node::CONSTANT);
+  bool sourceIsData = (source->type() == Node::VARIABLE || source->type() == Node::CONSTANT);
+  bool targetIsData = (target->type() == Node::VARIABLE || target->type() == Node::CONSTANT);
 
-  if (!((sourceIsData && targetIsData) ||
-        (sourceIsData && target->type() == Node::INSTRUCTION) ||
+  if (!((sourceIsData && targetIsData) || (sourceIsData && target->type() == Node::INSTRUCTION) ||
         (targetIsData && source->type() == Node::INSTRUCTION))) {
     return Status(labm8::error::Code::INVALID_ARGUMENT,
                   "Data edge must connect either an instruction with data "
                   "OR data with an instruction. "
                   "Source has type {} and target has type {}",
-                  Node::Type_Name(source->type()),
-                  Node::Type_Name(target->type()));
+                  Node::Type_Name(source->type()), Node::Type_Name(target->type()));
   }
 
   return AddEdge(Edge::DATA, position, source, target);
 }
 
-labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
-                                                        const Node* target) {
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source, const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
@@ -144,26 +132,32 @@ labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source,
 }
 
 labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {
+  if (options().strict()) {
+    RETURN_IF_ERROR(ValidateGraph());
+  }
+  return GetProgramGraph();
+}
+
+labm8::Status ProgramGraphBuilder::ValidateGraph() const {
   // Check that all nodes except the root are connected. The root is allowed to
   // have no connections in the case where it is an empty graph.
   if (!emptyModules_.empty()) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "Module `{}` is empty", (*emptyModules_.begin())->name());
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "Module `{}` is empty",
+                  (*emptyModules_.begin())->name());
   }
 
   if (!emptyFunctions_.empty()) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "Function `{}` is empty", (*emptyFunctions_.begin())->name());
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "Function `{}` is empty",
+                  (*emptyFunctions_.begin())->name());
   }
 
   if (!unconnectedNodes_.empty()) {
-    return Status(labm8::error::Code::FAILED_PRECONDITION,
-                  "{} has no connections: `{}`",
+    return Status(labm8::error::Code::FAILED_PRECONDITION, "{} has no connections: `{}`",
                   Node::Type_Name((*unconnectedNodes_.begin())->type()),
                   (*unconnectedNodes_.begin())->text());
   }
 
-  return GetProgramGraph();
+  return Status::OK;
 }
 
 void ProgramGraphBuilder::Clear() {
@@ -205,8 +199,8 @@ Node* ProgramGraphBuilder::AddNode(const Node::Type& type, const string& text,
   return node;
 }
 
-Edge* ProgramGraphBuilder::AddEdge(const Edge::Flow& flow, int32_t position,
-                                   const Node* source, const Node* target) {
+Edge* ProgramGraphBuilder::AddEdge(const Edge::Flow& flow, int32_t position, const Node* source,
+                                   const Node* target) {
   DCHECK(source) << "nullptr argument";
   DCHECK(target) << "nullptr argument";
 
@@ -228,8 +222,7 @@ Edge* ProgramGraphBuilder::AddEdge(const Edge::Flow& flow, int32_t position,
 namespace {
 
 template <typename T>
-int32_t GetIndexOrDie(const absl::flat_hash_map<T*, int32_t>& map,
-                      const T* element) {
+int32_t GetIndexOrDie(const absl::flat_hash_map<T*, int32_t>& map, const T* element) {
   DCHECK(element) << "nullptr argument";
 
   auto it = map.find(element);

@@ -22,7 +22,8 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":base_batch_builder",
-        "//third_party/py/labm8",
+        "//programl/util/py:humanize",
+        "//third_party/py/absl",
     ],
 )
 
@@ -53,7 +54,7 @@ py_library(
     srcs = ["batch_results.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/labm8",
+        "//third_party/py/absl",
         "//third_party/py/numpy",
         "//third_party/py/scikit_learn",
     ],
@@ -77,9 +78,9 @@ py_library(
         "//programl/models:batch_data",
         "//programl/models:batch_results",
         "//programl/models:rolling_results_builder",
-        "//programl/proto:checkpoint_py",
-        "//programl/proto:epoch_py",
-        "//third_party/py/labm8",
+        "//programl/proto:programl_py",
+        "//programl/util/py:progress",
+        "//third_party/py/absl",
     ],
 )
 
@@ -90,18 +91,7 @@ py_library(
     deps = [
         ":batch_data",
         ":batch_results",
-        "//programl/proto:epoch_py",
-    ],
-)
-
-py_test(
-    name = "rolling_results_test",
-    srcs = ["rolling_results_test.py"],
-    deps = [
-        ":batch_data",
-        ":batch_results",
-        ":rolling_results",
-        "//third_party/py/labm8",
+        "//programl/proto:programl_py",
     ],
 )
 

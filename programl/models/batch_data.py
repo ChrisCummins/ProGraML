@@ -14,14 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This module defines data structures for mini-batches."""
-from typing import Any
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 
 class BatchData(NamedTuple):
-  """Container for a mini-batch of data."""
+    """Container for a mini-batch of data."""
 
-  # The number of graphs in the batch.
-  graph_count: int
-  # The model data for this batch.
-  model_data: Any
+    # The number of graphs in the batch.
+    graph_count: int
+    # The model data for this batch.
+    model_data: Any

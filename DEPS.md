@@ -72,11 +72,11 @@ sudo apt install -y --no-install-recommends libwildmidi-dev
 sudo apt install -y --no-install-recommends libboost-all-dev
 sudo apt install -y --no-install-recommends libsdl2-dev
 sudo apt install -y --no-install-recommends patch # Required by bazel workspace rules:
-sudo apt-get install -y --no-install-recommends libmysqlclient-dev 
-sudo apt-get install -y --no-install-recommends libtinfo-dev 
-sudo apt-get install -y --no-install-recommends python3-tk 
+sudo apt-get install -y --no-install-recommends libmysqlclient-dev
+sudo apt-get install -y --no-install-recommends libtinfo-dev
+sudo apt-get install -y --no-install-recommends python3-tk
 ```
-in one line: 
+in one line:
 
 ```bash
 sudo apt-get update && sudo apt install -y --no-install-recommends ca-certificates curl wget g++ git ocl-icd-opencl-dev opencl-c-headers  pkg-config python3.6 python3.6-dev python3-pip python3-distutils unzip zip zlib1g-dev openjdk-11-jdk m4 libexempi-dev rsync python3-numpy build-essential libsdl2-dev libjpeg-dev nasm tar libbz2-dev libgtk2.0-dev cmake libfluidsynth-dev libgme-dev libopenal-dev timidity libwildmidi-dev libboost-all-dev libsdl2-dev patch libmysqlclient-dev libtinfo-dev

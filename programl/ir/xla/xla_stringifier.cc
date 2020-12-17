@@ -32,8 +32,7 @@ string ShapeProtoToString(const ::xla::ShapeProto& shape) {
 }
 
 string HloInstructionToText(const ::xla::HloInstructionProto& instruction) {
-  if (instruction.opcode() == "parameter" ||
-      instruction.opcode() == "constant") {
+  if (instruction.opcode() == "parameter" || instruction.opcode() == "constant") {
     return instruction.name();
   }
 

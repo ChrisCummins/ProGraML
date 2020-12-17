@@ -117,4 +117,3 @@ Contributions, comments, and issues are welcome!
 ## License
 
 NCC is published under the New BSD license, see [LICENSE](LICENSE).
-
