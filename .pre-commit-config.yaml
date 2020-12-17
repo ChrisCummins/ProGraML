@@ -10,6 +10,13 @@
 #     $ brew install pre-commit buildifier llvm prototool python
 #     $ python -m pip install -r requirements.pre_commit.txt
 #
+# On linux:
+#
+#     $ sudo apt install golang clang-format
+#     $ go get github.com/bazelbuild/buildtools/buildifier
+#     $ GO111MODULE=on go get github.com/uber/prototool/cmd/prototool@dev
+#     $ python -m pip install -r requirements.pre_commit.txt
+#
 # Usage
 # -----
 #
