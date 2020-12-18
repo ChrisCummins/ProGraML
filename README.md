@@ -124,6 +124,7 @@ Or if papers are more your ☕, have a read of ours:
 1. Download the latest macOS or Linux release archive from the [releases page](https://github.com/ChrisCummins/ProGraML/releases).
 2. Unpack the release archive to `~/.local/opt/programl` (or a directory of your choice) using:
 ```sh
+mkdir -p ~/.local/opt/programl
 tar xjvf ~/Downloads/programl-*.tar.bz2 -C ~/.local/opt/programl
 ```
 3. Add the installed files to your paths. You may want to add this to your `~/.bashrc`:
