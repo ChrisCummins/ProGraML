@@ -56,11 +56,10 @@ cc_binary(
     copts = [
         "-std=c++14",
         "-fno-rtti",
-        "-DGOOGLE_PROTOBUF_NO_RTTI",
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/ir/llvm",
+        "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
@@ -154,13 +153,31 @@ genrule(
 )
 
 cc_binary(
+    name = "llvm2graph-3.8",
+    srcs = ["llvm2graph.cc"],
+    copts = ["-std=c++14"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//programl:version_header",
+        "//programl/ir/llvm:llvm-3.8",
+        "//programl/proto:programl_cc",
+        "//programl/util:stdout_fmt",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:strutil",
+        "@llvm//3.8.0",
+    ],
+)
+
+cc_binary(
     name = "llvm2graph-10",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
-        "//programl/ir/llvm",
+        "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",
         "//programl/util:stdout_fmt",
         "@labm8//labm8/cpp:app",

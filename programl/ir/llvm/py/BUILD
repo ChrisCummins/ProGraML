@@ -24,7 +24,7 @@ load(
 py_library(
     name = "llvm",
     srcs = ["llvm.py"],
-    data = [":graph_builder_bin"],
+    data = [":graph_builder_bin-10"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl/proto:programl_py",
@@ -33,10 +33,10 @@ py_library(
 )
 
 cc_binary(
-    name = "graph_builder_bin",
+    name = "graph_builder_bin-10",
     srcs = ["graph_builder_bin.cc"],
     deps = [
-        "//programl/ir/llvm",
+        "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",
         "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
