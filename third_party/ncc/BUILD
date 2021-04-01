@@ -31,6 +31,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":rgx_utils",
+        "//programl/util/py:runfiles_path",
         "//third_party/ncc/inst2vec:inst2vec_preprocess",
     ],
 )

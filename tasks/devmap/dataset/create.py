@@ -25,7 +25,7 @@ from zipfile import ZipFile
 import numpy as np
 import pandas as pd
 import requests
-from absl import flags
+from absl import app, flags
 
 from programl.ir.llvm.py import llvm
 from programl.util.py import pbutil

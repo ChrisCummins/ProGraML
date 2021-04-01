@@ -16,9 +16,10 @@
 """Enumerate all test graphs and print their data flow step count to stdout."""
 import pathlib
 
-from absl import flags, pbutil
+from absl import app, flags
 
 from programl.proto import program_graph_features_pb2, program_graph_pb2
+from programl.util.py import pbutil
 from programl.util.py.init_app import init_app
 
 flags.DEFINE_string(

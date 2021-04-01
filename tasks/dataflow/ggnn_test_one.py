@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 import numpy as np
-from absl import flags
+from absl import app, flags
 
 from programl.models.base_graph_loader import BaseGraphLoader
 from programl.models.batch_results import BatchResults

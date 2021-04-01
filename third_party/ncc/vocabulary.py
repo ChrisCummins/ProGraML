@@ -9,6 +9,7 @@ import zipfile
 
 from absl import decorators, flags
 
+from programl.util.py.runfiles_path import runfiles_path
 from third_party.ncc import rgx_utils
 from third_party.ncc.inst2vec import inst2vec_preprocess as i2v_prep
 
@@ -96,7 +97,9 @@ def GetStructDict(bytecode_lines: typing.List[str]) -> typing.Dict[str, str]:
     # If the dictionary is empty
     if not struct_dict:
         for line in bytecode_lines:
-            if re.match(rgx_utils.struct_name + " = type (<?\{ .* \}|opaque|{})", line):
+            if re.match(
+                rgx_utils.struct_name + r" = type (<?\{ .* \}|opaque|{})", line
+            ):
                 # "Structures' dictionary is empty for file containing type definitions"
                 # + data[0] + '\n' + data[1] + '\n' + data + '\n'
                 assert False
