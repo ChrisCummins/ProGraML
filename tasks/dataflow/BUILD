@@ -123,6 +123,7 @@ py_binary(
     deps = [
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
+        "//programl/util/py:pbutil",
     ],
 )
 
@@ -133,6 +134,8 @@ py_binary(
         ":vocabulary",
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
         "//third_party/ncc:vocabulary",
     ],

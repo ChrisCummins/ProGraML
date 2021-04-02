@@ -16,10 +16,9 @@
 """This file defines a class for constructing program graphs."""
 from typing import Optional
 
-from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
-
 from programl.graph.py import program_graph_builder_pybind
 from programl.proto import program_graph_pb2
+from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
 
 
 class ProgramGraphBuilder(program_graph_builder_pybind.ProgramGraphBuilder):

@@ -24,7 +24,7 @@ import random
 import shutil
 import subprocess
 
-from absl import flags, logging
+from absl import app, flags, logging
 from MySQLdb import _mysql
 
 from programl.ir.llvm.py import llvm
@@ -119,7 +119,7 @@ def _ProcessRow(output_directory, row, file_id) -> None:
             f"../graphs/{name}.ProgramGraph.pb",
             output_directory / dst / f"{name}.ProgramGraph.pb",
         )
-    except (ValueError, OSError, TimeoutError, AssertionError) as e:
+    except (ValueError, OSError, TimeoutError, AssertionError):
         pass
 
 

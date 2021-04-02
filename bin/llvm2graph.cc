@@ -90,7 +90,7 @@ llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> GetInputAsBuffer(const string
     programl::IrList irList;
     if (!irList.ParseFromIstream(&file)) {
       LOG(ERROR) << "Failed to parse IrList protocol buffer";
-      return nullptr;
+      return std::unique_ptr<llvm::MemoryBuffer>(nullptr);
     }
     const auto& ir = irList.ir(FLAGS_ir_list_index);
     return llvm::MemoryBuffer::getMemBuffer(ir.text());
@@ -99,14 +99,14 @@ llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> GetInputAsBuffer(const string
     programl::Ir ir;
     if (!ir.ParseFromIstream(&file)) {
       LOG(ERROR) << "Failed to parse Ir protocol buffer";
-      return nullptr;
+      return std::unique_ptr<llvm::MemoryBuffer>(nullptr);
     }
     return llvm::MemoryBuffer::getMemBuffer(ir.text());
   } else {
     auto buf = llvm::MemoryBuffer::getFileOrSTDIN(filename);
     if (!buf) {
       LOG(ERROR) << "File not found: " << filename;
-      return nullptr;
+      return std::unique_ptr<llvm::MemoryBuffer>(nullptr);
     }
     return buf;
   }

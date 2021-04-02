@@ -94,6 +94,9 @@ py_binary(
         ":pathflag",
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:programl_py",
+        "//programl/util/py:decorators",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
     ],
 )
 

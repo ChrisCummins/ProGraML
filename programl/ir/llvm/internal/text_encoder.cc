@@ -19,6 +19,7 @@
 #include <utility>
 
 #include "labm8/cpp/logging.h"
+#include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
 

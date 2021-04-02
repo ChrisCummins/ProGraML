@@ -39,4 +39,4 @@ def path():
       You call it to return path.
       I am computer.
     """
-    return app.FLAGS.path
+    return flags.FLAGS.path

@@ -17,7 +17,7 @@
 import sys
 
 import google.protobuf.json_format
-from absl import flags
+from absl import app, flags
 
 flags.DEFINE_string(
     "stdout_fmt",

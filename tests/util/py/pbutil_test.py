@@ -104,7 +104,7 @@ def test_FromString_valid_input():
 def test_FromString_DecodeError_unknown_field():
     """Test that DecodeError is raised if string contains unknown field."""
     with pytest.raises(pbutil.DecodeError) as e_info:
-        proto = pbutil.FromString(
+        pbutil.FromString(
             'foo: "bar"',
             test_protos_pb2.AnotherTestMessage(),
         )
@@ -152,7 +152,7 @@ def test_FromFile_required_fields_not_set(suffix):
 def test_FromFile_required_fields_not_set_uninitialized_okay(suffix):
     """Test that DecodeError not raised if required fields not set."""
     with tempfile.NamedTemporaryFile(prefix="labm8_proto_", suffix=suffix) as f:
-        proto_in = test_protos_pb2.AnotherTestMessage(number=1)
+        test_protos_pb2.AnotherTestMessage(number=1)
         pbutil.ToFile(
             test_protos_pb2.AnotherTestMessage(number=1),
             pathlib.Path(f.name),

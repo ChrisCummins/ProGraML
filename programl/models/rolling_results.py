@@ -134,7 +134,9 @@ class RollingResults(object):
                     epoch_pb2.ConfusionMatrixRow(row=column)
                     for column in self.confusion_matrix.T.tolist()
                 ],
-            ),
+            )
+            if self.confusion_matrix
+            else None,
         )
 
     def __repr__(self) -> str:

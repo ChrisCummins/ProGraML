@@ -49,6 +49,7 @@ genrule(
         "//bin:clang2graph-10",
         "//bin:graph2dot",
         "//bin:graph2json",
+        "//bin:llvm2graph-3.8",
         "//bin:llvm2graph-10",
         "//bin:pbq",
         "//bin:xla2graph",

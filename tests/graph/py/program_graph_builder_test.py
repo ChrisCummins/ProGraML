@@ -15,10 +15,10 @@
 # limitations under the License.
 """Unit tests for //programl/graph/py:program_graph_builder."""
 import pytest
-from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
 
 from programl.graph.py.program_graph_builder import ProgramGraphBuilder
 from programl.proto import edge_pb2, node_pb2, program_graph_pb2
+from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
 from tests.test_main import main
 
 

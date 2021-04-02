@@ -20,7 +20,7 @@ import pathlib
 import tempfile
 import warnings
 
-from absl import flags
+from absl import app, flags
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 

@@ -17,6 +17,7 @@
 from typing import Dict, Optional
 
 import numpy as np
+from absl import logging
 
 from programl.graph.format.py.graph_tuple_builder import GraphTupleBuilder
 from programl.models.base_batch_builder import BaseBatchBuilder

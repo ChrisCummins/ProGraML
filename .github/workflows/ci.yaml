@@ -18,7 +18,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: [ubuntu-latest, macos-latest]
-                python: [3.6, 3.7, 3.8]
+                python: [3.6, 3.7, 3.8, 3.9]
                 exclude:
                     # Only test recent python versions on macOS.
                     - os: macos-latest
@@ -28,26 +28,12 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: 'Linux: Mount bazel cache'
-              uses: pat-s/always-upload-cache@v2.1.0
-              with:
-                  path: /home/runner/.cache/bazel
-                  key: ${{ matrix.os }}-${{ matrix.python }}-bazel
-              if: matrix.os == 'ubuntu-latest'
-
             - name: 'Linux: Install system dependencies'
               run: |
                   curl -L "https://github.com/bazelbuild/bazelisk/releases/download/v1.6.1/bazelisk-linux-amd64" > bazel.tmp
                   sudo mv bazel.tmp /usr/local/bin/bazel
                   chmod +x /usr/local/bin/bazel
               if: matrix.os == 'ubuntu-latest'
-
-            - name: 'macOS: Mount bazel cache'
-              uses: pat-s/always-upload-cache@v2.1.0
-              with:
-                  path: /private/var/tmp/_bazel_runner
-                  key: ${{ matrix.os }}-${{ matrix.python }}-bazel
-              if: matrix.os == 'macos-latest'
 
             - name: 'macOS: Install system dependencies'
               run: |
@@ -68,7 +54,7 @@ jobs:
               run: ./tools/whoami.sh
 
             - name: Test
-              run: xargs bazel test --config=ci //...
+              run: bazel test --config=ci //...
 
             - name: Install
               run: |

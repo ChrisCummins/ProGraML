@@ -32,9 +32,9 @@ class LinearNet(nn.Module):
 
     Shape:
     - Input: :math:`(N, *, H_{in})` where :math:`*` means any number of
-    additional dimensions and :math:`H_{in} = \text{in\_features}`
+    additional dimensions and :math:`H_{in} = \\text{in\\_features}`
     - Output: :math:`(N, *, H_{out})` where all but the last dimension
-    are the same shape as the input and :math:`H_{out} = \text{out\_features}`.
+    are the same shape as the input and :math:`H_{out} = \\text{out\\_features}`.
     """
 
     def __init__(self, in_features, out_features, bias=True, dropout=0.0):

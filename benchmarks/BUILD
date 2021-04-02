@@ -18,7 +18,7 @@
 
 py_test(
     name = "benchmark_dataflow_analyses",
-    timeout = "long",
+    timeout = "eternal",
     srcs = ["benchmark_dataflow_analyses.py"],
     data = [
         "//bin:analyze",
@@ -31,7 +31,7 @@ py_test(
 
 py_test(
     name = "benchmark_dataflow_ggnn",
-    timeout = "long",
+    timeout = "eternal",
     srcs = ["benchmark_dataflow_ggnn.py"],
     deps = [
         "//programl/models/ggnn",
@@ -48,7 +48,7 @@ py_test(
 
 #py_test(
 #    name = "benchmark_dataflow_lstm",
-#    timeout = "long",
+#    timeout = "eternal",
 #    srcs = ["benchmark_dataflow_lstm.py"],
 #    deps = [
 #        "//programl/models/lstm",
@@ -65,7 +65,7 @@ py_test(
 
 py_test(
     name = "benchmark_llvm2graph",
-    timeout = "long",
+    timeout = "eternal",
     srcs = ["benchmark_llvm2graph.py"],
     data = [
         "//bin:llvm2graph",
