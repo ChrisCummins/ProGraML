@@ -129,14 +129,14 @@ class RollingResults(object):
             mean_recall=self.recall,
             mean_f1=self.f1,
             walltime_seconds=time.time() - self.start_time,
-            confusion_matrix=epoch_pb2.ConfusionMatrix(
+            confusion_matrix=None
+            if self.confusion_matrix is None
+            else epoch_pb2.ConfusionMatrix(
                 column=[
                     epoch_pb2.ConfusionMatrixRow(row=column)
                     for column in self.confusion_matrix.T.tolist()
                 ],
-            )
-            if self.confusion_matrix
-            else None,
+            ),
         )
 
     def __repr__(self) -> str:
