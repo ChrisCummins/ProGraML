@@ -111,11 +111,11 @@ class Inst2vecEncoder(object):
         text_index = 0
         for node in proto.node:
             if node.type == node_pb2.Node.INSTRUCTION:
-                text = preprocessed_texts[text_index].encode("utf-8")
+                text = preprocessed_texts[text_index]
                 text_index += 1
                 embedding = self.dictionary.get(text, self.dictionary["!UNK"])
                 node.features.feature["inst2vec_preprocessed"].bytes_list.value.append(
-                    text
+                    text.encode("utf-8")
                 )
                 node.features.feature["inst2vec_embedding"].int64_list.value.append(
                     embedding
