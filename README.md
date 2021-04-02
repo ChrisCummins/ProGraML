@@ -1,4 +1,4 @@
-# ProGraML: Program Graphs for Machine Learning
+3# ProGraML: Program Graphs for Machine Learning
 
 <!-- Build status -->
 <table>
@@ -16,7 +16,7 @@
     </tr>
     <tr>
       <td>Python Versions</td>
-      <td>3.6, 3.7, 3.8</td>
+      <td>3.6, 3.7, 3.8, 3.9</td>
     </tr>
     <tr>
       <td>
