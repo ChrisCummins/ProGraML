@@ -15,7 +15,6 @@
 # limitations under the License.
 """Benchmark for analyze command."""
 import subprocess
-import sys
 import time
 
 import numpy as np
@@ -60,20 +59,24 @@ def BenchmarkAnalysis(analysis: str):
     paths = list(LLVM_IR_GRAPHS.iterdir())
     if FLAGS.graph_count:
         paths = paths[: FLAGS.graph_count]
+    print(f"Runtimes for {analysis} analysis on test LLVM-IR files:", flush=True)
     for path in paths:
         with open(str(path), "rb") as f:
             start_time = time.time()
-            subprocess.call(
-                [ANALYZE, analysis, "--stdin_fmt=pb", "--stdout_fmt=pb"],
-                stdin=f,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            runtimes.append(time.time() - start_time)
+            try:
+                subprocess.call(
+                    [ANALYZE, analysis, "--stdin_fmt=pb", "--stdout_fmt=pb"],
+                    stdin=f,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=30,
+                )
+                runtimes.append(time.time() - start_time)
+            except subprocess.TimeoutExpired:
+                runtimes.append(float("inf"))
+                break
     runtimes_ms = np.array(runtimes) * 1000
-    print(f"Runtimes for {analysis} analysis on test LLVM-IR files:")
-    print(SummarizeFloats(runtimes_ms, unit="ms"))
-    sys.stdout.flush()
+    print(SummarizeFloats(runtimes_ms, unit="ms"), flush=True)
 
 
 def main(argv):
