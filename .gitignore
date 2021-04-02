@@ -1,8 +1,6 @@
+__pycache__/
 .DS_Store
-/bazel-*
-/bootstrap.sh
-/env
+.env
 /.clwb/
 /.idea/
-
-__pycache__/
+/bazel-*
