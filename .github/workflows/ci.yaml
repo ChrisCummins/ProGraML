@@ -54,7 +54,7 @@ jobs:
               run: ./tools/whoami.sh
 
             - name: Test
-              run: xargs bazel test --config=ci //...
+              run: bazel test --config=ci //...
 
             - name: Install
               run: |
