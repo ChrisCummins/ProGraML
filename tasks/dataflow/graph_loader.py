@@ -58,6 +58,8 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
         require_inst2vec: bool = False,
         max_queue_size: int = 512,
     ):
+        self._stopped = False
+
         self.graph_path = path / epoch_pb2.EpochType.Name(epoch_type).lower()
         if not self.graph_path.is_dir():
             raise FileNotFoundError(str(self.graph_path))
@@ -88,7 +90,6 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
         self._outq = Queue(maxsize=max_queue_size)
         self._thread = threading.Thread(target=self._Worker)
         self._thread.start()
-        self._stopped = False
 
     def Stop(self):
         if self._stopped:
