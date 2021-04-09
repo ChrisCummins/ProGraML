@@ -17,6 +17,7 @@
 
 #include "absl/strings/str_format.h"
 #include "labm8/cpp/bazelutil.h"
+#include "labm8/cpp/logging.h"
 #include "labm8/cpp/status.h"
 #include "subprocess/subprocess.hpp"
 
@@ -38,8 +39,9 @@ Status Clang::Compile(const string& src, IrList* irs) const {
     auto process = subprocess::Popen(compileCommands_[i], subprocess::input{subprocess::PIPE},
                                      subprocess::output{subprocess::PIPE},
                                      subprocess::error{subprocess::PIPE});
-    auto stdout = process.communicate(src.c_str(), src.size()).first;
+    auto outs = process.communicate(src.c_str(), src.size());
     if (process.retcode()) {
+      LOG(ERROR) << string(outs.second.buf.begin(), outs.second.buf.end());
       return Status(error::Code::INVALID_ARGUMENT, "Compilation failed");
     }
 
@@ -47,7 +49,7 @@ Status Clang::Compile(const string& src, IrList* irs) const {
     ir->set_type(Ir::LLVM);
     ir->set_compiler_version(600);
     ir->set_cmd(compileCommandsWithoutAbspath_[i]);
-    ir->set_text(string(stdout.buf.begin(), stdout.buf.end()));
+    ir->set_text(string(outs.first.buf.begin(), outs.first.buf.end()));
   }
 
   return Status::OK;
@@ -60,16 +62,7 @@ std::vector<string> Clang::BuildCompileCommands(const string& baseFlags, int tim
                                  labm8::BazelDataPathOrDie(kClangPath).string())
                : "clang++");
 
-  const std::vector<string> opts{
-      "-O0",
-      "-O1",
-      "-O2",
-      "-O3",
-      "-O0 -ffast-math",
-      "-O1 -ffast-math",
-      "-O2 -ffast-math",
-      "-O3 -ffast-math",
-  };
+  const std::vector<string> opts{"-O0"};
 
   std::vector<string> commands;
   commands.reserve(opts.size());

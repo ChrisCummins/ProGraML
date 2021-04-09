@@ -104,40 +104,18 @@ Status ProcessSourceFile(const fs::path& root, const fs::path& path, const fs::p
   const string stringLabel = relpath.substr(0, relpath.find('/'));
   const int label = std::stoi(stringLabel);
 
-  std::ofstream srcOut(
-      absl::StrFormat("%s/src/%s.%d.SourceFile.pb", outpath.string(), stringLabel, srcId));
   {
-    SourceFile srcMessage;
-    srcMessage.set_relpath(relpath);
-    srcMessage.set_language(SourceFile::CXX);
-    srcMessage.set_text(src);
-    srcMessage.SerializeToOstream(&srcOut);
+    std::ofstream srcOut(absl::StrFormat("%s/src/%s.%d.cc", outpath.string(), stringLabel, srcId));
+    srcOut << src;
   }
 
   IrList irs;
   RETURN_IF_ERROR(compiler.Compile(src, &irs));
 
-  {
-    std::ofstream irsOut(
-        absl::StrFormat("%s/ir/%s.%d.IrList.pb", outpath.string(), stringLabel, srcId));
-    irs.SerializeToOstream(&irsOut);
-  }
-
   for (int i = 0; i < irs.ir_size(); ++i) {
     std::ofstream irOut(
         absl::StrFormat("%s/ir/%s.%d.%d.ll", outpath.string(), stringLabel, srcId, i));
     irOut << irs.ir(i).text();
-
-    // Add program label.
-    ProgramGraph graph;
-    RETURN_IF_ERROR(ir::llvm::BuildProgramGraph(irs.ir(i).text(), &graph));
-    Feature feature;
-    feature.mutable_int64_list()->add_value(label);
-    graph.mutable_features()->mutable_feature()->insert({"poj104_label", feature});
-
-    std::ofstream graphOut(absl::StrFormat("%s/graphs/%s.%d.%d.ProgramGraph.pb", outpath.string(),
-                                           stringLabel, srcId, i));
-    graph.SerializeToOstream(&graphOut);
   }
 
   return Status::OK;
@@ -278,10 +256,13 @@ size_t CreatePoj104Dataset(const string& url, const fs::path& outputPath) {
   LOG(INFO) << "Processing " << totalFiles << " files ...";
 
   std::atomic_uint64_t fileCount{0};
+  std::atomic_uint64_t errorCount{0};
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, files.size()), [&](const tbb::blocked_range<size_t>& r) {
         for (size_t index = r.begin(); index != r.end(); ++index) {
-          ProcessSourceFile(root, files[index], outputPath, index);
+          if (!ProcessSourceFile(root, files[index], outputPath, index).ok()) {
+            ++errorCount;
+          }
           ++fileCount;
           uint64_t f = fileCount;
           if (f && !(f % 8)) {
@@ -289,8 +270,9 @@ size_t CreatePoj104Dataset(const string& url, const fs::path& outputPath) {
                 std::chrono::system_clock::now().time_since_epoch());
             int msPerGraph = ((now - startTime) / f).count();
             std::cout << "\r\033[K" << f << " of " << totalFiles << " files processed ("
-                      << msPerGraph << " ms / src, " << std::setprecision(3)
-                      << (f / static_cast<float>(totalFiles)) * 100 << "%)" << std::flush;
+                      << errorCount << " errors, " << msPerGraph << " ms / src, "
+                      << std::setprecision(3) << (f / static_cast<float>(totalFiles)) * 100 << "%)"
+                      << std::flush;
           }
         }
       });
