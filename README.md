@@ -1,4 +1,4 @@
-3# ProGraML: Program Graphs for Machine Learning
+# ProGraML: Program Graphs for Machine Learning
 
 <!-- Build status -->
 <table>
