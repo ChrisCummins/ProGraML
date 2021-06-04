@@ -28,11 +28,16 @@ jobs:
               env:
                   BAZEL_OPTS: --batch
                   BAZEL_BUILD_OPTS: --config=ci
+                  CC: clang
+                  CXX: clang++
 
             - name: Test
               # Note the `|| true` as we don't care about failing tests in this
               # job.
               run: make install-test-cov || true
+              env:
+                  CC: clang
+                  CXX: clang++
 
             - name: Upload coverage to Codecov
               uses: codecov/codecov-action@v1

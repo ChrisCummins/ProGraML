@@ -1,5 +1,5 @@
 ---
-name: CI
+name: Bazel Test
 
 on:
     push:
@@ -30,5 +30,7 @@ jobs:
             - name: Test
               run: make test
               env:
+                  CC: clang
+                  CXX: clang++
                   BAZEL_OPTS: --batch
                   BAZEL_TEST_OPTS: --config=ci --test_timeout=300,900,1800,7200
