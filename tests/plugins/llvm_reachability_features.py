@@ -17,4 +17,4 @@ from programl.util.py.runfiles_path import runfiles_path
 
 # Directory containing ProgramGraphFeatures protocol messages for reachability
 # analysis.
-LLVM_REACHABILITY_FEATURES = runfiles_path("programl/tests/data/llvm_ir_reachability")
+LLVM_REACHABILITY_FEATURES = runfiles_path("tests/data/llvm_ir_reachability")

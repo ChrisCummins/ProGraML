@@ -16,6 +16,7 @@
 """Unit tests for //programl/ir/llvm/py:llvm."""
 import pytest
 
+import programl
 from programl.ir.llvm.py import llvm
 from programl.proto import node_pb2, program_graph_options_pb2, program_graph_pb2
 from tests.test_main import main
@@ -38,14 +39,19 @@ define i32 @A(i32, i32) #0 {
 """
 
 
+@pytest.fixture(params=[programl.build_llvm_graph, llvm.BuildProgramGraph])
+def build_llvm_graph(request):
+    return request.param
+
+
 def GetStringScalar(proto, name):
     return proto.features.feature[name].bytes_list.value[0].decode("utf-8")
 
 
-def test_simple_ir():
+def test_simple_ir(build_llvm_graph):
     """Test equivalence of nodes that pre-process to the same text."""
     options = program_graph_options_pb2.ProgramGraphOptions(opt_level=3)
-    proto = llvm.BuildProgramGraph(SIMPLE_IR, options)
+    proto = build_llvm_graph(SIMPLE_IR, options)
     assert isinstance(proto, program_graph_pb2.ProgramGraph)
 
     assert len(proto.module) == 1
@@ -78,22 +84,22 @@ def test_simple_ir():
     assert GetStringScalar(proto.node[5], "full_text").startswith("i32 %")
 
 
-def test_opt_level():
+def test_opt_level(build_llvm_graph):
     """Test equivalence of nodes that pre-process to the same text."""
     options = program_graph_options_pb2.ProgramGraphOptions(
         opt_level=0,
     )
-    unoptimized = llvm.BuildProgramGraph(SIMPLE_IR)
+    unoptimized = build_llvm_graph(SIMPLE_IR)
     options.opt_level = 3
-    optimized = llvm.BuildProgramGraph(SIMPLE_IR, options)
+    optimized = build_llvm_graph(SIMPLE_IR, options)
 
     assert len(optimized.node) < len(unoptimized.node)
 
 
-def test_invalid_ir():
+def test_invalid_ir(build_llvm_graph):
     """Test equivalence of nodes that pre-process to the same text."""
     with pytest.raises(ValueError) as e_ctx:
-        llvm.BuildProgramGraph("foo bar")
+        build_llvm_graph("foo bar")
     assert "expected top-level entity" in str(e_ctx.value)
 
 

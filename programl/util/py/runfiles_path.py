@@ -2,6 +2,13 @@
 import os
 from pathlib import Path
 
+# NOTE(cummins): Moving this file may require updating this relative path.
+_PACKAGE_ROOT = Path(os.path.join(os.path.dirname(__file__), "../../../")).resolve(
+    strict=True
+)
+
+_TESTS_ROOT = Path("/tmp/programl/install_tests")
+
 
 def runfiles_path(relpath: str) -> Path:
     """Resolve the path to a runfiles data path.
@@ -13,8 +20,16 @@ def runfiles_path(relpath: str) -> Path:
     if runfiles_path:
         return Path(runfiles_path) / relpath
     else:
-        # Defer importing this module so that if we have set
-        # $COMPILER_GYM_RUNFILES we do not need any bazel dependencies.
-        from rules_python.python.runfiles import runfiles
+        try:
+            from rules_python.python.runfiles import runfiles
 
-        return Path(runfiles.Create().Rlocation(relpath))
+            return Path(
+                runfiles.Create().Rlocation(
+                    "programl" if relpath == "." else f"programl/{relpath}"
+                )
+            )
+        except (ModuleNotFoundError, TypeError):
+            # Special handler for paths to test data.
+            if relpath.startswith("tests/"):
+                return _TESTS_ROOT / relpath
+            return _PACKAGE_ROOT / relpath

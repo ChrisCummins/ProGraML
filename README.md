@@ -64,23 +64,20 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-    - [Command-line tools](#command-line-tools)
-    - [Building from source](#building-from-source)
-    - [Datasets](#datasets)
-    - [Using this project as a dependency](#using-this-project-as-a-dependency)
-- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-    - [Step 1: Compiler IR](#step-1-compiler-ir)
-    - [Step 2: Control-flow](#step-2-control-flow)
-    - [Step 3: Data-flow](#step-3-data-flow)
-    - [Step 4: Call graph](#step-4-call-graph)
-- [Usage](#usage)
-    - [End-to-end C++ flow](#end-to-end-c-flow)
-    - [Dataflow experiments](#dataflow-experiments)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
+1. [Overview](#overview)
+1. [Getting Started](#getting-started)
+1. [Installation](#installation)
+  1. [Datasets](#datasets)
+1. [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+  1. [Step 1: Compiler IR](#step-1-compiler-ir)
+  1. [Step 2: Control-flow](#step-2-control-flow)
+  1. [Step 3: Data-flow](#step-3-data-flow)
+  1. [Step 4: Call graph](#step-4-call-graph)
+1. [Usage](#usage)
+  1. [End-to-end C++ flow](#end-to-end-c-flow)
+  1. [Dataflow experiments](#dataflow-experiments)
+1. [Contributing](#contributing)
+1. [Acknowledgements](#acknowledgements)
 
 <!-- /MarkdownTOC -->
 
@@ -118,57 +115,13 @@ Or if papers are more your ☕, have a read of ours:
 
 ## Installation
 
-
-#### Command-line tools
-
-1. Download the latest macOS or Linux release archive from the [releases page](https://github.com/ChrisCummins/ProGraML/releases).
-2. Unpack the release archive to `~/.local/opt/programl` (or a directory of your choice) using:
-```sh
-mkdir -p ~/.local/opt/programl
-tar xjvf ~/Downloads/programl-*.tar.bz2 -C ~/.local/opt/programl
-```
-3. Add the installed files to your paths. You may want to add this to your `~/.bashrc`:
-```sh
-export PATH=$HOME/.local/opt/programl/bin:$PATH
-export LD_LIBRARY_PATH=$HOME/.local/opt/programl/lib:$LD_LIBRARY_PATH
-```
-
-#### Building from source
-
-Requirements:
-
-* macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
-* bazel ≥ 2.0 (we recommend using
-  [bazelisk](https://github.com/bazelbuild/bazelisk) to automatically
-  download and use the correct bazel version).
-* Python ≥ 3.6
-
-Install the python dependencies using:
+Install the latest release of the Python package using:
 
 ```
-$ python -m pip install -r requirements.txt
+pip install -U programl
 ```
 
-Once you have the above requirements installed, test that everything is working
-by building and running full test suite:
-
-```sh
-$ bazel test //...
-```
-
-Build and install the command line tools to `~/.local` (or a
-directory of your choice) using:
-
-```sh
-$ bazel run -c opt //:install -- ~/.local
-```
-
-Then to use them, append the following to your `~/.bashrc`:
-
-```sh
-export PATH=~/.local/opt/programl/bin:$PATH
-export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
-```
+See [INSTALL.md](INSTALL.md) for alternative installation options.
 
 
 #### Datasets
@@ -178,51 +131,6 @@ export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
 Please see [this doc](/Documentation/DataflowDataset.md) for download
 links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
 flow analysis labels.
-
-
-#### Using this project as a dependency
-
-If you are using bazel you can add ProGraML as an external dependency. Add to
-your WORKSPACE file:
-
-```py
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name="programl",
-    strip_prefix="ProGraML-<stable-commit>",
-    urls=["https://github.com/ChrisCummins/ProGraML/archive/<stable-commit>.tar.gz"],
-)
-
-# ----------------- Begin ProGraML dependencies -----------------
-<WORKSPACE dependencies>
-# ----------------- End ProGraML dependencies -----------------
-```
-
-Where `<WORKSPACE dependencies>` is the block of delimited code in
-[@programl//:WORKSPACE](https://github.com/ChrisCummins/ProGraML/blob/development/WORKSPACE)
-(this is an unfortunately clumsy workaround for [recursive
-workspaces](https://github.com/bazelbuild/bazel/issues/1943)).
-
-Then in your BUILD file:
-
-```py
-cc_library(
-    name = "mylib",
-    srcs = ["mylib.cc"],
-    deps = [
-        "@programl//programl/ir/llvm",
-    ],
-)
-
-py_binary(
-    name = "myscript",
-    srcs = ["myscript.py"],
-    deps = [
-        "@programl//programl/ir/llvm/py:llvm",
-    ],
-)
-```
 
 
 ## Constructing the ProGraML Representation

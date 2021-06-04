@@ -25,7 +25,7 @@ from absl import app, flags, logging
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
-from programl.models.ggnn.ggnn import Ggnn
+from models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
 from programl.util.py import humanize, progress
 from programl.util.py.threaded_iterator import ThreadedIterator

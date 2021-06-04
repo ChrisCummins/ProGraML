@@ -1,17 +1,21 @@
 # See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
 
-# This flag is set by the bazel IntelliJ plugin. Set it here so that alternating
-# between command line and IntelliJ invocations does not reset the analysis cache.
-build --runs_per_test=1
-test --runs_per_test=1
-
-# This project uses C++14.
+# This project requires c++14.
+#
+# NOTE(cummins): This flag has to be pushed out to the copts argument of a
+# handful of cxx targets, grep for them when changing the standard.
+#
+# NOTE(cummins): LLVM 3.8 is not compatible with C++17 or later.
 build --cxxopt='-std=c++14'
 test --cxxopt='-std=c++14'
 
-# Default to continuing on build error. Override using --keep_going=false.
-build --keep_going
-test --keep_going
+# Workaround for broken grpc build on macOS.
+# See: https://github.com/bazelbuild/bazel/issues/4341
+build --copt -DGRPC_BAZEL_BUILD
+test --copt -DGRPC_BAZEL_BUILD
+
+# Show test error output. Override using --test_output={summary,full}.
+test --test_output=errors
 
 # Show test error output. Override using --test_output={summary,full}.
 test --test_output=errors
