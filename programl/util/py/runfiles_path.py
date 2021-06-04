@@ -7,6 +7,8 @@ _PACKAGE_ROOT = Path(os.path.join(os.path.dirname(__file__), "../../../")).resol
     strict=True
 )
 
+_TESTS_ROOT = Path("/tmp/programl/install_tests")
+
 
 def runfiles_path(relpath: str) -> Path:
     """Resolve the path to a runfiles data path.
@@ -27,4 +29,7 @@ def runfiles_path(relpath: str) -> Path:
                 )
             )
         except (ModuleNotFoundError, TypeError):
+            # Special handler for paths to test data.
+            if relpath.startswith("tests/"):
+                return _TESTS_ROOT / relpath
             return _PACKAGE_ROOT / relpath

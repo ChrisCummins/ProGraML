@@ -50,13 +50,13 @@ sh_binary(
     name = "install",
     srcs = ["install.sh"],
     data = [
-        ":package",
+        ":tar_package",
         "@bazel_tools//tools/bash/runfiles",
     ],
 )
 
 genrule(
-    name = "package_archive",
+    name = "tar_package",
     srcs = [
         "//bin:analyze",
         "//bin:graph2cdfg",

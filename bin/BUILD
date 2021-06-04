@@ -54,7 +54,7 @@ cc_binary(
     name = "clang2graph-10",
     srcs = ["clang2graph.cc"],
     copts = [
-        "-std=c++14",
+        "-std=c++17",
         "-fno-rtti",
     ],
     visibility = ["//visibility:public"],
@@ -155,7 +155,7 @@ genrule(
 cc_binary(
     name = "llvm2graph-3.8",
     srcs = ["llvm2graph.cc"],
-    copts = ["-std=c++14"],
+    copts = ["-std=c++17"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
@@ -173,7 +173,7 @@ cc_binary(
 cc_binary(
     name = "llvm2graph-10",
     srcs = ["llvm2graph.cc"],
-    copts = ["-std=c++14"],
+    copts = ["-std=c++17"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
@@ -195,9 +195,9 @@ cc_binary(
     deps = [
         "//programl:version_header",
         "//programl/proto:programl_cc",
+        "//programl/third_party/tensorflow:xla_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
-        "//third_party/tensorflow:xla_cc",
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",
     ],
@@ -210,8 +210,8 @@ cc_binary(
     deps = [
         "//programl:version_header",
         "//programl/ir/xla:hlo_module_graph_builder",
+        "//programl/third_party/tensorflow:xla_cc",
         "//programl/util:stdin_fmt",
-        "//third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:statusor",

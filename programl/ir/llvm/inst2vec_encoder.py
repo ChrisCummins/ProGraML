@@ -25,9 +25,9 @@ from typing import Any, Iterable, List, Optional, Tuple
 import numpy as np
 
 from programl.proto import node_pb2, program_graph_pb2
+from programl.third_party.ncc.inst2vec import inst2vec_preprocess
 from programl.util.py import decorators, pbutil, progress
 from programl.util.py.runfiles_path import runfiles_path
-from third_party.ncc.inst2vec import inst2vec_preprocess
 
 DICTIONARY = runfiles_path(
     "programl/ir/llvm/internal/inst2vec_augmented_dictionary.pickle"

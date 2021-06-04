@@ -6,8 +6,15 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//programl/graph/analysis/py:analysis",
+        "//programl/graph/format/py:format",
+        "//programl/graph/py:program_graph_builder",
+        "//programl/ir/llvm:inst2vec_encoder",
         "//programl/ir/llvm/py:llvm",
+        "//programl/ir/xla/py:xla",
         "//programl/proto:programl_py",
+        "//programl/third_party/tensorflow:xla_py",
+        "//programl/util/py:util",
     ],
 )
 

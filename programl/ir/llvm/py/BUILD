@@ -79,6 +79,7 @@ genrule(
 cc_binary(
     name = "graph_builder_bin-10-prelinked",
     srcs = ["graph_builder_bin.cc"],
+    copts = ["-std=c++17"],
     deps = [
         "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",

@@ -60,7 +60,7 @@ Python 3.8 introduced some failures in the python pypi dependencies:
 
 scipy:
 
-    $ bazel test //programl/models:rolling_results_test
+    $ bazel test //models:rolling_results_test
 
     ImportError: dlopen(${bazelroot}/bin/programl/test/benchmarks/benchmark_dataflow_analyses.runfiles/programl_requirements_pypi__scipy_1_2_1/scipy/linalg/cython_lapack.cpython-38-darwin.so, 2): Symbol not found: _cbbcsd_
       Referenced from: ${bazelroot}/bin/programl/test/benchmarks/benchmark_dataflow_analyses.runfiles/programl_requirements_pypi__scipy_1_2_1/scipy/linalg/cython_lapack.cpython-38-darwin.so
@@ -70,7 +70,7 @@ scikit-learn:
 
     $ bazel test //programl/test/benchmarks:benchmark_dataflow_analyses
 
-      File "${bazelroot}/bin/programl/models/rolling_results_test.runfiles/programl_requirements_pypi__scikit_learn_0_20_3/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py", line 148, in _make_cell_set_template_code
+      File "${bazelroot}/bin/models/rolling_results_test.runfiles/programl_requirements_pypi__scikit_learn_0_20_3/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py", line 148, in _make_cell_set_template_code
         return types.CodeType(
     TypeError: an integer is required (got type bytes)
 

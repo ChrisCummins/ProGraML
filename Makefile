@@ -119,6 +119,7 @@ CXX ?= clang++
 BAZEL ?= bazel
 IBAZEL ?= ibazel
 PYTHON ?= python3
+RSYNC ?= rsync
 
 # Bazel build options.
 BAZEL_OPTS ?=
@@ -159,6 +160,9 @@ BUILD_TARGET ?= //:py_package
 
 bazel-build:
 	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) $(BUILD_TARGET)
+
+install-test-data:
+	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>/dev/null
 
 bdist_wheel: bazel-build
 	$(PYTHON) setup.py bdist_wheel
@@ -213,10 +217,12 @@ itest:
 # Since we can't run ProGraML from the project root we need to jump through some
 # hoops to run pytest "out of tree" by creating an empty directory and
 # symlinking the test directory into it so that pytest can be invoked.
-install-test-setup:
+install-test-setup: install-test-data
 	mkdir -p "$(INSTALL_TEST_ROOT)"
-	rm -f "$(INSTALL_TEST_ROOT)/tests" "$(INSTALL_TEST_ROOT)/tox.ini"
-	ln -s "$(ROOT)/tests" "$(INSTALL_TEST_ROOT)"
+	rm -rf "$(INSTALL_TEST_ROOT)/tests" "$(INSTALL_TEST_ROOT)/tox.ini"
+	mkdir "$(INSTALL_TEST_ROOT)/tests/"
+	"$(RSYNC)" -a "$(ROOT)/bazel-bin/tests/data/" "$(INSTALL_TEST_ROOT)/tests/data/"
+	"$(RSYNC)" -a "$(ROOT)/tests/" "$(INSTALL_TEST_ROOT)/tests/"
 	ln -s "$(ROOT)/tox.ini" "$(INSTALL_TEST_ROOT)"
 
 define pytest

@@ -13,14 +13,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""ProGraML is a graph-based program representation for data flow analysis and
+compiler optimizations.
+"""
 from programl.ir.llvm.py.llvm import BuildProgramGraph
 from programl.version import PROGRAML_VERSION
 
 __version__ = PROGRAML_VERSION
+__author__ = "Chris Cummins"
+__email__ = "chrisc.101@gmail.com"
+__copyright__ = "Copyright 2019-2020 the ProGraML authors"
+__license__ = "Apache License, Version 2.0"
 
 build_llvm_graph = BuildProgramGraph
 
 __all__ = [
-    "BuildProgramGraph",
     "build_llvm_graph",
 ]

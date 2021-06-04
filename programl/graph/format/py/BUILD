@@ -22,6 +22,18 @@ load(
 )
 
 py_library(
+    name = "format",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":cdfg",
+        ":graph_serializer",
+        ":graph_tuple",
+        ":graph_tuple_builder",
+        ":nx_format",
+    ],
+)
+
+py_library(
     name = "cdfg",
     srcs = ["cdfg.py"],
     data = [
