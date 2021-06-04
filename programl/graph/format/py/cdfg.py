@@ -22,7 +22,7 @@ import google.protobuf.message
 from programl.proto import program_graph_pb2
 from programl.util.py.runfiles_path import runfiles_path
 
-GRAPH2CDFG = runfiles_path("programl/bin/graph2cdfg")
+GRAPH2CDFG = runfiles_path("bin/graph2cdfg")
 
 
 def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:

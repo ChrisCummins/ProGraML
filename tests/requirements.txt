@@ -1,11 +1,8 @@
-attrs==20.2.0  # Needed by pytest.
-importlib-metadata==2.0.0  # Needed by pytest.
-iniconfig==1.0.1  # Needed by pytest.
-packaging==20.4  # Needed by pytest.
-pluggy==0.13.1  # Needed by pytest.
-py==1.9.0  # Needed by pytest.
-pyparsing==2.4.7  # Needed by pytest.
 pytest==6.1.0
 pytest-benchmark==3.2.3
+pytest-cov==2.11.1
+pytest-mock==3.6.0
 pytest-shard==0.1.1
-zipp==3.2.0  # Needed by importlib-metadata.
+pytest-stress==1.0.1
+pytest-sugar==0.9.4
+pytest-xdist==2.2.1

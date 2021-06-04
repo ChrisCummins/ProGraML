@@ -16,6 +16,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 exports_files([
     ".bettercodehub.yml",
@@ -32,6 +33,19 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+py_binary(
+    name = "py_package",
+    srcs = ["empty.py"],
+    main = "empty.py",
+    deps = ["//programl"],
+)
+
+genrule(
+    name = "make_empty_py_file",
+    outs = ["empty.py"],
+    cmd = "touch $@",
+)
+
 sh_binary(
     name = "install",
     srcs = ["install.sh"],
@@ -42,7 +56,7 @@ sh_binary(
 )
 
 genrule(
-    name = "package",
+    name = "package_archive",
     srcs = [
         "//bin:analyze",
         "//bin:graph2cdfg",

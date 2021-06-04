@@ -30,10 +30,10 @@ from programl.util.py.runfiles_path import runfiles_path
 from third_party.ncc.inst2vec import inst2vec_preprocess
 
 DICTIONARY = runfiles_path(
-    "programl/programl/ir/llvm/internal/inst2vec_augmented_dictionary.pickle"
+    "programl/ir/llvm/internal/inst2vec_augmented_dictionary.pickle"
 )
 AUGMENTED_INST2VEC_EMBEDDINGS = runfiles_path(
-    "programl/programl/ir/llvm/internal/inst2vec_augmented_embeddings.pickle"
+    "programl/ir/llvm/internal/inst2vec_augmented_embeddings.pickle"
 )
 
 

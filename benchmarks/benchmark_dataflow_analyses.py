@@ -27,8 +27,8 @@ flags.DEFINE_integer(
 )
 FLAGS = flags.FLAGS
 
-LLVM_IR_GRAPHS = runfiles_path("programl/tests/data/llvm_ir_graphs")
-ANALYZE = runfiles_path("programl/bin/analyze")
+LLVM_IR_GRAPHS = runfiles_path("tests/data/llvm_ir_graphs")
+ANALYZE = runfiles_path("bin/analyze")
 
 ANALYSES = [
     "reachability",
