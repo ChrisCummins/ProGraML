@@ -54,7 +54,7 @@ cc_binary(
     name = "clang2graph-10",
     srcs = ["clang2graph.cc"],
     copts = [
-        "-std=c++17",
+        "-std=c++14",
         "-fno-rtti",
     ],
     visibility = ["//visibility:public"],
@@ -155,7 +155,7 @@ genrule(
 cc_binary(
     name = "llvm2graph-3.8",
     srcs = ["llvm2graph.cc"],
-    copts = ["-std=c++17"],
+    copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
@@ -173,7 +173,7 @@ cc_binary(
 cc_binary(
     name = "llvm2graph-10",
     srcs = ["llvm2graph.cc"],
-    copts = ["-std=c++17"],
+    copts = ["-std=c++14"],
     visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",

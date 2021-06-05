@@ -75,7 +75,7 @@ cc_library(
     srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
     hdrs = ["llvm.h"] + glob(["internal/*.h"]),
     copts = [
-        "-std=c++17",
+        "-std=c++14",
         "-fno-rtti",
     ],
     defines = [
@@ -102,7 +102,7 @@ cc_library(
     srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
     hdrs = ["llvm.h"] + glob(["internal/*.h"]),
     copts = [
-        "-std=c++17",
+        "-std=c++14",
         "-fno-rtti",
     ],
     defines = [

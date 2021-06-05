@@ -51,7 +51,7 @@ OPTIONS:
   -emit-ast               Emit Clang AST files for source inputs
   -emit-llvm              Use the LLVM representation for assembler and object files
   -E                      Only run the preprocessor
-  -faligned-allocation    Enable C++17 aligned allocation functions
+  -faligned-allocation    Enable c++14 aligned allocation functions
   -fallow-editor-placeholders
                           Treat editor placeholders as valid source code
   -fansi-escape-codes     Use ANSI escape codes for diagnostics
@@ -303,7 +303,7 @@ OPTIONS:
   -freciprocal-math       Allow division operations to be reassociated
   -freg-struct-return     Override the default ABI to return small structs in registers
   -frelaxed-template-template-args
-                          Enable C++17 relaxed template template argument matching
+                          Enable c++14 relaxed template template argument matching
   -freroll-loops          Turn on loop reroller
   -frtlib-add-rpath       Add -rpath with architecture-specific resource directory to the linker flags
   -fsanitize-address-field-padding=<value>

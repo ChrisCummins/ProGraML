@@ -53,18 +53,25 @@ def BuildProgramGraph(
         f.flush()
         options.ir_path = f.name
         process = subprocess.Popen(
-            ["timeout", "-s9", str(timeout), str(GRAPH_BUILDER_BIN)],
+            [str(GRAPH_BUILDER_BIN)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
         )
-        stdout, stderr = process.communicate(options.SerializeToString())
+        try:
+            stdout, stderr = process.communicate(
+                options.SerializeToString(),
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as e:
+            # Catch and re-raise timeout error using standard exception type.
+            raise TimeoutError(
+                f"Program graph construction exceeded {timeout} seconds"
+            ) from e
 
     proto = program_graph_pb2.ProgramGraph()
     if process.returncode == 2:
         raise ValueError(stderr.decode("utf-8").rstrip())
-    elif process.returncode == 9 or process.returncode == -9:
-        raise TimeoutError(f"Program graph construction exceeded {timeout} seconds")
     elif process.returncode:
         raise OSError(stderr.decode("utf-8").rstrip())
     proto.ParseFromString(stdout)
