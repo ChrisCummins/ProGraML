@@ -41,6 +41,7 @@ namespace llvm {
 //
 class Clang {
  public:
+  // TODO(cummins): timeout is unused!
   Clang(const string& baseFlags, int timeout = 60)
       : compileCommands_(BuildCompileCommands(baseFlags, timeout, /*abspath=*/true)),
         compileCommandsWithoutAbspath_(

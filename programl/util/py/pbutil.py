@@ -450,21 +450,24 @@ def RunProcessMessage(
     """
     # Run the C++ worker process, capturing it's output.
     process = subprocess.Popen(
-        ["timeout", "-s9", str(timeout_seconds)] + cmd,
+        cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         env=env,
     )
     # Send the input proto to the C++ worker process.
-    stdout, _ = process.communicate(input_proto.SerializeToString())
-
-    if process.returncode == -9 or process.returncode == 9:
+    try:
+        stdout, _ = process.communicate(
+            input_proto.SerializeToString(), timeout=timeout_seconds
+        )
+    except subprocess.TimeoutExpired as e:
         raise ProtoWorkerTimeoutError(
             cmd=cmd,
             timeout_seconds=timeout_seconds,
             returncode=process.returncode,
-        )
-    elif process.returncode:
+        ) from e
+
+    if process.returncode:
         raise subprocess.CalledProcessError(process.returncode, cmd)
 
     return stdout
