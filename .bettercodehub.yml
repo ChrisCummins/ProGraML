@@ -3,6 +3,8 @@
 # See https://bettercodehub.com/docs/configuration-manual
 exclude:
     - /bin/.*
+    - /models/.*
+    - /programl/third_party/.*
     - /tasks/.*
     - /tests/.*
     - /third_party/.*
