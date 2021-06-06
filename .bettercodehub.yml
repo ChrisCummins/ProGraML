@@ -2,6 +2,7 @@
 # Configuration for Better Code analysis.
 # See https://bettercodehub.com/docs/configuration-manual
 exclude:
+    - /benchmarks/.*
     - /bin/.*
     - /models/.*
     - /programl/third_party/.*
