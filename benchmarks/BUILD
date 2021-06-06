@@ -21,7 +21,7 @@ py_test(
     timeout = "eternal",
     srcs = ["benchmark_dataflow_analyses.py"],
     data = [
-        "//bin:analyze",
+        "//programl/bin:analyze",
         "//tests/data:llvm_ir_graphs",
     ],
     deps = [
@@ -68,7 +68,7 @@ py_test(
     timeout = "eternal",
     srcs = ["benchmark_llvm2graph.py"],
     data = [
-        "//bin:llvm2graph",
+        "//programl/bin:llvm2graph",
         "//tests/data:llvm_ir",
     ],
     deps = [

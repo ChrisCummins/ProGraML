@@ -36,7 +36,7 @@ f=
 set -eu
 
 # Paths to binaries.
-ANALYZE="$(DataPath programl/bin/analyze)"
+ANALYZE="$(DataPath programl/programl/bin/analyze)"
 if [[ -f /usr/local/opt/findutils/libexec/gnubin/find ]]; then
   FIND=/usr/local/opt/findutils/libexec/gnubin/find
 else

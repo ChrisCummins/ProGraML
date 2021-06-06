@@ -37,7 +37,7 @@ py_library(
     name = "cdfg",
     srcs = ["cdfg.py"],
     data = [
-        "//bin:graph2cdfg",
+        "//programl/bin:graph2cdfg",
     ],
     visibility = ["//visibility:public"],
     deps = [

@@ -49,7 +49,7 @@ sh_binary(
     name = "count_instances",
     srcs = ["count_instances.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -58,7 +58,7 @@ sh_binary(
     name = "count_labels",
     srcs = ["count_labels.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -67,7 +67,7 @@ sh_binary(
     name = "create_labels",
     srcs = ["create_labels.sh"],
     data = [
-        "//bin:analyze",
+        "//programl/bin:analyze",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -145,7 +145,7 @@ sh_binary(
     name = "unpack_ir_text",
     srcs = ["unpack_ir_text.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )

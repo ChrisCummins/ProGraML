@@ -1,5 +1,5 @@
 # Graph-based Machine Learning for Programming Languages.
-# https://chriscummins.cc/ProGraML/
+# https://chriscummins.cc/programl/
 #
 # Copyright 2019-2020 the ProGraML authors.
 #
@@ -58,15 +58,15 @@ sh_binary(
 genrule(
     name = "tar_package",
     srcs = [
-        "//bin:analyze",
-        "//bin:graph2cdfg",
-        "//bin:clang2graph-10",
-        "//bin:graph2dot",
-        "//bin:graph2json",
-        "//bin:llvm2graph-3.8",
-        "//bin:llvm2graph-10",
-        "//bin:pbq",
-        "//bin:xla2graph",
+        "//programl/bin:analyze",
+        "//programl/bin:graph2cdfg",
+        "//programl/bin:clang2graph-10",
+        "//programl/bin:graph2dot",
+        "//programl/bin:graph2json",
+        "//programl/bin:llvm2graph-3.8",
+        "//programl/bin:llvm2graph-10",
+        "//programl/bin:pbq",
+        "//programl/bin:xla2graph",
         ":LICENSE",
         ":version.txt",
     ] + select({
@@ -87,7 +87,7 @@ genrule(
               "echo \"ProGraML version $$(tr -d '\n' < $(location :version.txt)) <http://github.com/ChrisCummins/ProGraML>\" > package/README &&"
           ) + (
               # Copy the binaries to package/bin.
-              "rsync -ah --copy-links $$(dirname $(location //bin:graph2dot)) package &&"
+              "rsync -ah --copy-links $$(dirname $(location //programl/bin:graph2dot)) package &&"
           ) + (
               # Create the clang2graph and llvm2graph symlinks in package/bin.
               "ln -s clang2graph-10 package/bin/clang2graph &&" +

@@ -27,6 +27,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+filegroup(
+    name = "bin",
+    srcs = [
+        "clang2graph-10",
+        "clang2graph-latest",
+        "graph2cdfg",
+        "graph2dot",
+        "graph2json",
+        "graph2seq",
+        "llvm2graph-3.8",
+        "llvm2graph-latest",
+        "pbq",
+        "xla2graph",
+        ":analyze",
+    ],
+)
+
 cc_binary(
     name = "analyze",
     srcs = ["analyze.cc"],
@@ -106,18 +123,6 @@ cc_binary(
     ],
 )
 
-py_binary(
-    name = "graph2nx",
-    srcs = ["graph2nx.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//programl/graph/format/py:nx_format",
-        "//programl/proto:programl_py",
-        "//programl/util/py:init_app",
-        "//programl/util/py:stdin_fmt",
-    ],
-)
-
 cc_binary(
     name = "graph2seq",
     srcs = ["graph2seq.cc"],
@@ -131,6 +136,8 @@ cc_binary(
     ],
 )
 
+# TODO(cummins): Move this to a different package. Compiled binaries only in
+# //programl/bin.
 py_binary(
     name = "inst2vec",
     srcs = ["inst2vec.py"],
