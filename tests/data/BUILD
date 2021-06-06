@@ -21,6 +21,21 @@ load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 package(default_visibility = ["//visibility:public"])
 
 filegroup(
+    name = "data",
+    testonly = 1,
+    srcs = [
+        ":hlo_protos",
+        ":llvm_ir",
+        ":llvm_ir_graphs",
+        ":llvm_ir_reachability_features",
+        ":llvm_ir_tar",
+        ":module_with_unreachable_instructions",
+        ":test_protos",
+        ":test_protos_py",
+    ],
+)
+
+filegroup(
     name = "hlo_protos",
     testonly = 1,
     srcs = glob(["*.hlo.pb"]),

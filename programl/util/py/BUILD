@@ -17,6 +17,22 @@
 # limitations under the License.
 
 py_library(
+    name = "util",
+    srcs = [
+        "decorators.py",
+        "humanize.py",
+        "init_app.py",
+        "pbutil.py",
+        "progress.py",
+        "runfiles_path.py",
+        "stdin_fmt.py",
+        "stdout_fmt.py",
+        "threaded_iterator.py",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "decorators",
     srcs = ["decorators.py"],
     visibility = ["//visibility:public"],
@@ -34,7 +50,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl",
-        "//third_party/py/absl",
     ],
 )
 
@@ -43,7 +58,6 @@ py_library(
     srcs = ["pbutil.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/protobuf",
     ],
 )
 
@@ -53,8 +67,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":humanize",
-        "//third_party/py/absl",
-        "//third_party/py/tqdm",
     ],
 )
 
@@ -73,8 +85,6 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/protobuf",
     ],
 )
 
@@ -83,8 +93,6 @@ py_library(
     srcs = ["stdout_fmt.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/py/absl",
-        "//third_party/py/protobuf",
     ],
 )
 

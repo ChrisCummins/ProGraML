@@ -31,6 +31,9 @@ ProtocolBuffer = typing.Any
 # A type alias for protocol enum fields.
 Enum = int
 
+# A type alias for JSON dictionaries.
+JSON = typing.Union[typing.List[typing.Any], typing.Dict[str, typing.Any]]
+
 
 class ProtoValueError(ValueError):
     """Raised in case of a value error from a proto."""
@@ -95,7 +98,7 @@ def FromString(
         raise DecodeError(e)
 
     if not uninitialized_okay and not message.IsInitialized():
-        raise DecodeError(f"Required fields not set")
+        raise DecodeError("Required fields not set")
 
     return message
 
@@ -257,7 +260,7 @@ def ToFile(
     return message
 
 
-def ToJson(message: ProtocolBuffer) -> "jsonutil.JSON":
+def ToJson(message: ProtocolBuffer) -> JSON:
     """Return a JSON encoded representation of a protocol buffer.
     Args:
       message: The message to convert to JSON.
@@ -285,9 +288,9 @@ def _TruncatedString(string: str, n: int = 80) -> str:
 
 
 def _TruncateDictionaryStringValues(
-    data: "jsonutil.JSON",
+    data: JSON,
     n: int = 62,
-) -> "jsonutil.JSON":
+) -> JSON:
     """Truncate all string values in a nested dictionary.
     Args:
       data: A dictionary.
@@ -358,7 +361,7 @@ def ProtoIsReadable(
     try:
         FromFile(pathlib.Path(path), message)
         return True
-    except:
+    except:  # noqa
         return False
 
 
@@ -447,21 +450,24 @@ def RunProcessMessage(
     """
     # Run the C++ worker process, capturing it's output.
     process = subprocess.Popen(
-        ["timeout", "-s9", str(timeout_seconds)] + cmd,
+        cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         env=env,
     )
     # Send the input proto to the C++ worker process.
-    stdout, _ = process.communicate(input_proto.SerializeToString())
-
-    if process.returncode == -9 or process.returncode == 9:
+    try:
+        stdout, _ = process.communicate(
+            input_proto.SerializeToString(), timeout=timeout_seconds
+        )
+    except subprocess.TimeoutExpired as e:
         raise ProtoWorkerTimeoutError(
             cmd=cmd,
             timeout_seconds=timeout_seconds,
             returncode=process.returncode,
-        )
-    elif process.returncode:
+        ) from e
+
+    if process.returncode:
         raise subprocess.CalledProcessError(process.returncode, cmd)
 
     return stdout

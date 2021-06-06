@@ -16,7 +16,7 @@
     </tr>
     <tr>
       <td>Python Versions</td>
-      <td>3.6, 3.7, 3.8</td>
+      <td>3.6, 3.7, 3.8, 3.9</td>
     </tr>
     <tr>
       <td>
@@ -64,23 +64,20 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-- [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-    - [Step 1: Compiler IR](#step-1-compiler-ir)
-    - [Step 2: Control-flow](#step-2-control-flow)
-    - [Step 3: Data-flow](#step-3-data-flow)
-    - [Step 4: Call graph](#step-4-call-graph)
-- [Datasets](#datasets)
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Command-line tools](#command-line-tools)
-  - [Dataflow experiments](#dataflow-experiments)
-  - [Using this project as a dependency](#using-this-project-as-a-dependency)
-- [Usage](#usage)
-  - [End-to-end C++ example](#end-to-end-c-example)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
+1. [Overview](#overview)
+1. [Getting Started](#getting-started)
+1. [Installation](#installation)
+  1. [Datasets](#datasets)
+1. [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+  1. [Step 1: Compiler IR](#step-1-compiler-ir)
+  1. [Step 2: Control-flow](#step-2-control-flow)
+  1. [Step 3: Data-flow](#step-3-data-flow)
+  1. [Step 4: Call graph](#step-4-call-graph)
+1. [Usage](#usage)
+  1. [End-to-end C++ flow](#end-to-end-c-flow)
+  1. [Dataflow experiments](#dataflow-experiments)
+1. [Contributing](#contributing)
+1. [Acknowledgements](#acknowledgements)
 
 <!-- /MarkdownTOC -->
 
@@ -116,31 +113,54 @@ Or if papers are more your ☕, have a read of ours:
 [![Preprint](/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
 
 
+## Installation
+
+Install the latest release of the Python package using:
+
+```
+pip install -U programl
+```
+
+See [INSTALL.md](INSTALL.md) for alternative installation options.
+
+
+#### Datasets
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
+
+Please see [this doc](/Documentation/DataflowDataset.md) for download
+links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
+flow analysis labels.
+
+
 ## Constructing the ProGraML Representation
 
 The ProGraML representation is constructed in multiple stages. Here we describe
 the process for a simple recursive Fibonacci implementation in C. For
 instructions on how to run this process, see [Usage](#usage) below.
 
+
 #### Step 1: Compiler IR
 
-<img src="/Documentation/assets/llvm2graph-1-ir.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-1-ir.png" width=300>
 
 We start by lowering the program to a compiler IR. In this case, we'll use
 LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
 
+
 #### Step 2: Control-flow
 
-<img src="/Documentation/assets/llvm2graph-2-cfg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-2-cfg.png" width=300>
 
 We begin building a graph by constructing a full-flow graph of the program. In a
 full-flow graph, every instruction is a node and the edges are control-flow.
 Note that edges are positional so that we can differentiate the branching
 control flow in that `switch` instruction.
 
+
 #### Step 3: Data-flow
 
-<img src="/Documentation/assets/llvm2graph-3-dfg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-3-dfg.png" width=300>
 
 Then we add a graph node for every variable and constant. In the drawing above,
 the diamonds are constants and the variables are ovals. We add data-flow edges
@@ -149,9 +169,10 @@ and variables and the constants which define/use them. Like control edges, data
 edges have positions. In the case of data edges, the position encodes the order
 of a data element in the list of instruction operands.
 
+
 #### Step 4: Call graph
 
-<img src="/Documentation/assets/llvm2graph-4-cg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-4-cg.png" width=300>
 
 Finally, we add call edges (green) from callsites to the function entry
 instruction, and return edges from function exits to the callsite. Since this is
@@ -165,35 +186,10 @@ The process described above can be run locally using our
 clang2graph -O3 fib.c | graph2dot`
 
 
-## Datasets
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
-
-Please see [this doc](/Documentation/DataflowDataset.md) for download
-links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
-flow analysis labels.
+## Usage
 
 
-## Installation
-
-
-### Requirements
-
-* macOS ≥ 10.15 or GNU / Linux (we recommend Ubuntu Linux ≥ 18.04).
-* bazel ≥ 2.0 (we recommend using
-  [bazelisk](https://github.com/bazelbuild/bazelisk) to automatically
-  download and use the correct bazel version).
-* Python ≥ 3.6
-
-Once you have the above requirements installed, test that everything is working
-by building and running full test suite:
-
-```sh
-$ bazel test //...
-```
-
-
-### Command-line tools
+#### End-to-end C++ flow
 
 In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
 using [command-line tools](/Documentation/bin) which act as filters,
@@ -201,101 +197,8 @@ reading in graphs from stdin and emitting graphs to stdout. The structure for
 graphs is described through a series of [protocol
 buffers](/Documentation/ProtocolBuffers.md).
 
-Build and install the command line tools to `~/.local/opt/programl` (or a
-directory of your choice) using:
-
-```sh
-$ bazel run -c opt //:install -- ~/.local/opt/programl
-```
-
-Then to use them, append the following to your `~/.bashrc`:
-
-```sh
-export PATH=~/.local/opt/programl/bin:$PATH
-export LD_LIBRARY_PATH=~/.local/opt/programl/lib:$LD_LIBRARY_PATH
-```
-
-
-### Dataflow experiments
-
-1. Download and unpack our [dataflow
-dataset](/Documentation/DataflowDataset.md)
-2. Install the python requirements:
-```sh
-python -m pip install -r requirements.txt
-```
-3. Train and evaluate a graph neural network model using:
-
-```sh
-bazel run -c opt //tasks/dataflow:train_ggnn -- \
-    --analysis reachability \
-    --path=$HOME/programl
-```
-
-where `--analysis` is the name of the analysis you want to evaluate, and
-`--path` is the root of the unpacked dataset. There are a lot of options that
-you can use to control the behavior of the experiment, see `--helpfull` for a
-full list. Some useful ones include:
-
-* `--batch_size` controls the number of nodes in each batch of graphs.
-* `--layer_timesteps` defines the layers of the GGNN model, and the number of timesteps used for
-  each.
-* `--learning_rate` sets the initial learning rate of the optimizer.
-* `--lr_decay_rate` the rate at which learning rate decays.
-* `--lr_decay_steps` number of gradient steps until the lr is decayed.
-* `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
-
-
-### Using this project as a dependency
-
-If you are using bazel you can add ProGraML as an external dependency. Add to
-your WORKSPACE file:
-
-```py
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name="programl",
-    strip_prefix="ProGraML-<stable-commit>",
-    urls=["https://github.com/ChrisCummins/ProGraML/archive/<stable-commit>.tar.gz"],
-)
-
-# ----------------- Begin ProGraML dependencies -----------------
-<WORKSPACE dependencies>
-# ----------------- End ProGraML dependencies -----------------
-```
-
-Where `<WORKSPACE dependencies>` is the block of delimited code in
-[@programl//:WORKSPACE](https://github.com/ChrisCummins/ProGraML/blob/development/WORKSPACE)
-(this is an unfortunately clumsy workaround for [recursive
-workspaces](https://github.com/bazelbuild/bazel/issues/1943)).
-
-Then in your BUILD file:
-
-```py
-cc_library(
-    name = "mylib",
-    srcs = ["mylib.cc"],
-    deps = [
-        "@programl//programl/ir/llvm",
-    ],
-)
-
-py_binary(
-    name = "myscript",
-    srcs = ["myscript.py"],
-    deps = [
-        "@programl//programl/ir/llvm/py:llvm",
-    ],
-)
-```
-
-## Usage
-
-### End-to-end C++ example
-
 This section provides an example step-by-step guide for generating a program
-graph from a C++ application.
+graph for a C++ application.
 
 1. Install LLVM-10 and the ProGraML [command line tools](#command-line-tools).
 2. Compile your C++ code to LLVM-IR. The way to do this to modify your build
@@ -331,6 +234,38 @@ $ graph2dot < my_app.pbtxt > my_app.dot
 ```
 $ dot -Tpng my_app.dot -o my_app.png
 ```
+
+
+#### Dataflow experiments
+
+1. Follow the instructions for [building from source](#building-from-source)
+2. Download and unpack our [dataflow
+dataset](/Documentation/DataflowDataset.md)
+3. Train and evaluate a graph neural network model using:
+
+```sh
+bazel run -c opt //tasks/dataflow:train_ggnn -- \
+    --analysis reachability \
+    --path=$HOME/programl
+```
+
+where `--analysis` is the name of the analysis you want to evaluate, and
+`--path` is the root of the unpacked dataset. There are a lot of options that
+you can use to control the behavior of the experiment, see `--helpfull` for a
+full list. Some useful ones include:
+
+* `--batch_size` controls the number of nodes in each batch of graphs.
+* `--layer_timesteps` defines the layers of the GGNN model, and the number of timesteps used for
+  each.
+* `--learning_rate` sets the initial learning rate of the optimizer.
+* `--lr_decay_rate` the rate at which learning rate decays.
+* `--lr_decay_steps` number of gradient steps until the lr is decayed.
+* `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
+
+🏗️ **Under construction** We are in the process of refactoring the dataflow
+experiments with a revamped API.  There are currently bugs in the data loader
+which may affect training jobs, see
+[#147](https://github.com/ChrisCummins/ProGraML/issues/147).
 
 
 ## Contributing

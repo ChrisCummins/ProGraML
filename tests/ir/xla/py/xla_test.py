@@ -18,14 +18,14 @@ import pytest
 from absl import flags
 
 from programl.ir.xla.py import xla
+from programl.third_party.tensorflow import xla_pb2
 from programl.util.py import pbutil
 from programl.util.py.runfiles_path import runfiles_path
 from tests.test_main import main
-from third_party.tensorflow import xla_pb2
 
 FLAGS = flags.FLAGS
 
-TEST_PROTO = runfiles_path("programl/tests/data/a.hlo.pb")
+TEST_PROTO = runfiles_path("tests/data/a.hlo.pb")
 
 
 def test_empty_proto():

@@ -22,6 +22,7 @@
 
 #include "labm8/cpp/status.h"
 #include "llvm/IR/Module.h"
+#include "llvm/Support/MemoryBuffer.h"
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_options.pb.h"
 

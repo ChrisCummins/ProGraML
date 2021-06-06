@@ -18,10 +18,7 @@ py_test(
     name = "llvm_test",
     srcs = ["llvm_test.py"],
     deps = [
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto:programl_py",
+        "//programl",
         "//tests:test_main",
-        "//third_party/py/absl",
-        "//third_party/py/pytest",
     ],
 )

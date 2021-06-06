@@ -24,7 +24,7 @@ option java_multiple_files = true;
 option java_outer_classname = "TestProtosProto";
 option java_package = "com.labm8";
 
-message TestMessage {
+message ATestMessage {
   required string string = 1;
   optional int32 number = 2;
   oneof union_field {

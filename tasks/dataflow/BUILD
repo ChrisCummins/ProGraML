@@ -23,13 +23,12 @@ py_library(
         ":dataflow",
         ":ggnn_batch_builder",
         ":graph_loader",
-        "//programl/models:async_batch_builder",
-        "//programl/models:epoch_batch_iterator",
-        "//programl/models/ggnn",
+        "//models:async_batch_builder",
+        "//models:epoch_batch_iterator",
+        "//models/ggnn",
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
         "//programl/util/py:pbutil",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -38,12 +37,11 @@ py_library(
     srcs = ["ggnn_batch_builder.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//models:base_batch_builder",
+        "//models:base_graph_loader",
+        "//models:batch_data",
+        "//models/ggnn:ggnn_batch",
         "//programl/graph/format/py:graph_tuple_builder",
-        "//programl/models:base_batch_builder",
-        "//programl/models:base_graph_loader",
-        "//programl/models:batch_data",
-        "//programl/models/ggnn:ggnn_batch",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -53,12 +51,10 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_loader",
-        "//programl/models:async_batch_builder",
-        "//programl/models/ggnn",
+        "//models:async_batch_builder",
+        "//models/ggnn",
         "//programl/proto:programl_py",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -70,8 +66,6 @@ py_binary(
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
-        "//third_party/py/absl",
-        "//third_party/py/pandas",
     ],
 )
 
@@ -79,9 +73,9 @@ py_binary(
     name = "ggnn_test_one",
     srcs = ["ggnn_test_one.py"],
     deps = [
-        "//programl/models:base_graph_loader",
-        "//programl/models:batch_results",
-        "//programl/models/ggnn",
+        "//models:base_graph_loader",
+        "//models:batch_results",
+        "//models/ggnn",
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
@@ -89,8 +83,6 @@ py_binary(
         "//tasks/dataflow:ggnn_batch_builder",
         "//tasks/dataflow:vocabulary",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -99,12 +91,11 @@ py_library(
     srcs = ["graph_loader.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//models:base_graph_loader",
         "//programl/graph/format/py:cdfg",
-        "//programl/models:base_graph_loader",
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
     ],
 )
 
@@ -113,13 +104,11 @@ py_library(
     srcs = ["lstm_batch_builder.py"],
     visibility = ["//visibility:public"],
     deps = [
+        "//models:base_batch_builder",
+        "//models:base_graph_loader",
+        "//models:batch_data",
+        "//models/lstm:lstm_batch",
         "//programl/graph/format/py:graph_serializer",
-        "//programl/models:base_batch_builder",
-        "//programl/models:base_graph_loader",
-        "//programl/models:batch_data",
-        "//programl/models/lstm:lstm_batch",
-        "//third_party/py/absl",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -134,7 +123,7 @@ py_binary(
     deps = [
         "//programl/proto:programl_py",
         "//programl/util/py:init_app",
-        "//third_party/py/absl",
+        "//programl/util/py:pbutil",
     ],
 )
 
@@ -144,10 +133,11 @@ py_binary(
     deps = [
         ":vocabulary",
         "//programl/proto:programl_py",
+        "//programl/third_party/ncc:vocabulary",
         "//programl/util/py:init_app",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
-        "//third_party/py/ncc:vocabulary",
     ],
 )
 
@@ -159,7 +149,6 @@ py_binary(
         ":ggnn",
         ":vocabulary",
         "//programl/util/py:init_app",
-        "//third_party/py/absl",
     ],
 )
 
@@ -170,16 +159,14 @@ py_binary(
         ":dataflow",
         ":graph_loader",
         ":lstm_batch_builder",
-        "//programl/models:async_batch_builder",
-        "//programl/models:epoch_batch_iterator",
-        "//programl/models/lstm",
+        "//models:async_batch_builder",
+        "//models:epoch_batch_iterator",
+        "//models/lstm",
         "//programl/proto:programl_py",
+        "//programl/third_party/ncc:vocabulary",
         "//programl/util/py:humanize",
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
-        "//third_party/py/absl",
-        "//third_party/py/ncc:vocabulary",
-        "//third_party/py/numpy",
     ],
 )
 
@@ -188,6 +175,5 @@ py_library(
     srcs = ["vocabulary.py"],
     deps = [
         "//programl/util/py:humanize",
-        "//third_party/py/absl",
     ],
 )

@@ -21,10 +21,10 @@
 #include "programl/proto/program_graph.pb.h"
 #include "programl/proto/program_graph_features.pb.h"
 #include "programl/proto/src.pb.h"
+#include "programl/third_party/tensorflow/xla.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
 #include "programl/version.h"
-#include "third_party/tensorflow/xla.pb.h"
 
 const char* usage = R"(Query properties of a protocol buffer.
 

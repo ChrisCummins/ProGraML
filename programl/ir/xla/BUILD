@@ -25,7 +25,7 @@ cc_library(
         ":xla_stringifier",
         "//programl/graph:program_graph_builder",
         "//programl/proto:programl_cc",
-        "//third_party/tensorflow:xla_cc",
+        "//programl/third_party/tensorflow:xla_cc",
         "@com_google_absl//absl/container:flat_hash_map",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:port",
@@ -41,7 +41,7 @@ cc_library(
     hdrs = ["hlo_proto_reader.h"],
     visibility = ["//tests:__subpackages__"],
     deps = [
-        "//third_party/tensorflow:xla_cc",
+        "//programl/third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:status_macros",
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
@@ -53,7 +53,7 @@ cc_library(
     srcs = ["xla_stringifier.cc"],
     hdrs = ["xla_stringifier.h"],
     deps = [
-        "//third_party/tensorflow:xla_cc",
+        "//programl/third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:string",
     ],
 )

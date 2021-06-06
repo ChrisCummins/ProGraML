@@ -21,9 +21,9 @@ from typing import Dict, List, Optional
 import numpy as np
 from absl import logging
 
-from programl.models.async_batch_builder import AsyncBatchBuilder
-from programl.models.epoch_batch_iterator import EpochBatchIterator
-from programl.models.ggnn.ggnn import Ggnn
+from models.async_batch_builder import AsyncBatchBuilder
+from models.epoch_batch_iterator import EpochBatchIterator
+from models.ggnn.ggnn import Ggnn
 from programl.proto import epoch_pb2
 from programl.util.py import humanize, pbutil
 from tasks.dataflow import dataflow

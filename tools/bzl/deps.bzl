@@ -22,10 +22,10 @@ def programl_deps():
 
   http_archive(
     name="llvm",
-    sha256 = "02ca111816345d76d7d7687f2d6ed5eaaa0d30f297f3a286171b8409e4502282",
-    strip_prefix="bazel_llvm-a0bffdcbbcb551acda57832d817aef6571b911ee",
+    sha256 = "9bac9169582c2bdc8629f56f390b444e4442ed215695692f3925a996e35c0b88",
+    strip_prefix="bazel_llvm-f0d78833bc1e43f475fd41495dbd55017104cb36",
     urls=[
-      "https://github.com/ChrisCummins/bazel_llvm/archive/a0bffdcbbcb551acda57832d817aef6571b911ee.tar.gz"
+      "https://github.com/ChrisCummins/bazel_llvm/archive/f0d78833bc1e43f475fd41495dbd55017104cb36.tar.gz"
     ],
   )
 
@@ -74,9 +74,9 @@ def programl_deps():
   http_archive(
     name="pybind11_json",
     build_file="@programl//:third_party/pybind11_json.BUILD",
-    sha256="45957f8564e921a412a6de49c578ef1faf3b04e531e859464853e26e1c734ea5",
-    strip_prefix="pybind11_json-0.2.4/include",
-    urls=["https://github.com/pybind/pybind11_json/archive/0.2.4.tar.gz"],
+    sha256="2eaf4c294aaf449ed6de83ae81d23f9275d6286cf184834c7cf6ea6087d98794",
+    strip_prefix="pybind11_json-0.2.10/include",
+    urls=["https://github.com/pybind/pybind11_json/archive/0.2.10.tar.gz"],
   )
 
   http_archive(
@@ -131,9 +131,9 @@ def programl_deps():
   http_archive(
     name="pybind11",
     build_file="@programl//:third_party/pybind11_bazel/pybind11.BUILD",
-    sha256="1eed57bc6863190e35637290f97a20c81cfe4d9090ac0a24f3bbf08f265eb71d",
-    strip_prefix="pybind11-2.4.3",
-    urls=["https://github.com/pybind/pybind11/archive/v2.4.3.tar.gz"],
+    sha256="8ff2fff22df038f5cd02cea8af56622bc67f5b64534f1b83b9f133b8366acff2",
+    strip_prefix="pybind11-2.6.2",
+    urls=["https://github.com/pybind/pybind11/archive/v2.6.2.tar.gz"],
   )
 
   http_archive(

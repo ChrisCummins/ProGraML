@@ -22,7 +22,6 @@ py_binary(
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
-        "//third_party/py/absl",
     ],
 )
 
@@ -36,15 +35,13 @@ py_binary(
     ],
     deps = [
         ":encode_inst2vec",
-        "//programl/util/py:init_app",
         ":pathflag",
         "//programl/ir/llvm/py:llvm",
         "//programl/proto:programl_py",
-        "//third_party/py/absl",
-        "//programl/util/py:runfiles_path",
-        "//programl/util/py:progress",
+        "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
-        # "//third_party/py/mysql",
+        "//programl/util/py:progress",
+        "//programl/util/py:runfiles_path",
     ],
 )
 
@@ -97,7 +94,9 @@ py_binary(
         ":pathflag",
         "//programl/ir/llvm:inst2vec_encoder",
         "//programl/proto:programl_py",
-        "//third_party/py/absl",
+        "//programl/util/py:decorators",
+        "//programl/util/py:pbutil",
+        "//programl/util/py:progress",
     ],
 )
 
@@ -123,7 +122,6 @@ py_library(
     srcs = ["pathflag.py"],
     visibility = ["//tasks:__subpackages__"],
     deps = [
-        "//third_party/py/absl",
     ],
 )
 

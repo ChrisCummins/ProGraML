@@ -1,0 +1,36 @@
+---
+name: Bazel Test
+
+on:
+    push:
+        branches:
+            - development
+            - stable
+    pull_request:
+
+jobs:
+    test:
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+
+            - name: Install build dependencies
+              uses: ./.github/actions/install-build-dependencies
+
+            - name: Test
+              run: make test
+              env:
+                  CC: clang
+                  CXX: clang++
+                  BAZEL_OPTS: --batch
+                  BAZEL_TEST_OPTS: --config=ci --test_timeout=300,900,1800,7200

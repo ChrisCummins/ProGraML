@@ -31,8 +31,8 @@ cc_library(
     srcs = ["poj104.cc"],
     hdrs = ["poj104.h"],
     deps = [
-        "//programl/ir/llvm",
         "//programl/ir/llvm:clang",
+        "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",
         "//programl/util:filesystem_cache",
         "//third_party/tbb",

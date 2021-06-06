@@ -25,16 +25,16 @@ from typing import Dict
 import numpy as np
 from absl import app, flags, logging
 
-from programl.models.async_batch_builder import AsyncBatchBuilder
-from programl.models.epoch_batch_iterator import EpochBatchIterator
-from programl.models.lstm.lstm import Lstm
+from models.async_batch_builder import AsyncBatchBuilder
+from models.epoch_batch_iterator import EpochBatchIterator
+from models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
+from programl.third_party.ncc import vocabulary
 from programl.util.py import humanize, pbutil
 from programl.util.py.init_app import init_app
 from tasks.dataflow import dataflow
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
-from third_party.py.ncc import vocabulary
 
 flags.DEFINE_integer(
     "max_data_flow_steps",

@@ -18,13 +18,14 @@ import csv
 import pathlib
 from collections import defaultdict
 
-from absl import flags, pbutil, progress
+from absl import app, flags
 
 from programl.proto import program_graph_pb2
+from programl.third_party.ncc.vocabulary import VocabularyZipFile
+from programl.util.py import pbutil, progress
 from programl.util.py.init_app import init_app
 from tasks.dataflow.dataset import pathflag
 from tasks.dataflow.vocabulary import LoadVocabulary
-from third_party.py.ncc.vocabulary import VocabularyZipFile
 
 flags.DEFINE_integer("limit", 0, "Limit the number of files read.")
 FLAGS = flags.FLAGS

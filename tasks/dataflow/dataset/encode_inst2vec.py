@@ -21,15 +21,25 @@ import multiprocessing
 import pathlib
 import random
 import time
+from itertools import islice
 from typing import List, Tuple
 
-from absl import decorators, flags, labtypes, pbutil, progress
+from absl import app, flags
 
 from programl.ir.llvm.inst2vec_encoder import Inst2vecEncoder
 from programl.proto import ir_pb2, program_graph_pb2
+from programl.util.py import decorators, pbutil, progress
 from tasks.dataflow.dataset import pathflag
 
 FLAGS = flags.FLAGS
+
+
+def chunkify(iterable, n):
+    i = iter(iterable)
+    piece = list(islice(i, n))
+    while piece:
+        yield piece
+        piece = list(islice(i, n))
 
 
 @decorators.timeout(seconds=60)
@@ -96,7 +106,7 @@ class Inst2vecEncodeGraphs(progress.Progress):
 
     def Run(self):
         encoder = Inst2vecEncoder()
-        jobs = [(encoder, chunk) for chunk in list(labtypes.Chunkify(self.paths, 128))]
+        jobs = [(encoder, chunk) for chunk in list(chunkify(self.paths, 128))]
         with open(self.path / "graphs.inst2vec_log.txt", "a") as f:
             with multiprocessing.Pool() as pool:
                 for processed_count, encoded_count, runtime in pool.imap_unordered(

@@ -19,11 +19,11 @@ from pathlib import Path
 from typing import Any, Iterable
 
 import numpy as np
-from absl import flags
+from absl import app, flags
 
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.models.batch_results import BatchResults
-from programl.models.ggnn.ggnn import Ggnn
+from models.base_graph_loader import BaseGraphLoader
+from models.batch_results import BatchResults
+from models.ggnn.ggnn import Ggnn
 from programl.proto import (
     checkpoint_pb2,
     epoch_pb2,

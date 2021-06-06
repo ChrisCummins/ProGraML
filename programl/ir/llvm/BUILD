@@ -39,38 +39,87 @@ cc_library(
     ],
 )
 
+filegroup(
+    name = "inst2vec_augmented_dictionary",
+    srcs = ["internal/inst2vec_augmented_dictionary.pickle"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "inst2vec_augmented_embeddings",
+    srcs = ["internal/inst2vec_augmented_embeddings.pickle"],
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "inst2vec_encoder",
     srcs = ["inst2vec_encoder.py"],
     data = [
-        "//programl/ir/llvm/internal:inst2vec_augmented_dictionary",
-        "//programl/ir/llvm/internal:inst2vec_augmented_embeddings",
+        ":inst2vec_augmented_dictionary",
+        ":inst2vec_augmented_embeddings",
     ],
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/py:program_graph_builder",
         "//programl/proto:programl_py",
+        "//programl/third_party/ncc/inst2vec:inst2vec_preprocess",
         "//programl/util/py:decorators",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//programl/util/py:runfiles_path",
-        "//third_party/py/absl",
-        "//third_party/py/ncc/inst2vec:inst2vec_preprocess",
-        "//third_party/py/numpy",
     ],
 )
 
 cc_library(
-    name = "llvm",
-    srcs = ["llvm.cc"],
-    hdrs = ["llvm.h"],
-    copts = ["-std=c++14"],
+    name = "llvm-10",
+    srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
+    hdrs = ["llvm.h"] + glob(["internal/*.h"]),
+    copts = [
+        "-std=c++14",
+        "-fno-rtti",
+    ],
+    defines = [
+        "GOOGLE_PROTOBUF_NO_RTTI",
+        "PROGRAML_LLVM_VERSION_MAJOR=10",
+    ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/ir/llvm/internal:program_graph_builder_pass",
+        "//programl/graph:features",
+        "//programl/graph:program_graph_builder",
         "//programl/proto:programl_cc",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
         "@labm8//labm8/cpp:status",
         "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
         "@llvm//10.0.0",
+    ],
+)
+
+cc_library(
+    name = "llvm-3.8",
+    srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
+    hdrs = ["llvm.h"] + glob(["internal/*.h"]),
+    copts = [
+        "-std=c++14",
+        "-fno-rtti",
+    ],
+    defines = [
+        "GOOGLE_PROTOBUF_NO_RTTI",
+        "PROGRAML_LLVM_VERSION_MAJOR=3",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//programl/graph:features",
+        "//programl/graph:program_graph_builder",
+        "//programl/proto:programl_cc",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
+        "@llvm//3.8.0",
     ],
 )

@@ -21,7 +21,7 @@ from programl.proto import program_graph_pb2
 from programl.util.py import pbutil
 from programl.util.py.runfiles_path import runfiles_path
 
-LLVM_IR_GRAPHS = runfiles_path("programl/tests/data/llvm_ir_graphs")
+LLVM_IR_GRAPHS = runfiles_path("tests/data/llvm_ir_graphs")
 
 
 def EnumerateLlvmProgramGraphs() -> Iterable[

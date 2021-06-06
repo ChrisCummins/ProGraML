@@ -18,7 +18,7 @@
 #pragma once
 
 #include "labm8/cpp/string.h"
-#include "third_party/tensorflow/xla.pb.h"
+#include "programl/third_party/tensorflow/xla.pb.h"
 
 namespace programl {
 namespace ir {

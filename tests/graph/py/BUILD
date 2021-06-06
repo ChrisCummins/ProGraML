@@ -21,6 +21,5 @@ py_test(
         "//programl/graph/py:program_graph_builder",
         "//programl/proto:programl_py",
         "//tests:test_main",
-        "//third_party/py/pytest",
     ],
 )

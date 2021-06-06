@@ -26,8 +26,8 @@ from typing import Iterable, Tuple
 
 from absl import flags, logging
 
+from models import base_graph_loader
 from programl.graph.format.py import cdfg
-from programl.models import base_graph_loader
 from programl.proto import epoch_pb2, program_graph_features_pb2, program_graph_pb2
 from programl.util.py import humanize, pbutil
 
@@ -58,6 +58,8 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
         require_inst2vec: bool = False,
         max_queue_size: int = 512,
     ):
+        self._stopped = False
+
         self.graph_path = path / epoch_pb2.EpochType.Name(epoch_type).lower()
         if not self.graph_path.is_dir():
             raise FileNotFoundError(str(self.graph_path))
@@ -88,7 +90,6 @@ class DataflowGraphLoader(base_graph_loader.BaseGraphLoader):
         self._outq = Queue(maxsize=max_queue_size)
         self._thread = threading.Thread(target=self._Worker)
         self._thread.start()
-        self._stopped = False
 
     def Stop(self):
         if self._stopped:

@@ -17,12 +17,13 @@
 from typing import Dict, Optional
 
 import numpy as np
+from absl import logging
 
+from models.base_batch_builder import BaseBatchBuilder
+from models.base_graph_loader import BaseGraphLoader
+from models.batch_data import BatchData
+from models.ggnn.ggnn_batch import GgnnBatchData
 from programl.graph.format.py.graph_tuple_builder import GraphTupleBuilder
-from programl.models.base_batch_builder import BaseBatchBuilder
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.models.batch_data import BatchData
-from programl.models.ggnn.ggnn_batch import GgnnBatchData
 
 
 class DataflowGgnnBatchBuilder(BaseBatchBuilder):

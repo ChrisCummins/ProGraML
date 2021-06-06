@@ -27,7 +27,9 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instruction.h"
 #include "llvm/IR/Instructions.h"
+#if PROGRAML_LLVM_VERSION_MAJOR > 3
 #include "llvm/IR/ProfileSummary.h"
+#endif
 #include "programl/graph/features.h"
 #include "programl/ir/llvm/internal/text_encoder.h"
 #include "programl/proto/program_graph.pb.h"
@@ -307,6 +309,7 @@ Node* ProgramGraphBuilder::AddLlvmInstruction(const ::llvm::Instruction* instruc
   node->set_block(blockCount_);
   graph::AddScalarFeature(node, "full_text", text.text);
 
+#if PROGRAML_LLVM_VERSION_MAJOR > 3
   // Add profiling information features, if available.
   uint64_t profTotalWeight;
   if (instruction->extractProfTotalWeight(profTotalWeight)) {
@@ -318,6 +321,7 @@ Node* ProgramGraphBuilder::AddLlvmInstruction(const ::llvm::Instruction* instruc
     graph::AddScalarFeature(node, "llvm_profile_true_weight", profTrueWeight);
     graph::AddScalarFeature(node, "llvm_profile_false_weight", profFalseWeight);
   }
+#endif
 
   return node;
 }
@@ -351,11 +355,23 @@ Node* ProgramGraphBuilder::AddLlvmConstant(const ::llvm::Constant* constant) {
   return node;
 }
 
+namespace {
+
+std::string getModuleName(const ::llvm::Module& module) {
+#if PROGRAML_LLVM_VERSION_MAJOR == 3
+  return module.getModuleIdentifier();
+#else
+  return module.getSourceFileName();
+#endif
+}
+
+}  // anonymous namespace
+
 labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& module) {
   // A map from functions to their entry and exit nodes.
   absl::flat_hash_map<const ::llvm::Function*, FunctionEntryExits> functions;
 
-  Module* moduleMessage = AddModule(module.getSourceFileName());
+  Module* moduleMessage = AddModule(getModuleName(module));
 
   graph::AddScalarFeature(moduleMessage, "llvm_target_triple", module.getTargetTriple());
   graph::AddScalarFeature(moduleMessage, "llvm_data_layout", module.getDataLayoutStr());
@@ -364,6 +380,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
     // Create the function message.
     Function* functionMessage = AddFunction(function.getName(), moduleMessage);
 
+#if PROGRAML_LLVM_VERSION_MAJOR > 3
     // Add profiling information, if available.
     if (function.hasProfileData()) {
       auto profileCount = function.getEntryCount();
@@ -372,6 +389,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
       functionMessage->mutable_features()->mutable_feature()->insert(
           {"llvm_profile_entry_count", feature});
     }
+#endif
 
     FunctionEntryExits functionEntryExits;
     ASSIGN_OR_RETURN(functionEntryExits, VisitFunction(function, functionMessage));
@@ -405,6 +423,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
     }
   }
 
+#if PROGRAML_LLVM_VERSION_MAJOR > 3
   // Add profiling information, if available.
   ::llvm::Metadata* profileMetadata = module.getModuleFlag("ProfileSummary");
   if (profileMetadata) {
@@ -424,6 +443,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
     graph::AddScalarFeature(moduleMessage, "llvm_profile_max_internal_count",
                             profileSummary->getMaxInternalCount());
   }
+#endif
 
   return programl::graph::ProgramGraphBuilder::Build();
 }

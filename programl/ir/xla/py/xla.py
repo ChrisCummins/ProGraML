@@ -16,7 +16,7 @@
 """Generate program graphs from XLA HLO modules."""
 from programl.ir.xla.py import xla_pybind
 from programl.proto import program_graph_pb2
-from third_party.tensorflow import xla_pb2
+from programl.third_party.tensorflow import xla_pb2
 
 
 def BuildProgramGraphProto(

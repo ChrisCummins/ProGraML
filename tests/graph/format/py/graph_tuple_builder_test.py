@@ -26,7 +26,7 @@ def test_GraphTuple_empty_shapes():
     """Build from an empty proto."""
     builder = GraphTupleBuilder()
     with pytest.raises(ValueError) as e_ctx:
-        gt = builder.Build()
+        builder.Build()
     assert "contains no graphs" in str(e_ctx.value)
 
 
