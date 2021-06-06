@@ -172,16 +172,16 @@ bdist_wheel-linux-rename:
 
 bdist_wheel-linux:
 	rm -rf build
-	docker pull chriscummins/compiler_gym-linux-build:latest
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/programl-linux-build:latest /bin/sh -c './packaging/container_init.sh && make bdist_wheel'
+	docker build -t chriscummins/compiler_gym-linux-build packaging
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/compiler_gym-linux-build:latest /bin/sh -c './packaging/container_init.sh && make bdist_wheel'
 	mv dist/programl-$(VERSION)-py3-none-linux_x86_64.whl dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl
 	rm -rf build
 
 bdist_wheel-linux-shell:
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g -it --entrypoint "/bin/bash" chriscummins/programl-linux-build:latest
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g -it --entrypoint "/bin/bash" chriscummins/compiler_gym-linux-build:latest
 
 bdist_wheel-linux-test:
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/programl-linux-build:latest /bin/sh -c 'cd /ProGraML && pip3 install -U pip && pip3 install dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl && pip install -r tests/requirements.txt && make install-test'
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/compiler_gym-linux-build:latest /bin/sh -c 'cd /ProGraML && pip3 install -U pip && pip3 install dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl && pip install -r tests/requirements.txt && make install-test'
 
 all: docs bdist_wheel bdist_wheel-linux
 
