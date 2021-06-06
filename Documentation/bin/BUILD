@@ -52,13 +52,6 @@ genrule(
 )
 
 genrule(
-    name = "graph2nx",
-    outs = ["graph2nx.txt"],
-    cmd = "$(location //programl/bin:graph2nx) --helpfull > $@ || true",
-    tools = ["//programl/bin:graph2nx"],
-)
-
-genrule(
     name = "graph2seq",
     outs = ["graph2seq.txt"],
     cmd = "$(location //programl/bin:graph2seq) --helpfull > $@ || true",
