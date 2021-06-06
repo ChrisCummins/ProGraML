@@ -26,8 +26,8 @@ from typing import Iterable, Tuple
 
 from absl import flags, logging
 
+from models import base_graph_loader
 from programl.graph.format.py import cdfg
-from programl.models import base_graph_loader
 from programl.proto import epoch_pb2, program_graph_features_pb2, program_graph_pb2
 from programl.util.py import humanize, pbutil
 

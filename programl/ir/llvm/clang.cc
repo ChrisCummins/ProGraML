@@ -55,10 +55,7 @@ Status Clang::Compile(const string& src, IrList* irs) const {
 
 std::vector<string> Clang::BuildCompileCommands(const string& baseFlags, int timeout,
                                                 bool abspath) {
-  const string clangPath =
-      (abspath ? absl::StrFormat("timeout -s9 %d %s", timeout,
-                                 labm8::BazelDataPathOrDie(kClangPath).string())
-               : "clang++");
+  const string clangPath = (abspath ? labm8::BazelDataPathOrDie(kClangPath).string() : "clang++");
 
   const std::vector<string> opts{
       "-O0",

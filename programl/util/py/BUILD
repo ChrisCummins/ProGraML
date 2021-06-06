@@ -17,6 +17,22 @@
 # limitations under the License.
 
 py_library(
+    name = "util",
+    srcs = [
+        "decorators.py",
+        "humanize.py",
+        "init_app.py",
+        "pbutil.py",
+        "progress.py",
+        "runfiles_path.py",
+        "stdin_fmt.py",
+        "stdout_fmt.py",
+        "threaded_iterator.py",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "decorators",
     srcs = ["decorators.py"],
     visibility = ["//visibility:public"],

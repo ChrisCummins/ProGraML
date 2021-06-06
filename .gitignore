@@ -1,6 +1,13 @@
-__pycache__/
+__pycache__
 .DS_Store
 .env
-/.clwb/
-/.idea/
+/.act
+/.clwb
+/.vscode
+/*.egg-info
 /bazel-*
+/build
+/coverage.xml
+/dist
+/node_modules
+/package-lock.json

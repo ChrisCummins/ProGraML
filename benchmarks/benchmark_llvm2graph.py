@@ -29,8 +29,8 @@ flags.DEFINE_float(
 )
 FLAGS = flags.FLAGS
 
-LLVM_IR = runfiles_path("programl/tests/data/llvm_ir")
-LLVM2GRAPH = runfiles_path("programl/bin/llvm2graph")
+LLVM_IR = runfiles_path("tests/data/llvm_ir")
+LLVM2GRAPH = runfiles_path("bin/llvm2graph")
 
 
 def SummarizeFloats(floats, nplaces: int = 2, unit: str = "") -> str:

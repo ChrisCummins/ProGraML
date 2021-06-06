@@ -20,11 +20,11 @@ import numpy as np
 import tensorflow as tf
 from absl import flags, logging
 
+from models.base_batch_builder import BaseBatchBuilder
+from models.base_graph_loader import BaseGraphLoader
+from models.batch_data import BatchData
+from models.lstm.lstm_batch import LstmBatchData
 from programl.graph.format.py import graph_serializer
-from programl.models.base_batch_builder import BaseBatchBuilder
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.models.batch_data import BatchData
-from programl.models.lstm.lstm_batch import LstmBatchData
 
 FLAGS = flags.FLAGS
 

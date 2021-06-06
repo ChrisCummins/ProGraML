@@ -24,14 +24,14 @@ from absl import app, flags
 from sklearn.exceptions import UndefinedMetricWarning
 from tqdm import tqdm
 
-from programl.models.lstm.lstm import Lstm
+from models.lstm.lstm import Lstm
 from programl.proto import epoch_pb2
+from programl.third_party.ncc import vocabulary
 from programl.util.py import progress
 from programl.util.py.threaded_iterator import ThreadedIterator
 from tasks.dataflow.graph_loader import DataflowGraphLoader
 from tasks.dataflow.lstm_batch_builder import DataflowLstmBatchBuilder
 from tests.plugins import llvm_program_graph, llvm_reachability_features
-from third_party.ncc import vocabulary
 
 flags.DEFINE_integer("graph_count", None, "The number of graphs to load.")
 flags.DEFINE_integer("batch_count", None, "The number of batches.")

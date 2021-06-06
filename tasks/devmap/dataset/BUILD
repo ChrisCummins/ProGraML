@@ -25,3 +25,14 @@ py_binary(
         "//tasks/dataflow/dataset:pathflag",
     ],
 )
+
+py_test(
+    name = "create_test",
+    timeout = "long",
+    srcs = ["create_test.py"],
+    deps = [
+        "//tasks/devmap/dataset:create",
+        "//tests:test_main",
+        "//tests/plugins:tempdir",
+    ],
+)

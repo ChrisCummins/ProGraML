@@ -34,7 +34,7 @@ py_test(
     timeout = "eternal",
     srcs = ["benchmark_dataflow_ggnn.py"],
     deps = [
-        "//programl/models/ggnn",
+        "//models/ggnn",
         "//programl/proto:programl_py",
         "//programl/util/py:humanize",
         "//programl/util/py:progress",
@@ -51,7 +51,7 @@ py_test(
 #    timeout = "eternal",
 #    srcs = ["benchmark_dataflow_lstm.py"],
 #    deps = [
-#        "//programl/models/lstm",
+#        "//models/lstm",
 #        "//programl/proto:programl_py",
 #        "//programl/util/py:progress",
 #        "//programl/util/py:threaded_iterator",
@@ -59,7 +59,7 @@ py_test(
 #        "//tests/plugins:llvm_reachability_features",
 #        "//tasks/dataflow:graph_loader",
 #        "//tasks/dataflow:lstm_batch_builder",
-#        "//third_party/ncc:vocabulary",
+#        "//programl/third_party/ncc:vocabulary",
 #    ],
 #)
 

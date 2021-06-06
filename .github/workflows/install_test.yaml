@@ -1,0 +1,54 @@
+---
+name: Install Test
+
+on:
+    push:
+        branches:
+            - development
+            - stable
+    pull_request:
+    schedule:
+        - cron: 0 0 * * 0 # weekly
+
+jobs:
+    test:
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python: [3.6, 3.7, 3.8, 3.9]
+                exclude:
+                    # Only test recent python versions on macOS.
+                    - os: macos-latest
+                      python: 3.6
+                    - os: macos-latest
+                      python: 3.7
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Set up Python ${{ matrix.python }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python }}
+
+            - name: Install build dependencies
+              uses: ./.github/actions/install-build-dependencies
+
+            - name: Install
+              run: make install
+              env:
+                  CC: clang
+                  CXX: clang++
+                  BAZEL_OPTS: --batch
+                  BAZEL_BUILD_OPTS: --config=ci
+
+            - name: Test
+              run: make install-test
+              env:
+                  CC: clang
+                  CXX: clang++
+
+            - name: Uninstall
+              run: make uninstall

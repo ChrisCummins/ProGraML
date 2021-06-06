@@ -46,9 +46,9 @@ flags.DEFINE_string("pwd", None, "The database to export from.")
 flags.DEFINE_string("db", None, "The database to export from.")
 FLAGS = flags.FLAGS
 
-CREATE_LABELS = runfiles_path("programl/tasks/dataflow/dataset/create_labels")
-CREATE_VOCAB = runfiles_path("programl/tasks/dataflow/dataset/create_vocab")
-UNPACK_IR_LISTS = runfiles_path("programl/tasks/dataflow/dataset/unpack_ir_lists")
+CREATE_LABELS = runfiles_path("tasks/dataflow/dataset/create_labels")
+CREATE_VOCAB = runfiles_path("tasks/dataflow/dataset/create_vocab")
+UNPACK_IR_LISTS = runfiles_path("tasks/dataflow/dataset/unpack_ir_lists")
 
 
 def _ProcessRow(output_directory, row, file_id) -> None:

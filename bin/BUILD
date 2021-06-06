@@ -195,9 +195,9 @@ cc_binary(
     deps = [
         "//programl:version_header",
         "//programl/proto:programl_cc",
+        "//programl/third_party/tensorflow:xla_cc",
         "//programl/util:stdin_fmt",
         "//programl/util:stdout_fmt",
-        "//third_party/tensorflow:xla_cc",
         "@com_google_protobuf//:protobuf",
         "@labm8//labm8/cpp:app",
     ],
@@ -210,8 +210,8 @@ cc_binary(
     deps = [
         "//programl:version_header",
         "//programl/ir/xla:hlo_module_graph_builder",
+        "//programl/third_party/tensorflow:xla_cc",
         "//programl/util:stdin_fmt",
-        "//third_party/tensorflow:xla_cc",
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:statusor",

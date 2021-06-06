@@ -19,7 +19,7 @@ import pytest
 
 from programl.util.py.runfiles_path import runfiles_path
 
-LLVM_IR = runfiles_path("programl/tests/data/llvm_ir")
+LLVM_IR = runfiles_path("tests/data/llvm_ir")
 
 
 def EnumerateLlvmIrs() -> Iterable[Tuple[str, str]]:
