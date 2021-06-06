@@ -142,7 +142,7 @@ instructions on how to run this process, see [Usage](#usage) below.
 
 #### Step 1: Compiler IR
 
-<img src="/Documentation/assets/llvm2graph-1-ir.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-1-ir.png" width=300>
 
 We start by lowering the program to a compiler IR. In this case, we'll use
 LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
@@ -150,7 +150,7 @@ LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
 
 #### Step 2: Control-flow
 
-<img src="/Documentation/assets/llvm2graph-2-cfg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-2-cfg.png" width=300>
 
 We begin building a graph by constructing a full-flow graph of the program. In a
 full-flow graph, every instruction is a node and the edges are control-flow.
@@ -160,7 +160,7 @@ control flow in that `switch` instruction.
 
 #### Step 3: Data-flow
 
-<img src="/Documentation/assets/llvm2graph-3-dfg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-3-dfg.png" width=300>
 
 Then we add a graph node for every variable and constant. In the drawing above,
 the diamonds are constants and the variables are ovals. We add data-flow edges
@@ -172,7 +172,7 @@ of a data element in the list of instruction operands.
 
 #### Step 4: Call graph
 
-<img src="/Documentation/assets/llvm2graph-4-cg.png" width=300>
+<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-4-cg.png" width=300>
 
 Finally, we add call edges (green) from callsites to the function entry
 instruction, and return edges from function exits to the callsite. Since this is
