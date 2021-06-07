@@ -4,6 +4,9 @@ py_library(
         "__init__.py",
         "version.py",
     ],
+    data = [
+        "//programl/bin",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/analysis/py:analysis",

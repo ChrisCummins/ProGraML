@@ -30,18 +30,32 @@
 filegroup(
     name = "bin",
     srcs = [
-        "clang2graph-10",
-        "clang2graph-latest",
-        "graph2cdfg",
-        "graph2dot",
-        "graph2json",
-        "graph2seq",
-        "llvm2graph-3.8",
-        "llvm2graph-latest",
-        "pbq",
-        "xla2graph",
+        ":clang2graph-10",
+        ":graph2cdfg",
+        ":graph2dot",
+        ":graph2json",
+        ":graph2seq",
+        ":llvm2graph-3.8",
+        ":llvm2graph-10",
+        ":pbq",
+        ":xla2graph",
         ":analyze",
+    ] + select({
+        "@llvm//:darwin": [],
+        "//conditions:default": [":libLLVMPolly"],
+    }),
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "libLLVMPolly",
+    srcs = [
+        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:all_files",
+        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang",
     ],
+    outs = ["libLLVMPolly.so"],
+    cmd = "cp $$(dirname $(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang))/../lib/LLVMPolly.so $@",
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -57,14 +71,6 @@ cc_binary(
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:status",
     ],
-)
-
-genrule(
-    name = "clang2graph-latest",
-    srcs = [":clang2graph-10"],
-    outs = ["clang2graph"],
-    cmd = "ln -s $$(basename $<) $@",
-    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -152,18 +158,27 @@ py_binary(
 )
 
 genrule(
-    name = "llvm2graph-latest",
-    srcs = [":llvm2graph-10"],
-    outs = ["llvm2graph"],
-    cmd = "ln -s $$(basename $<) $@",
+    name = "llvm2graph-3.8-bin",
+    srcs = [":llvm2graph-3.8-prelinked"],
+    outs = ["llvm2graph-3.8"],
+    cmd = select({
+        "@llvm//:darwin": (
+            "cp $(location :llvm2graph-3.8-prelinked) $@"
+        ),
+        "//conditions:default": (
+            "cp $(location :llvm2graph-3.8-prelinked) $@ && " +
+            "chmod 666 $@ && " +
+            "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "chmod 555 $@"
+        ),
+    }),
     visibility = ["//visibility:public"],
 )
 
 cc_binary(
-    name = "llvm2graph-3.8",
+    name = "llvm2graph-3.8-prelinked",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
-    visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
         "//programl/ir/llvm:llvm-3.8",
@@ -177,11 +192,28 @@ cc_binary(
     ],
 )
 
+genrule(
+    name = "llvm2graph-10-bin",
+    srcs = [":llvm2graph-10-prelinked"],
+    outs = ["llvm2graph-10"],
+    cmd = select({
+        "@llvm//:darwin": (
+            "cp $(location :llvm2graph-10-prelinked) $@"
+        ),
+        "//conditions:default": (
+            "cp $(location :llvm2graph-10-prelinked) $@ && " +
+            "chmod 666 $@ && " +
+            "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "chmod 555 $@"
+        ),
+    }),
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "llvm2graph-10",
+    name = "llvm2graph-10-prelinked",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
-    visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
         "//programl/ir/llvm:llvm-10",

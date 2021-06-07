@@ -76,7 +76,7 @@ setuptools.setup(
     },
     package_data={
         "programl": [
-            "bin/llvm2graph",
+            "bin/*",
             "ir/llvm/py/graph_builder_bin-10",
             "ir/llvm/py/*.so",
             "ir/llvm/internal/*.pickle",

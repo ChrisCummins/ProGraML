@@ -64,18 +64,6 @@ genrule(
     }),
 )
 
-# This target copies the LLVMPolly.so file from LLVM to libLLVMPolly.so.
-genrule(
-    name = "libLLVMPolly",
-    srcs = [
-        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:all_files",
-        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang",
-    ],
-    outs = ["libLLVMPolly.so"],
-    cmd = "cp $$(dirname $(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang))/../lib/LLVMPolly.so $@",
-    visibility = ["//visibility:public"],
-)
-
 cc_binary(
     name = "graph_builder_bin-10-prelinked",
     srcs = ["graph_builder_bin.cc"],
@@ -86,4 +74,16 @@ cc_binary(
         "@labm8//labm8/cpp:status",
         "@llvm//10.0.0",
     ],
+)
+
+# This target copies the LLVMPolly.so file from LLVM to libLLVMPolly.so.
+genrule(
+    name = "libLLVMPolly",
+    srcs = [
+        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:all_files",
+        "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang",
+    ],
+    outs = ["libLLVMPolly.so"],
+    cmd = "cp $$(dirname $(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang))/../lib/LLVMPolly.so $@",
+    visibility = ["//visibility:public"],
 )
