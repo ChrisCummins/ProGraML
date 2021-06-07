@@ -24,10 +24,10 @@ genrule(
 )
 
 genrule(
-    name = "clang2graph",
-    outs = ["clang2graph.txt"],
-    cmd = "$(location //programl/bin:clang2graph-latest) -help > $@ || true",
-    tools = ["//programl/bin:clang2graph-latest"],
+    name = "clang2graph-10",
+    outs = ["clang2graph-10.txt"],
+    cmd = "$(location //programl/bin:clang2graph-10) -help > $@ || true",
+    tools = ["//programl/bin:clang2graph-10"],
 )
 
 genrule(
@@ -66,10 +66,17 @@ genrule(
 )
 
 genrule(
-    name = "llvm2graph",
-    outs = ["llvm2graph.txt"],
-    cmd = "$(location //programl/bin:llvm2graph-latest) --helpfull > $@ || true",
-    tools = ["//programl/bin:llvm2graph-latest"],
+    name = "llvm2graph-3.8",
+    outs = ["llvm2graph-3.8.txt"],
+    cmd = "$(location //programl/bin:llvm2graph-3.8) --helpfull > $@ || true",
+    tools = ["//programl/bin:llvm2graph-3.8"],
+)
+
+genrule(
+    name = "llvm2graph-10",
+    outs = ["llvm2graph-10.txt"],
+    cmd = "$(location //programl/bin:llvm2graph-10) --helpfull > $@ || true",
+    tools = ["//programl/bin:llvm2graph-10"],
 )
 
 genrule(

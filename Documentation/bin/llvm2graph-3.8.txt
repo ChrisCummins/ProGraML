@@ -1,8 +1,21 @@
-graph2json: Convert a ProgramGraph message to JSON node link graph.
+llvm2graph-3.8: Generate a program graph from LLVM-IR.
 
-Usage:
+Read an LLVM-IR module from stdin and print the program graph to stdout. For example:
 
-    graph2json < program_graph.pbtxt
+  $ llvm2graph < /path/to/llvm.ll
+
+Or pipe the output directly from clang:
+
+  $ clang foo.c -emit-llvm -o - | llvm2graph -
+
+If the filename has suffix '.Ir.pb', the file is parsed as an Ir protocol buffer:
+
+  $ llvm2graph /path/to/llvm.Ir.pb
+
+If the filename has suffix '.IrList.pb', the file is parsed as an IrList protocol buffer
+and the IR at position --ir_list_index (zero-based) is used:
+
+  $ llvm2graph /path/to/list.IrList.pb --ir_list_index=2
 
   Flags from external/com_github_gflags_gflags/src/gflags.cc:
     -flagfile (load flags from file) type: string default: ""
@@ -40,13 +53,24 @@ Usage:
 
 
 
-  Flags from programl/bin/graph2json.cc:
-    -pretty_print (Pretty-print the generated JSON.) type: bool default: false
+  Flags from programl/bin/llvm2graph.cc:
+    -ignore_call_returns (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -instructions_only (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -ir_list_index (If reading an IrList protocol buffer, use this value to
+      index into the list.) type: int32 default: 0
+    -strict (Validate that the generated graph conforms to expectations of what
+      a graph should look like - i.e. the module is not empty, every function
+      contains instructions, and it does not contain unreachable code.)
+      type: bool default: false
 
 
 
-  Flags from programl/util/stdin_fmt.cc:
-    -stdin_fmt (The type of input format to use. Valid options are: "pbtxt"
-      which reads a text format protocol buffer, "pb" which reads a binary
-      format protocol buffer, or "json" which reads a JSON format protocol
-      buffer.) type: string default: "pbtxt"
+  Flags from programl/util/stdout_fmt.cc:
+    -stdout_fmt (The format of output. Valid options are: "pbtxt" for a
+      text-format protocol buffer, "pb" for a binary format protocol buffer, or
+      "json" for JSON. Text format protocol buffers are recommended for
+      human-readable output, binary-format for efficient and fast file storage,
+      and JSON for processing with third-party tools such as `jq`.)
+      type: string default: "pbtxt"

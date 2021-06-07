@@ -1,4 +1,4 @@
-llvm2graph: Generate a program graph from LLVM-IR.
+llvm2graph-10: Generate a program graph from LLVM-IR.
 
 Read an LLVM-IR module from stdin and print the program graph to stdout. For example:
 
@@ -53,13 +53,17 @@ and the IR at position --ir_list_index (zero-based) is used:
 
 
 
-  Flags from bin/llvm2graph.cc:
+  Flags from programl/bin/llvm2graph.cc:
     -ignore_call_returns (Include only instructions in the generated program
       graph.) type: bool default: false
     -instructions_only (Include only instructions in the generated program
       graph.) type: bool default: false
     -ir_list_index (If reading an IrList protocol buffer, use this value to
       index into the list.) type: int32 default: 0
+    -strict (Validate that the generated graph conforms to expectations of what
+      a graph should look like - i.e. the module is not empty, every function
+      contains instructions, and it does not contain unreachable code.)
+      type: bool default: false
 
 
 

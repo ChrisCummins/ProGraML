@@ -46,7 +46,7 @@ Where --node_label is the attribute to use for producing node labels. Possible v
 
 
 
-  Flags from bin/graph2dot.cc:
+  Flags from programl/bin/graph2dot.cc:
     -node_label (The node attribute to use for node labels.) type: string
       default: "text"
 
