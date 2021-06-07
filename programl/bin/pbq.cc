@@ -63,9 +63,6 @@ Supported Queries
     pbq SourceFile
       Prints an entire SourceFile message.
 
-    pbq Checkpoint
-      Prints an entire Checkpoint message.
-
     pbq NodeIndexList
       Prints an entire NodeIndexList message.
 
@@ -144,8 +141,6 @@ int main(int argc, char** argv) {
     DecodeAndPrint<programl::IrList>();
   } else if (name == "SourceFile") {
     DecodeAndPrint<programl::SourceFile>();
-  } else if (name == "Checkpoint") {
-    DecodeAndPrint<programl::Checkpoint>();
   } else if (name == "NodeIndexList") {
     DecodeAndPrint<programl::NodeIndexList>();
   } else if (name == "SELECT COUNT(graph) FROM ProgramGraphFeaturesList") {
