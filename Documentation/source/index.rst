@@ -9,6 +9,7 @@ graph-based representation of programs for machine learning.
    :caption: Python API Reference
 
    api/python
+   api/protocol-buffers
 
 
 Indices and tables

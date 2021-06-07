@@ -14,18 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from programl.proto.program_graph_pb2 import (
-    Edge,
-    Function,
-    Module,
-    Node,
-    ProgramGraph,
+from programl.proto.program_graph_pb2 import Edge, Function, Module, Node, ProgramGraph
+from programl.proto.util_pb2 import (
+    Ir,
+    IrList,
+    NodeIndexList,
     ProgramGraphFeatures,
     ProgramGraphFeaturesList,
     ProgramGraphList,
     ProgramGraphOptions,
+    Repo,
+    SourceFile,
 )
-from programl.proto.util_pb2 import Ir, IrList, NodeIndexList, Repo, SourceFile
 from programl.third_party.tensorflow.features_pb2 import (
     BytesList,
     Feature,

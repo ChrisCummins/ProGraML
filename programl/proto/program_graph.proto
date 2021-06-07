@@ -29,49 +29,19 @@ import "programl/third_party/tensorflow/features.proto";
 
 // A program graph.
 //
+// The order of elements in these lists matters.
+//
 // Module -> Function -> Node
 //
 // Edges connect nodes, without an explicit scope.
 message ProgramGraph {
+  // The nodes of the program.
   repeated Node node = 1;
+  // The edge relations between nodes.
   repeated Edge edge = 2;
   repeated Function function = 4;
   repeated Module module = 5;
   Features features = 6;
-}
-
-// A list of program graphs.
-message ProgramGraphList {
-  Features context = 1;
-  repeated ProgramGraph graph = 2;
-}
-
-// Options used to generate a program graph.
-message ProgramGraphOptions {
-  // If set, the program graph builder will reject graphs where:
-  //  1. A module contains no nodes.
-  //  2. A function contains no nodes.
-  //  3. A node is unnconnected.
-  bool strict = 3;
-  bool instructions_only = 1;
-  bool ignore_call_returns = 2;
-  int32 opt_level = 4;
-  string ir_path = 10;
-}
-
-// Features describing a program.
-message ProgramGraphFeatures {
-  FeatureLists node_features = 1;
-  FeatureLists edge_features = 2;
-  FeatureLists function_features = 3;
-  FeatureLists module_features = 4;
-  Features features = 5;
-}
-
-// A list of program graphs.
-message ProgramGraphFeaturesList {
-  Features context = 1;
-  repeated ProgramGraphFeatures graph = 2;
 }
 
 // A node represents an instruction, variable, or constant.
