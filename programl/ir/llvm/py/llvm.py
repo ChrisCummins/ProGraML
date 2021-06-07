@@ -17,19 +17,19 @@
 import subprocess
 import tempfile
 
-from programl.proto import program_graph_options_pb2, program_graph_pb2
+from programl.proto import ProgramGraph, ProgramGraphOptions
 from programl.util.py.runfiles_path import runfiles_path
 
 GRAPH_BUILDER_BIN = runfiles_path("programl/ir/llvm/py/graph_builder_bin-10")
 
-DefaultOptions = program_graph_options_pb2.ProgramGraphOptions()
+DefaultOptions = ProgramGraphOptions()
 
 
 def BuildProgramGraph(
     ir: str,
-    options: program_graph_options_pb2.ProgramGraphOptions = DefaultOptions,
+    options: ProgramGraphOptions = DefaultOptions,
     timeout: int = 60,
-) -> program_graph_pb2.ProgramGraph:
+) -> ProgramGraph:
     """Construct a program graph from an LLVM-IR.
 
     Args:
@@ -69,7 +69,7 @@ def BuildProgramGraph(
                 f"Program graph construction exceeded {timeout} seconds"
             ) from e
 
-    proto = program_graph_pb2.ProgramGraph()
+    proto = ProgramGraph()
     if process.returncode == 2:
         raise ValueError(stderr.decode("utf-8").rstrip())
     elif process.returncode:

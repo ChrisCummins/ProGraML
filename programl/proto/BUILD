@@ -20,29 +20,30 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@rules_cc//cc:defs.bzl", "cc_proto_library")
 load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 
+py_library(
+    name = "proto",
+    srcs = ["__init__.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":programl_py",
+        "//programl/third_party/tensorflow:features_py",
+    ],
+)
+
 proto_library(
     name = "programl",
     srcs = [
-        "checkpoint.proto",
-        "edge.proto",
-        "epoch.proto",
-        "features.proto",
-        "function.proto",
-        "ir.proto",
-        "module.proto",
-        "node.proto",
         "program_graph.proto",
-        "program_graph_features.proto",
-        "program_graph_options.proto",
-        "repo.proto",
-        "src.proto",
+        "util.proto",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//programl/third_party/tensorflow:features",
+    ],
 )
 
 py_proto_library(
     name = "programl_py",
-    visibility = ["//visibility:public"],
     deps = [":programl"],
 )
 

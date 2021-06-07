@@ -29,7 +29,7 @@ from pathlib import Path
 from absl import app, flags
 
 from programl.ir.llvm import inst2vec_encoder
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 from programl.util.py.init_app import init_app
 from programl.util.py.stdin_fmt import ParseStdinOrDie
 from programl.util.py.stdout_fmt import WriteStdout
@@ -74,7 +74,7 @@ def main(argv):
         encoder.RunOnDirectory(Path(FLAGS.directory))
         return
 
-    proto = ParseStdinOrDie(program_graph_pb2.ProgramGraph())
+    proto = ParseStdinOrDie(ProgramGraph())
     if FLAGS.ir:
         with open(FLAGS.ir) as f:
             ir = f.read()

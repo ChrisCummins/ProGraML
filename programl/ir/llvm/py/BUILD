@@ -27,7 +27,7 @@ py_library(
     data = [":graph_builder_bin-10-files"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:runfiles_path",
     ],
 )

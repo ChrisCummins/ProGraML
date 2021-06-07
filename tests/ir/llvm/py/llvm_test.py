@@ -16,9 +16,8 @@
 """Unit tests for //programl/ir/llvm/py:llvm."""
 import pytest
 
-import programl
 from programl.ir.llvm.py import llvm
-from programl.proto import node_pb2, program_graph_options_pb2, program_graph_pb2
+from programl.proto import Node, ProgramGraph, ProgramGraphOptions
 from tests.test_main import main
 
 SIMPLE_IR = """
@@ -39,7 +38,7 @@ define i32 @A(i32, i32) #0 {
 """
 
 
-@pytest.fixture(params=[programl.build_llvm_graph, llvm.BuildProgramGraph])
+@pytest.fixture(params=[llvm.BuildProgramGraph])
 def build_llvm_graph(request):
     return request.param
 
@@ -50,43 +49,43 @@ def GetStringScalar(proto, name):
 
 def test_simple_ir(build_llvm_graph):
     """Test equivalence of nodes that pre-process to the same text."""
-    options = program_graph_options_pb2.ProgramGraphOptions(opt_level=3)
+    options = ProgramGraphOptions(opt_level=3)
     proto = build_llvm_graph(SIMPLE_IR, options)
-    assert isinstance(proto, program_graph_pb2.ProgramGraph)
+    assert isinstance(proto, ProgramGraph)
 
     assert len(proto.module) == 1
     assert proto.module[0].name == "foo.c"
 
     assert len(proto.node) == 6
     assert proto.node[0].text == "[external]"
-    assert proto.node[0].type == node_pb2.Node.INSTRUCTION
+    assert proto.node[0].type == Node.INSTRUCTION
 
     assert proto.node[1].text == "add"
-    assert proto.node[1].type == node_pb2.Node.INSTRUCTION
+    assert proto.node[1].type == Node.INSTRUCTION
     assert GetStringScalar(proto.node[1], "full_text") == "%3 = add nsw i32 %1, %0"
 
     assert proto.node[2].text == "ret"
-    assert proto.node[2].type == node_pb2.Node.INSTRUCTION
+    assert proto.node[2].type == Node.INSTRUCTION
     assert GetStringScalar(proto.node[2], "full_text") == "ret i32 %3"
 
     assert proto.node[3].text == "i32"
-    assert proto.node[3].type == node_pb2.Node.VARIABLE
+    assert proto.node[3].type == Node.VARIABLE
     assert GetStringScalar(proto.node[3], "full_text") == "i32 %3"
 
     # Use startswith() to compare names for these last two variables as thier
     # order may differ.
     assert proto.node[4].text == "i32"
-    assert proto.node[4].type == node_pb2.Node.VARIABLE
+    assert proto.node[4].type == Node.VARIABLE
     assert GetStringScalar(proto.node[4], "full_text").startswith("i32 %")
 
     assert proto.node[5].text == "i32"
-    assert proto.node[5].type == node_pb2.Node.VARIABLE
+    assert proto.node[5].type == Node.VARIABLE
     assert GetStringScalar(proto.node[5], "full_text").startswith("i32 %")
 
 
 def test_opt_level(build_llvm_graph):
     """Test equivalence of nodes that pre-process to the same text."""
-    options = program_graph_options_pb2.ProgramGraphOptions(
+    options = ProgramGraphOptions(
         opt_level=0,
     )
     unoptimized = build_llvm_graph(SIMPLE_IR)

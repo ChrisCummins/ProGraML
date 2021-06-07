@@ -21,7 +21,6 @@
 #include "labm8/cpp/string.h"
 #include "programl/graph/analysis/analysis.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_features.pb.h"
 #include "pybind11/pybind11.h"
 
 namespace py = pybind11;

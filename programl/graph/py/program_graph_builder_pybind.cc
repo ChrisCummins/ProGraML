@@ -19,7 +19,7 @@
 #include <string>
 
 #include "programl/graph/program_graph_builder.h"
-#include "programl/proto/program_graph_options.pb.h"
+#include "programl/proto/program_graph.pb.h"
 #include "pybind11/pybind11.h"
 
 namespace py = pybind11;

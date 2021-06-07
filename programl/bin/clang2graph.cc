@@ -46,7 +46,6 @@
 #include "llvm/Target/TargetMachine.h"
 #include "programl/ir/llvm/llvm.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
 using namespace clang;
 using namespace clang::driver;
 using labm8::Status;

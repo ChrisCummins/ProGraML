@@ -18,7 +18,7 @@ py_binary(
     name = "collect_stats",
     srcs = ["collect_stats.py"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
@@ -37,7 +37,7 @@ py_binary(
         ":encode_inst2vec",
         ":pathflag",
         "//programl/ir/llvm/py:llvm",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:init_app",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
@@ -93,7 +93,7 @@ py_binary(
     deps = [
         ":pathflag",
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:decorators",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",

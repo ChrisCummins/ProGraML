@@ -34,7 +34,7 @@ py_library(
     srcs = ["llvm_program_graph.py"],
     data = ["//tests/data:llvm_ir_graphs"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:pbutil",
         "//programl/util/py:runfiles_path",
     ],

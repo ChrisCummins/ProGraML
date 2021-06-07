@@ -17,14 +17,13 @@
 import pytest
 
 from programl.graph.py.program_graph_builder import ProgramGraphBuilder
-from programl.proto import edge_pb2, node_pb2, program_graph_pb2
-from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
+from programl.proto import Edge, Node, ProgramGraph, ProgramGraphOptions
 from tests.test_main import main
 
 
 def test_empty_proto():
     builder = ProgramGraphBuilder()
-    assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+    assert isinstance(builder.Build(), ProgramGraph)
 
 
 def test_empty_proto_strict():
@@ -39,7 +38,7 @@ def test_add_empty_module():
     foo = builder.AddModule("foo")
 
     assert foo == 0
-    assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+    assert isinstance(builder.Build(), ProgramGraph)
 
 
 def test_add_empty_module_strict():
@@ -58,7 +57,7 @@ def test_add_empty_function():
     foo = builder.AddFunction("bar", mod)
 
     assert foo == 0
-    assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+    assert isinstance(builder.Build(), ProgramGraph)
 
 
 def test_add_empty_function_strict():
@@ -78,7 +77,7 @@ def test_graph_with_unconnected_node():
     fn = builder.AddFunction("x", mod)
     builder.AddInstruction("x", fn)
 
-    assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+    assert isinstance(builder.Build(), ProgramGraph)
 
 
 def test_graph_with_unconnected_node_strict():
@@ -101,31 +100,31 @@ def test_linear_statement_control_flow():
     builder.AddControlEdge(builder.root, a, position=0)
     builder.AddControlEdge(a, b, position=0)
 
-    assert isinstance(builder.Build(), program_graph_pb2.ProgramGraph)
+    assert isinstance(builder.Build(), ProgramGraph)
 
     assert len(builder.Build().node) == 3
 
     assert builder.Build().node[builder.root].text == "[external]"
-    assert builder.Build().node[builder.root].type == node_pb2.Node.INSTRUCTION
+    assert builder.Build().node[builder.root].type == Node.INSTRUCTION
 
     assert builder.Build().node[a].text == "a"
-    assert builder.Build().node[a].type == node_pb2.Node.INSTRUCTION
+    assert builder.Build().node[a].type == Node.INSTRUCTION
     assert builder.Build().node[a].function == fn
 
     assert builder.Build().node[b].text == "b"
-    assert builder.Build().node[b].type == node_pb2.Node.INSTRUCTION
+    assert builder.Build().node[b].type == Node.INSTRUCTION
     assert builder.Build().node[b].function == fn
 
     assert len(builder.Build().edge) == 2
     assert builder.Build().edge[0].source == builder.root
     assert builder.Build().edge[0].target == a
     assert builder.Build().edge[0].position == 0
-    assert builder.Build().edge[0].flow == edge_pb2.Edge.CONTROL
+    assert builder.Build().edge[0].flow == Edge.CONTROL
 
     assert builder.Build().edge[1].source == a
     assert builder.Build().edge[1].target == b
     assert builder.Build().edge[1].position == 0
-    assert builder.Build().edge[1].flow == edge_pb2.Edge.CONTROL
+    assert builder.Build().edge[1].flow == Edge.CONTROL
 
 
 def test_clear():

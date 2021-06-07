@@ -17,19 +17,17 @@ from typing import Iterable, Tuple
 
 import pytest
 
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 from programl.util.py import pbutil
 from programl.util.py.runfiles_path import runfiles_path
 
 LLVM_IR_GRAPHS = runfiles_path("tests/data/llvm_ir_graphs")
 
 
-def EnumerateLlvmProgramGraphs() -> Iterable[
-    Tuple[str, program_graph_pb2.ProgramGraph]
-]:
+def EnumerateLlvmProgramGraphs() -> Iterable[Tuple[str, ProgramGraph]]:
     """Enumerate a test set of LLVM IR file paths."""
     for path in LLVM_IR_GRAPHS.iterdir():
-        yield path.name, pbutil.FromFile(path, program_graph_pb2.ProgramGraph())
+        yield path.name, pbutil.FromFile(path, ProgramGraph())
 
 
 _PROGRAM_GRAPHS = list(EnumerateLlvmProgramGraphs())

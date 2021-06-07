@@ -18,8 +18,6 @@
 #include "absl/container/flat_hash_set.h"
 #include "labm8/cpp/logging.h"
 #include "programl/graph/features.h"
-#include "programl/proto/edge.pb.h"
-#include "programl/proto/node.pb.h"
 #include "programl/proto/program_graph.pb.h"
 
 namespace programl {

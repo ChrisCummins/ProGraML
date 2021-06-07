@@ -20,7 +20,7 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm/py:llvm",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:pbutil",
         "//tasks/dataflow/dataset:pathflag",
     ],

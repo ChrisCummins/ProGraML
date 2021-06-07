@@ -27,7 +27,7 @@ py_library(
     data = [":xla_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/third_party/tensorflow:xla_py",
     ],
 )

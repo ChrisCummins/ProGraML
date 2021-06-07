@@ -13,26 +13,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import List, Optional
 
-cc_test(
-    name = "clang_test",
-    srcs = ["clang_test.cc"],
-    deps = [
-        "//programl/ir/llvm:clang",
-        "//programl/proto:programl_cc",
-        "@labm8//labm8/cpp:test",
-    ],
-)
+from programl.proto import ProgramGraph
+from programl.third_party.tensorflow.xla_pb2 import HloProto
 
-py_test(
-    name = "inst2vec_encoder_test",
-    timeout = "long",
-    srcs = ["inst2vec_encoder_test.py"],
-    deps = [
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto",
-        "//tests:test_main",
-        "//tests/plugins:llvm_program_graph",
-    ],
-)
+# Graph Create Ops
+
+# -> LLVM
+
+
+def from_llvm_ir(ir: str, timeout=300) -> ProgramGraph:
+    pass
+
+
+def from_clang(args: str, timeout=300) -> ProgramGraph:
+    pass
+
+
+def from_cpp(src: str, copts: Optional[List[str]] = None, timeout=300) -> ProgramGraph:
+    pass
+
+
+# -> XLA
+
+
+def from_xla_hlo_proto(hlo: HloProto, timeout=300) -> ProgramGraph:
+    pass

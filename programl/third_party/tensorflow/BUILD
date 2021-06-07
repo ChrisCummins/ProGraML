@@ -9,6 +9,24 @@ licenses(["notice"])  # Apache 2.0
 exports_files(["LICENSE"])
 
 proto_library(
+    name = "features",
+    srcs = ["features.proto"],
+    visibility = ["//visibility:public"],
+)
+
+cc_proto_library(
+    name = "features_cc",
+    visibility = ["//visibility:public"],
+    deps = [":features"],
+)
+
+py_proto_library(
+    name = "features_py",
+    visibility = ["//visibility:public"],
+    deps = [":features"],
+)
+
+proto_library(
     name = "xla",
     srcs = ["xla.proto"],
     visibility = ["//visibility:public"],

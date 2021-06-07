@@ -2,6 +2,9 @@ py_library(
     name = "programl",
     srcs = [
         "__init__.py",
+        "create_ops.py",
+        "serialization_ops.py",
+        "transform_ops.py",
         "version.py",
     ],
     data = [
@@ -9,13 +12,7 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/graph/analysis/py:analysis",
-        "//programl/graph/format/py:format",
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/ir/llvm/py:llvm",
-        "//programl/ir/xla/py:xla",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/third_party/tensorflow:xla_py",
         "//programl/util/py:util",
     ],

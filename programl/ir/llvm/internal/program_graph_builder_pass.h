@@ -22,7 +22,6 @@
 #include "llvm/Pass.h"
 #include "programl/ir/llvm/internal/program_graph_builder.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
 
 namespace programl {
 namespace ir {

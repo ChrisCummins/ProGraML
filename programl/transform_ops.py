@@ -13,26 +13,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any, Dict, Iterable
 
-cc_test(
-    name = "clang_test",
-    srcs = ["clang_test.cc"],
-    deps = [
-        "//programl/ir/llvm:clang",
-        "//programl/proto:programl_cc",
-        "@labm8//labm8/cpp:test",
-    ],
-)
+import networkx as nx
 
-py_test(
-    name = "inst2vec_encoder_test",
-    timeout = "long",
-    srcs = ["inst2vec_encoder_test.py"],
-    deps = [
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto",
-        "//tests:test_main",
-        "//tests/plugins:llvm_program_graph",
-    ],
-)
+from programl.proto import ProgramGraph
+
+JsonDict = Dict[str, Any]
+
+
+def to_json(graphs: Iterable[ProgramGraph], timeout: int = 300) -> Iterable[JsonDict]:
+    pass
+
+
+def to_networkx(
+    graphs: Iterable[ProgramGraph], timeout: int = 300
+) -> Iterable[nx.MultiDiGraph]:
+    pass
+
+
+def to_dgl(graphs: Iterable[ProgramGraph], timeout: int = 300):
+    pass

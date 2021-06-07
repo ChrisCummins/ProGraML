@@ -16,11 +16,8 @@
 #include <iostream>
 
 #include "labm8/cpp/app.h"
-#include "programl/proto/checkpoint.pb.h"
-#include "programl/proto/ir.pb.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_features.pb.h"
-#include "programl/proto/src.pb.h"
+#include "programl/proto/util.pb.h"
 #include "programl/third_party/tensorflow/xla.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
@@ -62,9 +59,6 @@ Supported Queries
 
     pbq SourceFile
       Prints an entire SourceFile message.
-
-    pbq NodeIndexList
-      Prints an entire NodeIndexList message.
 
     pbq 'SELECT COUNT(graph) FROM ProgramGraphFeaturesList'
       Count the number of program graphs in a list of program graph features.
@@ -141,8 +135,6 @@ int main(int argc, char** argv) {
     DecodeAndPrint<programl::IrList>();
   } else if (name == "SourceFile") {
     DecodeAndPrint<programl::SourceFile>();
-  } else if (name == "NodeIndexList") {
-    DecodeAndPrint<programl::NodeIndexList>();
   } else if (name == "SELECT COUNT(graph) FROM ProgramGraphFeaturesList") {
     const auto featuresList = ReadStdin<programl::ProgramGraphFeaturesList>();
     std::cout << featuresList.graph_size() << std::endl;

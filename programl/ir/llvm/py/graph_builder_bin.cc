@@ -20,7 +20,6 @@
 #include "llvm/Support/SourceMgr.h"
 #include "programl/ir/llvm/llvm.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
 
 using labm8::Status;
 

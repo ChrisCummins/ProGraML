@@ -31,7 +31,6 @@
 #include "programl/graph/program_graph_builder.h"
 #include "programl/ir/llvm/internal/text_encoder.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
 
 namespace programl {
 namespace ir {

@@ -22,7 +22,7 @@ cc_library(
     hdrs = ["features.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_cc",
+        "//programl/third_party/tensorflow:features_cc",
     ],
 )
 

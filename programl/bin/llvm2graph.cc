@@ -24,9 +24,8 @@
 #include "llvm/Support/ErrorOr.h"
 #include "llvm/Support/SourceMgr.h"
 #include "programl/ir/llvm/llvm.h"
-#include "programl/proto/ir.pb.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
+#include "programl/proto/util.pb.h"
 #include "programl/util/stdout_fmt.h"
 #include "programl/version.h"
 

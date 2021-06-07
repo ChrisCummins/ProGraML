@@ -15,13 +15,13 @@
 # limitations under the License.
 """Generate program graphs from XLA HLO modules."""
 from programl.ir.xla.py import xla_pybind
-from programl.proto import program_graph_pb2
-from programl.third_party.tensorflow import xla_pb2
+from programl.proto import ProgramGraph
+from programl.third_party.tensorflow.xla_pb2 import HloProto
 
 
 def BuildProgramGraphProto(
-    hlo_proto: xla_pb2.HloProto,
-) -> program_graph_pb2.ProgramGraph:
+    hlo_proto: HloProto,
+) -> ProgramGraph:
     """Construct a program graph for the given LLVM IR.
 
     Args:
@@ -36,7 +36,7 @@ def BuildProgramGraphProto(
     # This requires a round trip serialized to / from strings, since I can't
     # figure out a way to get pybind11 to auto-generate bindings for protocol
     # buffers.
-    graph = program_graph_pb2.ProgramGraph()
+    graph = ProgramGraph()
     serialized_graph = xla_pybind.BuildProgramGraphProto(hlo_proto.SerializeToString())
     graph.ParseFromString(serialized_graph)
     return graph

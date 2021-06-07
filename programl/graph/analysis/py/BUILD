@@ -27,7 +27,7 @@ py_library(
     data = [":analysis_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
     ],
 )
 

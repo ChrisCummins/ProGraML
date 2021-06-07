@@ -150,7 +150,7 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:init_app",
         "//programl/util/py:stdin_fmt",
         "//programl/util/py:stdout_fmt",

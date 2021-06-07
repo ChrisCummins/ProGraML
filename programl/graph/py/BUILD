@@ -36,6 +36,6 @@ py_library(
     data = [":program_graph_builder_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
     ],
 )

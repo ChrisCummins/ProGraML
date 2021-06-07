@@ -21,7 +21,6 @@
 #include "labm8/cpp/status.h"
 #include "programl/graph/analysis/analysis.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_features.pb.h"
 #include "programl/util/stdin_fmt.h"
 #include "programl/util/stdout_fmt.h"
 #include "programl/version.h"

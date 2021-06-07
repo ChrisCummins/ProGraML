@@ -18,7 +18,7 @@ import numpy as np
 import pytest
 
 from programl.graph.format.py.graph_tuple_builder import GraphTupleBuilder
-from programl.proto import edge_pb2, node_pb2, program_graph_pb2
+from programl.proto import Edge, Node, ProgramGraph
 from tests.test_main import main
 
 
@@ -31,25 +31,25 @@ def test_GraphTuple_empty_shapes():
 
 
 def test_GraphTuple_one_graph():
-    graph = program_graph_pb2.ProgramGraph(
+    graph = ProgramGraph(
         node=[
-            node_pb2.Node(),
+            Node(),
         ],
         edge=[
-            edge_pb2.Edge(
+            Edge(
                 source=0,
                 target=1,
             ),
-            edge_pb2.Edge(
+            Edge(
                 source=0,
                 target=2,
                 position=1,
             ),
-            edge_pb2.Edge(
+            Edge(
                 source=1,
                 target=0,
                 position=10,
-                flow=edge_pb2.Edge.CALL,
+                flow=Edge.CALL,
             ),
         ],
     )
@@ -58,15 +58,13 @@ def test_GraphTuple_one_graph():
     builder.AddProgramGraph(graph)
     gt = builder.Build()
 
-    assert np.array_equal(gt.adjacencies[edge_pb2.Edge.CONTROL], [(0, 1), (0, 2)])
-    assert np.array_equal(
-        gt.adjacencies[edge_pb2.Edge.DATA], np.zeros((0, 2), dtype=np.int32)
-    )
-    assert np.array_equal(gt.adjacencies[edge_pb2.Edge.CALL], [(1, 0)])
+    assert np.array_equal(gt.adjacencies[Edge.CONTROL], [(0, 1), (0, 2)])
+    assert np.array_equal(gt.adjacencies[Edge.DATA], np.zeros((0, 2), dtype=np.int32))
+    assert np.array_equal(gt.adjacencies[Edge.CALL], [(1, 0)])
 
-    assert np.array_equal(gt.edge_positions[edge_pb2.Edge.CONTROL], [0, 1])
-    assert np.array_equal(gt.edge_positions[edge_pb2.Edge.DATA], [])
-    assert np.array_equal(gt.edge_positions[edge_pb2.Edge.CALL], [10])
+    assert np.array_equal(gt.edge_positions[Edge.CONTROL], [0, 1])
+    assert np.array_equal(gt.edge_positions[Edge.DATA], [])
+    assert np.array_equal(gt.edge_positions[Edge.CALL], [10])
 
 
 if __name__ == "__main__":

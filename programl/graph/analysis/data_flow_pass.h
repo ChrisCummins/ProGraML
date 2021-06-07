@@ -20,7 +20,6 @@
 
 #include "labm8/cpp/status.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_features.pb.h"
 
 namespace programl {
 namespace graph {

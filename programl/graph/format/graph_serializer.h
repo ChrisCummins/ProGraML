@@ -18,8 +18,8 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
-#include "programl/proto/node.pb.h"
 #include "programl/proto/program_graph.pb.h"
+#include "programl/proto/util.pb.h"
 
 namespace programl {
 namespace graph {
