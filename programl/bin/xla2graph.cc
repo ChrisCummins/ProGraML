@@ -27,6 +27,7 @@
 #include "programl/ir/xla/hlo_module_graph_builder.h"
 #include "programl/third_party/tensorflow/xla.pb.h"
 #include "programl/util/stdin_fmt.h"
+#include "programl/util/stdout_fmt.h"
 #include "programl/version.h"
 
 static const char* usage = R"(Generate program graph from a HLO module.
@@ -96,7 +97,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  std::cout << graphOr.ValueOrDie().DebugString();
+  programl::util::WriteStdout(graphOr.ValueOrDie());
 
   return 0;
 }

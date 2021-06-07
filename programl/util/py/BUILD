@@ -20,6 +20,7 @@ py_library(
     name = "util",
     srcs = [
         "decorators.py",
+        "executor.py",
         "humanize.py",
         "init_app.py",
         "pbutil.py",

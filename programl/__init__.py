@@ -17,8 +17,20 @@
 compiler optimizations.
 """
 from programl.create_ops import from_clang, from_cpp, from_llvm_ir, from_xla_hlo_proto
+from programl.exceptions import (
+    GraphCreationError,
+    GraphTransformError,
+    UnsupportedCompiler,
+)
 from programl.proto import ProgramGraph
-from programl.serialization_ops import from_string, load_graphs, save_graphs, to_string
+from programl.serialize_ops import (
+    from_bytes,
+    from_string,
+    load_graphs,
+    save_graphs,
+    to_bytes,
+    to_string,
+)
 from programl.transform_ops import to_dgl, to_json, to_networkx
 from programl.version import PROGRAML_VERSION
 
@@ -29,16 +41,21 @@ __copyright__ = "Copyright 2019-2020 the ProGraML authors"
 __license__ = "Apache License, Version 2.0"
 
 __all__ = [
-    "to_json",
-    "to_networkx",
-    "to_dgl",
-    "to_string",
-    "from_string",
-    "save_graphs",
-    "load_graphs",
-    "from_llvm_ir",
+    "from_bytes",
     "from_clang",
     "from_cpp",
+    "from_llvm_ir",
+    "from_string",
     "from_xla_hlo_proto",
+    "GraphCreationError",
+    "GraphTransformError",
+    "load_graphs",
     "ProgramGraph",
+    "save_graphs",
+    "to_bytes",
+    "to_dgl",
+    "to_json",
+    "to_networkx",
+    "to_string",
+    "UnsupportedCompiler",
 ]

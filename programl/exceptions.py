@@ -13,28 +13,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from pathlib import Path
-from typing import Iterable, List, Optional
-
-from programl.proto import ProgramGraph
-
-# -> Serialization to file
 
 
-def save_graphs(path: Path, graphs: Iterable[ProgramGraph]) -> None:
-    pass
+class UnsupportedCompiler(TypeError):
+    """Exception raised if the requested compiler is not supported."""
 
 
-def load_graphs(path: Path, idx_list: Optional[List[int]] = None) -> List[ProgramGraph]:
-    pass
+class GraphCreationError(ValueError):
+    """Exception raised if a graph creation op fails."""
 
 
-# -> Serialization to string
-
-
-def to_string(graphs: Iterable[ProgramGraph]) -> str:
-    pass
-
-
-def from_string(string: str) -> List[ProgramGraph]:
-    pass
+class GraphTransformError(ValueError):
+    """Exception raised if a graph transform op fails."""

@@ -163,7 +163,7 @@ int main(int argc, const char** argv, char* const* envp) {
     Status status = programl::ir::llvm::BuildProgramGraph(*Module, &graph, options);
     if (status.ok()) {
       returncode = 0;
-      std::cout << graph.DebugString();
+      graph.SerializeToOstream(&std::cout);
     } else {
       llvm::errs() << status.error_message() << '\n';
     }

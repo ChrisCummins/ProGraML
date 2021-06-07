@@ -73,14 +73,31 @@ cc_binary(
     ],
 )
 
+genrule(
+    name = "clang2graph-bin",
+    srcs = [":clang2graph-10-prelinked"],
+    outs = ["clang2graph-10"],
+    cmd = select({
+        "@llvm//:darwin": (
+            "cp $(location :clang2graph-10-prelinked) $@"
+        ),
+        "//conditions:default": (
+            "cp $(location :clang2graph-10-prelinked) $@ && " +
+            "chmod 666 $@ && " +
+            "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "chmod 555 $@"
+        ),
+    }),
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
-    name = "clang2graph-10",
+    name = "clang2graph-10-prelinked",
     srcs = ["clang2graph.cc"],
     copts = [
         "-std=c++14",
         "-fno-rtti",
     ],
-    visibility = ["//visibility:public"],
     deps = [
         "//programl/ir/llvm:llvm-10",
         "//programl/proto:programl_cc",
@@ -251,6 +268,7 @@ cc_binary(
         "//programl/ir/xla:hlo_module_graph_builder",
         "//programl/third_party/tensorflow:xla_cc",
         "//programl/util:stdin_fmt",
+        "//programl/util:stdout_fmt",
         "@labm8//labm8/cpp:app",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:statusor",
