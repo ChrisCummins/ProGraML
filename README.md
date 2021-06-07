@@ -64,20 +64,20 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-1. [Overview](#overview)
-1. [Getting Started](#getting-started)
-1. [Installation](#installation)
-  1. [Datasets](#datasets)
-1. [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-  1. [Step 1: Compiler IR](#step-1-compiler-ir)
-  1. [Step 2: Control-flow](#step-2-control-flow)
-  1. [Step 3: Data-flow](#step-3-data-flow)
-  1. [Step 4: Call graph](#step-4-call-graph)
-1. [Usage](#usage)
-  1. [End-to-end C++ flow](#end-to-end-c-flow)
-  1. [Dataflow experiments](#dataflow-experiments)
-1. [Contributing](#contributing)
-1. [Acknowledgements](#acknowledgements)
+- [ProGraML: Program Graphs for Machine Learning](#programl-program-graphs-for-machine-learning)
+  - [Overview](#overview)
+  - [Getting Started](#getting-started)
+  - [Installation](#installation)
+      - [Datasets](#datasets)
+  - [Constructing the ProGraML Representation](#constructing-the-programl-representation)
+      - [Step 1: Compiler IR](#step-1-compiler-ir)
+      - [Step 2: Control-flow](#step-2-control-flow)
+      - [Step 3: Data-flow](#step-3-data-flow)
+      - [Step 4: Call graph](#step-4-call-graph)
+  - [Usage](#usage)
+      - [End-to-end C++ flow](#end-to-end-c-flow)
+  - [Contributing](#contributing)
+  - [Acknowledgements](#acknowledgements)
 
 <!-- /MarkdownTOC -->
 
@@ -96,7 +96,7 @@ Key features are:
 * **Portability:** ProGraML is derived from compiler IRs, making it independent
   of the source language (e.g. we have trained models to reason across five
   different source languages at a time). It is easy to target new IRs (we
-  currently support [LLVM](/Documentation/bin/llvm2graph.txt) and
+  currently support [LLVM](/Documentation/bin/llvm2graph-10.txt) and
   [XLA](/Documentation/bin/xla2graph.txt)).
 * **Extensibility:** Features and labels can easily be added at the
   whole-program level, per-instruction level, or for individual relations.
@@ -200,7 +200,7 @@ buffers](/Documentation/ProtocolBuffers.md).
 This section provides an example step-by-step guide for generating a program
 graph for a C++ application.
 
-1. Install LLVM-10 and the ProGraML [command line tools](#command-line-tools).
+1. Install LLVM-10 and the ProGraML [command line tools](INSTALL.md).
 2. Compile your C++ code to LLVM-IR. The way to do this to modify your build
    system so that clang is passed the `-emit-llvm -S` flags. For a
    single-source application, the command line invocation would be:
@@ -215,7 +215,7 @@ $ clang-10 -emit-llvm -S -c bar.cpp -o bar.ll
 $ llvm-link foo.ll bar.ll -S -o my_app.ll
 ```
 3. Generate a ProGraML graph protocol buffer from the LLVM-IR using the
-   [llvm2graph](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/llvm2graph.txt)
+   [llvm2graph](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/llvm2graph-10.txt)
    commnand:
 ```
 $ llvm2graph < my_app.ll > my_app.pbtxt
@@ -234,38 +234,6 @@ $ graph2dot < my_app.pbtxt > my_app.dot
 ```
 $ dot -Tpng my_app.dot -o my_app.png
 ```
-
-
-#### Dataflow experiments
-
-1. Follow the instructions for [building from source](#building-from-source)
-2. Download and unpack our [dataflow
-dataset](/Documentation/DataflowDataset.md)
-3. Train and evaluate a graph neural network model using:
-
-```sh
-bazel run -c opt //tasks/dataflow:train_ggnn -- \
-    --analysis reachability \
-    --path=$HOME/programl
-```
-
-where `--analysis` is the name of the analysis you want to evaluate, and
-`--path` is the root of the unpacked dataset. There are a lot of options that
-you can use to control the behavior of the experiment, see `--helpfull` for a
-full list. Some useful ones include:
-
-* `--batch_size` controls the number of nodes in each batch of graphs.
-* `--layer_timesteps` defines the layers of the GGNN model, and the number of timesteps used for
-  each.
-* `--learning_rate` sets the initial learning rate of the optimizer.
-* `--lr_decay_rate` the rate at which learning rate decays.
-* `--lr_decay_steps` number of gradient steps until the lr is decayed.
-* `--train_graph_counts` lists the number of graphs to train on between runs of the validation set.
-
-🏗️ **Under construction** We are in the process of refactoring the dataflow
-experiments with a revamped API.  There are currently bugs in the data loader
-which may affect training jobs, see
-[#147](https://github.com/ChrisCummins/ProGraML/issues/147).
 
 
 ## Contributing
