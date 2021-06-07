@@ -6,12 +6,14 @@ Python API Reference
 .. contents:: Document contents:
     :local:
 
+
 Graph Creation Ops
 ------------------
 
 .. automodule:: programl.create_ops
 
 .. currentmodule:: programl
+
 
 LLVM / Clang
 ~~~~~~~~~~~~
@@ -28,6 +30,7 @@ XLA
 
 .. autofunction:: from_xla_hlo_proto
 
+
 Graph Transform Ops
 -------------------
 
@@ -40,6 +43,8 @@ Graph Transform Ops
 .. autofunction:: to_networkx
 
 .. autofunction:: to_dgl
+
+.. autofunction:: to_dot
 
 
 Graph Serialization

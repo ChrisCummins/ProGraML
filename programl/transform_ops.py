@@ -32,9 +32,76 @@ from programl.proto import ProgramGraph
 from programl.util.py.executor import ExecutorLike, SequentialExecutor
 from programl.util.py.runfiles_path import runfiles_path
 
+GRAPH2DOT = str(runfiles_path("programl/bin/graph2dot"))
 GRAPH2JSON = str(runfiles_path("programl/bin/graph2json"))
 
 JsonDict = Dict[str, Any]
+
+
+def _run_graph_transform_binary(
+    binary: str,
+    graphs: Iterable[ProgramGraph],
+    timeout: int = 300,
+    executor: Optional[ExecutorLike] = None,
+    chunksize: int = 128,
+):
+    executor = executor or SequentialExecutor()
+
+    def _process_one_graph(graph: ProgramGraph) -> JsonDict:
+        process = subprocess.Popen(
+            [binary, "--stdin_fmt=pb"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+        try:
+            stdout, stderr = process.communicate(
+                graph.SerializeToString(), timeout=timeout
+            )
+        except subprocess.TimeoutExpired as e:
+            raise TimeoutError(str(e)) from e
+
+        if process.returncode:
+            try:
+                raise GraphTransformError(stderr.decode("utf-8"))
+            except UnicodeDecodeError as e:
+                raise GraphTransformError(
+                    "Unknown error in graph transformation"
+                ) from e
+
+        return stdout
+
+    graphs = iter(graphs)
+    chunk = list(islice(graphs, chunksize))
+    while chunk:
+        futures = [executor.submit(_process_one_graph, graph) for graph in chunk]
+        for future in futures:
+            yield future.result()
+        chunk = list(islice(graphs, chunksize))
+
+
+def to_dot(
+    graphs: Iterable[ProgramGraph],
+    timeout: int = 300,
+    executor: Optional[ExecutorLike] = None,
+    chunksize: int = 128,
+) -> Iterable[str]:
+    """
+    :param executor: An executor object, with method :code:`submit(callable,
+        *args, **kwargs)` and returning a Future-like object with methods
+        :code:`done() -> bool` and :code:`result() -> float`. The executor's
+        role is to dispatch the execution of jobs with multithreading depending
+        on the implementation. Eg:
+        :code:`concurrent.futures.ThreadPoolExecutor`.
+    """
+    return _run_graph_transform_binary(
+        GRAPH2DOT,
+        graphs=graphs,
+        timeout=timeout,
+        executor=executor,
+        chunksize=chunksize,
+    )
 
 
 def to_json(
@@ -51,45 +118,17 @@ def to_json(
         on the implementation. Eg:
         :code:`concurrent.futures.ThreadPoolExecutor`.
     """
-    executor = executor or SequentialExecutor()
-
-    def _process_one_graph(graph: ProgramGraph) -> JsonDict:
-        process = subprocess.Popen(
-            [GRAPH2JSON, "--stdin_fmt=pb"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
+    for json_data in _run_graph_transform_binary(
+        GRAPH2JSON,
+        graphs=graphs,
+        timeout=timeout,
+        executor=executor,
+        chunksize=chunksize,
+    ):
         try:
-            stdout, stderr = process.communicate(
-                graph.SerializeToString(), timeout=timeout
-            )
-        except subprocess.TimeoutExpired as e:
-            raise TimeoutError(str(e)) from e
-
-        print("b")
-
-        if process.returncode:
-            try:
-                raise GraphTransformError(stderr.decode("utf-8"))
-            except UnicodeDecodeError as e:
-                raise GraphTransformError(
-                    "Unknown error in graph transformation"
-                ) from e
-
-        try:
-            return json.loads(stdout)
+            yield json.loads(json_data)
         except json.JSONDecodeError as e:
             raise GraphTransformError(str(e)) from e
-
-    graphs = iter(graphs)
-    chunk = list(islice(graphs, chunksize))
-    while chunk:
-        futures = [executor.submit(_process_one_graph, graph) for graph in chunk]
-        for future in futures:
-            yield future.result()
-        chunk = list(islice(graphs, chunksize))
 
 
 def to_networkx(
