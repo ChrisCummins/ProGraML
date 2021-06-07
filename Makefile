@@ -117,6 +117,7 @@ export HELP
 CC ?= clang
 CXX ?= clang++
 BAZEL ?= bazel
+DOXYGEN ?= doxygen
 IBAZEL ?= ibazel
 PYTHON ?= python3
 RSYNC ?= rsync
@@ -251,6 +252,26 @@ post-install-test:
 	SEARCH_TIME=3 $(MAKE) -C examples/makefile_integration test
 
 .PHONY: test post-install-test
+
+
+#################
+# Documentation #
+#################
+
+doxygen:
+	cd Documentation && $(DOXYGEN) Doxyfile
+
+doxygen-rst:
+	cd Documentation && $(PYTHON) generate_cc_rst.py
+
+docs: bazel-build doxygen
+	PYTHONPATH=$(ROOT)/bazel-bin/py_package.runfiles/programl $(MAKE) -C Documentation html
+
+livedocs: doxygen
+	PYTHONPATH=$(ROOT)/bazel-bin/py_package.runfiles/programl $(MAKE) -C Documentation livehtml
+
+
+.PHONY: doxygen doxygen-rst
 
 
 ################
