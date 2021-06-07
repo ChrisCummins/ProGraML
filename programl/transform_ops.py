@@ -16,6 +16,7 @@
 from typing import Any, Dict, Iterable
 
 import networkx as nx
+from dgl import DGLGraph
 
 from programl.proto import ProgramGraph
 
@@ -32,5 +33,5 @@ def to_networkx(
     pass
 
 
-def to_dgl(graphs: Iterable[ProgramGraph], timeout: int = 300):
+def to_dgl(graphs: Iterable[ProgramGraph], timeout: int = 300) -> Iterable[DGLGraph]:
     pass
