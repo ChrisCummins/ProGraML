@@ -8,28 +8,34 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from typing import Any, Callable, Optional, Protocol, TypeVar
-
-# %% Protocol definitions for executor typing
+import sys
+from typing import Any, Callable, Optional, TypeVar
 
 X = TypeVar("X", covariant=True)
 
+if sys.version_info > (3, 8, 0):
+    from typing import Protocol
 
-class JobLike(Protocol[X]):
-    # pylint: disable=pointless-statement
+    class JobLike(Protocol[X]):
+        # pylint: disable=pointless-statement
 
-    def done(self) -> bool:
-        ...
+        def done(self) -> bool:
+            ...
 
-    def result(self) -> X:
-        ...
+        def result(self) -> X:
+            ...
+
+    class ExecutorLike(Protocol):
+        # pylint: disable=pointless-statement, unused-argument
+
+        def submit(self, fn: Callable[..., X], *args: Any, **kwargs: Any) -> JobLike[X]:
+            ...
 
 
-class ExecutorLike(Protocol):
-    # pylint: disable=pointless-statement, unused-argument
+else:
 
-    def submit(self, fn: Callable[..., X], *args: Any, **kwargs: Any) -> JobLike[X]:
-        ...
+    JobLike = TypeVar("JobLike")
+    ExecutorLike = TypeVar("ExecutorLike")
 
 
 class DelayedJob:
