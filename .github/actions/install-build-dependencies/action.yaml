@@ -31,7 +31,9 @@ runs:
           shell: bash
 
         - name: Create DGL directory
-          run: mkdir ~/.dgl
+          run: |
+              mkdir ~/.dgl
+              touch ~/.dgl/config.json
           shell: bash
 
         - name: whoami
