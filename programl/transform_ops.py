@@ -22,7 +22,8 @@ from itertools import islice
 from typing import Any, Dict, Iterable, Optional
 
 import networkx as nx
-from dgl.heterograph import DGLHeteroGraph
+
+# TODO: from dgl.heterograph import DGLHeteroGraph
 from networkx.readwrite import json_graph as nx_json
 
 from programl.exceptions import GraphTransformError
@@ -144,5 +145,5 @@ def to_networkx(
 
 def to_dgl(
     graphs: Iterable[ProgramGraph], timeout: int = 300
-) -> Iterable[DGLHeteroGraph]:
+):  # TODO: -> Iterable[DGLHeteroGraph]:
     raise NotImplementedError
