@@ -165,8 +165,10 @@ bazel-build:
 install-test-data:
 	if ! $(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>log.txt ; then \
 		cat log.txt >&2; \
+		rm log.txt; \
 		false; \
 	fi
+	rm log.txt
 
 bdist_wheel: bazel-build
 	$(PYTHON) setup.py bdist_wheel
