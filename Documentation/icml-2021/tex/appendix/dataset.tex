@@ -1,0 +1,79 @@
+\section{\textsc{DeepDataFlow} Dataset}
+
+The \textsc{DeepDataFlow} dataset comprises: 461k LLVM-IR files assembled from a
+range of sources, \programl representations of each of the IRs, and 15.4M sets
+of labeled graphs for the five data flow analyses described in the previous
+section, totaling 8.5B classification labels. The dataset is publicly
+available~\cite{chris_cummins_2020_4247595}.
+
+\paragraph{Programs} We assembled a 256M-line corpus of real-world LLVM-IRs from
+a variety of sources, summarized in Table~\ref{table:corpus}. We selected
+popular open source software projects that cover a diverse range of domains and
+disciplines, augmented by uncategorized code mined from popular GitHub projects
+using the methodology described by~\citet{Cummins2017a}. Our corpus comprises
+five source languages (C, C++, Fortran, OpenCL, and Swift) covering a range of
+domains from functional to imperative, high-level to accelerators. The software
+covers a broad range of disciplines from compilers and operating systems to
+traditional benchmarks, machine learning systems, and unclassified code
+downloaded from popular open source repositories.
+
+\begin{table*}
+  \centering%
+  \input{tables/corpus}%
+  \caption{The \textsc{DeepDataFlow} LLVM-IR corpus.}%
+  \vspace{.5em}
+  \label{table:corpus} %
+\end{table*}
+
+\paragraph{\programl Graphs} We implemented \programl construction as an
+\texttt{llvm::ModulePass} using LLVM version 10.0.0 and generated a graph
+representation of each of the LLVM-IRs. \programl construction takes an average
+of 10.72ms per file. Our corpus of unlabeled graphs totals 268M vertices and
+485M edges, with an average of 581 vertices and 1,051 edges per graph. The
+maximum edge position is 355 (a large \texttt{switch} statement found in a
+TensorFlow compute kernel).
+
+\paragraph{Data Flow Labels} We produced labeled graph instances from the
+unlabeled corpus by computing ground truth labels for each of the analysis tasks
+described in Section~\ref{appendix:dataflow_problems} using a traditional
+analysis implementation. For each of the five tasks, and for every unlabeled
+graph in the corpus, we produce $n$ labeled graphs by selecting unique source
+vertices $v_{0} \in V$, where $n$ is proportional to the size of the graph:
+\begin{equation*}
+n = \min \left( \left\lceil \frac{|V|}{10} \right\rceil, 10 \right)
+\end{equation*}
+Each example in the dataset consists of an input graph in which the source
+vertex is indicated using the \emph{vertex selector}, and an output graph with
+the ground truth labels used for training or for evaluating the accuracy of
+model predictions. For every example we produce, we also record the number of
+steps that the iterative analysis required to compute the labels. We use this
+value to produce subsets of the dataset to test problems of different sizes,
+shown in Table~\ref{table:ddf_sizes}.
+
+\begin{table*}
+\centering%
+\footnotesize
+\begin{tabular}{r r r r r r}
+  & DDF-30 & DDF-60 & DDF-200 & \ddfinf{} \\
+  \toprule
+  Max.\ data flow step count & 30 & 60 & 200 & 28,727 \\
+  \#.\ classification labels & 6,038,709,880 & 6,758,353,737 & 7,638,510,145 & 8,623,030,254 \\
+  \#.\ graphs (3:1:1 train/val/test) & 10,951,533 & 12,354,299 & 13,872,294 & 15,359,619 \\
+  Ratio of full test set & 71.3\% & 80.4\% & 90.3\% & 100\% \\
+\end{tabular}
+\caption{Characterization of \textsc{DeepDataFlow} subsets.}
+\label{table:ddf_sizes}
+\end{table*}
+
+We divided the datasets randomly using a 3:1:1 ratio for training, validation,
+and test instances. The same random allocation of instances was used for each of
+the five tasks. Where multiple examples were derived from a single IR, examples
+derived from the same IR were allocated to the same split.
+
+As binary classification tasks, data flow analyses display strong class
+imbalances as only a small fraction of a program graph is typically relevant to
+computing the result set of an analysis. On the \ddfinf{} test sets, an accuracy
+of 86.92\% can be achieved by always predicting the negative class. For this
+reason we report only binary precision, recall, and F1 scores with respect to
+the positive class when reporting model performance on \textsc{DeepDataFlow}
+tasks.

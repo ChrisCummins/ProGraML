@@ -1,0 +1,37 @@
+\vspace{-.5em}
+\centering
+\footnotesize
+\begin{subfigure}{.98\linewidth}
+  \centering
+  \begin{tabular}{l r r}
+    & Error [\%] & Relative [\%]\\
+    \toprule
+    TBCNN & 6.00 & +77.5\\
+    NCC & 5.17 & +53.0\\
+    XFG w.\ inst2vec vocab & 4.56 & +34.9\\
+    XFG & 4.29 & +26.9\\
+    \programl & \textbf{3.38} & -\\
+    &&\\
+    &&\\
+  \end{tabular}
+  \vspace{-2.5em}
+  \caption{Comparison to state-of-the-art.}
+  \label{tab:classify_soa}
+\end{subfigure}\\*
+\vspace{.5em}
+\begin{subfigure}{.98\linewidth}
+  \centering
+  \begin{tabular}{l r r}
+    & Error [\%] & Relative [\%]\\
+    \toprule
+    No vocab & 3.70 & +9.5\\
+    inst2vec vocab & 3.78 & +11.8\\
+    No control edges & 3.88 & +14.8\\
+    No data edges & 7.76 & +129.6\\
+    No call edges & 3.88 & +14.8\\
+    No backward edges & 4.16 & +23.1\\
+    No edge positions & 3.43 & +1.5\\
+  \end{tabular}
+  \caption{\programl ablations.}
+  \label{tab:classify_ablations}
+\end{subfigure}

@@ -1,0 +1,106 @@
+\section{Downstream Tasks: Supplementary Details}
+
+This section provides additional details for the experiments present in
+Section~6.
+
+
+\subsection{Heterogeneous Compute Device Mapping}
+\label{app:devmap_details}
+
+\paragraph{Datasets} The \textsc{OpenCL DevMap} dataset comprises 256 OpenCL
+kernels from two combinations of CPU/GPU pairs. The \emph{AMD} set uses an Intel
+Core i7-3820 CPU and AMD Tahiti 7970 GPU; the \emph{NVIDIA} set uses an Intel
+Core i7-3820 CPU and an NVIDIA GTX 970 GPU. Each dataset consists of 680 labeled
+examples derived from the 256 unique kernels by varying dynamic inputs.
+
+
+\paragraph{Models}
+
+We compare \programl with four approaches: First, with a static baseline that
+selects the most-frequently optimal device for each dataset (CPU for \emph{AMD},
+GPU for \emph{NVIDIA}). Second, with DeepTune~\citep{Cummins2017b}, which is a
+sequential LSTM model at the OpenCL source level. Third, to isolate the impact
+of transitioning from OpenCL source to LLVM-IR, we evaluate against a new
+DeepTune$_{\text{IR}}$ model, which adapts DeepTune to using tokenized sequences
+of LLVM-IR as input instead of OpenCL tokens. Finally, we compare against the
+state-of-the-art approach inst2vec~\citep{Ben-nun2018}, which replaces the
+OpenCL tokenizer with a sequence of 200-dimensional embeddings, pre-trained on a
+large corpus of LLVM-IR using a skip-gram model. \programl itself uses the GGNN
+adaptation as described in the paper. We adapted the readout head to produce a
+single classification label for each graph, rather than per-vertex
+classifications, by aggregating over the final iterated vertex states. We also
+included the available auxiliary input features of the \textsc{DevMap} dataset.
+The auxiliary features are concatenated to the features extracted by the GGNN
+before classification following the methodology of~\citet{Cummins2017b}.
+
+The experimental results in this section come from an earlier development
+iteration of \programl which deviates from the method described in the main
+paper in the way in which it produces initial vertex embeddings. Instead of
+deriving a textual representation of instructions and data types to produce a
+vocabulary, the vocabulary used for the \textsc{DevMap} experiment is that of
+inst2vec~\citep{Ben-nun2018}, where variables and constants are all represented
+by a single additional embedding vector. The poor vocabulary coverage achieved
+by using inst2vec motivated us to provide the improved vocabulary implementation
+that we describe in the main paper (see Table 1).
+
+
+\paragraph{Training Details and Parameters} All neural networks are regularized
+with dropout~\citep{Hinton2012} for generalization and Batch
+Normalization~\citep{Ioffe2015a} in order to be uniformly applicable to vastly
+different scales of auxiliary input features. We used $10$-fold cross-validation
+with rotating 80/10/10 splits by training on 80\% of the data and selecting the
+model with the highest validation accuracy, setting aside $1/10$th of the
+training data to use for validation. We trained each model for 300 epochs and
+selected the epoch with the greatest validation accuracy for testing. Baseline
+models were trained with hyperparameters from the original works. For the
+\programl results we used 6 layers in the GGNN corresponding to 6 timesteps of
+message propagation, while sharing parameters between even and odd layers to
+introduce additional regularization of the weights. We ran a sweep of basic
+hyperparameters which led us to use the pre-trained inst2vec statement
+embeddings~\citep{Ben-nun2018} and to exclude the use of position
+representations. Both of these hyperparameter choices help generalization by
+reducing the complexity of the model. This is not surprising in light of the
+fact that the dataset only contains 680 samples derived from 256 unique
+programs. \programl was trained with the Adam optimizer with default parameters,
+a learning rate of $10^{-3}$ and a batch size of 18,000 nodes (resulting in ca.
+12000 iteration steps of the optimizer). For the \programl result, we repeat the
+automated sweep for all hyperparameter configurations and picked the
+configuration with the best average validation performance. Performance on the
+unseen tenth of the data is reported.
+
+\subsection{Algorithm Classification}
+\label{app:classifyapp_details}
+
+\paragraph{Dataset} We use the POJ-104 dataset~\citep{Mou2016}. It contains
+implementations of 104 different algorithms that were submitted to a judge
+system. All programs were written by students in higher education. The dataset
+has around 500 samples per algorithm. We compile them with different
+combinations of optimization flags to generate a dataset of overall 240k
+samples, as in~\citet{Ben-nun2018}. Approximately 10,000 files are held out each
+as a development and test set.
+
+\paragraph{Models} We compare with tree-based convolutional neural networks
+(TBCNN)~\citep{Mou2016} and inst2vec~\citep{Ben-nun2018}. We used
+author-provided parameters for the baseline models. For \programl we used 4
+layers in the GGNN corresponding to 8 timesteps. To further test the expressive
+power of the graph-based representation against the tree-based (TBCNN) and
+sequential (inst2vec) prior work, we additionally compare against graph-based
+baselines based on XFG~\citep{Ben-nun2018}.
+
+To better understand the qualitative aspects of replacing a graph-based
+representation that captures program semantics like Contextual Flow
+Graphs~(XFG)~\citep{Ben-nun2018} with the more complete \programl
+representation, we adapted a GGNN~\citep{Li2015a} to directly predict algorithm
+classes from XFG representations of the programs. In contrast to this,
+\citet{Ben-nun2018} used XFG only to generate statement contexts for use in
+skip-gram pre-training. Here, we lift this graphical representation and make it
+accessible to a deep neural network directly, as opposed to the structure-less
+sequential approach in the original work (inst2vec).
+
+
+\paragraph{Training Details and Parameters}
+
+All models were trained with the AdamW~\citep{Loshchilov2019} optimizer with
+learning rate $2.5\cdot 10^{-4}, \beta_1=0.9, \beta_2=0.999,
+\varepsilon=10^{-8}$ for 80 epochs. Dropout regularization is employed on the
+graph states with a rate of $0.2$.
