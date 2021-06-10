@@ -27,7 +27,7 @@ import subprocess
 from absl import app, flags, logging
 from MySQLdb import _mysql
 
-from programl.ir.llvm.py import llvm
+import programl as pg
 from programl.proto import Ir
 from programl.util.py import pbutil, progress
 from programl.util.py.init_app import init_app
@@ -102,7 +102,7 @@ def _ProcessRow(output_directory, row, file_id) -> None:
 
     # Convert to ProgramGraph.
     try:
-        graph = llvm.BuildProgramGraph(ir)
+        graph = pg.from_llvm_ir(ir)
         pbutil.ToFile(graph, output_directory / f"graphs/{name}.ProgramGraph.pb")
 
         # Put into train/val/test bin.

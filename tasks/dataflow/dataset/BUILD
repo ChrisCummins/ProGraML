@@ -36,12 +36,7 @@ py_binary(
     deps = [
         ":encode_inst2vec",
         ":pathflag",
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto",
-        "//programl/util/py:init_app",
-        "//programl/util/py:pbutil",
-        "//programl/util/py:progress",
-        "//programl/util/py:runfiles_path",
+        "//programl",
     ],
 )
 

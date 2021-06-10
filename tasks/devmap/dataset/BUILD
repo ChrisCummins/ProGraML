@@ -19,9 +19,7 @@ py_binary(
     srcs = ["create.py"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto",
-        "//programl/util/py:pbutil",
+        "//programl",
         "//tasks/dataflow/dataset:pathflag",
     ],
 )
