@@ -1,0 +1,64 @@
+\section{Data Flow Definitions}
+\label{appendix:dataflow_problems}
+
+This section provides the definitions of the five analysis tasks used in this
+paper to evaluate the representational power of deep learning over programs. We
+chose a diverse set of analysis tasks to capture a mixture of both forward and
+backward analyses, and control-, data-, and procedure-sensitive analyses.
+
+\paragraph{(I) \textsc{Reachability}: Reachable Instructions} Control
+reachability is a fundamental compiler analysis which determines the set of
+points in a program that can be reached from a particular starting point. Given
+$\text{succ}(n)$, which returns the control successors of an instruction $n$,
+the set of reachable instructions starting at root $n$ can be found using
+forward analysis:
+\begin{equation*}
+  \text{Reachable}(n) = \{n\} \bigcup_{p \in \text{succ}(n)} \text{Reachable}(p)
+\end{equation*}
+
+\paragraph{(II) \textsc{Dominance}: Instruction Dominance} Instruction $n$
+dominates statement $m$ if every control-flow path the from the program entry
+$n_0$  to $m$ passes through $n$. Like reachability, this analysis only requires
+propagation of control-flow, but unlike reachability, the set of dominator
+instructions are typically constructed through analysis of a program's reverse
+control-flow graph~\citep{Lengauer1979,Blazy2015}:
+\begin{equation*}
+  \text{Dom}(n) = \{n\} \cup \left( \bigcap_{p \in \text{pred}(n)} \text{Dom}(p) \right)
+\end{equation*}
+Where $\text{pred}(n)$ returns the control predecessors of instruction $n$. We
+formulate the \textsc{Dominance} problem as: Given a root instruction vertex
+$n$, label all vertices $m$ where $n \in \text{Dom}(m)$.
+
+\paragraph{(III) \textsc{DataDep}: Data Dependencies} The data dependencies of a
+variable $v$ is the set of predecessor instructions that must be evaluated to
+produce $v$. Computing data dependencies requires traversing the reverse
+data-flow graph:
+\begin{equation*}
+  \text{DataDep}(n) = \text{defs}(n) \cup \left( \bigcup_{p \in \text{defs}(n)} \text{DataDep}(p) \right)
+\end{equation*}
+Where $\text{defs}(n)$ returns the instructions that produce the operands of
+$n$.
+
+\paragraph{(IV) \textsc{Liveness} Live-out variables} A variable $v$ is live-out
+of statement $n$ if there exists some path from $n$ to a statement that uses
+$v$, without redefining it. Given $\text{uses}(n)$, which returns the operand
+variables of $n$, and $\text{defs}(n)$, which returns defined variables, the
+live-out variables can be computed forwards using:
+\begin{equation*}
+  \text{LiveOut}(n) = \bigcup_{s \in \text{succ}(n)} \text{uses}(s) \cup \big(  \text{LiveOut}(s) - \text{defs}(s) \big)
+\end{equation*}
+
+\paragraph{(V) Global Common Subexpressions} The identification of common
+subexpressions is an important analysis for optimization. For compiler IRs we
+define a subexpression as an instruction and its operands, ordered by either
+their position (for non-commutative operations), or lexicographically (for
+commutative operations). We thus formulate the common subexpression problem as:
+Given an instruction (which forms part of a subexpression), label any other
+instructions in the program which compute the same subexpression. This is an
+inter-procedural analysis, though operands must obey their scope. Common
+subexpressions are typically identified using available expression analysis:
+\begin{equation*}
+  \text{Avail}(n) = \text{uses}(n) \cup \left( \bigcap_{p \in \text{pred}(n)} \text{Avail}(p) \right) - \text{defs(n)}
+\end{equation*}
+Where $\text{uses}(n)$ return the expressions used by instruction $n$, and
+$\text{defs}(n)$ returns the expressions defined by $n$.

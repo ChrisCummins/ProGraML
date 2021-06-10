@@ -1,0 +1,76 @@
+\section{Downstream Tasks}
+\label{sec:downstream_tasks}
+
+In the previous section we focus on data flow analysis as a benchmark for the
+capabilities of machine learning for compiler analysis. For the analyses
+considered, non-ML techniques achieve perfect scores. In this section we apply
+\programl to two downstream data flow tasks for which non-ML techniques fail:
+predicting heterogeneous compute device mappings and algorithm classification.
+In both domains \programl outperforms prior graph-based and sequence-based
+representations, reducing test error by $1.20\times$ and $1.35\times$,
+respectively. Finally, we ablate every component of our representation and
+summarize the contribution of each.
+
+\subsection{Heterogeneous Device Mapping}
+
+We apply our methodology to the challenging domain of heterogeneous compute
+device mapping. Given an OpenCL kernel and a choice of two devices to run it on
+(CPU or GPU), the task is to predict the device which will provide the best
+performance. This problem has received significant prior attention, with
+previous approaches using both hand-engineered features~\citep{Grewe2013} and
+sequential models~\citep{Ben-nun2018,Cummins2017b}. We use the \textsc{OpenCL
+Devmap} dataset~\citep{Cummins2017b}, which provides 680 labeled CPU/GPU
+instances derived from 256 OpenCL kernels sourced from seven benchmark suites on
+two combinations of CPU/GPU hardware, AMD and NVIDIA. \emph{cf.\ Appendix~D.1.
+in supplementary materials for details.}
+
+The performance of \programl and baseline models is shown in
+Table~\ref{figure:devmap_results}. As can be seen, \programl outperforms prior
+works. We set new state-of-the-art F$_1$ scores of 0.88 and 0.80.
+
+\begin{table}
+  \centering%
+  \input{tables/devmap_results}
+  \caption{%
+    Predicting heterogeneous compute device mapping.
+  }%
+  \label{figure:devmap_results} %
+\end{table}
+
+\begin{table}
+  \centering
+  \input{tables/classifyapp-ablation}
+  \caption{%
+    Algorithm classification comparison to state-of-the-art, and ablations.
+  }
+  \label{tab:classify}
+\end{table}
+
+\subsection{Algorithm Classification}
+
+We apply our approach to the task of classifying algorithms from unlabeled
+implementations. We use the~\citet{Mou2016} dataset. It contains implementations
+of 104 different algorithms that were submitted to a judge system. All samples
+were written by students in higher education. There are around 500 samples per
+algorithm. We compile them with different combinations of optimization flags to
+generate a dataset of overall 240k samples, as in~\citet{Ben-nun2018}.
+Approximately 10,000 files are held out each as development and test sets.
+\emph{cf.\ Appendix~D.2. for details}.
+
+Table~\ref{tab:classify_soa} compares the test error of our method against prior
+works, where we set a new state-of-the-art.
+
+\paragraph{Ablation Studies} We ablate the \programl representation in
+Table~\ref{tab:classify_ablations}. Every component of our representation
+contributes positively to performance. We note that structure alone (\emph{No
+vocab}) is sufficient to outperform prior work, suggesting that algorithm
+classification is a problem that lends itself especially well to judging the
+power of the representation structure, since most algorithms are well-defined
+independent of implementation details, such as data types. However, the choice
+of vocabulary is important. Replacing the \programl vocabulary with that of a
+prior approach (\emph{inst2vec vocab}~\cite{Ben-nun2018}) degrades performance.
+The greatest contribution to the performance of \programl on this task is data
+flow edges. Backward edges~\cite{Li2015a}, which are required for reasoning
+about backward data flow analyses, provide the second greatest contribution.
+These results highlight the importance of data flow analysis for improving
+program reasoning through machine learning.

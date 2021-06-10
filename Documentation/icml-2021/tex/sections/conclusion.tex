@@ -1,0 +1,16 @@
+\section{Conclusions}
+
+The evolution of ML for compilers requires more expressive representations. We
+show that current techniques cannot reason about simple data flows which are at
+the core of all compilers. We present \programl, a graph-based representation
+for programs derived from compiler IRs that accurately captures the semantics of
+a program's statements and the relations between them. We are releasing the
+\textsc{DeepDataFlow} dataset as a community benchmark for evaluating approaches
+to learning over programs. \programl and \textsc{DeepDataFlow} open up new
+directions for research towards more flexible and useful program analysis.
+\programl outperforms the state-of-the-art, but is limited by scalability issues
+imposed by MPNNs. In highlighting the limitations of our approach we wish to
+expedite future research to address key challenges that are faced in the domain
+of program analysis. As future work, we will investigate how MPNNs could be
+improved to learn efficient and stable fixed-point algorithms, regardless of
+input graph size.

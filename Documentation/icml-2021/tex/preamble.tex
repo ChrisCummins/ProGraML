@@ -1,0 +1,81 @@
+% Force arXiv to process with pdflatex.
+\pdfoutput=1
+
+% Support alternating row colours in tables. Normal usage is to include the
+% xcolor package with option `table', but the xcolor package is already getting
+% pulled in from somewhere else which causes builds to fail with a package
+% options conflict.
+%
+% See: http://tex.stackexchange.com/a/5375
+%
+\PassOptionsToPackage{table}{xcolor}
+
+\documentclass{article}
+
+\usepackage[accepted]{icml2021}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{comment}
+\usepackage{caption}
+\newcommand{\programl}{\textsc{ProGraML}\xspace}
+\newcommand{\ddfinf}{DDF\xspace}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+
+\usepackage{url}
+
+% Maths.
+\usepackage{bm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+% Tables.
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hhline}
+\usepackage{xspace}
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+% Define column types L, C, R with known text justification and fixed widths:
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% \usepackage{subfig}
+
+% Reset footnote counter on every page.
+\usepackage{perpage}
+\MakePerPage{footnote}
+
+% Add \cmark and \xmark for check and cross symbols, respectively.
+\usepackage{amssymb}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+% Images
+\usepackage{graphicx}
+
+\newcommand\todo[2]{\textcolor{red}{\footnotesize \emph{TODO(#1): #2}}}
+\newcommand{\bigo}{\mathcal{O}}
+
+\usepackage{dsfont}
+
+% Provides \sout{} for strike-out text:
+\usepackage[normalem]{ulem}
+
+% Provides \subfile{}, for working on the main paper and supplementary material
+% as a single doc.
+\usepackage{subfiles}
+
+
+% Support for dashed lines in tables. https://tex.stackexchange.com/a/20141
+\usepackage{arydshln}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}

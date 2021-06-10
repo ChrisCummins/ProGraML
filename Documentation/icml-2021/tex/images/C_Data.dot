@@ -1,0 +1,102 @@
+digraph main {
+margin=0;
+
+graph [
+    nodesep=0.2,
+    ranksep=0.2,
+];
+node [
+    fontname=Inconsolata,
+    fontsize=25,
+    penwidth=2,
+    margin=0,
+];
+edge [
+    fontname=Inconsolata,
+    fontsize=22,
+    arrowsize=.8,
+    penwidth=3,
+]
+
+// === Nodes ===
+
+external            [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393" label="[external]", width=2];
+
+// Constants:
+const_1             [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // 1
+const_0             [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"]; // 0
+const_minus_1       [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // -1
+const_minus_2       [shape=diamond, style=filled, fillcolor="#F4CCCC", width=1, color="#990000", fontcolor="#990000", label="i32"];  // -2
+
+// Instructions:
+inst_switch         [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=2, label="switch"];
+inst_br             [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="br"];
+phi                 [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="phi"];
+inst_add_minus_1    [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="add"];
+call_1              [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="call"];
+inst_add_minus_2    [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="add"];
+call_2              [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="call"];
+add_3               [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="add"];
+ret_2               [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="ret"];
+ret_1               [shape=box, style=filled, fillcolor="#C0DAFF", color="#C0DAFF", fontcolor="#345393", width=1, label="ret"];
+
+// Variables:
+arg_0               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"]; // %0
+var_4               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %4
+var_5               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %5
+var_6               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %6
+var_7               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %7
+var_8               [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %8
+var_10              [shape=ellipse, style=filled, fillcolor="#E99C9C", color="#990000", width=1, fontcolor="#990000", label="i32"];  // %10
+
+
+// === Edges ===
+external -> inst_switch [style=invis];
+external -> const_1 [style=invis];
+
+// Control edges:
+inst_switch -> inst_add_minus_1 [color="#345393", penwidth=2, weight=10, minlen=2];
+inst_switch -> phi              [color="#345393", penwidth=2, weight=10, minlen=2];
+inst_switch -> inst_br          [color="#345393", penwidth=2, weight=10, minlen=2];
+inst_br -> phi                  [color="#345393", penwidth=2, weight=10];
+inst_add_minus_1 -> call_1      [color="#345393", penwidth=2, weight=10];
+call_1 -> inst_add_minus_2      [color="#345393", penwidth=2, weight=10];
+inst_add_minus_2 -> call_2      [color="#345393", penwidth=2, weight=10];
+call_2 -> add_3                 [color="#345393", penwidth=2, weight=10];
+add_3 -> ret_2                  [color="#345393", penwidth=2, weight=10];
+phi -> ret_1                    [color="#345393", penwidth=2, weight=10];
+
+// Data edges:
+inst_add_minus_1 -> var_4       [color="#990000", labelfontcolor="#990000", weight=0];
+call_1 -> var_5                 [color="#990000", labelfontcolor="#990000", weight=0];
+var_4 -> call_1                 [color="#990000", labelfontcolor="#990000", weight=0];
+inst_add_minus_2 -> var_6       [color="#990000", labelfontcolor="#990000", weight=0];
+call_2 -> var_7                 [color="#990000", labelfontcolor="#990000", weight=0];
+var_6 -> call_2                 [color="#990000", labelfontcolor="#990000", weight=0];
+add_3 -> var_8                  [color="#990000", labelfontcolor="#990000", weight=0];
+var_7 -> add_3                  [color="#990000", labelfontcolor="#990000", weight=0, headlabel=0];
+var_5 -> add_3                  [color="#990000", labelfontcolor="#990000", weight=0, headlabel=1];
+var_8 -> ret_2                  [color="#990000", labelfontcolor="#990000", weight=0];
+phi -> var_10                   [color="#990000", labelfontcolor="#990000", weight=0];
+var_10 -> ret_1                 [color="#990000", labelfontcolor="#990000", weight=0];
+arg_0 -> inst_switch            [color="#990000", labelfontcolor="#990000", weight=0, headlabel=0];
+arg_0 -> inst_add_minus_1       [color="#990000", labelfontcolor="#990000", weight=0, headlabel=0];
+arg_0 -> inst_add_minus_2       [color="#990000", labelfontcolor="#990000", weight=0, headlabel=0];
+arg_0 -> phi                    [color="#990000", labelfontcolor="#990000", weight=0, headlabel=1];
+
+// Data edges (constants):
+
+const_1 -> inst_switch              [color="#990000", labelfontcolor="#990000", headlabel=1];
+const_0 -> inst_switch              [color="#990000", labelfontcolor="#990000", headlabel=2];
+const_1 -> phi                      [color="#990000", labelfontcolor="#990000", headlabel=0];
+const_minus_1 -> inst_add_minus_1   [color="#990000", labelfontcolor="#990000", headlabel=1];
+const_minus_2 -> inst_add_minus_2   [color="#990000", labelfontcolor="#990000", headlabel=1];
+
+rankdir = TB;
+{rank = same; external; const_0; const_1; arg_0;}
+{rank = same; inst_add_minus_1; phi; inst_br;}
+{rank = same; ret_1; call_1;}
+{rank = same; call_2, var_5, var_6;}
+{rank = same; add_3, var_7;}
+{rank = same; ret_2, var_8;}
+}

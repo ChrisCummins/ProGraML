@@ -1,0 +1,70 @@
+\section{Graph-based Machine Learning for Program Analysis}
+\label{sec:graph-based-machine-learning}
+
+We formulate our system in a Message Passing Neural Network (MPNN)
+framework~\citep{Gilmer2017}. Our design mimics the \emph{transfer functions}
+and \emph{meet operators} of classical iterative data flow
+analysis~\citep{Kam1977,Cooper2003}, replacing the rule-based implementations
+with learnable analogues (message and update functions). This single unified
+model can be specialized through training to solve a diverse set of problems
+without human intervention or algorithm design.
+
+The \programl model is an adaptation of GGNN~\citep{Li2015a} that takes as input
+an attributed directed multigraph as presented in
+Section~\ref{sec:graph-representation}. It consists of three logical phases:
+input encoding, message propagation and update, and result readout.
+
+\paragraph{(I) Input Encoding} Starting from the augmented graph representation
+$G = (V, E)$, we capture the semantics of the program graph vertices by mapping
+every instruction, constant, and variable vertex $v \in V$ to a vector
+representation $h_v^0 \in \mathbb{R}^{d}$ by lookup in a fixed-size learnable
+embedding table. The mapping from vertex to embedding vector $f: v \mapsto
+h_v^0$ must be defined for each IR.
+
+For LLVM-IR, we construct an embedding key from each vertex using the name of
+the instruction, e.g., \texttt{store}, and the data type for variables and
+constants, e.g., \texttt{i32*} (a pointer to a 32-bit integer). In this manner,
+we derive the set of unique embedding keys using the graph vertices of a
+training set of LLVM-IRs described in Section~\ref{subsec:dataset}. This defines
+the embedding table used for training and deployment. An \emph{unknown element}
+embedding is used during deployment to map embedding keys  which were not
+observed in the training data. Since composite types make the size of the
+vocabulary unbounded in principle, our data-driven approach trades a certain
+amount of semantic resolution against good coverage of the vocabulary by the
+available datasets (cf. Table 1). The embedding vectors are trained jointly with
+the rest of the model.
+
+\paragraph{(II) Message Propagation} Each iteration step is divided into a
+message propagation  followed by vertex state update. Receiving messages
+$M(h_w^{t-1}, e_{wv})$ are a function of neighboring states and the respective
+edge. Messages are mean-aggregated over the neighborhood after transformation
+with a custom position-augmented transfer function that scales $h_w$ elementwise
+with a position-gating vector $p(e_{wv})$:%
+\begin{equation*}
+	M(h^{t-1}_w,e_{wv}) = W_{\mathrm{type}(e_{wv})} \Big(h_w^{t-1} \odot p(e_{wv})\Big) + b_{\mathrm{type}(e_{wv})}
+\end{equation*}
+The position-gating $p(e_{wv}) = 2 \sigma (W_p \operatorname{emb}(e_{wv}) +
+b_p)$ is implemented as a sigmoid-activated linear layer mapping from a constant
+sinusoidal position embedding ~\citep{Vaswani2017,Gehring2017}. It enables the
+network to distinguish non-commutative operations such as division, and the
+branch type in diverging control-flow. In order to allow for reverse-propagation
+of information, which is necessary for backward compiler analyses, we add
+backward edges for each edge in the graph as separate edge-types. In all our
+experiments, we employ Gated Recurrent Units (GRU)~\citep{Cho2014} as our update
+function.
+
+Step (II) is iterated $T$ times to extract vertex representations that are
+contextualized with respect to the graph structure.
+
+\paragraph{(III) Result Readout} Data flow analyses compute value sets composed
+of instructions or variables. We support per-instruction and per-variable
+classification tasks using a \emph{readout head} on top of the iterated feature
+extraction, mapping, for each vertex, the extracted vertex features $h_v^T$ to
+probabilities $R_v(h_v^T, h_v^0)$:
+\begin{equation*}
+	R_{v}(h_v^T, h_v^0) = \sigma\left(f(h_v^T, h_v^0)\right) \cdot g(h_v^T) \\
+\end{equation*}
+where $f(\cdot)$ and $g(\cdot)$ are linear layers and $\sigma(\cdot)$ is the
+sigmoid activation function. Allowing the readout head to access the initial
+node state $h_v^0$ in its gating function $\sigma(f(\cdot))$ acts as a skip
+connection from the input embedding to the readout.
