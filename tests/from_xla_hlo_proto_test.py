@@ -13,31 +13,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable, Tuple
-
 import pytest
+from absl import flags
 
-from programl.proto import ProgramGraph
+import programl as pg
+from programl.third_party.tensorflow import xla_pb2
 from programl.util.py import pbutil
 from programl.util.py.runfiles_path import runfiles_path
+from tests.test_main import main
 
-LLVM_IR_GRAPHS = runfiles_path("tests/data/llvm_ir_graphs")
-
-
-def EnumerateLlvmProgramGraphs() -> Iterable[Tuple[str, ProgramGraph]]:
-    """Enumerate a test set of LLVM IR file paths."""
-    for path in LLVM_IR_GRAPHS.iterdir():
-        yield path.name, pbutil.FromFile(path, ProgramGraph())
+FLAGS = flags.FLAGS
 
 
-_PROGRAM_GRAPHS = list(EnumerateLlvmProgramGraphs())
+def test_empty_proto():
+    """Build from an empty proto."""
+    proto = xla_pb2.HloProto()
+    with pytest.raises(ValueError) as e_ctx:
+        pg.from_xla_hlo_proto(proto)
+
+    assert "Failed to locate entry computation" in str(e_ctx.value)
 
 
-@pytest.fixture(
-    scope="session",
-    params=_PROGRAM_GRAPHS,
-    ids=[s[0] for s in _PROGRAM_GRAPHS],
-)
-def llvm_program_graph(request) -> ProgramGraph:
-    """A test fixture which yields a program graph."""
-    return request.param[1]
+def test_non_empty_proto():
+    """Build a graph proto from an example proto."""
+    proto = pbutil.FromFile(runfiles_path("tests/data/a.hlo.pb"), xla_pb2.HloProto())
+    graph = pg.from_xla_hlo_proto(proto)
+    assert len(graph.node) == 155
+    assert len(graph.function) == 5
+
+
+if __name__ == "__main__":
+    main()

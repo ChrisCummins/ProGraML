@@ -47,3 +47,46 @@ cc_library(
         "@labm8//labm8/cpp:strutil",
     ],
 )
+
+py_test(
+    name = "from_clang_test",
+    srcs = ["from_clang_test.py"],
+    shard_count = 4,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_cpp_test",
+    srcs = ["from_cpp_test.py"],
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_llvm_ir_test",
+    srcs = ["from_llvm_ir_test.py"],
+    shard_count = 4,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_xla_hlo_proto_test",
+    srcs = ["from_xla_hlo_proto_test.py"],
+    data = ["//tests/data:hlo_protos"],
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
