@@ -6,9 +6,13 @@
 [Michael O'Boyle](http://www.dcs.ed.ac.uk/home/mob/),
 [Hugh Leather](http://homepages.inf.ed.ac.uk/hleather/).
 
-<a href="paper.pdf">
+**tl;dr:** For ML to be able to reason about programs it must be able to reason
+about graphs.
+
+<a href="https://github.com/ChrisCummins/ProGraML/raw/febeb692d49d90fe7125d12ace5a0298a9458523/Documentation/icml-2021/paper.pdf">
   <img src="paper.png" height="325">
 </a>
+
 
 **Abstract:**
 > Machine learning (ML) is increasingly seen as a viable approach for building
@@ -24,6 +28,7 @@
 > overcomes the limitations of prior works and yields improved performance on
 > downstream optimization tasks.
 
+<img src="logo.png" height="325">
 
 ```
 @inproceedings{cummins2021a,
