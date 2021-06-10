@@ -30,6 +30,10 @@ runs:
               echo /home/runner/.local/bin >> $GITHUB_PATH
           shell: bash
 
+        - name: Create DGL directory
+          run: mkdir ~/.dgl
+          shell: bash
+
         - name: whoami
           run: ./tools/whoami.sh
           shell: bash
