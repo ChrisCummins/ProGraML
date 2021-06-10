@@ -21,6 +21,7 @@ import google.protobuf.message
 from programl.exceptions import GraphCreationError, UnsupportedCompiler
 from programl.proto import ProgramGraph
 from programl.third_party.tensorflow.xla_pb2 import HloProto
+from programl.util.py.cc_system_includes import get_system_includes
 from programl.util.py.runfiles_path import runfiles_path
 
 LLVM2GRAPH_BINARIES = {
@@ -76,13 +77,19 @@ def from_llvm_ir(ir: str, timeout=300, version: str = "10") -> ProgramGraph:
     return _graph_from_subprocess(process, stdout, stderr)
 
 
-def from_clang(args: str, version: str = "10", timeout=300) -> ProgramGraph:
+def from_clang(
+    args: str, system_includes: bool = True, version: str = "10", timeout=300
+) -> ProgramGraph:
     binary = CLANG2GRAPH_BINARIES.get(version)
     if not binary:
         raise UnsupportedCompiler(
             f"Unknown clang version: {version}. "
             f"Supported versions: {sorted(CLANG2GRAPH_BINARIES.keys())}"
         )
+
+    if system_includes:
+        for directory in get_system_includes():
+            args += ["-isystem", str(directory)]
 
     process = subprocess.Popen(
         [binary] + args,
@@ -99,17 +106,27 @@ def from_clang(args: str, version: str = "10", timeout=300) -> ProgramGraph:
 
 
 def from_cpp(
-    src: str, copts: Optional[List[str]] = None, version: str = "10", timeout=300
+    src: str,
+    copts: Optional[List[str]] = None,
+    system_includes: bool = True,
+    language: str = "c++",
+    version: str = "10",
+    timeout=300,
 ) -> ProgramGraph:
     binary = CLANG2GRAPH_BINARIES.get(version)
+    copts = copts or []
     if not binary:
         raise UnsupportedCompiler(
             f"Unknown clang version: {version}. "
             f"Supported versions: {sorted(CLANG2GRAPH_BINARIES.keys())}"
         )
 
+    if system_includes:
+        for directory in get_system_includes():
+            copts += ["-isystem", str(directory)]
+
     process = subprocess.Popen(
-        [binary, "-xc++", "-"] + (copts or []),
+        [binary, f"-x{language}", "-"] + copts,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
