@@ -125,13 +125,6 @@ int main(int argc, const char** argv, char* const* envp) {
   std::unique_ptr<CompilerInvocation> CI(new CompilerInvocation);
   CompilerInvocation::CreateFromArgs(*CI, CCArgs, Diags);
 
-  // Show the invocation, with -v.
-  if (CI->getHeaderSearchOpts().Verbose) {
-    llvm::errs() << "clang invocation:\n";
-    Jobs.Print(llvm::errs(), "\n", true);
-    llvm::errs() << "\n";
-  }
-
   // Create a compiler instance to handle the actual work.
   CompilerInstance Clang;
   Clang.setInvocation(std::move(CI));
