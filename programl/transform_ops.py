@@ -15,8 +15,6 @@
 # limitations under the License.
 """The graph transform ops each take an iterable sequence of graphs and produce
 an iterable sequence of transformed graphs.
-
-
 """
 import json
 import subprocess

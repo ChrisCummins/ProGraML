@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import Path
 from typing import Iterable, Tuple
 
 import pytest
@@ -24,20 +25,25 @@ from programl.util.py.runfiles_path import runfiles_path
 LLVM_IR_GRAPHS = runfiles_path("tests/data/llvm_ir_graphs")
 
 
-def EnumerateLlvmProgramGraphs() -> Iterable[Tuple[str, ProgramGraph]]:
+def EnumerateLlvmProgramGraphPaths() -> Iterable[Tuple[str, Path]]:
     """Enumerate a test set of LLVM IR file paths."""
     for path in LLVM_IR_GRAPHS.iterdir():
-        yield path.name, pbutil.FromFile(path, ProgramGraph())
+        yield path.name, path
 
 
-_PROGRAM_GRAPHS = list(EnumerateLlvmProgramGraphs())
+_PROGRAM_GRAPH_PATHS = list(EnumerateLlvmProgramGraphPaths())
+
+
+def EnumerateLlvmProgramGraphs() -> Iterable[ProgramGraph]:
+    for _, path in _PROGRAM_GRAPH_PATHS:
+        yield pbutil.FromFile(path, ProgramGraph())
 
 
 @pytest.fixture(
     scope="session",
-    params=_PROGRAM_GRAPHS,
-    ids=[s[0] for s in _PROGRAM_GRAPHS],
+    params=_PROGRAM_GRAPH_PATHS,
+    ids=[s[0] for s in _PROGRAM_GRAPH_PATHS],
 )
 def llvm_program_graph(request) -> ProgramGraph:
     """A test fixture which yields a program graph."""
-    return request.param[1]
+    return pbutil.FromFile(request.param[1], ProgramGraph())

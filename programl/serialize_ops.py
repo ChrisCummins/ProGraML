@@ -32,9 +32,10 @@ def save_graphs(
         None: lambda d: d,
     }
     if compression not in compressors:
+        compressors = ", ".join(sorted(str(x) for x in compressors))
         raise TypeError(
-            "Invalid compression argument: {compression}. "
-            f"Supported compressions: {sorted(compressors.keys())}"
+            f"Invalid compression argument: {compression}. "
+            f"Supported compressions: {compressors}"
         )
     compress = compressors[compression]
     with open(path, "wb") as f:
@@ -49,17 +50,18 @@ def load_graphs(
         None: lambda d: d,
     }
     if compression not in decompressors:
+        decompressors = ", ".join(sorted(str(x) for x in decompressors))
         raise TypeError(
-            "Invalid compression argument: {decompression}. "
-            f"Supported compressions: {sorted(decompressors.keys())}"
+            f"Invalid compression argument: {compression}. "
+            f"Supported compressions: {decompressors}"
         )
     decompress = decompressors[compression]
     with open(path, "rb") as f:
-        return from_bytes(decompress(f.read()))
+        return from_bytes(decompress(f.read()), idx_list=idx_list)
 
 
 def to_bytes(graphs: Iterable[ProgramGraph]) -> bytes:
-    return ProgramGraphList(graph=list(graphs).SerializeToString())
+    return ProgramGraphList(graph=list(graphs)).SerializeToString()
 
 
 def from_bytes(data: bytes, idx_list: Optional[List[int]] = None) -> List[ProgramGraph]:
@@ -75,7 +77,7 @@ def from_bytes(data: bytes, idx_list: Optional[List[int]] = None) -> List[Progra
 
 
 def to_string(graphs: Iterable[ProgramGraph]) -> str:
-    return str(ProgramGraphList(graph=list(graphs).SerializeToString()))
+    return str(ProgramGraphList(graph=list(graphs)))
 
 
 def from_string(

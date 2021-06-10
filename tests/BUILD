@@ -90,3 +90,14 @@ py_test(
         "//tests/plugins",
     ],
 )
+
+py_test(
+    name = "serialize_graphs_test",
+    srcs = ["serialize_graphs_test.py"],
+    shard_count = 3,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)

@@ -29,15 +29,7 @@ def EnumerateLlvmIrPaths() -> Iterable[Tuple[str, Path]]:
         yield path.name, path
 
 
-def EnumerateLlvmIrs(paths) -> Iterable[Tuple[str, str]]:
-    """Enumerate a test set of LLVM IR file paths."""
-    for name, path in paths:
-        with open(str(path), "r") as f:
-            yield name, f.read()
-
-
 _LLVM_IR_PATHS = list(EnumerateLlvmIrPaths())
-_LLVM_IRS = list(EnumerateLlvmIrs(_LLVM_IR_PATHS))
 
 
 @pytest.fixture(
@@ -48,7 +40,10 @@ def llvm_ir_path(request) -> Path:
     return request.param[1]
 
 
-@pytest.fixture(scope="session", params=_LLVM_IRS, ids=[s[0] for s in _LLVM_IRS])
+@pytest.fixture(
+    scope="session", params=_LLVM_IR_PATHS, ids=[s[0] for s in _LLVM_IR_PATHS]
+)
 def llvm_ir(request) -> str:
     """A test fixture which yields an LLVM-IR string."""
-    return request.param[1]
+    with open(request.param[1], "r") as f:
+        yield request.param[0], f.read()
