@@ -72,6 +72,9 @@ def test_to_bytes_from_bytes_smoke_test(llvm_program_graphs: List[pg.ProgramGrap
 
 
 def test_to_string_from_string_smoke_test(llvm_program_graphs: List[pg.ProgramGraph]):
+    # Use a smaller set of graphs for string serialization as it is quite slow.
+    llvm_program_graphs = llvm_program_graphs[:10]
+
     serialized = pg.to_string(llvm_program_graphs)
     assert isinstance(serialized, str)
     graphs = pg.from_string(serialized)
