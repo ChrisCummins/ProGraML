@@ -58,7 +58,13 @@ setuptools.setup(
     url="https://github.com/ChrisCummins/ProGraML",
     license="Apache 2.0",
     packages=[
+        "programl.graph.analysis.py",
+        "programl.graph.format.py",
+        "programl.graph.py",
+        "programl.graph",
         "programl.proto",
+        "programl.third_party.ncc.inst2vec",
+        "programl.third_party.ncc",
         "programl.third_party.tensorflow",
         "programl.util.py",
         "programl",
@@ -67,7 +73,13 @@ setuptools.setup(
         "": "bazel-bin/py_package.runfiles/programl",
     },
     package_data={
-        "programl": ["bin/*"],
+        "programl": [
+            "bin/*",
+            "graph/analysis/py/*.so",
+            "graph/format/py/*.so",
+            "graph/py/*.so",
+            "ir/llvm/internal/*.pickle",
+        ],
     },
     install_requires=requirements,
     include_package_data=True,
