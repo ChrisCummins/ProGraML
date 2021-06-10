@@ -42,7 +42,7 @@ def _run_graph_transform_binary(
     timeout: int = 300,
     executor: Optional[ExecutorLike] = None,
     chunksize: int = 128,
-):
+) -> Iterable[bytes]:
     executor = executor or SequentialExecutor()
 
     def _process_one_graph(graph: ProgramGraph) -> JsonDict:
@@ -93,13 +93,14 @@ def to_dot(
         on the implementation. Eg:
         :code:`concurrent.futures.ThreadPoolExecutor`.
     """
-    return _run_graph_transform_binary(
+    for dotgraph in _run_graph_transform_binary(
         GRAPH2DOT,
         graphs=graphs,
         timeout=timeout,
         executor=executor,
         chunksize=chunksize,
-    )
+    ):
+        yield dotgraph.decode("utf-8")
 
 
 def to_json(

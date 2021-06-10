@@ -23,15 +23,6 @@ cc_library(
     visibility = ["//tests:__subpackages__"],
 )
 
-py_library(
-    name = "test_main",
-    testonly = 1,
-    srcs = ["test_main.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-    ],
-)
-
 cc_library(
     name = "llvm_program_graphs",
     testonly = 1,
@@ -95,6 +86,48 @@ py_test(
     name = "serialize_graphs_test",
     srcs = ["serialize_graphs_test.py"],
     shard_count = 3,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_library(
+    name = "test_main",
+    testonly = 1,
+    srcs = ["test_main.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+    ],
+)
+
+py_test(
+    name = "to_dot_test",
+    srcs = ["to_dot_test.py"],
+    shard_count = 8,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "to_json_test",
+    srcs = ["to_json_test.py"],
+    shard_count = 8,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "to_networkx_test",
+    srcs = ["to_networkx_test.py"],
+    shard_count = 8,
     deps = [
         "//programl",
         "//tests:test_main",
