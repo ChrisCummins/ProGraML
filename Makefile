@@ -163,7 +163,10 @@ bazel-build:
 	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) $(BUILD_TARGET)
 
 install-test-data:
-	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>/dev/null
+	if ! $(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>log.txt ; then \
+		cat log.txt >&2; \
+		false; \
+	fi
 
 bdist_wheel: bazel-build
 	$(PYTHON) setup.py bdist_wheel
