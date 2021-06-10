@@ -46,4 +46,4 @@ def llvm_ir_path(request) -> Path:
 def llvm_ir(request) -> str:
     """A test fixture which yields an LLVM-IR string."""
     with open(request.param[1], "r") as f:
-        yield request.param[0], f.read()
+        yield f.read()
