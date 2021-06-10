@@ -21,8 +21,8 @@ from tests.test_main import main
 pytest_plugins = ["tests.plugins.llvm_ir"]
 
 
-@pytest.fixture(scope="module")
-def simple_ir_graph() -> pg.ProgramGraph:
+@pytest.fixture(scope="module", params=pg.create_ops.LLVM2GRAPH_BINARIES.keys())
+def simple_ir_graph(request) -> pg.ProgramGraph:
     return pg.from_llvm_ir(
         """
 source_filename = "foo.c"
@@ -39,7 +39,8 @@ define i32 @A(i32, i32) #0 {
   %7 = add nsw i32 %5, %6
   ret i32 %7
 }
-"""
+""",
+        version=request.param,
     )
 
 
@@ -153,16 +154,23 @@ def test_node_full_texts(simple_ir_graph):
     ]
 
 
-def test_invalid_ir():
+@pytest.mark.parametrize("version", pg.create_ops.LLVM2GRAPH_BINARIES.keys())
+def test_invalid_ir(version: str):
     """Test equivalence of nodes that pre-process to the same text."""
     with pytest.raises(pg.GraphCreationError, match="expected top-level entity"):
-        pg.from_llvm_ir("foo bar")
+        pg.from_llvm_ir("foo bar", version=version)
 
 
-def test_from_ir_string_smoke_test(llvm_ir: str):
+@pytest.mark.parametrize("version", pg.create_ops.LLVM2GRAPH_BINARIES.keys())
+def test_from_ir_string_smoke_test(llvm_ir: str, version: str):
     """Smoke test on real IRs."""
-    graph = pg.from_llvm_ir(llvm_ir)
+    graph = pg.from_llvm_ir(llvm_ir, version=version)
     assert isinstance(graph, pg.ProgramGraph)
+
+
+def test_invalid_version():
+    with pytest.raises(pg.UnsupportedCompiler):
+        pg.from_llvm_ir("", version="invalid")
 
 
 if __name__ == "__main__":
