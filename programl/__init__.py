@@ -16,6 +16,8 @@
 """ProGraML is a graph-based program representation for data flow analysis and
 compiler optimizations.
 """
+from pathlib import Path
+
 from programl.create_ops import from_clang, from_cpp, from_llvm_ir, from_xla_hlo_proto
 from programl.exceptions import (
     GraphCreationError,
@@ -32,6 +34,7 @@ from programl.serialize_ops import (
     to_string,
 )
 from programl.transform_ops import to_dgl, to_json, to_networkx
+from programl.util.py.runfiles_path import runfiles_path
 from programl.version import PROGRAML_VERSION
 
 __version__ = PROGRAML_VERSION
@@ -40,7 +43,10 @@ __email__ = "chrisc.101@gmail.com"
 __copyright__ = "Copyright 2019-2020 the ProGraML authors"
 __license__ = "Apache License, Version 2.0"
 
+binaries_path: Path = runfiles_path("programl/bin")
+
 __all__ = [
+    "binaries_path",
     "from_bytes",
     "from_clang",
     "from_cpp",
