@@ -34,7 +34,7 @@ runs:
           run: |
               sudo mkdir -p ~/.dgl
               sudo chmod 777 ~/.dgl
-
+              python -c 'import dgl; print(dgl.__version__)'
           shell: bash
 
         - name: whoami
