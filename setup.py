@@ -62,6 +62,7 @@ setuptools.setup(
         "programl.graph.format.py",
         "programl.graph.py",
         "programl.graph",
+        "programl.ir.llvm",
         "programl.proto",
         "programl.third_party.ncc.inst2vec",
         "programl.third_party.ncc",
