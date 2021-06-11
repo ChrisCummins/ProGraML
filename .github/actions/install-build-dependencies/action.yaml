@@ -32,8 +32,9 @@ runs:
 
         - name: Create DGL directory
           run: |
-              mkdir ~/.dgl
-              touch ~/.dgl/config.json
+              sudo mkdir -p ~/.dgl
+              sudo chmod 777 ~/.dgl
+
           shell: bash
 
         - name: whoami
