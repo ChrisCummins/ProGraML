@@ -62,7 +62,7 @@ py_library(
     deps = [
         "//programl/graph/py:program_graph_builder",
         "//programl/proto",
-        "//programl/third_party/ncc/inst2vec:inst2vec_preprocess",
+        "//programl/third_party/inst2vec",
         "//programl/util/py:decorators",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
