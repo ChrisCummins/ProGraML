@@ -27,7 +27,7 @@ from typing import List, Tuple
 from absl import app, flags
 
 from programl.ir.llvm.inst2vec_encoder import Inst2vecEncoder
-from programl.proto import ir_pb2, program_graph_pb2
+from programl.proto import Ir, ProgramGraph
 from programl.util.py import decorators, pbutil, progress
 from tasks.dataflow.dataset import pathflag
 
@@ -46,7 +46,7 @@ def chunkify(iterable, n):
 def Encode(encoder, graph, graph_path, ir_path):
     if ir_path.is_file():
         try:
-            ir = pbutil.FromFile(ir_path, ir_pb2.Ir()).text
+            ir = pbutil.FromFile(ir_path, Ir()).text
         except pbutil.DecodeError:
             ir = None
     else:
@@ -63,7 +63,7 @@ def _ProcessRows(job) -> Tuple[int, int, float]:
     encoder: Inst2vecEncoder = job[0]
     paths: List[Tuple[pathlib.Path, pathlib.Path]] = job[1]
     for graph_path, ir_path in paths:
-        graph = pbutil.FromFile(graph_path, program_graph_pb2.ProgramGraph())
+        graph = pbutil.FromFile(graph_path, ProgramGraph())
         # Check to see if we have already processed this file.
         if len(graph.features.feature["inst2vec_annotated"].int64_list.value):
             continue

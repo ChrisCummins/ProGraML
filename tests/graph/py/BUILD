@@ -19,7 +19,7 @@ py_test(
     srcs = ["program_graph_builder_test.py"],
     deps = [
         "//programl/graph/py:program_graph_builder",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//tests:test_main",
     ],
 )

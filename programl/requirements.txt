@@ -1,8 +1,7 @@
 absl-py>=0.11.0
-decorator>=4.3.0
+dgl>=0.6.1
 grpcio==1.33.2
 networkx>=2.4
 numpy>=1.19.3
 protobuf==3.13.0
-PyYAML>=4.2b4
 tqdm>=4.38.0

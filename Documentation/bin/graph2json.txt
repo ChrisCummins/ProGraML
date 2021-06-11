@@ -40,7 +40,7 @@ Usage:
 
 
 
-  Flags from bin/graph2json.cc:
+  Flags from programl/bin/graph2json.cc:
     -pretty_print (Pretty-print the generated JSON.) type: bool default: false
 
 

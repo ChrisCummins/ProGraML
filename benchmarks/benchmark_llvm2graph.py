@@ -30,7 +30,7 @@ flags.DEFINE_float(
 FLAGS = flags.FLAGS
 
 LLVM_IR = runfiles_path("tests/data/llvm_ir")
-LLVM2GRAPH = runfiles_path("bin/llvm2graph")
+LLVM2GRAPH = runfiles_path("programl/bin/llvm2graph-10")
 
 
 def SummarizeFloats(floats, nplaces: int = 2, unit: str = "") -> str:

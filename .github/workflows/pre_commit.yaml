@@ -46,7 +46,7 @@ jobs:
                   python3 -m black --version
                   python3 -m pre_commit --version
             - name: Run pre-commit checks
-              # TODO(github.com/fairinternal/CompilerGym/issues/60): Disable
+              # TODO(github.com/facebookresearch/CompilerGym/issues/1): Disable
               # isort due to inconsistent results when run locally versus in
               # the GitHub Actions environment.
               run: SKIP=isort python3 -m pre_commit run --all-files

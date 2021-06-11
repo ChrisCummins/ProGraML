@@ -117,6 +117,7 @@ export HELP
 CC ?= clang
 CXX ?= clang++
 BAZEL ?= bazel
+DOXYGEN ?= doxygen
 IBAZEL ?= ibazel
 PYTHON ?= python3
 RSYNC ?= rsync
@@ -162,7 +163,12 @@ bazel-build:
 	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) $(BUILD_TARGET)
 
 install-test-data:
-	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>/dev/null
+	if ! $(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>log.txt ; then \
+		cat log.txt >&2; \
+		rm log.txt; \
+		false; \
+	fi
+	rm log.txt
 
 bdist_wheel: bazel-build
 	$(PYTHON) setup.py bdist_wheel
@@ -172,16 +178,16 @@ bdist_wheel-linux-rename:
 
 bdist_wheel-linux:
 	rm -rf build
-	docker pull chriscummins/compiler_gym-linux-build:latest
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/programl-linux-build:latest /bin/sh -c './packaging/container_init.sh && make bdist_wheel'
+	docker build -t chriscummins/compiler_gym-linux-build packaging
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/compiler_gym-linux-build:latest /bin/sh -c './packaging/container_init.sh && make bdist_wheel'
 	mv dist/programl-$(VERSION)-py3-none-linux_x86_64.whl dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl
 	rm -rf build
 
 bdist_wheel-linux-shell:
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g -it --entrypoint "/bin/bash" chriscummins/programl-linux-build:latest
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g -it --entrypoint "/bin/bash" chriscummins/compiler_gym-linux-build:latest
 
 bdist_wheel-linux-test:
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/programl-linux-build:latest /bin/sh -c 'cd /ProGraML && pip3 install -U pip && pip3 install dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl && pip install -r tests/requirements.txt && make install-test'
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/compiler_gym-linux-build:latest /bin/sh -c 'cd /ProGraML && pip3 install -U pip && pip3 install dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl && pip install -r tests/requirements.txt && make install-test'
 
 all: docs bdist_wheel bdist_wheel-linux
 
@@ -251,6 +257,26 @@ post-install-test:
 	SEARCH_TIME=3 $(MAKE) -C examples/makefile_integration test
 
 .PHONY: test post-install-test
+
+
+#################
+# Documentation #
+#################
+
+doxygen:
+	cd Documentation && $(DOXYGEN) Doxyfile
+
+doxygen-rst:
+	cd Documentation && $(PYTHON) generate_cc_rst.py
+
+docs: bazel-build doxygen
+	PYTHONPATH=$(ROOT)/bazel-bin/py_package.runfiles/programl $(MAKE) -C Documentation html
+
+livedocs: doxygen
+	PYTHONPATH=$(ROOT)/bazel-bin/py_package.runfiles/programl $(MAKE) -C Documentation livehtml
+
+
+.PHONY: doxygen doxygen-rst
 
 
 ################

@@ -17,7 +17,7 @@
 import numpy as np
 
 from programl.graph.format.py.graph_tuple import GraphTuple
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 
 
 class GraphTupleBuilder(object):
@@ -82,7 +82,7 @@ class GraphTupleBuilder(object):
             raise ValueError(f"Graph tuple contains no edges: {graph_tuple}")
         return graph_tuple
 
-    def AddProgramGraph(self, graph: program_graph_pb2.ProgramGraph) -> None:
+    def AddProgramGraph(self, graph: ProgramGraph) -> None:
         """Add a program graph to the graph tuple."""
         for edge in graph.edge:
             self._adjacencies[edge.flow].append(

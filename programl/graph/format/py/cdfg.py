@@ -19,13 +19,13 @@ from typing import Optional
 
 import google.protobuf.message
 
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 from programl.util.py.runfiles_path import runfiles_path
 
-GRAPH2CDFG = runfiles_path("bin/graph2cdfg")
+GRAPH2CDFG = runfiles_path("programl/bin/graph2cdfg")
 
 
-def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:
+def FromProgramGraphFile(path) -> Optional[ProgramGraph]:
     """Convert a binary ProgramGraph message file to a CDFG.
 
     Args:
@@ -37,7 +37,7 @@ def FromProgramGraphFile(path) -> Optional[program_graph_pb2.ProgramGraph]:
     Raises:
       ValueError: If the graph cannot be converted.
     """
-    graph = program_graph_pb2.ProgramGraph()
+    graph = ProgramGraph()
 
     with open(path, "rb") as f:
         p = subprocess.Popen(

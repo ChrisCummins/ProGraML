@@ -15,12 +15,10 @@
 # limitations under the License.
 """Python bindings for running analyses."""
 from programl.graph.analysis.py import analysis_pybind
-from programl.proto import program_graph_features_pb2, program_graph_pb2
+from programl.proto import ProgramGraph, ProgramGraphFeaturesList
 
 
-def RunAnalysis(
-    analysis: str, graph: program_graph_pb2.ProgramGraph
-) -> program_graph_features_pb2.ProgramGraphFeaturesList:
+def RunAnalysis(analysis: str, graph: ProgramGraph) -> ProgramGraphFeaturesList:
     """Run the given analysis.
 
     Args:
@@ -33,7 +31,7 @@ def RunAnalysis(
     Raises:
       ValueError: In case analysis fails.
     """
-    graph_features = program_graph_features_pb2.ProgramGraphFeaturesList()
+    graph_features = ProgramGraphFeaturesList()
     serialized_graph_features = analysis_pybind.RunAnalysis(
         analysis, graph.SerializeToString()
     )

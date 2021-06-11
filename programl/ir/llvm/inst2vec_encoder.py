@@ -24,8 +24,8 @@ from typing import Any, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from programl.proto import node_pb2, program_graph_pb2
-from programl.third_party.ncc.inst2vec import inst2vec_preprocess
+from programl.proto import Node, ProgramGraph
+from programl.third_party.inst2vec import inst2vec_preprocess
 from programl.util.py import decorators, pbutil, progress
 from programl.util.py.runfiles_path import runfiles_path
 
@@ -37,7 +37,7 @@ AUGMENTED_INST2VEC_EMBEDDINGS = runfiles_path(
 )
 
 
-def NodeFullText(node: node_pb2.Node) -> str:
+def NodeFullText(node: Node) -> str:
     """Get the full text of a node, or an empty string if not set."""
     if len(node.features.feature["full_text"].bytes_list.value):
         return node.features.feature["full_text"].bytes_list.value[0].decode("utf-8")
@@ -60,9 +60,7 @@ class Inst2vecEncoder(object):
     def RunOnDirectory(self, directory: pathlib.Path) -> None:
         progress.Run(_Inst2vecEncodeDirectory(self, directory))
 
-    def Encode(
-        self, proto: program_graph_pb2.ProgramGraph, ir: Optional[str] = None
-    ) -> program_graph_pb2.ProgramGraph:
+    def Encode(self, proto: ProgramGraph, ir: Optional[str] = None) -> ProgramGraph:
         """Pre-process the node text and set the text embedding index.
 
         For each node, this sets 'inst2vec_preprocessed' and 'inst2vec_embedding'
@@ -79,9 +77,7 @@ class Inst2vecEncoder(object):
         """
         # Gather the instruction texts to pre-process.
         lines = [
-            [NodeFullText(node)]
-            for node in proto.node
-            if node.type == node_pb2.Node.INSTRUCTION
+            [NodeFullText(node)] for node in proto.node if node.type == Node.INSTRUCTION
         ]
 
         if ir:
@@ -110,7 +106,7 @@ class Inst2vecEncoder(object):
 
         text_index = 0
         for node in proto.node:
-            if node.type == node_pb2.Node.INSTRUCTION:
+            if node.type == Node.INSTRUCTION:
                 text = preprocessed_texts[text_index]
                 text_index += 1
                 embedding = self.dictionary.get(text, self.dictionary["!UNK"])
@@ -120,11 +116,11 @@ class Inst2vecEncoder(object):
                 node.features.feature["inst2vec_embedding"].int64_list.value.append(
                     embedding
                 )
-            elif node.type == node_pb2.Node.VARIABLE:
+            elif node.type == Node.VARIABLE:
                 node.features.feature["inst2vec_embedding"].int64_list.value.append(
                     var_embedding
                 )
-            elif node.type == node_pb2.Node.CONSTANT:
+            elif node.type == Node.CONSTANT:
                 node.features.feature["inst2vec_embedding"].int64_list.value.append(
                     const_embedding
                 )
@@ -147,7 +143,7 @@ class Inst2vecEncoder(object):
 @decorators.timeout(seconds=60)
 def _EncodeOne(
     encoder: Inst2vecEncoder,
-    graph: program_graph_pb2.ProgramGraph,
+    graph: ProgramGraph,
     graph_path: pathlib.Path,
     ir_path: Optional[pathlib.Path],
 ):
@@ -167,7 +163,7 @@ def _ProcessRows(job) -> Tuple[int, int, float]:
     encoder: Inst2vecEncoder = job[0]
     paths: List[Tuple[pathlib.Path, pathlib.Path]] = job[1]
     for graph_path, ir_path in paths:
-        graph = pbutil.FromFile(graph_path, program_graph_pb2.ProgramGraph())
+        graph = pbutil.FromFile(graph_path, ProgramGraph())
         # Check to see if we have already processed this file.
         if len(graph.features.feature["inst2vec_annotated"].int64_list.value):
             continue

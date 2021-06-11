@@ -18,7 +18,7 @@ import pytest
 
 from programl.graph.py import program_graph_builder
 from programl.ir.llvm import inst2vec_encoder
-from programl.proto import node_pb2, program_graph_pb2
+from programl.proto import Node, ProgramGraph
 from tests.test_main import main
 
 pytest_plugins = ["tests.plugins.llvm_program_graph"]
@@ -232,24 +232,24 @@ define i32 @Foo(%struct.bar*) #0 {
 
 
 def test_Encode_llvm_program_graph(
-    llvm_program_graph: program_graph_pb2.ProgramGraph,
+    llvm_program_graph: ProgramGraph,
     encoder: inst2vec_encoder.Inst2vecEncoder,
 ):
     """Black-box test encoding LLVM program graphs."""
-    proto = program_graph_pb2.ProgramGraph()
+    proto = ProgramGraph()
     proto.CopyFrom(llvm_program_graph)
     encoder.Encode(proto)
 
     # This assumes that all of the test graphs have at least one instruction.
     num_instructions = sum(
-        1 if node.type == node_pb2.Node.INSTRUCTION else 0 for node in proto.node
+        1 if node.type == Node.INSTRUCTION else 0 for node in proto.node
     )
     assert num_instructions >= 1
 
     # Check for the presence of expected node attributes.
     for node in proto.node:
         assert "inst2vec_embedding" in node.features.feature
-        if node.type == node_pb2.Node.INSTRUCTION:
+        if node.type == Node.INSTRUCTION:
             assert "inst2vec_preprocessed" in node.features.feature
 
 

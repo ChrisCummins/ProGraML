@@ -17,13 +17,13 @@
 import networkx as nx
 
 from programl.graph.format.py import nx_format
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 from tests.test_main import main
 
 
 def test_ProgramGraphToNetworkX_empty_graph():
     """Build from an empty proto."""
-    proto = program_graph_pb2.ProgramGraph()
+    proto = ProgramGraph()
     g = nx_format.ProgramGraphToNetworkX(proto)
     assert isinstance(g, nx.MultiDiGraph)
     assert not g.number_of_nodes()

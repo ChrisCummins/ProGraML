@@ -19,6 +19,17 @@
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "plugins",
+    testonly = 1,
+    deps = [
+        ":llvm_ir",
+        ":llvm_program_graph",
+        ":llvm_reachability_features",
+        ":tempdir",
+    ],
+)
+
+py_library(
     name = "llvm_ir",
     testonly = 1,
     srcs = ["llvm_ir.py"],
@@ -34,7 +45,7 @@ py_library(
     srcs = ["llvm_program_graph.py"],
     data = ["//tests/data:llvm_ir_graphs"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:pbutil",
         "//programl/util/py:runfiles_path",
     ],

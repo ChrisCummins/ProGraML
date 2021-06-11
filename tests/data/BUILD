@@ -2071,13 +2071,13 @@ genrule(
         "for f in $(locations :llvm_ir); do" +
         "    basename=$$(basename $$f); " +
         "    out=$(@D)/llvm_ir_graphs/$${basename%.ll}.ProgramGraph.pb;" +
-        "    LD_LIBRARY_PATH=$(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir):$(location @clang-llvm-10.0.0-x86_64-apple-darwin//:libdir) $(location //bin:llvm2graph) --stdout_fmt=pb <$$f --stdout_fmt=pb >$$out;" +
+        "    LD_LIBRARY_PATH=$(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir):$(location @clang-llvm-10.0.0-x86_64-apple-darwin//:libdir) $(location //programl/bin:llvm2graph-10) --stdout_fmt=pb <$$f --stdout_fmt=pb >$$out;" +
         "done && " +
-        "$(location //bin:inst2vec) --directory=$(@D)/llvm_ir_graphs"
+        "$(location //programl/bin:inst2vec) --directory=$(@D)/llvm_ir_graphs"
     ),
     tools = [
-        "//bin:inst2vec",
-        "//bin:llvm2graph",
+        "//programl/bin:inst2vec",
+        "//programl/bin:llvm2graph-10",
         "@clang-llvm-10.0.0-x86_64-apple-darwin//:libdir",
         "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:libdir",
     ],
@@ -3094,10 +3094,10 @@ genrule(
         "for f in $(locations :llvm_ir_graphs); do" +
         "    basename=$$(basename $$f); " +
         "    out=$(@D)/llvm_ir_reachability/$${basename%.ProgramGraph.pb}.ProgramGraphFeaturesList.pb;" +
-        "    $(location //bin:analyze) reachability < $$f > $$out --stdin_fmt=pb --stdout_fmt=pb;" +
+        "    $(location //programl/bin:analyze) reachability < $$f > $$out --stdin_fmt=pb --stdout_fmt=pb;" +
         "done"
     ),
-    tools = ["//bin:analyze"],
+    tools = ["//programl/bin:analyze"],
 )
 
 filegroup(

@@ -18,7 +18,7 @@ py_binary(
     name = "collect_stats",
     srcs = ["collect_stats.py"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
         "//tasks/dataflow/dataset:pathflag",
@@ -36,12 +36,7 @@ py_binary(
     deps = [
         ":encode_inst2vec",
         ":pathflag",
-        "//programl/ir/llvm/py:llvm",
-        "//programl/proto:programl_py",
-        "//programl/util/py:init_app",
-        "//programl/util/py:pbutil",
-        "//programl/util/py:progress",
-        "//programl/util/py:runfiles_path",
+        "//programl",
     ],
 )
 
@@ -49,7 +44,7 @@ sh_binary(
     name = "count_instances",
     srcs = ["count_instances.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -58,7 +53,7 @@ sh_binary(
     name = "count_labels",
     srcs = ["count_labels.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -67,7 +62,7 @@ sh_binary(
     name = "create_labels",
     srcs = ["create_labels.sh"],
     data = [
-        "//bin:analyze",
+        "//programl/bin:analyze",
         "@labm8//labm8/sh:app",
     ],
 )
@@ -93,7 +88,7 @@ py_binary(
     deps = [
         ":pathflag",
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:decorators",
         "//programl/util/py:pbutil",
         "//programl/util/py:progress",
@@ -145,7 +140,7 @@ sh_binary(
     name = "unpack_ir_text",
     srcs = ["unpack_ir_text.sh"],
     data = [
-        "//bin:pbq",
+        "//programl/bin:pbq",
         "@labm8//labm8/sh:app",
     ],
 )

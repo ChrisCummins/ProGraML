@@ -27,8 +27,8 @@ import subprocess
 from absl import app, flags, logging
 from MySQLdb import _mysql
 
-from programl.ir.llvm.py import llvm
-from programl.proto import ir_pb2
+import programl as pg
+from programl.proto import Ir
 from programl.util.py import pbutil, progress
 from programl.util.py.init_app import init_app
 from programl.util.py.runfiles_path import runfiles_path
@@ -97,14 +97,12 @@ def _ProcessRow(output_directory, row, file_id) -> None:
         "LLVM_6_0": 600,
         "LLVM_3_5": 350,
     }[ir_type]
-    ir_message = ir_pb2.Ir(
-        type=ir_pb2.Ir.LLVM, compiler_version=compiler_version, text=ir
-    )
+    ir_message = Ir(type=Ir.LLVM, compiler_version=compiler_version, text=ir)
     pbutil.ToFile(ir_message, ir_message_path)
 
     # Convert to ProgramGraph.
     try:
-        graph = llvm.BuildProgramGraph(ir)
+        graph = pg.from_llvm_ir(ir)
         pbutil.ToFile(graph, output_directory / f"graphs/{name}.ProgramGraph.pb")
 
         # Put into train/val/test bin.

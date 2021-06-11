@@ -118,8 +118,6 @@ Status CreateFeatureArray(const Feature& feature, json* featureArray) {
     for (int i = 0; i < feature.int64_list().value_size(); ++i) {
       featureArray->push_back(feature.int64_list().value(i));
     }
-  } else {
-    return Status(labm8::error::Code::INTERNAL, "Empty feature");
   }
 
   return Status::OK;

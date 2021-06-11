@@ -21,7 +21,7 @@ py_test(
     timeout = "eternal",
     srcs = ["benchmark_dataflow_analyses.py"],
     data = [
-        "//bin:analyze",
+        "//programl/bin:analyze",
         "//tests/data:llvm_ir_graphs",
     ],
     deps = [
@@ -30,45 +30,11 @@ py_test(
 )
 
 py_test(
-    name = "benchmark_dataflow_ggnn",
-    timeout = "eternal",
-    srcs = ["benchmark_dataflow_ggnn.py"],
-    deps = [
-        "//models/ggnn",
-        "//programl/proto:programl_py",
-        "//programl/util/py:humanize",
-        "//programl/util/py:progress",
-        "//programl/util/py:threaded_iterator",
-        "//tasks/dataflow:ggnn_batch_builder",
-        "//tasks/dataflow:graph_loader",
-        "//tests/plugins:llvm_program_graph",
-        "//tests/plugins:llvm_reachability_features",
-    ],
-)
-
-#py_test(
-#    name = "benchmark_dataflow_lstm",
-#    timeout = "eternal",
-#    srcs = ["benchmark_dataflow_lstm.py"],
-#    deps = [
-#        "//models/lstm",
-#        "//programl/proto:programl_py",
-#        "//programl/util/py:progress",
-#        "//programl/util/py:threaded_iterator",
-#        "//tests/plugins:llvm_program_graph",
-#        "//tests/plugins:llvm_reachability_features",
-#        "//tasks/dataflow:graph_loader",
-#        "//tasks/dataflow:lstm_batch_builder",
-#        "//programl/third_party/ncc:vocabulary",
-#    ],
-#)
-
-py_test(
     name = "benchmark_llvm2graph",
     timeout = "eternal",
     srcs = ["benchmark_llvm2graph.py"],
     data = [
-        "//bin:llvm2graph",
+        "//programl/bin:llvm2graph-10",
         "//tests/data:llvm_ir",
     ],
     deps = [

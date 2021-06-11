@@ -27,7 +27,7 @@ import pandas as pd
 import requests
 from absl import app, flags
 
-from programl.ir.llvm.py import llvm
+import programl as pg
 from programl.util.py import pbutil
 from tasks.dataflow.dataset import pathflag
 
@@ -137,7 +137,7 @@ def build_graphs(df: pd.DataFrame, ir_dir: Path, graph_dir: Path):
     for _, row in df.iterrows():
         with open(ir_dir / f"{row['name']}.ll") as f:
             ir = f.read()
-        graph = llvm.BuildProgramGraph(ir)
+        graph = pg.from_llvm_ir(ir)
         graph.features.feature["devmap_label"].int64_list.value[:] = [row["label"]]
         graph.features.feature["wgsize"].int64_list.value[:] = [row["wgsize"]]
         graph.features.feature["transfer_bytes"].int64_list.value[:] = [

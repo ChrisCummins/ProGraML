@@ -17,8 +17,7 @@
 from typing import Optional
 
 from programl.graph.py import program_graph_builder_pybind
-from programl.proto import program_graph_pb2
-from programl.proto.program_graph_options_pb2 import ProgramGraphOptions
+from programl.proto import ProgramGraph, ProgramGraphOptions
 
 
 class ProgramGraphBuilder(program_graph_builder_pybind.ProgramGraphBuilder):
@@ -41,7 +40,7 @@ class ProgramGraphBuilder(program_graph_builder_pybind.ProgramGraphBuilder):
         options = options or ProgramGraphOptions()
         super().__init__(options.SerializeToString())
 
-    def Build(self) -> program_graph_pb2.ProgramGraph:
-        proto = program_graph_pb2.ProgramGraph()
+    def Build(self) -> ProgramGraph:
+        proto = ProgramGraph()
         proto.ParseFromString(self._Build())
         return proto

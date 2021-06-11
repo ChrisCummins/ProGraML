@@ -21,11 +21,11 @@ lossless.
 import networkx as nx
 
 from programl.graph.format.py import node_link_graph_pybind
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 
 
 def ProgramGraphToNetworkX(
-    proto: program_graph_pb2.ProgramGraph,
+    proto: ProgramGraph,
 ) -> nx.MultiDiGraph:
     """Convert a ProgramGraph message to a NetworkX graph.
 

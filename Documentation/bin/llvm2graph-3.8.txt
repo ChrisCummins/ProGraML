@@ -1,0 +1,76 @@
+llvm2graph-3.8: Generate a program graph from LLVM-IR.
+
+Read an LLVM-IR module from stdin and print the program graph to stdout. For example:
+
+  $ llvm2graph < /path/to/llvm.ll
+
+Or pipe the output directly from clang:
+
+  $ clang foo.c -emit-llvm -o - | llvm2graph -
+
+If the filename has suffix '.Ir.pb', the file is parsed as an Ir protocol buffer:
+
+  $ llvm2graph /path/to/llvm.Ir.pb
+
+If the filename has suffix '.IrList.pb', the file is parsed as an IrList protocol buffer
+and the IR at position --ir_list_index (zero-based) is used:
+
+  $ llvm2graph /path/to/list.IrList.pb --ir_list_index=2
+
+  Flags from external/com_github_gflags_gflags/src/gflags.cc:
+    -flagfile (load flags from file) type: string default: ""
+    -fromenv (set flags from the environment [use 'export FLAGS_flag1=value'])
+      type: string default: ""
+    -tryfromenv (set flags from the environment if present) type: string
+      default: ""
+    -undefok (comma-separated list of flag names that it is okay to specify on
+      the command line even if the program does not define a flag with that
+      name.  IMPORTANT: flags in this list that have arguments MUST use the
+      flag=value format) type: string default: ""
+
+  Flags from external/com_github_gflags_gflags/src/gflags_completions.cc:
+    -tab_completion_columns (Number of columns to use in output for tab
+      completion) type: int32 default: 80
+    -tab_completion_word (If non-empty, HandleCommandLineCompletions() will
+      hijack the process and attempt to do bash-style command line flag
+      completion on this value.) type: string default: ""
+
+  Flags from external/com_github_gflags_gflags/src/gflags_reporting.cc:
+    -help (show help on all flags [tip: all flags can have two dashes])
+      type: bool default: false
+    -helpfull (show help on all flags -- same as -help) type: bool
+      default: false currently: true
+    -helpmatch (show help on modules whose name contains the specified substr)
+      type: string default: ""
+    -helpon (show help on the modules named by this flag value) type: string
+      default: ""
+    -helppackage (show help on all modules in the main package) type: bool
+      default: false
+    -helpshort (show help on only the main module for this program) type: bool
+      default: false
+    -helpxml (produce an xml version of help) type: bool default: false
+    -version (show version and build info and exit) type: bool default: false
+
+
+
+  Flags from programl/bin/llvm2graph.cc:
+    -ignore_call_returns (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -instructions_only (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -ir_list_index (If reading an IrList protocol buffer, use this value to
+      index into the list.) type: int32 default: 0
+    -strict (Validate that the generated graph conforms to expectations of what
+      a graph should look like - i.e. the module is not empty, every function
+      contains instructions, and it does not contain unreachable code.)
+      type: bool default: false
+
+
+
+  Flags from programl/util/stdout_fmt.cc:
+    -stdout_fmt (The format of output. Valid options are: "pbtxt" for a
+      text-format protocol buffer, "pb" for a binary format protocol buffer, or
+      "json" for JSON. Text format protocol buffers are recommended for
+      human-readable output, binary-format for efficient and fast file storage,
+      and JSON for processing with third-party tools such as `jq`.)
+      type: string default: "pbtxt"

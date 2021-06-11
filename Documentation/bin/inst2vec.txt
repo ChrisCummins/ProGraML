@@ -11,7 +11,7 @@ Example usage:
 
 flags:
 
-bin/inst2vec.py:
+programl/bin/inst2vec.py:
   --dataset: The path of a directory to process. When set, this changes the
     behavior to instead iterate over all *.PrographGraph.pb protocol buffer
     files in the given directory, and adding inst2vec labels in-place. For each
@@ -25,10 +25,6 @@ bin/inst2vec.py:
   --ir: The path of the IR file that was used to construct the graph. This is
     required to inline struct definitions. This argument may be omitted when
     struct definitions do not need to be inlined.
-  --stdin_fmt: The format for stdin. One of {pb,pbtxt}
-    (default: 'pbtxt')
-  --stdout_fmt: The format for stdout. One of {pb,pbtxt}
-    (default: 'pbtxt')
 
 absl.app:
   -?,--[no]help: show this help
@@ -40,6 +36,8 @@ absl.app:
   --[no]helpxml: like --helpfull, but generates XML output
     (default: 'false')
   --[no]only_check_args: Set to true to validate args and exit.
+    (default: 'false')
+  --[no]pdb: Alias for --pdb_post_mortem.
     (default: 'false')
   --[no]pdb_post_mortem: Set to true to handle uncaught exceptions with PDB post
     mortem.
@@ -60,6 +58,11 @@ absl.logging:
     (default: 'false')
   --log_dir: directory to write logfiles into
     (default: '')
+  --logger_levels: Specify log level of loggers. The format is a CSV list of
+    `name:level`. Where `name` is the logger name used with
+    `logging.getLogger()`, and `level` is a level name  (INFO, DEBUG, etc). e.g.
+    `myapp.foo:INFO,other.logger:DEBUG`
+    (default: '')
   --[no]logtostderr: Should only log to stderr?
     (default: 'false')
   --[no]showprefixforinfo: If False, do not prepend prefix to info messages when
@@ -79,29 +82,23 @@ absl.logging:
     (default: '-1')
     (an integer)
 
-labm8.py.app:
-  --[no]dump_flags: Print the defined flags and their values and exit.
-    (default: 'false')
-  --[no]dump_flags_to_json: Print the defined flags and their values to JSON and
-    exit.
-    (default: 'false')
-  --[no]log_colors: Whether to colorize logging output.
-    (default: 'true')
-  --[no]ptvsd: Pauses execution on app start to enable you to attach a debugging
-    session in Visual Studio or Visual Studio Code. This requires additional
-    configuration of your IDE. See: https://stackoverflow.com/a/61367381
-    (default: 'false')
-  --[no]version: Print version information and exit.
+programl.util.py.init_app:
+  --[no]version: Print the version information and exit.
     (default: 'false')
 
-labm8.py.internal.labm8_logging:
-  --vmodule: Per-module verbose level. The argument has to contain a comma-
-    separated list of <module name>=<log level>. <module name> is a glob pattern
-    (e.g., gfs* for all modules whose name starts with "gfs"), matched against
-    the filename base (that is, name ignoring .py). <log level> overrides any
-    value given by --v.
-    (default: '')
-    (a comma separated list)
+programl.util.py.stdin_fmt:
+  --stdin_fmt: The type of input format to use. Valid options are: "pbtxt" which
+    reads a text format protocol buffer, "pb" which reads a binary format
+    protocol buffer, or "json" which reads a JSON format protocol buffer.
+    (default: 'pbtxt')
+
+programl.util.py.stdout_fmt:
+  --stdout_fmt: The format of output. Valid options are: "pbtxt" for a text-
+    format protocol buffer, "pb" for a binary format protocol buffer, or "json"
+    for JSON. Text format protocol buffers are recommended for human-readable
+    output, binary-format for efficient and fast file storage, and JSON for
+    processing with third-party tools such as `jq`.
+    (default: 'pbtxt')
 
 absl.flags:
   --flagfile: Insert flag definitions from the given file into the command line.

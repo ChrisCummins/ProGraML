@@ -46,9 +46,8 @@ TEST(CreateFeatureArray, EmptyFeature) {
   auto featureArray = json::array({});
   Status status = detail::CreateFeatureArray(feature, &featureArray);
 
-  ASSERT_FALSE(status.ok());
-  ASSERT_EQ(status.error_code(), labm8::error::Code::INTERNAL);
-  ASSERT_EQ(status.error_message(), "Empty feature");
+  ASSERT_TRUE(status.ok());
+  ASSERT_EQ(featureArray.size(), 0);
 }
 
 TEST(CreateFeatureArray, BytesList) {

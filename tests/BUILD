@@ -23,15 +23,6 @@ cc_library(
     visibility = ["//tests:__subpackages__"],
 )
 
-py_library(
-    name = "test_main",
-    testonly = 1,
-    srcs = ["test_main.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-    ],
-)
-
 cc_library(
     name = "llvm_program_graphs",
     testonly = 1,
@@ -45,5 +36,101 @@ cc_library(
         "@labm8//labm8/cpp:bazelutil",
         "@labm8//labm8/cpp:logging",
         "@labm8//labm8/cpp:strutil",
+    ],
+)
+
+py_test(
+    name = "from_clang_test",
+    srcs = ["from_clang_test.py"],
+    shard_count = 4,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_cpp_test",
+    srcs = ["from_cpp_test.py"],
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_llvm_ir_test",
+    srcs = ["from_llvm_ir_test.py"],
+    shard_count = 4,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "from_xla_hlo_proto_test",
+    srcs = ["from_xla_hlo_proto_test.py"],
+    data = ["//tests/data:hlo_protos"],
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "serialize_graphs_test",
+    srcs = ["serialize_graphs_test.py"],
+    shard_count = 3,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_library(
+    name = "test_main",
+    testonly = 1,
+    srcs = ["test_main.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+    ],
+)
+
+py_test(
+    name = "to_dot_test",
+    srcs = ["to_dot_test.py"],
+    shard_count = 8,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "to_json_test",
+    srcs = ["to_json_test.py"],
+    shard_count = 8,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
+
+py_test(
+    name = "to_networkx_test",
+    srcs = ["to_networkx_test.py"],
+    shard_count = 8,
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
     ],
 )

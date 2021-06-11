@@ -37,11 +37,11 @@ py_library(
     name = "cdfg",
     srcs = ["cdfg.py"],
     data = [
-        "//bin:graph2cdfg",
+        "//programl/bin:graph2cdfg",
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//programl/util/py:runfiles_path",
     ],
 )
@@ -52,7 +52,7 @@ py_library(
     data = [":graph_serializer_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
     ],
 )
 
@@ -81,7 +81,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":graph_tuple",
-        "//programl/proto:programl_py",
+        "//programl/proto",
     ],
 )
 
@@ -112,6 +112,6 @@ py_library(
     data = [":node_link_graph_pybind.so"],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/proto:programl_py",
+        "//programl/proto",
     ],
 )

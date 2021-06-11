@@ -21,7 +21,7 @@
 
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/string.h"
-#include "programl/proto/ir.pb.h"
+#include "programl/proto/util.pb.h"
 
 namespace programl {
 namespace ir {

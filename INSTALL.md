@@ -21,11 +21,11 @@ mkdir -p ~/.local/opt/programl
 tar xjvf ~/Downloads/programl-*.tar.bz2 -C ~/.local/opt/programl
 ```
 
-Add the installed binaries to your PATH, and libraries to your LD_LIBRARY_PATH.
-You may want to add this to your `~/.bashrc`:
+Add the installed binaries to your PATH. You may want to add this to your
+`~/.bashrc`:
 ```sh
+# ProGraML <https://github.com/ChrisCummins/ProGraML>.
 export PATH=$HOME/.local/opt/programl/bin:$PATH
-export LD_LIBRARY_PATH=$HOME/.local/opt/programl/lib:$LD_LIBRARY_PATH
 ```
 
 

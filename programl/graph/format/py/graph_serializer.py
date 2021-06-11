@@ -21,11 +21,11 @@ lossless.
 from typing import List
 
 from programl.graph.format.py import graph_serializer_pybind
-from programl.proto import program_graph_pb2
+from programl.proto import ProgramGraph
 
 
 def SerializeInstructionsInProgramGraph(
-    proto: program_graph_pb2.ProgramGraph, max_nodes: int
+    proto: ProgramGraph, max_nodes: int
 ) -> List[int]:
     """Convert a ProgramGraph message to a NetworkX graph.
 

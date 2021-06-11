@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include "programl/proto/features.pb.h"
+#include "programl/third_party/tensorflow/features.pb.h"
 
 namespace programl {
 namespace graph {

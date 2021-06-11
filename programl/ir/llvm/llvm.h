@@ -24,7 +24,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
+#include "programl/proto/util.pb.h"
 
 namespace programl {
 namespace ir {

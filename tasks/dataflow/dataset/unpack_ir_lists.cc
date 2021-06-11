@@ -27,7 +27,7 @@
 #include "labm8/cpp/fsutil.h"
 #include "labm8/cpp/logging.h"
 #include "labm8/cpp/strutil.h"
-#include "programl/proto/ir.pb.h"
+#include "programl/proto/util.pb.h"
 #include "tasks/dataflow/dataset/parallel_file_map.h"
 
 namespace fs = boost::filesystem;

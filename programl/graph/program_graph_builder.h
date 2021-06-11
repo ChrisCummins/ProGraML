@@ -25,7 +25,7 @@
 #include "labm8/cpp/statusor.h"
 #include "labm8/cpp/string.h"
 #include "programl/proto/program_graph.pb.h"
-#include "programl/proto/program_graph_options.pb.h"
+#include "programl/proto/util.pb.h"
 
 namespace programl {
 namespace graph {

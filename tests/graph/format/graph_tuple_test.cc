@@ -19,7 +19,6 @@
 
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/test.h"
-#include "programl/proto/edge.pb.h"
 #include "programl/proto/program_graph.pb.h"
 
 namespace programl {

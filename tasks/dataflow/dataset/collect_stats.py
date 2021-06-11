@@ -19,7 +19,7 @@ import pathlib
 
 from absl import app, flags, logging
 
-from programl.proto import program_graph_features_pb2, program_graph_pb2
+from programl.proto import ProgramGraph, ProgramGraphFeaturesList
 from programl.util.py import pbutil, progress
 from tasks.dataflow.dataset import pathflag
 
@@ -67,7 +67,7 @@ class CollectGraphStats(progress.Progress):
 
         for self.ctx.i, path in enumerate(self.files):
             graph_name = path.name[: -len(".ProgramGraph.pb")]
-            graph = pbutil.FromFile(path, program_graph_pb2.ProgramGraph())
+            graph = pbutil.FromFile(path, ProgramGraph())
             self.writer.writerow(
                 (
                     self.split,
@@ -110,9 +110,7 @@ class CollectAnalysisStats(progress.Progress):
 
         for self.ctx.i, path in enumerate(self.files):
             graph_name = path.name[: -len(".ProgramGraphFeaturesList.pb")]
-            features = pbutil.FromFile(
-                path, program_graph_features_pb2.ProgramGraphFeaturesList()
-            )
+            features = pbutil.FromFile(path, ProgramGraphFeaturesList())
             for i, graph in enumerate(features.graph):
                 step_count = graph.features.feature[
                     "data_flow_step_count"

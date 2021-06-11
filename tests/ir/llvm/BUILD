@@ -31,7 +31,7 @@ py_test(
     deps = [
         "//programl/graph/py:program_graph_builder",
         "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto:programl_py",
+        "//programl/proto",
         "//tests:test_main",
         "//tests/plugins:llvm_program_graph",
     ],

@@ -19,7 +19,7 @@
 
 #include "labm8/cpp/status.h"
 #include "labm8/cpp/test.h"
-#include "programl/proto/ir.pb.h"
+#include "programl/proto/util.pb.h"
 
 using labm8::Status;
 namespace error = labm8::error;
