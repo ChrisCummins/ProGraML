@@ -30,10 +30,10 @@ runs:
               echo /home/runner/.local/bin >> $GITHUB_PATH
           shell: bash
 
-        - name: Create DGL directory
+        # DGL creates ~/.dgl on first run and I have found that this will fail
+        # if run from pytest / bazel.
+        - name: Initialize DGL
           run: |
-              sudo mkdir -p ~/.dgl
-              sudo chmod 777 ~/.dgl
               python -c 'import dgl; print(dgl.__version__)'
           shell: bash
 
