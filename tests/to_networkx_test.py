@@ -75,6 +75,8 @@ def test_to_networkx_smoke_test(llvm_program_graph: pg.ProgramGraph):
     graphs = list(pg.to_networkx([llvm_program_graph]))
     assert len(graphs) == 1
     assert isinstance(graphs[0], nx.MultiDiGraph)
+    assert graphs[0].number_of_nodes() == len(llvm_program_graph.node)
+    assert graphs[0].number_of_edges() <= len(llvm_program_graph.edge)
 
 
 if __name__ == "__main__":
