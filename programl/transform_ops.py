@@ -76,12 +76,13 @@ def to_json(
         graph conversion before raising an error. If multiple inputs are
         provided, this timeout is per-input.
 
-    :param executor: An executor object, with method :code:`map(callable,
-        *inputs)` that returns an iterator over results. The executor's role is
-        to dispatch the execution of jobs with multithreading depending on the
-        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.
-        Defaults to single threaded execution. This is only used when multiple
-        inputs are given.
+    :param executor: An executor object, with method :code:`submit(callable,
+        *args, **kwargs)` and returning a Future-like object with methods
+        :code:`done() -> bool` and :code:`result() -> float`. The executor role
+        is to dispatch the execution of the jobs locally/on a cluster/with
+        multithreading depending on the implementation. Eg:
+        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single
+        threaded execution. This is only used when multiple inputs are given.
 
     :param chunksize: The number of inputs to read and process at a time. A
         larger chunksize improves parallelism but increases memory consumption
@@ -128,12 +129,13 @@ def to_networkx(
         graph conversion before raising an error. If multiple inputs are
         provided, this timeout is per-input.
 
-    :param executor: An executor object, with method :code:`map(callable,
-        *inputs)` that returns an iterator over results. The executor's role is
-        to dispatch the execution of jobs with multithreading depending on the
-        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.
-        Defaults to single threaded execution. This is only used when multiple
-        inputs are given.
+    :param executor: An executor object, with method :code:`submit(callable,
+        *args, **kwargs)` and returning a Future-like object with methods
+        :code:`done() -> bool` and :code:`result() -> float`. The executor role
+        is to dispatch the execution of the jobs locally/on a cluster/with
+        multithreading depending on the implementation. Eg:
+        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single
+        threaded execution. This is only used when multiple inputs are given.
 
     :param chunksize: The number of inputs to read and process at a time. A
         larger chunksize improves parallelism but increases memory consumption
@@ -176,12 +178,13 @@ def to_dgl(
         graph conversion before raising an error. If multiple inputs are
         provided, this timeout is per-input.
 
-    :param executor: An executor object, with method :code:`map(callable,
-        *inputs)` that returns an iterator over results. The executor's role is
-        to dispatch the execution of jobs with multithreading depending on the
-        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.
-        Defaults to single threaded execution. This is only used when multiple
-        inputs are given.
+    :param executor: An executor object, with method :code:`submit(callable,
+        *args, **kwargs)` and returning a Future-like object with methods
+        :code:`done() -> bool` and :code:`result() -> float`. The executor role
+        is to dispatch the execution of the jobs locally/on a cluster/with
+        multithreading depending on the implementation. Eg:
+        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single
+        threaded execution. This is only used when multiple inputs are given.
 
     :param chunksize: The number of inputs to read and process at a time. A
         larger chunksize improves parallelism but increases memory consumption
@@ -228,12 +231,13 @@ def to_dot(
         graph conversion before raising an error. If multiple inputs are
         provided, this timeout is per-input.
 
-    :param executor: An executor object, with method :code:`map(callable,
-        *inputs)` that returns an iterator over results. The executor's role is
-        to dispatch the execution of jobs with multithreading depending on the
-        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.
-        Defaults to single threaded execution. This is only used when multiple
-        inputs are given.
+    :param executor: An executor object, with method :code:`submit(callable,
+        *args, **kwargs)` and returning a Future-like object with methods
+        :code:`done() -> bool` and :code:`result() -> float`. The executor role
+        is to dispatch the execution of the jobs locally/on a cluster/with
+        multithreading depending on the implementation. Eg:
+        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single
+        threaded execution. This is only used when multiple inputs are given.
 
     :param chunksize: The number of inputs to read and process at a time. A
         larger chunksize improves parallelism but increases memory consumption
