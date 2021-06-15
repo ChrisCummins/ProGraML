@@ -66,14 +66,17 @@ option java_package = "com.programl";
 
 // Containers to hold repeated fundamental values.
 message BytesList {
+  // Features data.
   repeated bytes value = 1;
 }
 
 message FloatList {
+  // Features data.
   repeated float value = 1 [packed = true];
 }
 
 message Int64List {
+  // Features data.
   repeated int64 value = 1 [packed = true];
 }
 
@@ -101,6 +104,7 @@ message Features {
 // contains the mapping from name to FeatureList.
 //
 message FeatureList {
+  // A list of Feature messages.
   repeated Feature feature = 1;
 }
 

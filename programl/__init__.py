@@ -15,10 +15,29 @@
 # limitations under the License.
 """ProGraML is a graph-based program representation for data flow analysis and
 compiler optimizations.
+
+The API is divided into three types of operations: graph *creation*, graph
+*transformation*, and graph *serialization*, all available under the
+:code:`programl` namespace.
+
+ProGraML was first described in this `this paper
+<https://chriscummins.cc/pub/2021-icml.pdf>`_:
+
+    Cummins, C., Fisches, Z., Ben-Nun, T., Hoefler, T., O'Boyle, M., and
+    Leather, H. "ProGraML: A Graph-based Program Representation for Data Flow
+    Analysis and Compiler Optimizations." In 38th International Conference on
+    Machine Learning (ICML).
 """
 from pathlib import Path
 
-from programl.create_ops import from_clang, from_cpp, from_llvm_ir, from_xla_hlo_proto
+from programl.create_ops import (
+    CLANG_VERSIONS,
+    LLVM_VERSIONS,
+    from_clang,
+    from_cpp,
+    from_llvm_ir,
+    from_xla_hlo_proto,
+)
 from programl.exceptions import (
     GraphCreationError,
     GraphTransformError,
@@ -47,6 +66,7 @@ binaries_path: Path = runfiles_path("programl/bin")
 
 __all__ = [
     "binaries_path",
+    "CLANG_VERSIONS",
     "from_bytes",
     "from_clang",
     "from_cpp",
@@ -55,12 +75,13 @@ __all__ = [
     "from_xla_hlo_proto",
     "GraphCreationError",
     "GraphTransformError",
+    "LLVM_VERSIONS",
     "load_graphs",
     "ProgramGraph",
     "save_graphs",
     "to_bytes",
-    "to_dot",
     "to_dgl",
+    "to_dot",
     "to_json",
     "to_networkx",
     "to_string",

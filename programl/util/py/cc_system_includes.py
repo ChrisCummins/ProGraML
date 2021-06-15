@@ -85,10 +85,13 @@ _SYSTEM_INCLUDES = None
 
 def get_system_includes() -> List[Path]:
     """Determine the system include paths for C/C++ compilation jobs.
+
     This uses the system compiler to determine the search paths for C/C++ system
     headers. By default, :code:`c++` is invoked. This can be overridden by
     setting :code:`os.environ["CXX"]`.
+
     :return: A list of paths to system header directories.
+
     :raises OSError: If the compiler fails, or if the search paths cannot be
         determined.
     """

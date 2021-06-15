@@ -48,7 +48,9 @@ def test_save_load_graphs_smoke_test(
     assert some_graphs == [llvm_program_graphs[0], llvm_program_graphs[2]]
 
 
-def test_invalid_compression(llvm_program_graphs: List[pg.ProgramGraph], tempdir: Path):
+def test_file_invalid_compression(
+    llvm_program_graphs: List[pg.ProgramGraph], tempdir: Path
+):
     error_message = (
         "Invalid compression argument: txt. Supported compressions: [gz, None]"
     )
@@ -60,14 +62,28 @@ def test_invalid_compression(llvm_program_graphs: List[pg.ProgramGraph], tempdir
         pg.load_graphs(tempdir / "graphs.pb", compression="txt")
 
 
-def test_to_bytes_from_bytes_smoke_test(llvm_program_graphs: List[pg.ProgramGraph]):
-    serialized = pg.to_bytes(llvm_program_graphs)
+def test_bytes_invalid_compression(llvm_program_graphs: List[pg.ProgramGraph]):
+    error_message = (
+        "Invalid compression argument: txt. Supported compressions: [gz, None]"
+    )
+    with pytest.raises(TypeError, match=error_message):
+        pg.to_bytes(llvm_program_graphs, compression="txt")
+
+    with pytest.raises(TypeError, match=error_message):
+        pg.from_bytes(b"", compression="txt")
+
+
+@pytest.mark.parametrize("compression", ["gz", None])
+def test_to_bytes_from_bytes_smoke_test(
+    llvm_program_graphs: List[pg.ProgramGraph], compression: str
+):
+    serialized = pg.to_bytes(llvm_program_graphs, compression=compression)
     assert isinstance(serialized, bytes)
-    graphs = pg.from_bytes(serialized)
+    graphs = pg.from_bytes(serialized, compression=compression)
     assert llvm_program_graphs == graphs
 
     # Again with an index list.
-    some_graphs = pg.from_bytes(serialized, idx_list=[0, 2])
+    some_graphs = pg.from_bytes(serialized, idx_list=[0, 2], compression=compression)
     assert some_graphs == [llvm_program_graphs[0], llvm_program_graphs[2]]
 
 

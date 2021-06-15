@@ -1,13 +1,13 @@
 ProGraML
 ========
 
-`ProGraML <https://github.com/ChrisCummins/ProGraML>`_ is an expressive
-graph-based representation of programs for machine learning.
+Welcome to the `ProGraML <https://github.com/ChrisCummins/ProGraML>`_
+documentation.
 
 .. toctree::
    :maxdepth: 3
-   :caption: Python API Reference
 
+   getting-started
    api/python
    api/protocol-buffers
 

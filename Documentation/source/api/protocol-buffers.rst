@@ -1,13 +1,17 @@
 Protocol Buffers
 ================
 
+ProGraML uses `Protocol Buffers
+<https://developers.google.com/protocol-buffers>`_ for representing the
+structured data of program graphs.
+
 .. contents:: Document contents:
    :local:
 
 The Program Graph
 -----------------
 
-These are accessible from:
+These protocol buffer definitions are available in:
 
 * Python: :code:`from programl.proto import *`
 * C++: :code:`#include "programl/proto/program_graph.pb.h"`
@@ -30,7 +34,7 @@ These are accessible from:
 Features
 --------
 
-These are accessible from:
+These protocol buffer definitions are available in:
 
 * Python: :code:`from programl.proto import *`
 * C++: :code:`#include "programl/third_party/tesnroflow/features.pb.h"`
@@ -57,7 +61,7 @@ These are accessible from:
 Util
 ----
 
-These are accessible from:
+These protocol buffer definitions are available in:
 
 * Python: :code:`from programl.proto import *`
 * C++: :code:`#include "programl/proto/util.pb.h"`

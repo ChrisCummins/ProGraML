@@ -34,6 +34,11 @@ def test_to_json_simple_graph(graph: pg.ProgramGraph):
     assert isinstance(jsons[0], dict)
 
 
+def test_to_json_simple_graph_single_input(graph: pg.ProgramGraph):
+    json = pg.to_json(graph)
+    assert isinstance(json, dict)
+
+
 def test_to_json_two_inputs(graph: pg.ProgramGraph):
     jsons = list(pg.to_json([graph, graph]))
     assert len(jsons) == 2

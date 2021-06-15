@@ -35,6 +35,13 @@ def test_c_input():
     assert isinstance(graph, pg.ProgramGraph)
 
 
+def test_multiple_c_inputs():
+    graphs = list(pg.from_cpp(["int A() { return 0; }"] * 10))
+    assert len(graphs) == 10
+    for graph in graphs:
+        assert isinstance(graph, pg.ProgramGraph)
+
+
 def test_c_input_with_std_header():
     graph = pg.from_cpp(
         """

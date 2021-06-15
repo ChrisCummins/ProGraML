@@ -20,11 +20,7 @@ from tests.test_main import main
 
 pytest_plugins = ["tests.plugins.llvm_ir"]
 
-
-@pytest.fixture(scope="module", params=pg.create_ops.LLVM2GRAPH_BINARIES.keys())
-def simple_ir_graph(request) -> pg.ProgramGraph:
-    return pg.from_llvm_ir(
-        """
+SIMPLE_IR = """
 source_filename = "foo.c"
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.15.0"
@@ -39,9 +35,22 @@ define i32 @A(i32, i32) #0 {
   %7 = add nsw i32 %5, %6
   ret i32 %7
 }
-""",
+"""
+
+
+@pytest.fixture(scope="module", params=pg.create_ops.LLVM2GRAPH_BINARIES.keys())
+def simple_ir_graph(request) -> pg.ProgramGraph:
+    return pg.from_llvm_ir(
+        SIMPLE_IR,
         version=request.param,
     )
+
+
+def test_from_llvm_ir_multiple_inputs():
+    graphs = list(pg.from_llvm_ir([SIMPLE_IR] * 10))
+    assert len(graphs) == 10
+    for graph in graphs:
+        assert isinstance(graph, pg.ProgramGraph)
 
 
 def test_graph_type(simple_ir_graph):

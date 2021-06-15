@@ -83,8 +83,8 @@ py_test(
 )
 
 py_test(
-    name = "serialize_graphs_test",
-    srcs = ["serialize_graphs_test.py"],
+    name = "serialize_ops_test",
+    srcs = ["serialize_ops_test.py"],
     shard_count = 3,
     deps = [
         "//programl",
