@@ -1,0 +1,861 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Python API Reference &mdash; ProGraML 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Protocol Buffers" href="protocol-buffers.html" />
+    <link rel="prev" title="Getting Started" href="../getting-started.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ProGraML
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-programl.create_ops">Graph Creation Ops</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#llvm-clang">LLVM / Clang</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xla">XLA</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-programl.transform_ops">Graph Transform Ops</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dgl">DGL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#networkx">NetworkX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graphviz">Graphviz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-programl.serialize_ops">Graph Serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#byte-array">Byte Array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string">String</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="protocol-buffers.html">Protocol Buffers</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ProGraML</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Python API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/python.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-programl">
+<span id="python-api-reference"></span><h1>Python API Reference<a class="headerlink" href="#module-programl" title="Permalink to this headline">¶</a></h1>
+<p>ProGraML is a graph-based program representation for data flow analysis and
+compiler optimizations.</p>
+<p>The API is divided into three types of operations: graph <em>creation</em>, graph
+<em>transformation</em>, and graph <em>serialization</em>, all available under the
+<code class="code docutils literal notranslate"><span class="pre">programl</span></code> namespace.</p>
+<p>ProGraML was first described in this <a class="reference external" href="https://chriscummins.cc/pub/2021-icml.pdf">this paper</a>:</p>
+<blockquote>
+<div><p>Cummins, C., Fisches, Z., Ben-Nun, T., Hoefler, T., O’Boyle, M., and
+Leather, H. “ProGraML: A Graph-based Program Representation for Data Flow
+Analysis and Compiler Optimizations.” In 38th International Conference on
+Machine Learning (ICML).</p>
+</div></blockquote>
+<div class="contents local topic" id="document-contents">
+<p class="topic-title">Document contents:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#module-programl.create_ops" id="id1">Graph Creation Ops</a></p>
+<ul>
+<li><p><a class="reference internal" href="#llvm-clang" id="id2">LLVM / Clang</a></p></li>
+<li><p><a class="reference internal" href="#xla" id="id3">XLA</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-programl.transform_ops" id="id4">Graph Transform Ops</a></p>
+<ul>
+<li><p><a class="reference internal" href="#dgl" id="id5">DGL</a></p></li>
+<li><p><a class="reference internal" href="#networkx" id="id6">NetworkX</a></p></li>
+<li><p><a class="reference internal" href="#graphviz" id="id7">Graphviz</a></p></li>
+<li><p><a class="reference internal" href="#json" id="id8">JSON</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-programl.serialize_ops" id="id9">Graph Serialization</a></p>
+<ul>
+<li><p><a class="reference internal" href="#file" id="id10">File</a></p></li>
+<li><p><a class="reference internal" href="#byte-array" id="id11">Byte Array</a></p></li>
+<li><p><a class="reference internal" href="#string" id="id12">String</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-programl.create_ops">
+<span id="graph-creation-ops"></span><h2><a class="toc-backref" href="#id1">Graph Creation Ops</a><a class="headerlink" href="#module-programl.create_ops" title="Permalink to this headline">¶</a></h2>
+<p>Graph creation operations are used to construct Program Graphs from source
+code or compiler intermediate representations (IRs).</p>
+<div class="section" id="llvm-clang">
+<h3><a class="toc-backref" href="#id2">LLVM / Clang</a><a class="headerlink" href="#llvm-clang" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_cpp">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_cpp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">srcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_includes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'c++'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/create_ops.html#from_cpp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_cpp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Program Graph from a string of C/C++ code.</p>
+<p>This is a convenience function for generating graphs of simple single-file
+code snippets. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">programl</span><span class="o">.</span><span class="n">from_cpp</span><span class="p">(</span><span class="s2">&quot;&quot;&quot; ... #include &lt;stdio.h&gt;</span>
+<span class="gp">...</span><span class="s2"></span>
+<span class="gp">... </span><span class="s2">int main() {</span>
+<span class="gp">... </span><span class="s2">  printf(&quot;Hello, ProGraML!&quot;);</span>
+<span class="gp">... </span><span class="s2">  return 0;</span>
+<span class="gp">... </span><span class="s2">}</span>
+<span class="gp">... </span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is equivalent to invoking clang with input over stdin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">|</span> <span class="n">clang</span> <span class="o">-</span><span class="n">xc</span><span class="o">++</span> <span class="o">-</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span>
+<span class="c1">#include &lt;stdio.h&gt;</span>
+
+<span class="nb">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Hello, ProGraML!&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">EOF</span>
+</pre></div>
+</div>
+<p>For more control over the clang invocation, see <a class="reference internal" href="#programl.from_clang" title="programl.from_clang"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_clang()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>srcs</strong> – A string of C / C++, or an iterable sequence of strings of C /
+C++.</p></li>
+<li><p><strong>copts</strong> – A list of additional command line arguments to pass to clang.</p></li>
+<li><p><strong>system_includes</strong> – Detect and pass <code class="code docutils literal notranslate"><span class="pre">-isystem</span></code> arguments to clang
+using the default search path of the system compiler. See
+<a class="reference internal" href="#programl.util.py.cc_system_includes.get_system_includes" title="programl.util.py.cc_system_includes.get_system_includes"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_system_includes()</span></code></a> for details.</p></li>
+<li><p><strong>language</strong> – The programming language of <code class="code docutils literal notranslate"><span class="pre">srcs</span></code>. Must be either
+<code class="code docutils literal notranslate"><span class="pre">c++</span></code> or <code class="code docutils literal notranslate"><span class="pre">c</span></code>.</p></li>
+<li><p><strong>version</strong> – The version of clang to use. See
+<code class="code docutils literal notranslate"><span class="pre">programl.CLANG_VERSIONS</span></code> for a list of available versions.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+clang invocation before raising an error. If multiple <code class="code docutils literal notranslate"><span class="pre">srcs</span></code>
+inputs are provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">srcs</span></code>
+is a single input.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <code class="code docutils literal notranslate"><span class="pre">srcs</span></code> is singular, returns a single
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instance. Else returns a generator over
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.UnsupportedCompiler" title="programl.UnsupportedCompiler"><strong>UnsupportedCompiler</strong></a> – If the requested compiler version is not
+supported.</p></li>
+<li><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If compilation of the input fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_clang">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_clang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_includes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/create_ops.html#from_clang"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_clang" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run clang and construct a Program Graph from the output.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">programl</span><span class="o">.</span><span class="n">from_clang</span><span class="p">([</span><span class="s2">&quot;/path/to/my/app.c&quot;</span><span class="p">,</span> <span class="s2">&quot;-DMY_MACRO=3&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This is equivalent to invoking clang as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clang</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">app</span><span class="o">.</span><span class="n">c</span> <span class="o">-</span><span class="n">DMY_MACRO</span><span class="o">=</span><span class="mi">3</span>
+</pre></div>
+</div>
+<p>Multiple inputs can be passed in a single invocation to be batched and
+processed in parallel. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">programl</span><span class="o">.</span><span class="n">from_clang</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="s2">&quot;a.cc&quot;</span><span class="p">,</span> <span class="s2">&quot;-DMY_MACRO=3&quot;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="s2">&quot;b.cpp&quot;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="s2">&quot;c.c&quot;</span><span class="p">,</span> <span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-std=c99&quot;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="n">executor</span><span class="o">=</span><span class="n">executor</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – A list of arguments to pass to clang, or an iterable sequence
+of arguments to pass to clang.</p></li>
+<li><p><strong>system_includes</strong> – Detect and pass <code class="code docutils literal notranslate"><span class="pre">-isystem</span></code> arguments to clang
+using the default search path of the system compiler. See
+<a class="reference internal" href="#programl.util.py.cc_system_includes.get_system_includes" title="programl.util.py.cc_system_includes.get_system_includes"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_system_includes()</span></code></a> for details.</p></li>
+<li><p><strong>version</strong> – The version of clang to use. See
+<code class="code docutils literal notranslate"><span class="pre">programl.CLANG_VERSIONS</span></code> for a list of available versions.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+clang invocation before raising an error. If multiple inputs are
+provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">args</span></code>
+is a single input.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <code class="code docutils literal notranslate"><span class="pre">args</span></code> is a single list of arguments, returns a single
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instance. Else returns a generator over
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.UnsupportedCompiler" title="programl.UnsupportedCompiler"><strong>UnsupportedCompiler</strong></a> – If the requested compiler version is not
+supported.</p></li>
+<li><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If compilation of the input fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_llvm_ir">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_llvm_ir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">irs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/create_ops.html#from_llvm_ir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_llvm_ir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Program Graph from a string of LLVM-IR.</p>
+<p>This takes as input one or more LLVM-IR strings as generated by
+<code class="code docutils literal notranslate"><span class="pre">llvm-dis</span></code> from a bitcode file, or from <code class="code docutils literal notranslate"><span class="pre">clang</span></code> using arguments:
+<code class="code docutils literal notranslate"><span class="pre">-emit-llvm</span> <span class="pre">-S</span></code>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">programl</span><span class="o">.</span><span class="n">from_llvm_ir</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="gp">... </span><span class="s2">source_filename = &quot;-&quot;</span>
+<span class="gp">... </span><span class="s2">target datalayout = &quot;e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128&quot;</span>
+<span class="gp">... </span><span class="s2">target triple = &quot;x86_64-apple-macosx11.0.0&quot;</span>
+<span class="gp">...</span><span class="s2"></span>
+<span class="gp">... </span><span class="s2">; ...</span>
+<span class="gp">... </span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Multiple inputs can be passed in a single invocation to be batched and
+processed in parallel. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">graphs</span> <span class="o">=</span> <span class="n">programl</span><span class="o">.</span><span class="n">from_llvm_ir</span><span class="p">(</span><span class="n">llvm_ir_strings</span><span class="p">,</span> <span class="n">executor</span><span class="o">=</span><span class="n">executor</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>irs</strong> – A string of LLVM-IR, or an iterable sequence of LLVM-IR strings.</p></li>
+<li><p><strong>version</strong> – The version of LLVM to use. See
+<code class="code docutils literal notranslate"><span class="pre">programl.LLVM_VERSIONS</span></code> for a list of available versions.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph construction invocation before raising an error. If multiple
+inputs are provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">irs</span></code>
+is a single input.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <code class="code docutils literal notranslate"><span class="pre">irs</span></code> is a single IR, returns a single
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instance. Else returns a generator over
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.UnsupportedCompiler" title="programl.UnsupportedCompiler"><strong>UnsupportedCompiler</strong></a> – If the requested LLVM version is not supported.</p></li>
+<li><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If graph construction fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.util.py.cc_system_includes.get_system_includes">
+<span class="sig-prename descclassname"><span class="pre">programl.util.py.cc_system_includes.</span></span><span class="sig-name descname"><span class="pre">get_system_includes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/util/py/cc_system_includes.html#get_system_includes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.util.py.cc_system_includes.get_system_includes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the system include paths for C/C++ compilation jobs.</p>
+<p>This uses the system compiler to determine the search paths for C/C++ system
+headers. By default, <code class="code docutils literal notranslate"><span class="pre">c++</span></code> is invoked. This can be overridden by
+setting <code class="code docutils literal notranslate"><span class="pre">os.environ[&quot;CXX&quot;]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of paths to system header directories.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>OSError</strong> – If the compiler fails, or if the search paths cannot be
+determined.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="xla">
+<h3><a class="toc-backref" href="#id3">XLA</a><a class="headerlink" href="#xla" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_xla_hlo_proto">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_xla_hlo_proto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hlos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.third_party.tensorflow.xla_pb2.HloProto</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.third_party.tensorflow.xla_pb2.HloProto</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/create_ops.html#from_xla_hlo_proto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_xla_hlo_proto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Program Graph from an XLA HLO protocol buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hlos</strong> – A <code class="code docutils literal notranslate"><span class="pre">HloProto</span></code>, or an iterable sequence of <code class="code docutils literal notranslate"><span class="pre">HloProto</span></code>
+instances.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph construction invocation before raising an error. If multiple
+inputs are provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">hlos</span></code>
+is a single input.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <code class="code docutils literal notranslate"><span class="pre">hlos</span></code> is a single input, returns a single
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instance. Else returns a generator over
+<code class="code docutils literal notranslate"><span class="pre">programl.ProgramGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If graph construction fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="programl.GraphCreationError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">GraphCreationError</span></span><a class="reference internal" href="../_modules/programl/exceptions.html#GraphCreationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.GraphCreationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised if a graph creation op fails.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="programl.UnsupportedCompiler">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">UnsupportedCompiler</span></span><a class="reference internal" href="../_modules/programl/exceptions.html#UnsupportedCompiler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.UnsupportedCompiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised if the requested compiler is not supported.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-programl.transform_ops">
+<span id="graph-transform-ops"></span><h2><a class="toc-backref" href="#id4">Graph Transform Ops</a><a class="headerlink" href="#module-programl.transform_ops" title="Permalink to this headline">¶</a></h2>
+<p>The graph transform ops are used to modify or convert Program Graphs to
+another representation.</p>
+<div class="section" id="dgl">
+<h3><a class="toc-backref" href="#id5">DGL</a><a class="headerlink" href="#dgl" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_dgl">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_dgl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dgl.heterograph.DGLHeteroGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">dgl.heterograph.DGLHeteroGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/transform_ops.html#to_dgl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_dgl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert one or more Program Graphs to <a class="reference external" href="https://docs.dgl.ai/en/latest/api/python/dgl.DGLGraph.html#dgl.DGLGraph">DGLGraphs</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphs</strong> – A Program Graph, or a sequence of Program Graphs.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph conversion before raising an error. If multiple inputs are
+provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is only used when multiple
+inputs are given.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory. This is only used when multiple
+inputs are given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If a single input is provided, return a single
+<code class="code docutils literal notranslate"><span class="pre">dgl.DGLGraph</span></code>. Else returns an iterable sequence of
+<code class="code docutils literal notranslate"><span class="pre">dgl.DGLGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.GraphTransformError" title="programl.GraphTransformError"><strong>GraphTransformError</strong></a> – If graph conversion fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="networkx">
+<h3><a class="toc-backref" href="#id6">NetworkX</a><a class="headerlink" href="#networkx" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_networkx">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_networkx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">networkx.classes.multidigraph.MultiDiGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">networkx.classes.multidigraph.MultiDiGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/transform_ops.html#to_networkx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert one or more Program Graphs to <a class="reference external" href="https://networkx.org/documentation/stable/reference/classes/multidigraph.html">NetworkX MultiDiGraphs</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphs</strong> – A Program Graph, or a sequence of Program Graphs.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph conversion before raising an error. If multiple inputs are
+provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is only used when multiple
+inputs are given.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory. This is only used when multiple
+inputs are given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If a single input is provided, return a single <code class="code docutils literal notranslate"><span class="pre">nx.MultiDiGraph</span></code>.
+Else returns an iterable sequence of <code class="code docutils literal notranslate"><span class="pre">nx.MultiDiGraph</span></code> instances.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.GraphTransformError" title="programl.GraphTransformError"><strong>GraphTransformError</strong></a> – If graph conversion fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="graphviz">
+<h3><a class="toc-backref" href="#id7">Graphviz</a><a class="headerlink" href="#graphviz" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_dot">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/transform_ops.html#to_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert one or more Program Graphs to DOT Graph Description Language.</p>
+<p>This produces a DOT source string representing the input graph. This can
+then be rendered using the graphviz command line tools, or parsed using
+<a class="reference external" href="https://pypi.org/project/pydot/">pydot</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphs</strong> – A Program Graph, or a sequence of Program Graphs.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph conversion before raising an error. If multiple inputs are
+provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is only used when multiple
+inputs are given.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory. This is only used when multiple
+inputs are given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A graphviz dot string when a single input is provided, else an
+iterable sequence of graphviz dot strings.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.GraphTransformError" title="programl.GraphTransformError"><strong>GraphTransformError</strong></a> – If graph conversion fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="json">
+<h3><a class="toc-backref" href="#id8">JSON</a><a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_json">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.util.py.executor.ExecutorLike</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/transform_ops.html#to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert one or more Program Graphs to JSON node-link data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphs</strong> – A Program Graph, or a sequence of Program Graphs.</p></li>
+<li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
+graph conversion before raising an error. If multiple inputs are
+provided, this timeout is per-input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
+<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
+to dispatch the execution of jobs with multithreading depending on the
+implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
+Defaults to single threaded execution. This is only used when multiple
+inputs are given.</p></li>
+<li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
+larger chunksize improves parallelism but increases memory consumption
+as more inputs must be stored in memory. This is only used when multiple
+inputs are given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If a single input is provided, return a single JSON dictionary.
+Else returns an iterable sequence of JSON dictionaries.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#programl.GraphTransformError" title="programl.GraphTransformError"><strong>GraphTransformError</strong></a> – If graph conversion fails.</p></li>
+<li><p><strong>TimeoutError</strong> – If the specified timeout is reached.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="programl.GraphTransformError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">GraphTransformError</span></span><a class="reference internal" href="../_modules/programl/exceptions.html#GraphTransformError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.GraphTransformError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised if a graph transform op fails.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-programl.serialize_ops">
+<span id="graph-serialization"></span><h2><a class="toc-backref" href="#id9">Graph Serialization</a><a class="headerlink" href="#module-programl.serialize_ops" title="Permalink to this headline">¶</a></h2>
+<p>Graph serialization ops are used for storing or transferring Program
+Graphs.</p>
+<div class="section" id="file">
+<h3><a class="toc-backref" href="#id10">File</a><a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.save_graphs">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">save_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gz'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/programl/serialize_ops.html#save_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.save_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a sequence of program graphs to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The file to write.</p></li>
+<li><p><strong>graphs</strong> – A sequence of Program Graphs.</p></li>
+<li><p><strong>compression</strong> – Either <code class="code docutils literal notranslate"><span class="pre">gz</span></code> for GZip compression (the default), or
+<code class="code docutils literal notranslate"><span class="pre">None</span></code> for no compression. Compression increases the cost of
+serializing and deserializing but can greatly reduce the size of the
+serialized graphs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If an unsupported <code class="code docutils literal notranslate"><span class="pre">compression</span></code> is given.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.load_graphs">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">load_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gz'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/serialize_ops.html#load_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.load_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load program graphs from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The file to read from.</p></li>
+<li><p><strong>idx_list</strong> – A zero-based list of graph indices to return. If not
+provided, all graphs are loaded.</p></li>
+<li><p><strong>compression</strong> – Either <code class="code docutils literal notranslate"><span class="pre">gz</span></code> for GZip compression (the default), or
+<code class="code docutils literal notranslate"><span class="pre">None</span></code> for no compression. Compression increases the cost of
+serializing and deserializing but can greatly reduce the size of the
+serialized graphs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sequence of Program Graphs.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – If an unsupported <code class="code docutils literal notranslate"><span class="pre">compression</span></code> is given.</p></li>
+<li><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If deserialization fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="byte-array">
+<h3><a class="toc-backref" href="#id11">Byte Array</a><a class="headerlink" href="#byte-array" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_bytes">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gz'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="../_modules/programl/serialize_ops.html#to_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize a sequence of Program Graphs to a byte array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphs</strong> – A sequence of Program Graphs.</p></li>
+<li><p><strong>compression</strong> – Either <code class="code docutils literal notranslate"><span class="pre">gz</span></code> for GZip compression (the default), or
+<code class="code docutils literal notranslate"><span class="pre">None</span></code> for no compression. Compression increases the cost of
+serializing and deserializing but can greatly reduce the size of the
+serialized graphs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The serialized program graphs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_bytes">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gz'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/serialize_ops.html#from_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize Program Graphs from a byte array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The serialized Program Graphs.</p></li>
+<li><p><strong>idx_list</strong> – A zero-based list of graph indices to return. If not
+provided, all graphs are returned.</p></li>
+<li><p><strong>compression</strong> – Either <code class="code docutils literal notranslate"><span class="pre">gz</span></code> for GZip compression (the default), or
+<code class="code docutils literal notranslate"><span class="pre">None</span></code> for no compression. Compression increases the cost of
+serializing and deserializing but can greatly reduce the size of the
+serialized graphs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of Program Graphs.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If deserialization fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="string">
+<h3><a class="toc-backref" href="#id12">String</a><a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.to_string">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="../_modules/programl/serialize_ops.html#to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize a sequence of Program Graphs to a human-readable string.</p>
+<p>The generated string has a JSON-like syntax that is designed for human
+readability. This is the least compact form of serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>graphs</strong> – A sequence of Program Graphs.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The serialized program graphs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="programl.from_string">
+<span class="sig-prename descclassname"><span class="pre">programl.</span></span><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">programl.proto.program_graph_pb2.ProgramGraph</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/programl/serialize_ops.html#from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#programl.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize Program Graphs from a human-readable string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The serialized Program Graphs.</p></li>
+<li><p><strong>idx_list</strong> – A zero-based list of graph indices to return. If not
+provided, all graphs are returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of Program Graphs.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#programl.GraphCreationError" title="programl.GraphCreationError"><strong>GraphCreationError</strong></a> – If deserialization fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="protocol-buffers.html" class="btn btn-neutral float-right" title="Protocol Buffers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../getting-started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright Chris Cummins.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

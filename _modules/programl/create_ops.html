@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>programl.create_ops &mdash; ProGraML 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ProGraML
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/python.html">Python API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/protocol-buffers.html">Protocol Buffers</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ProGraML</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>programl.create_ops</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for programl.create_ops</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2019-2020 the ProGraML authors.</span>
+<span class="c1">#</span>
+<span class="c1"># Contact Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">&quot;&quot;&quot;Graph creation operations are used to construct Program Graphs from source</span>
+<span class="sd">code or compiler intermediate representations (IRs).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">google.protobuf.message</span>
+
+<span class="kn">from</span> <span class="nn">programl.exceptions</span> <span class="kn">import</span> <span class="n">GraphCreationError</span><span class="p">,</span> <span class="n">UnsupportedCompiler</span>
+<span class="kn">from</span> <span class="nn">programl.proto</span> <span class="kn">import</span> <span class="n">ProgramGraph</span>
+<span class="kn">from</span> <span class="nn">programl.third_party.tensorflow.xla_pb2</span> <span class="kn">import</span> <span class="n">HloProto</span>
+<span class="kn">from</span> <span class="nn">programl.util.py.cc_system_includes</span> <span class="kn">import</span> <span class="n">get_system_includes</span>
+<span class="kn">from</span> <span class="nn">programl.util.py.executor</span> <span class="kn">import</span> <span class="n">ExecutorLike</span><span class="p">,</span> <span class="n">execute</span>
+<span class="kn">from</span> <span class="nn">programl.util.py.runfiles_path</span> <span class="kn">import</span> <span class="n">runfiles_path</span>
+
+<span class="n">LLVM2GRAPH_BINARIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">runfiles_path</span><span class="p">(</span><span class="s2">&quot;programl/bin/llvm2graph-10&quot;</span><span class="p">)),</span>
+    <span class="s2">&quot;3.8&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">runfiles_path</span><span class="p">(</span><span class="s2">&quot;programl/bin/llvm2graph-10&quot;</span><span class="p">)),</span>
+<span class="p">}</span>
+
+<span class="n">LLVM_VERSIONS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">LLVM2GRAPH_BINARIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">CLANG2GRAPH_BINARIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">runfiles_path</span><span class="p">(</span><span class="s2">&quot;programl/bin/clang2graph-10&quot;</span><span class="p">)),</span>
+<span class="p">}</span>
+
+<span class="n">CLANG_VERSIONS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">CLANG2GRAPH_BINARIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">XLA2GRAPH</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">runfiles_path</span><span class="p">(</span><span class="s2">&quot;programl/bin/xla2graph&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_graph_from_subprocess</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GraphCreationError</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GraphCreationError</span><span class="p">(</span><span class="s2">&quot;Unknown error in graph construction&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">ProgramGraph</span><span class="p">()</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">graph</span>
+    <span class="k">except</span> <span class="n">google</span><span class="o">.</span><span class="n">protobuf</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">DecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GraphCreationError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+
+<span class="c1"># LLVM.</span>
+
+
+<div class="viewcode-block" id="from_cpp"><a class="viewcode-back" href="../../api/python.html#programl.from_cpp">[docs]</a><span class="k">def</span> <span class="nf">from_cpp</span><span class="p">(</span>
+    <span class="n">srcs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">copts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">system_includes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;c++&quot;</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExecutorLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">chunksize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Construct a Program Graph from a string of C/C++ code.</span>
+
+<span class="sd">    This is a convenience function for generating graphs of simple single-file</span>
+<span class="sd">    code snippets. For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; programl.from_cpp(\&quot;\&quot;\&quot; ... #include &lt;stdio.h&gt;</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... int main() {</span>
+<span class="sd">        ...   printf(&quot;Hello, ProGraML!&quot;);</span>
+<span class="sd">        ...   return 0;</span>
+<span class="sd">        ... }</span>
+<span class="sd">        ... \&quot;\&quot;\&quot;)</span>
+
+<span class="sd">    This is equivalent to invoking clang with input over stdin:</span>
+
+<span class="sd">    .. code-block::</span>
+
+<span class="sd">        cat &lt;&lt;EOF | clang -xc++ - -c -o -</span>
+<span class="sd">        #include &lt;stdio.h&gt;</span>
+
+<span class="sd">        int main() {</span>
+<span class="sd">            printf(&quot;Hello, ProGraML!&quot;);</span>
+<span class="sd">            return 0;</span>
+<span class="sd">        }</span>
+<span class="sd">        EOF</span>
+
+<span class="sd">    For more control over the clang invocation, see :func:`from_clang`.</span>
+
+<span class="sd">    :param srcs: A string of C / C++, or an iterable sequence of strings of C /</span>
+<span class="sd">        C++.</span>
+
+<span class="sd">    :param copts: A list of additional command line arguments to pass to clang.</span>
+
+<span class="sd">    :param system_includes: Detect and pass :code:`-isystem` arguments to clang</span>
+<span class="sd">        using the default search path of the system compiler. See</span>
+<span class="sd">        :func:`get_system_includes()</span>
+<span class="sd">        &lt;programl.util.py.cc_system_includes.get_system_includes&gt;` for details.</span>
+
+<span class="sd">    :param language: The programming language of :code:`srcs`. Must be either</span>
+<span class="sd">        :code:`c++` or :code:`c`.</span>
+
+<span class="sd">    :param version: The version of clang to use. See</span>
+<span class="sd">        :code:`programl.CLANG_VERSIONS` for a list of available versions.</span>
+
+<span class="sd">    :param timeout: The maximum number of seconds to wait for an individual</span>
+<span class="sd">        clang invocation before raising an error. If multiple :code:`srcs`</span>
+<span class="sd">        inputs are provided, this timeout is per-input.</span>
+
+<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
+<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
+<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
+<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
+<span class="sd">        Defaults to single threaded execution. This is unused when :code:`srcs`</span>
+<span class="sd">        is a single input.</span>
+
+<span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
+<span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
+<span class="sd">        as more inputs must be stored in memory.</span>
+
+<span class="sd">    :return: If :code:`srcs` is singular, returns a single</span>
+<span class="sd">        :code:`programl.ProgramGraph` instance. Else returns a generator over</span>
+<span class="sd">        :code:`programl.ProgramGraph` instances.</span>
+
+<span class="sd">    :raises UnsupportedCompiler: If the requested compiler version is not</span>
+<span class="sd">        supported.</span>
+
+<span class="sd">    :raises GraphCreationError: If compilation of the input fails.</span>
+
+<span class="sd">    :raises TimeoutError: If the specified timeout is reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copts</span> <span class="o">=</span> <span class="n">copts</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">binary</span> <span class="o">=</span> <span class="n">CLANG2GRAPH_BINARIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsupportedCompiler</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown clang version: </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported versions: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">CLANG2GRAPH_BINARIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">system_includes</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">get_system_includes</span><span class="p">():</span>
+            <span class="n">copts</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-isystem&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_run_one</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;-x</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">copts</span><span class="p">,</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">_graph_from_subprocess</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">srcs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_run_one</span><span class="p">(</span><span class="n">srcs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">execute</span><span class="p">(</span><span class="n">_run_one</span><span class="p">,</span> <span class="n">srcs</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_clang"><a class="viewcode-back" href="../../api/python.html#programl.from_clang">[docs]</a><span class="k">def</span> <span class="nf">from_clang</span><span class="p">(</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+    <span class="n">system_includes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExecutorLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">chunksize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Run clang and construct a Program Graph from the output.</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; programl.from_clang([&quot;/path/to/my/app.c&quot;, &quot;-DMY_MACRO=3&quot;])</span>
+
+<span class="sd">    This is equivalent to invoking clang as:</span>
+
+<span class="sd">    .. code-block::</span>
+
+<span class="sd">        clang -c /path/to/my/app.c -DMY_MACRO=3</span>
+
+<span class="sd">    Multiple inputs can be passed in a single invocation to be batched and</span>
+<span class="sd">    processed in parallel. For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:</span>
+<span class="sd">        ...     programl.from_clang(</span>
+<span class="sd">        ...         [&quot;a.cc&quot;, &quot;-DMY_MACRO=3&quot;],</span>
+<span class="sd">        ...         [&quot;b.cpp&quot;],</span>
+<span class="sd">        ...         [&quot;c.c&quot;, &quot;-O3&quot;, &quot;-std=c99&quot;],</span>
+<span class="sd">        ...         executor=executor,</span>
+<span class="sd">        ...     )</span>
+
+
+<span class="sd">    :param args: A list of arguments to pass to clang, or an iterable sequence</span>
+<span class="sd">        of arguments to pass to clang.</span>
+
+<span class="sd">    :param system_includes: Detect and pass :code:`-isystem` arguments to clang</span>
+<span class="sd">        using the default search path of the system compiler. See</span>
+<span class="sd">        :func:`get_system_includes()</span>
+<span class="sd">        &lt;programl.util.py.cc_system_includes.get_system_includes&gt;` for details.</span>
+
+<span class="sd">    :param version: The version of clang to use. See</span>
+<span class="sd">        :code:`programl.CLANG_VERSIONS` for a list of available versions.</span>
+
+<span class="sd">    :param timeout: The maximum number of seconds to wait for an individual</span>
+<span class="sd">        clang invocation before raising an error. If multiple inputs are</span>
+<span class="sd">        provided, this timeout is per-input.</span>
+
+<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
+<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
+<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
+<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
+<span class="sd">        Defaults to single threaded execution. This is unused when :code:`args`</span>
+<span class="sd">        is a single input.</span>
+
+<span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
+<span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
+<span class="sd">        as more inputs must be stored in memory.</span>
+
+<span class="sd">    :return: If :code:`args` is a single list of arguments, returns a single</span>
+<span class="sd">        :code:`programl.ProgramGraph` instance. Else returns a generator over</span>
+<span class="sd">        :code:`programl.ProgramGraph` instances.</span>
+
+<span class="sd">    :raises UnsupportedCompiler: If the requested compiler version is not</span>
+<span class="sd">        supported.</span>
+
+<span class="sd">    :raises GraphCreationError: If compilation of the input fails.</span>
+
+<span class="sd">    :raises TimeoutError: If the specified timeout is reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">binary</span> <span class="o">=</span> <span class="n">CLANG2GRAPH_BINARIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsupportedCompiler</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown clang version: </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported versions: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">CLANG2GRAPH_BINARIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">extra_copts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">system_includes</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">get_system_includes</span><span class="p">():</span>
+            <span class="n">extra_copts</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-isystem&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_run_one</span><span class="p">(</span><span class="n">one_args</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ONE ARG&quot;</span><span class="p">,</span> <span class="n">one_args</span><span class="p">)</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">binary</span><span class="p">]</span> <span class="o">+</span> <span class="n">one_args</span> <span class="o">+</span> <span class="n">extra_copts</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">_graph_from_subprocess</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_run_one</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">execute</span><span class="p">(</span><span class="n">_run_one</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_llvm_ir"><a class="viewcode-back" href="../../api/python.html#programl.from_llvm_ir">[docs]</a><span class="k">def</span> <span class="nf">from_llvm_ir</span><span class="p">(</span>
+    <span class="n">irs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span>
+    <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExecutorLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">chunksize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Construct a Program Graph from a string of LLVM-IR.</span>
+
+<span class="sd">    This takes as input one or more LLVM-IR strings as generated by</span>
+<span class="sd">    :code:`llvm-dis` from a bitcode file, or from :code:`clang` using arguments:</span>
+<span class="sd">    :code:`-emit-llvm -S`.</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; programl.from_llvm_ir(\&quot;\&quot;\&quot;</span>
+<span class="sd">        ... source_filename = &quot;-&quot;</span>
+<span class="sd">        ... target datalayout = &quot;e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128&quot;</span>
+<span class="sd">        ... target triple = &quot;x86_64-apple-macosx11.0.0&quot;</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... ; ...</span>
+<span class="sd">        ... \&quot;\&quot;\&quot;)</span>
+
+<span class="sd">    Multiple inputs can be passed in a single invocation to be batched and</span>
+<span class="sd">    processed in parallel. For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:</span>
+<span class="sd">        ...     graphs = programl.from_llvm_ir(llvm_ir_strings, executor=executor)</span>
+
+<span class="sd">    :param irs: A string of LLVM-IR, or an iterable sequence of LLVM-IR strings.</span>
+
+<span class="sd">    :param version: The version of LLVM to use. See</span>
+<span class="sd">        :code:`programl.LLVM_VERSIONS` for a list of available versions.</span>
+
+<span class="sd">    :param timeout: The maximum number of seconds to wait for an individual</span>
+<span class="sd">        graph construction invocation before raising an error. If multiple</span>
+<span class="sd">        inputs are provided, this timeout is per-input.</span>
+
+<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
+<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
+<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
+<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
+<span class="sd">        Defaults to single threaded execution. This is unused when :code:`irs`</span>
+<span class="sd">        is a single input.</span>
+
+<span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
+<span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
+<span class="sd">        as more inputs must be stored in memory.</span>
+
+<span class="sd">    :return: If :code:`irs` is a single IR, returns a single</span>
+<span class="sd">        :code:`programl.ProgramGraph` instance. Else returns a generator over</span>
+<span class="sd">        :code:`programl.ProgramGraph` instances.</span>
+
+<span class="sd">    :raises UnsupportedCompiler: If the requested LLVM version is not supported.</span>
+
+<span class="sd">    :raises GraphCreationError: If graph construction fails.</span>
+
+<span class="sd">    :raises TimeoutError: If the specified timeout is reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">binary</span> <span class="o">=</span> <span class="n">LLVM2GRAPH_BINARIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsupportedCompiler</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown llvm version: </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported versions: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">LLVM2GRAPH_BINARIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_run_one</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="s2">&quot;--stdout_fmt=pb&quot;</span><span class="p">],</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">_graph_from_subprocess</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">irs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_run_one</span><span class="p">(</span><span class="n">irs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">execute</span><span class="p">(</span><span class="n">_run_one</span><span class="p">,</span> <span class="n">irs</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">)</span></div>
+
+
+<span class="c1"># XLA.</span>
+
+
+<div class="viewcode-block" id="from_xla_hlo_proto"><a class="viewcode-back" href="../../api/python.html#programl.from_xla_hlo_proto">[docs]</a><span class="k">def</span> <span class="nf">from_xla_hlo_proto</span><span class="p">(</span>
+    <span class="n">hlos</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HloProto</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">HloProto</span><span class="p">]],</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExecutorLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">chunksize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgramGraph</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Construct a Program Graph from an XLA HLO protocol buffer.</span>
+
+<span class="sd">    :param hlos: A :code:`HloProto`, or an iterable sequence of :code:`HloProto`</span>
+<span class="sd">        instances.</span>
+
+<span class="sd">    :param timeout: The maximum number of seconds to wait for an individual</span>
+<span class="sd">        graph construction invocation before raising an error. If multiple</span>
+<span class="sd">        inputs are provided, this timeout is per-input.</span>
+
+<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
+<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
+<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
+<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
+<span class="sd">        Defaults to single threaded execution. This is unused when :code:`hlos`</span>
+<span class="sd">        is a single input.</span>
+
+<span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
+<span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
+<span class="sd">        as more inputs must be stored in memory.</span>
+
+<span class="sd">    :return: If :code:`hlos` is a single input, returns a single</span>
+<span class="sd">        :code:`programl.ProgramGraph` instance. Else returns a generator over</span>
+<span class="sd">        :code:`programl.ProgramGraph` instances.</span>
+
+<span class="sd">    :raises GraphCreationError: If graph construction fails.</span>
+
+<span class="sd">    :raises TimeoutError: If the specified timeout is reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_run_one</span><span class="p">(</span><span class="n">hlo</span><span class="p">:</span> <span class="n">HloProto</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProgramGraph</span><span class="p">:</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">XLA2GRAPH</span><span class="p">,</span> <span class="s2">&quot;--stdin_fmt=pb&quot;</span><span class="p">,</span> <span class="s2">&quot;--stdout_fmt=pb&quot;</span><span class="p">],</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span>
+                <span class="n">hlo</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">_graph_from_subprocess</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hlos</span><span class="p">,</span> <span class="n">HloProto</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_run_one</span><span class="p">(</span><span class="n">hlos</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">execute</span><span class="p">(</span><span class="n">_run_one</span><span class="p">,</span> <span class="n">hlos</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright Chris Cummins.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
