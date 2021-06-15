@@ -40,6 +40,11 @@ def test_to_networkx_simple_graph(graph: pg.ProgramGraph):
     assert isinstance(graphs[0], nx.MultiDiGraph)
 
 
+def test_to_networkx_simple_graph_single_input(graph: pg.ProgramGraph):
+    nx_graph = pg.to_networkx(graph)
+    assert isinstance(nx_graph, nx.MultiDiGraph)
+
+
 def test_to_networkx_two_inputs(graph: pg.ProgramGraph):
     graphs = list(pg.to_networkx([graph, graph]))
     assert len(graphs) == 2

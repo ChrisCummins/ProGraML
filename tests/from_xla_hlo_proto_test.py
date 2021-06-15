@@ -42,5 +42,13 @@ def test_non_empty_proto():
     assert len(graph.function) == 5
 
 
+def test_multiple_inputs():
+    proto = pbutil.FromFile(runfiles_path("tests/data/a.hlo.pb"), xla_pb2.HloProto())
+    graphs = list(pg.from_xla_hlo_proto([proto] * 10))
+    assert len(graphs) == 10
+    for graph in graphs:
+        assert isinstance(graph, pg.ProgramGraph)
+
+
 if __name__ == "__main__":
     main()

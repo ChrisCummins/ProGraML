@@ -28,79 +28,107 @@ option java_package = "com.programl";
 import "programl/third_party/tensorflow/features.proto";
 
 // A program graph.
-//
-// The order of elements in these lists matters.
-//
-// Module -> Function -> Node
-//
-// Edges connect nodes, without an explicit scope.
 message ProgramGraph {
   // The nodes of the program.
   repeated Node node = 1;
   // The edge relations between nodes.
   repeated Edge edge = 2;
+  // The functions that are defined in the program.
   repeated Function function = 4;
+  // The modules defined in the program.
   repeated Module module = 5;
+  // A `<key, value>` mapping of graph-level features.
   Features features = 6;
 }
 
 // A node represents an instruction, variable, or constant.
+//
+// A conformant node must:
+// * Have the `type` field set.
+// * Have the `text` field set.
 message Node {
   // The type of node.
   enum Type {
+    // An instruction.
     INSTRUCTION = 0;
+    // A variable.
     VARIABLE = 1;
+    // A constant.
     CONSTANT = 2;
   }
+  // The type of the node.
   Type type = 1;
   // The text of a node. This is the raw representation of a node, such as the
   // contents of a statement, or the name of an identifier.
   string text = 2;
   // An index into the parent ProgramGraph message's function list indicating
-  // the source function for this node.
+  // the source Function for this node.
   int32 function = 4;
+  // The basic block of this node.
+  //
   // For IRs with a basic block abstraction, this value can be used to group
   // nodes by the basic block that they are defined in. This value is optional,
   // and when set, is used to define an ID for the block. IDs should be unique
   // across the entire program, i.e. when two nodes have the same block, they
-  // should also have the same function.
+  // should also have the same Function.
   int32 block = 7;
+  // A `<key, value>` mapping of features for this node.
   Features features = 8;
 }
 
-// An edge in a program graph. A conformant edge must:
-// * Have a flow type set.
-// * Have source and target values that are indices into the parent
-//   ProgramGraph message's node list.
-// * Have a position of zero if the flow is CALL.
+// An edge is a relation between two Nodes in a ProgramGraph.
+//
+// A conformant edge must:
+// * Have the `flow` field set.
+// * Have `source` and `target` field values that are indices into the parent
+//   ProgramGraph message's Node list.
+// * Have a position of zero if the flow is `CALL`.
 message Edge {
   // The edge flow type.
   enum Flow {
+    // A control flow relation.
     CONTROL = 0;
+    // A data flow relation.
     DATA = 1;
+    // A call relation.
     CALL = 2;
   }
+  // The type of relation of this edge.
   Flow flow = 1;
+  // A numeric position for this edge, used to differentiate, for example,
+  // multiple incoming data edges to an instruction order by their operand
+  // order.
   int32 position = 2;
+  // An index into the parent ProgramGraph message's node list for the source of
+  // this relation.
   int32 source = 3;
+  // An index into the parent ProgramGraph message's node list for the target of
+  // this relation.
   int32 target = 4;
+  // A `<key, value>` mapping of features for this edge.
   Features features = 5;
 }
 
-// Container to describe a program function.
+// A function in a ProgramGraph.
+//
+// A function contains one or more `INSTRUCTION` Nodes.
 message Function {
   // The name of the function.
   string name = 1;
   // The source module of the function, as an index into the parent ProgramGraph
-  // message's module list.
+  // message's Module list.
   int32 module = 2;
+  // A `<key, value>` mapping of features for this function.
   Features features = 3;
 }
 
-// Container for a program module.
+// A module in a ProgramGraph.
+//
+// A module represents a logical grouping of functions within a ProgramGraph,
+// usually equivalent to a Translation Unit.
 message Module {
   // The name of the module.
   string name = 1;
-  // Features describing the module.
+  // A `<key, value>` mapping of features for this module.
   Features features = 2;
 }

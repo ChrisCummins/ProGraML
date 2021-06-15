@@ -9,26 +9,28 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import sys
-from typing import Any, Callable, Optional, TypeVar
+from collections import deque
+from typing import Any, Callable, Iterable, Optional, TypeVar
 
-X = TypeVar("X", covariant=True)
+T = TypeVar("T", covariant=True)
+U = TypeVar("U", covariant=True)
 
 if sys.version_info > (3, 8, 0):
     from typing import Protocol
 
-    class JobLike(Protocol[X]):
+    class JobLike(Protocol[T]):
         # pylint: disable=pointless-statement
 
         def done(self) -> bool:
             ...
 
-        def result(self) -> X:
+        def result(self) -> T:
             ...
 
     class ExecutorLike(Protocol):
         # pylint: disable=pointless-statement, unused-argument
 
-        def submit(self, fn: Callable[..., X], *args: Any, **kwargs: Any) -> JobLike[X]:
+        def submit(self, fn: Callable[..., T], *args: Any, **kwargs: Any) -> JobLike[T]:
             ...
 
 
@@ -59,9 +61,37 @@ class DelayedJob:
 
 
 class SequentialExecutor:
-    """Executor which run sequentially and locally
-    (just calls the function and returns a FinishedJob)
-    """
+    """Executor which run sequentially and locally."""
 
     def submit(self, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> DelayedJob:
         return DelayedJob(fn, *args, **kwargs)
+
+
+def execute(
+    run_one: Callable[[T], U],
+    inputs: Iterable[T],
+    executor: Optional[ExecutorLike] = None,
+    chunksize: Optional[int] = None,
+) -> Iterable[U]:
+    """Split inputs chunksize lists and process in parallel using executor.
+
+    Similar to Executor.map, but inputs is evaluated lazily rather than ahead of
+    time, to support very large input interators.
+    """
+    executor = executor or SequentialExecutor()
+    chunksize = chunksize or 1024
+    inputs = iter(inputs)
+    futures = deque()
+    while True:
+        try:
+            item = next(inputs)
+        except StopIteration:
+            break
+        futures.append(executor.submit(run_one, item))
+
+        while len(futures) > chunksize:
+            future = futures.popleft()
+            yield future.result()
+
+    for future in futures:
+        yield future.result()

@@ -10,7 +10,7 @@ _PACKAGE_ROOT = Path(os.path.join(os.path.dirname(__file__), "../../../")).resol
 _TESTS_ROOT = Path("/tmp/programl/install_tests")
 
 
-def runfiles_path(relpath: str) -> Path:
+def runfiles_path(relpath: str) -> Path:  # pragma: no cover
     """Resolve the path to a runfiles data path.
 
     Use environment variable PROGRAML_RUNFILES=/path/to/runfiles if running

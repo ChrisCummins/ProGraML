@@ -31,7 +31,9 @@ import "programl/third_party/tensorflow/features.proto";
 
 // A list of program graphs.
 message ProgramGraphList {
+  // A `<key, value>` mapping of features for this ProgramGraph list.
   Features context = 1;
+  // A list of ProgramGraph messages.
   repeated ProgramGraph graph = 2;
 }
 
@@ -42,34 +44,47 @@ message ProgramGraphOptions {
   //  2. A function contains no nodes.
   //  3. A node is unnconnected.
   bool strict = 3;
+  // Generate only nodes for instructions.
   bool instructions_only = 1;
+  // Omit return call edges from call sites.
   bool ignore_call_returns = 2;
+  // The optimization level when generating an IR from a source file.
   int32 opt_level = 4;
+  // The path of an IR to read.
   string ir_path = 10;
 }
 
 // Features describing a program.
 message ProgramGraphFeatures {
+  // A list of features corresponding a ProgramGraph's list of Node messages.
   FeatureLists node_features = 1;
+  // A list of features corresponding a ProgramGraph's list of Edge messages.
   FeatureLists edge_features = 2;
+  // A list of features corresponding a ProgramGraph's list of Function messages.
   FeatureLists function_features = 3;
+  // A list of features corresponding a ProgramGraph's list of Module messages.
   FeatureLists module_features = 4;
+  // A set of graph-level features.
   Features features = 5;
 }
 
 // A list of program graphs.
 message ProgramGraphFeaturesList {
+  // A `<key, value>` mapping of features for this ProgramGraphFeatures list.
   Features context = 1;
+  // A list of ProgramGraphFeatures messages.
   repeated ProgramGraphFeatures graph = 2;
 }
 
 // A compiler intermediate representation.
 message Ir {
+  // The type of IR.
   enum Type {
     UNKNOWN = 0;
     LLVM = 1;
     XLA_HLO = 2;
   }
+  // The type of IR.
   Type type = 1;
   // The compiler version, as a single integer. Major + minor versions
   // should be converted to this single number, e.g. 6.0.0 -> 600.
@@ -82,6 +97,7 @@ message Ir {
 
 // A list of compiler IRs.
 message IrList {
+  // A list of Ir messages.
   repeated Ir ir = 1;
 }
 
@@ -97,19 +113,25 @@ message SourceFile {
     HASKELL = 5;
     FORTRAN = 6;
   }
+  // The source programming language.
   Language language = 2;
+  // The relative path of the file.
   string relpath = 1;
+  // The text of the file.
   string text = 3;
 }
 
 // A repository of source files.
 message Repo {
+  // The URL of the repository.
   string url = 1;
+  // The sha1 of the repository's HEAD commit.
   string sha1 = 2;
+  // The timestamp that this repository was created.
   int64 created_ms_timestamp = 3;
 }
 
-// A node map is used to translate node indices between graphs.
+// A node map is used to translate node indices between ProgramGraph instances.
 message NodeIndexList {
   // The keys are node indices in the old graph representation, the
   // values are node inidices in the new graph representation.

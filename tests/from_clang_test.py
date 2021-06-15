@@ -42,6 +42,15 @@ def test_c_input(tempdir: Path):
     assert isinstance(graph, pg.ProgramGraph)
 
 
+def test_multiple_inputs(tempdir: Path):
+    with open(tempdir / "a.c", "w") as f:
+        f.write("int A() { return 0; }")
+    graphs = list(pg.from_clang([[str(tempdir / "a.c")]] * 10))
+    assert len(graphs) == 10
+    for graph in graphs:
+        assert isinstance(graph, pg.ProgramGraph)
+
+
 def test_c_input_with_std_header(tempdir: Path):
     with open(tempdir / "a.c", "w") as f:
         f.write(

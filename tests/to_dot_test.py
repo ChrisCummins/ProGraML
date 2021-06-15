@@ -39,6 +39,11 @@ def test_to_dot_simple_graph(graph: pg.ProgramGraph):
     assert_valid_graph(dots[0])
 
 
+def test_to_dot_simple_graph_single_input(graph: pg.ProgramGraph):
+    dot = pg.to_dot(graph)
+    assert_valid_graph(dot)
+
+
 def test_to_dot_two_inputs(graph: pg.ProgramGraph):
     dots = list(pg.to_dot([graph, graph]))
     assert len(dots) == 2
