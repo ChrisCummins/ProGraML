@@ -258,7 +258,6 @@ def from_clang(
             extra_copts += ["-isystem", str(directory)]
 
     def _run_one(one_args):
-        print("ONE ARG", one_args)
         process = subprocess.Popen(
             [binary] + one_args + extra_copts,
             stdout=subprocess.PIPE,
