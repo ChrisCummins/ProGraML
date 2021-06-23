@@ -380,7 +380,7 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
     // Create the function message.
     Function* functionMessage = AddFunction(function.getName(), moduleMessage);
 
-#if PROGRAML_LLVM_VERSION_MAJOR > 3
+#if PROGRAML_LLVM_VERSION_MAJOR > 6
     // Add profiling information, if available.
     if (function.hasProfileData()) {
       auto profileCount = function.getEntryCount();
@@ -388,6 +388,17 @@ labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build(const ::llvm::Module& m
       feature.mutable_int64_list()->add_value(profileCount.getCount());
       functionMessage->mutable_features()->mutable_feature()->insert(
           {"llvm_profile_entry_count", feature});
+    }
+#elif PROGRAML_LLVM_VERSION_MAJOR > 3
+    // Add profiling information, if available.
+    if (function.hasProfileData()) {
+      auto profileCount = function.getEntryCount();
+      Feature feature;
+      if (profileCount.hasValue()) {
+        feature.mutable_int64_list()->add_value(profileCount.getValue());
+        functionMessage->mutable_features()->mutable_feature()->insert(
+            {"llvm_profile_entry_count", feature});
+      }
     }
 #endif
 

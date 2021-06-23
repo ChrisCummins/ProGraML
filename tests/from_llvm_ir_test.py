@@ -38,7 +38,7 @@ define i32 @A(i32, i32) #0 {
 """
 
 
-@pytest.fixture(scope="module", params=pg.create_ops.LLVM2GRAPH_BINARIES.keys())
+@pytest.fixture(scope="module", params=["6", "10"])
 def simple_ir_graph(request) -> pg.ProgramGraph:
     return pg.from_llvm_ir(
         SIMPLE_IR,

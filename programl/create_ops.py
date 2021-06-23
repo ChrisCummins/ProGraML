@@ -30,7 +30,8 @@ from programl.util.py.runfiles_path import runfiles_path
 
 LLVM2GRAPH_BINARIES = {
     "10": str(runfiles_path("programl/bin/llvm2graph-10")),
-    "3.8": str(runfiles_path("programl/bin/llvm2graph-10")),
+    "6": str(runfiles_path("programl/bin/llvm2graph-6")),
+    "3.8": str(runfiles_path("programl/bin/llvm2graph-3.8")),
 }
 
 LLVM_VERSIONS = list(LLVM2GRAPH_BINARIES.keys())

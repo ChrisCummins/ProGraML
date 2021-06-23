@@ -31,29 +31,44 @@ filegroup(
     name = "bin",
     srcs = [
         ":clang2graph-10",
-        ":graph2cdfg",
+        # Not used by current Python API: ":graph2cdfg",
         ":graph2dot",
         ":graph2json",
-        ":graph2seq",
+        # Not used by current Python API: ":graph2seq",
         ":llvm2graph-3.8",
+        ":llvm2graph-6",
         ":llvm2graph-10",
-        ":pbq",
+        # Not used by current Python API: ":pbq",
         ":xla2graph",
-        ":analyze",
+        # Not used by current Python API: ":analyze",
     ] + select({
         "@llvm//:darwin": [],
-        "//conditions:default": [":libLLVMPolly"],
+        "//conditions:default": [
+            ":libLLVMPolly-10.0.0",
+            ":libLLVMPolly-6.0.0",
+        ],
     }),
     visibility = ["//visibility:public"],
 )
 
 genrule(
-    name = "libLLVMPolly",
+    name = "libLLVMPolly-6.0.0",
+    srcs = [
+        "@clang-llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04//:all_files",
+        "@clang-llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04//:clang",
+    ],
+    outs = ["libLLVMPolly.so.6.0.0"],
+    cmd = "cp $$(dirname $(location @clang-llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04//:clang))/../lib/LLVMPolly.so $@",
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "libLLVMPolly-10.0.0",
     srcs = [
         "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:all_files",
         "@clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang",
     ],
-    outs = ["libLLVMPolly.so"],
+    outs = ["libLLVMPolly.so.10.0.0"],
     cmd = "cp $$(dirname $(location @clang-llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04//:clang))/../lib/LLVMPolly.so $@",
     visibility = ["//visibility:public"],
 )
@@ -85,6 +100,7 @@ genrule(
             "cp $(location :clang2graph-10-prelinked) $@ && " +
             "chmod 666 $@ && " +
             "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "patchelf --replace-needed libLLVMPolly.so libLLVMPolly.so.10.0.0 $@ && " +
             "chmod 555 $@"
         ),
     }),
@@ -174,28 +190,11 @@ py_binary(
     ],
 )
 
-genrule(
-    name = "llvm2graph-3.8-bin",
-    srcs = [":llvm2graph-3.8-prelinked"],
-    outs = ["llvm2graph-3.8"],
-    cmd = select({
-        "@llvm//:darwin": (
-            "cp $(location :llvm2graph-3.8-prelinked) $@"
-        ),
-        "//conditions:default": (
-            "cp $(location :llvm2graph-3.8-prelinked) $@ && " +
-            "chmod 666 $@ && " +
-            "patchelf --set-rpath '$$ORIGIN' $@ && " +
-            "chmod 555 $@"
-        ),
-    }),
-    visibility = ["//visibility:public"],
-)
-
 cc_binary(
-    name = "llvm2graph-3.8-prelinked",
+    name = "llvm2graph-3.8",
     srcs = ["llvm2graph.cc"],
     copts = ["-std=c++14"],
+    visibility = ["//visibility:public"],
     deps = [
         "//programl:version_header",
         "//programl/ir/llvm:llvm-3.8",
@@ -206,6 +205,42 @@ cc_binary(
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:strutil",
         "@llvm//3.8.0",
+    ],
+)
+
+genrule(
+    name = "llvm2graph-6-bin",
+    srcs = [":llvm2graph-6-prelinked"],
+    outs = ["llvm2graph-6"],
+    cmd = select({
+        "@llvm//:darwin": (
+            "cp $(location :llvm2graph-6-prelinked) $@"
+        ),
+        "//conditions:default": (
+            "cp $(location :llvm2graph-6-prelinked) $@ && " +
+            "chmod 666 $@ && " +
+            "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "patchelf --replace-needed libLLVMPolly.so libLLVMPolly.so.6.0.0 $@ && " +
+            "chmod 555 $@"
+        ),
+    }),
+    visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "llvm2graph-6-prelinked",
+    srcs = ["llvm2graph.cc"],
+    copts = ["-std=c++14"],
+    deps = [
+        "//programl:version_header",
+        "//programl/ir/llvm:llvm-6",
+        "//programl/proto:programl_cc",
+        "//programl/util:stdout_fmt",
+        "@labm8//labm8/cpp:app",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:strutil",
+        "@llvm//6.0.0",
     ],
 )
 
@@ -221,6 +256,7 @@ genrule(
             "cp $(location :llvm2graph-10-prelinked) $@ && " +
             "chmod 666 $@ && " +
             "patchelf --set-rpath '$$ORIGIN' $@ && " +
+            "patchelf --replace-needed libLLVMPolly.so libLLVMPolly.so.10.0.0 $@ && " +
             "chmod 555 $@"
         ),
     }),
