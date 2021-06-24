@@ -7,7 +7,7 @@
  * [graph2json](bin/graph2json.txt): graph2json: Convert a ProgramGraph message to JSON node link graph.
  * [graph2seq](bin/graph2seq.txt): graph2seq: Serialize the instruction nodes in a program graph.
  * [inst2vec](bin/inst2vec.txt): Encode node embeddings using inst2vec.
- * [llvm2graph-10](bin/llvm2graph-10.txt): llvm2graph-10: Generate a program graph from LLVM-IR.
- * [llvm2graph-3.8](bin/llvm2graph-3.8.txt): llvm2graph-3.8: Generate a program graph from LLVM-IR.
+ * [llvm2graph-10](bin/llvm2graph-10.txt):  * [llvm2graph-3.8](bin/llvm2graph-3.8.txt): llvm2graph-3.8: Generate a program graph from LLVM-IR.
+ * [llvm2graph-6](bin/llvm2graph-6.txt): llvm2graph-6: Generate a program graph from LLVM-IR.
  * [pbq](bin/pbq.txt): pbq: Query properties of a protocol buffer.
  * [xla2graph](bin/xla2graph.txt): xla2graph: Generate program graph from a HLO module.

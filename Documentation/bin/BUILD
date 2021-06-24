@@ -73,6 +73,13 @@ genrule(
 )
 
 genrule(
+    name = "llvm2graph-6",
+    outs = ["llvm2graph-6.txt"],
+    cmd = "$(location //programl/bin:llvm2graph-6) --helpfull > $@ || true",
+    tools = ["//programl/bin:llvm2graph-6"],
+)
+
+genrule(
     name = "llvm2graph-10",
     outs = ["llvm2graph-10.txt"],
     cmd = "$(location //programl/bin:llvm2graph-10) --helpfull > $@ || true",

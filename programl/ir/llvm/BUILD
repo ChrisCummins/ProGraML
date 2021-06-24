@@ -70,32 +70,10 @@ py_library(
     ],
 )
 
-cc_library(
-    name = "llvm-10",
-    srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
-    hdrs = ["llvm.h"] + glob(["internal/*.h"]),
-    copts = [
-        "-std=c++14",
-        "-fno-rtti",
-    ],
-    defines = [
-        "GOOGLE_PROTOBUF_NO_RTTI",
-        "PROGRAML_LLVM_VERSION_MAJOR=10",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//programl/graph:features",
-        "//programl/graph:program_graph_builder",
-        "//programl/proto:programl_cc",
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/container:flat_hash_set",
-        "@labm8//labm8/cpp:status",
-        "@labm8//labm8/cpp:status_macros",
-        "@labm8//labm8/cpp:statusor",
-        "@labm8//labm8/cpp:string",
-        "@llvm//10.0.0",
-    ],
-)
+# The following cc_library definitions are identical except for the @llvm
+# dependency version.
+#
+# TODO(cummins): Find a neater way to declare these.
 
 cc_library(
     name = "llvm-3.8",
@@ -121,5 +99,59 @@ cc_library(
         "@labm8//labm8/cpp:statusor",
         "@labm8//labm8/cpp:string",
         "@llvm//3.8.0",
+    ],
+)
+
+cc_library(
+    name = "llvm-6",
+    srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
+    hdrs = ["llvm.h"] + glob(["internal/*.h"]),
+    copts = [
+        "-std=c++14",
+        "-fno-rtti",
+    ],
+    defines = [
+        "GOOGLE_PROTOBUF_NO_RTTI",
+        "PROGRAML_LLVM_VERSION_MAJOR=6",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//programl/graph:features",
+        "//programl/graph:program_graph_builder",
+        "//programl/proto:programl_cc",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
+        "@llvm//6.0.0",
+    ],
+)
+
+cc_library(
+    name = "llvm-10",
+    srcs = ["llvm.cc"] + glob(["internal/*.cc"]),
+    hdrs = ["llvm.h"] + glob(["internal/*.h"]),
+    copts = [
+        "-std=c++14",
+        "-fno-rtti",
+    ],
+    defines = [
+        "GOOGLE_PROTOBUF_NO_RTTI",
+        "PROGRAML_LLVM_VERSION_MAJOR=10",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//programl/graph:features",
+        "//programl/graph:program_graph_builder",
+        "//programl/proto:programl_cc",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@labm8//labm8/cpp:status",
+        "@labm8//labm8/cpp:status_macros",
+        "@labm8//labm8/cpp:statusor",
+        "@labm8//labm8/cpp:string",
+        "@llvm//10.0.0",
     ],
 )

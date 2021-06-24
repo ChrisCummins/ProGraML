@@ -1,119 +1,75 @@
-# ProGraML: Program Graphs for Machine Learning
+<h1 align="center">ProGraML: Program Graphs for Machine Learning</h1>
 
-<!-- Build status -->
-<table>
-    <tr>
-      <td>License</td>
-      <td>
-        <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
-          <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?color=brightgreen">
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td>OS</td>
-      <td>GNU/Linux, macOS ≥ 10.15</td>
-    </tr>
-    <tr>
-      <td>Python Versions</td>
-      <td>3.6, 3.7, 3.8, 3.9</td>
-    </tr>
-    <tr>
-      <td>
-        <a href="https://github.com/ChrisCummins/ProGraML/tree/development">
-          development
-        </a> Branch
-      </td>
-      <td>
-        <a href="https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Adevelopment">
-          <img src="https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=development">
-        </a>
-        <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
-          <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=development">
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td>
-        <a href="https://github.com/ChrisCummins/ProGraML/tree/stable">
-          stable
-        </a> Branch
-      </td>
-      <td>
-        <a href="https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Astable">
-          <img src="https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=stable">
-        </a>
-        <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
-          <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable">
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td>Development Activity</td>
-      <td>
-        <a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
-          <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
-        </a>
-        <a href="https://github.com/ChrisCummins/ProGraML">
-          <img src="https://img.shields.io/github/repo-size/ChrisCummins/ProGraML.svg">
-        </a>
-      </td>
-    </tr>
-</table>
+<p align="center">
+  <!-- PyPi Version -->
+  <a href="https://pypi.org/project/programl/">
+      <img src="https://badge.fury.io/py/programl.svg" alt="PyPI version" height="20">
+  </a>
+  <!-- Downloads counter -->
+  <a href="https://pypi.org/project/programl/">
+      <img src="https://pepy.tech/badge/programl" alt="PyPi Downloads" height="20">
+  </a>
+  <!-- license -->
+  <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
+      <img src="https://img.shields.io/pypi/l/programl" alt="License" height="20">
+  </a>
+  <!-- CI status -->
+  <a href="https://github.com/ChrisCummins/ProGraML/actions?query=workflow%3ACI+branch%3Astable">
+    <img src="https://github.com/ChrisCummins/ProGraML/workflows/CI/badge.svg?branch=stable">
+  </a>
+  <!-- Better code -->
+  <a href="https://bettercodehub.com/results/ChrisCummins/ProGraML">
+    <img src="https://bettercodehub.com/edge/badge/ChrisCummins/ProGraML?branch=stable">
+  </a>
+  <!-- Commit counter -->
+  <a href="https://github.com/ChrisCummins/ProGraML/graphs/commit-activity">
+    <img src="https://img.shields.io/github/commit-activity/y/ChrisCummins/ProGraML.svg?color=yellow">
+  </a>
+</p>
+
+<p align="center">
+  <i>An expressive, language-independent representation of programs.</i>
+</p>
+<p align="center">
+  <i>
+    Check <a href="https://chriscummins.cc/ProGraML">the website</a>
+    for more information.
+  </i>
+</p>
 
 
-<!-- MarkdownTOC autolink="true" -->
-
-- [ProGraML: Program Graphs for Machine Learning](#programl-program-graphs-for-machine-learning)
-  - [Overview](#overview)
-  - [Getting Started](#getting-started)
-  - [Installation](#installation)
-      - [Datasets](#datasets)
-  - [Constructing the ProGraML Representation](#constructing-the-programl-representation)
-      - [Step 1: Compiler IR](#step-1-compiler-ir)
-      - [Step 2: Control-flow](#step-2-control-flow)
-      - [Step 3: Data-flow](#step-3-data-flow)
-      - [Step 4: Call graph](#step-4-call-graph)
-  - [Usage](#usage)
-      - [End-to-end C++ flow](#end-to-end-c-flow)
-  - [Contributing](#contributing)
-  - [Acknowledgements](#acknowledgements)
-
-<!-- /MarkdownTOC -->
-
-
-## Overview
-
+## Introduction
 
 ProGraML is a representation for programs as input to a machine learning model.
+The key features are:
 
-Key features are:
+1. **Simple:** Everything is available through a `pip install`, no compilation
+   required. Supports several programming languages (*C, C++, LLVM-IR, XLA*) and
+   several graph formats (*NetworkX, DGL, Graphviz, JSON*) out of the box.
 
-* **Expressiveness:** We represent programs as graphs, capturing all of the
-  control, data, and call relations. Each node in the graph represents an
-  instruction, variable, or constant, and edges are positional such that
-  non-commutative operations can be differentiated.
-* **Portability:** ProGraML is derived from compiler IRs, making it independent
-  of the source language (e.g. we have trained models to reason across five
-  different source languages at a time). It is easy to target new IRs (we
-  currently support [LLVM](/Documentation/bin/llvm2graph-10.txt) and
-  [XLA](/Documentation/bin/xla2graph.txt)).
-* **Extensibility:** Features and labels can easily be added at the
-  whole-program level, per-instruction level, or for individual relations.
+2. **Expressive:** Captures every control, data, and call relation across entire
+   programs. The representation is independent of the source language. Features
+   and labels can be added at any granularity to support whole-program,
+   per-instruction, or per-relation reasoning tasks.
 
-
-## Getting Started
+3. **Fast:** The core graph construction is implemented in C++ with a low
+   overhead interface to Python. Every API method supports simple and efficient
+   parallelization through an `executor` parameter.
 
 To get stuck in and play around with our graph representation, visit:
 
-[![Program Explorer](/Documentation/assets/program_explorer.png)](https://chriscummins.cc/s/program_explorer)
+<a href="https://chriscummins.cc/s/program_explorer">
+  <img height="400" src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/program_explorer.png">
+</a>
 
 Or if papers are more your ☕, have a read of ours:
 
-[![Preprint](/Documentation/arXiv.2003.10536/paper.png)](https://arxiv.org/abs/2003.10536)
+<a href="https://chriscummins.cc/pub/2021-icml.pdf">
+  <img height="325" src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/icml-2021/paper.png">
+</a>
 
 
-## Installation
+## Getting Started
 
 Install the latest release of the Python package using:
 
@@ -121,119 +77,83 @@ Install the latest release of the Python package using:
 pip install -U programl
 ```
 
-See [INSTALL.md](INSTALL.md) for alternative installation options.
+The python API is very simple, comprising three types of operations: graph
+*creation* ops, graph *transform* ops, and graph *serialization* ops. Here is a
+quick demo of each:
 
+```py
+>>> import programl as pg
 
-#### Datasets
+# Construct a program graph from C++:
+>>> G = pg.from_cpp("""
+... #include <iostream>
+...
+... int main(int argc, char** argv) {
+...   std::cout << "Hello, world!" << std::endl;
+...   return 0;
+... }
+... """)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4122437.svg)](https://doi.org/10.5281/zenodo.4122437)
+# A program graph is a protocol buffer:
+>>> type(G).__name__
+'ProgramGraph'
 
-Please see [this doc](/Documentation/DataflowDataset.md) for download
-links for our publicly available datasets of LLVM-IRs, ProGraML graphs, and data
-flow analysis labels.
+# Convert the graph to NetworkX:
+>>> pg.to_networkx(G)
+<networkx.classes.multidigraph.MultiDiGraph at 0x7fbcf40a2fa0>
 
-
-## Constructing the ProGraML Representation
-
-The ProGraML representation is constructed in multiple stages. Here we describe
-the process for a simple recursive Fibonacci implementation in C. For
-instructions on how to run this process, see [Usage](#usage) below.
-
-
-#### Step 1: Compiler IR
-
-<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-1-ir.png" width=300>
-
-We start by lowering the program to a compiler IR. In this case, we'll use
-LLVM-IR. This can be done using: `clang -emit-llvm -S -O3 fib.c`.
-
-
-#### Step 2: Control-flow
-
-<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-2-cfg.png" width=300>
-
-We begin building a graph by constructing a full-flow graph of the program. In a
-full-flow graph, every instruction is a node and the edges are control-flow.
-Note that edges are positional so that we can differentiate the branching
-control flow in that `switch` instruction.
-
-
-#### Step 3: Data-flow
-
-<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-3-dfg.png" width=300>
-
-Then we add a graph node for every variable and constant. In the drawing above,
-the diamonds are constants and the variables are ovals. We add data-flow edges
-to describe the relations between constants and the instructions that use them,
-and variables and the constants which define/use them. Like control edges, data
-edges have positions. In the case of data edges, the position encodes the order
-of a data element in the list of instruction operands.
-
-
-#### Step 4: Call graph
-
-<img src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/llvm2graph-4-cg.png" width=300>
-
-Finally, we add call edges (green) from callsites to the function entry
-instruction, and return edges from function exits to the callsite. Since this is
-a graph of a recursive function, the callsites refer back to the entry of the
-function (the `switch`). The `external` node is used to represent a call from an
-external site.
-
-The process described above can be run locally using our
-[`clang2graph`](/Documentation/bin/clang2graph.txt) and
-[`graph2dot`](/Documentation/bin/graph2dot.txt) tools: `clang
-clang2graph -O3 fib.c | graph2dot`
-
-
-## Usage
-
-
-#### End-to-end C++ flow
-
-In the manner of Unix Zen, creating and manipulating ProGraML graphs is done
-using [command-line tools](/Documentation/bin) which act as filters,
-reading in graphs from stdin and emitting graphs to stdout. The structure for
-graphs is described through a series of [protocol
-buffers](/Documentation/ProtocolBuffers.md).
-
-This section provides an example step-by-step guide for generating a program
-graph for a C++ application.
-
-1. Install LLVM-10 and the ProGraML [command line tools](INSTALL.md).
-2. Compile your C++ code to LLVM-IR. The way to do this to modify your build
-   system so that clang is passed the `-emit-llvm -S` flags. For a
-   single-source application, the command line invocation would be:
+# Save the graph for later:
+>>> pg.save_graphs('file.data', [G])
 ```
-$ clang-10 -emit-llvm -S -c my_app.cpp -o my_app.ll
-```
-   For a multi-source application, you can compile each file to LLVM-IR
-   separately and then link the results. For example:
-```
-$ clang-10 -emit-llvm -S -c foo.cpp -o foo.ll
-$ clang-10 -emit-llvm -S -c bar.cpp -o bar.ll
-$ llvm-link foo.ll bar.ll -S -o my_app.ll
-```
-3. Generate a ProGraML graph protocol buffer from the LLVM-IR using the
-   [llvm2graph](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/llvm2graph-10.txt)
-   commnand:
-```
-$ llvm2graph < my_app.ll > my_app.pbtxt
-```
-   The generated file `my_app.pbtxt` uses a human-readable
-   [ProgramGraph](https://github.com/ChrisCummins/ProGraML/blob/development/programl/proto/program_graph.proto)
-   format which you can inspect using a text editor. In this case, we will
-   render it to an image file using Graphviz.
 
-4. Generate a Graphviz dotfile from the ProGraML graph using
-   [graph2dot](https://github.com/ChrisCummins/ProGraML/blob/development/Documentation/bin/graph2dot.txt):
-```
-$ graph2dot < my_app.pbtxt > my_app.dot
-```
-5. Render the dotfile to a PNG image using Graphviz:
-```
-$ dot -Tpng my_app.dot -o my_app.png
-```
+For further details check out the [API
+reference](https://chriscummins.cc/ProGraML/api/python.html).
+
+## Supported Programming Languages
+
+The following programming languages and compiler IRs are supported
+out-of-the-box:
+
+<table>
+  <tr>
+    <th>Language</th>
+    <th>API Calls</th>
+    <th>Supported Versions</th>
+  </tr>
+  <tr>
+    <td>C</td>
+    <td>
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
+    </td>
+    <td>Up to ISO C 2017</td>
+  </tr>
+  <tr>
+    <td>C++</td>
+    <td>
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
+    </td>
+    <td>Up to ISO C++ 2020 DIS</td>
+  </tr>
+  <tr>
+    <td>LLVM-IR</td>
+    <td>
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_llvm_ir"><code>programl.from_llvm_ir()</code></a>
+    </td>
+    <td>3.8.0, 6.0.0, 10.0.0</td>
+  </tr>
+  <tr>
+    <td>XLA</td>
+    <td>
+      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_xla_hlo_proto"><code>programl.from_xla_hlo_proto()</code></a>
+    </td>
+    <td>2.0.0</td>
+  </tr>
+</table>
+
+Is your favorite language not supported here? Submit a [feature
+request](https://github.com/ChrisCummins/ProGraML/issues/new/choose)!
 
 
 ## Contributing
@@ -244,15 +164,16 @@ bug report or question. If you would like to help out with the code, please
 read [this document](CONTRIBUTING.md).
 
 
-## Acknowledgements
+## Citation
 
-Made with ❤️️ by
-[Chris Cummins](https://chriscummins.cc/) and
-[Zach Fisches](https://github.com/Zacharias030),
-with help from folks at the University of Edinburgh and ETH Zurich:
-[Tal Ben-Nun](https://people.inf.ethz.ch/tbennun/),
-[Torsten Hoefler](https://htor.inf.ethz.ch/),
-[Hugh Leather](http://homepages.inf.ed.ac.uk/hleather/), and
-[Michael O'Boyle](http://www.dcs.ed.ac.uk/home/mob/).
+If you use ProGraML in any of your work, please cite [this
+paper](https://chriscummins.cc/pub/2021-icml.pdf):
 
-Funding sources: [HiPEAC Travel Grant](https://www.hipeac.net/collaboration-grants/).
+```
+@inproceedings{cummins2021a,
+  title={{ProGraML: A Graph-based Program Representation for Data Flow Analysis and Compiler Optimizations}},
+  author={Cummins, Chris and Fisches, Zacharias and Ben-Nun, Tal and Hoefler, Torsten and O'Boyle, Michael and Leather, Hugh},
+  booktitle = {Thirty-eighth International Conference on Machine Learning (ICML)},
+  year={2021}
+}
+```
