@@ -7,7 +7,6 @@ documentation.
 .. toctree::
    :maxdepth: 3
 
-   getting-started
    api/python
    api/protocol-buffers
 
