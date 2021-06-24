@@ -3,12 +3,8 @@
 # #####################################################
 # House keeping notes:
 #
-#   1) When you add a new command line tool, consider adding
-#      it to the //:install target so that it is installed
-#      into the user path.
-#
-#   2) Run ./bin/update_docs.sh and commit any
-#      changes.
+#   1) When you add a new command line tool, run
+#      ./bin/update_docs.sh and commit any changes.
 # #####################################################
 #
 # Copyright 2019-2020 the ProGraML authors.

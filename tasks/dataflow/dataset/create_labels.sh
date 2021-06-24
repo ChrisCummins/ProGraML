@@ -47,9 +47,7 @@ fi
 #
 # This must be run from the root of the dataset directory.
 #
-# This assumes that the `analyze` command is in $PATH, e.g. by running:
-#     $ bazel run -c opt //:install
-# and adding /usr/local/opt/programl/bin to $PATH.
+# This assumes that the `analyze` command is in $PATH.
 run_analysis() {
   local analysis="$1"
 
