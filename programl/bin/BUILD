@@ -31,16 +31,16 @@ filegroup(
     name = "bin",
     srcs = [
         ":clang2graph-10",
-        # Not used by current Python API: ":graph2cdfg",
         ":graph2dot",
         ":graph2json",
-        # Not used by current Python API: ":graph2seq",
+        ":llvm2graph-10",
         ":llvm2graph-3.8",
         ":llvm2graph-6",
-        ":llvm2graph-10",
-        # Not used by current Python API: ":pbq",
         ":xla2graph",
         # Not used by current Python API: ":analyze",
+        # Not used by current Python API: ":graph2cdfg",
+        # Not used by current Python API: ":graph2seq",
+        # Not used by current Python API: ":pbq",
     ] + select({
         "@llvm//:darwin": [],
         "//conditions:default": [
