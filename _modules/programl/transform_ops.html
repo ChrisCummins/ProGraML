@@ -91,7 +91,6 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/python.html">Python API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/protocol-buffers.html">Protocol Buffers</a></li>
 </ul>
@@ -238,12 +237,13 @@
 <span class="sd">        graph conversion before raising an error. If multiple inputs are</span>
 <span class="sd">        provided, this timeout is per-input.</span>
 
-<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
-<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
-<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
-<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
-<span class="sd">        Defaults to single threaded execution. This is only used when multiple</span>
-<span class="sd">        inputs are given.</span>
+<span class="sd">    :param executor: An executor object, with method :code:`submit(callable,</span>
+<span class="sd">        *args, **kwargs)` and returning a Future-like object with methods</span>
+<span class="sd">        :code:`done() -&gt; bool` and :code:`result() -&gt; float`. The executor role</span>
+<span class="sd">        is to dispatch the execution of the jobs locally/on a cluster/with</span>
+<span class="sd">        multithreading depending on the implementation. Eg:</span>
+<span class="sd">        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single</span>
+<span class="sd">        threaded execution. This is only used when multiple inputs are given.</span>
 
 <span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
 <span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
@@ -290,12 +290,13 @@
 <span class="sd">        graph conversion before raising an error. If multiple inputs are</span>
 <span class="sd">        provided, this timeout is per-input.</span>
 
-<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
-<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
-<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
-<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
-<span class="sd">        Defaults to single threaded execution. This is only used when multiple</span>
-<span class="sd">        inputs are given.</span>
+<span class="sd">    :param executor: An executor object, with method :code:`submit(callable,</span>
+<span class="sd">        *args, **kwargs)` and returning a Future-like object with methods</span>
+<span class="sd">        :code:`done() -&gt; bool` and :code:`result() -&gt; float`. The executor role</span>
+<span class="sd">        is to dispatch the execution of the jobs locally/on a cluster/with</span>
+<span class="sd">        multithreading depending on the implementation. Eg:</span>
+<span class="sd">        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single</span>
+<span class="sd">        threaded execution. This is only used when multiple inputs are given.</span>
 
 <span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
 <span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
@@ -338,12 +339,13 @@
 <span class="sd">        graph conversion before raising an error. If multiple inputs are</span>
 <span class="sd">        provided, this timeout is per-input.</span>
 
-<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
-<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
-<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
-<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
-<span class="sd">        Defaults to single threaded execution. This is only used when multiple</span>
-<span class="sd">        inputs are given.</span>
+<span class="sd">    :param executor: An executor object, with method :code:`submit(callable,</span>
+<span class="sd">        *args, **kwargs)` and returning a Future-like object with methods</span>
+<span class="sd">        :code:`done() -&gt; bool` and :code:`result() -&gt; float`. The executor role</span>
+<span class="sd">        is to dispatch the execution of the jobs locally/on a cluster/with</span>
+<span class="sd">        multithreading depending on the implementation. Eg:</span>
+<span class="sd">        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single</span>
+<span class="sd">        threaded execution. This is only used when multiple inputs are given.</span>
 
 <span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
 <span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>
@@ -390,12 +392,13 @@
 <span class="sd">        graph conversion before raising an error. If multiple inputs are</span>
 <span class="sd">        provided, this timeout is per-input.</span>
 
-<span class="sd">    :param executor: An executor object, with method :code:`map(callable,</span>
-<span class="sd">        *inputs)` that returns an iterator over results. The executor&#39;s role is</span>
-<span class="sd">        to dispatch the execution of jobs with multithreading depending on the</span>
-<span class="sd">        implementation. Eg: :code:`concurrent.futures.ThreadPoolExecutor`.</span>
-<span class="sd">        Defaults to single threaded execution. This is only used when multiple</span>
-<span class="sd">        inputs are given.</span>
+<span class="sd">    :param executor: An executor object, with method :code:`submit(callable,</span>
+<span class="sd">        *args, **kwargs)` and returning a Future-like object with methods</span>
+<span class="sd">        :code:`done() -&gt; bool` and :code:`result() -&gt; float`. The executor role</span>
+<span class="sd">        is to dispatch the execution of the jobs locally/on a cluster/with</span>
+<span class="sd">        multithreading depending on the implementation. Eg:</span>
+<span class="sd">        :code:`concurrent.futures.ThreadPoolExecutor`. Defaults to single</span>
+<span class="sd">        threaded execution. This is only used when multiple inputs are given.</span>
 
 <span class="sd">    :param chunksize: The number of inputs to read and process at a time. A</span>
 <span class="sd">        larger chunksize improves parallelism but increases memory consumption</span>

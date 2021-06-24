@@ -43,7 +43,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Protocol Buffers" href="protocol-buffers.html" />
-    <link rel="prev" title="Getting Started" href="../getting-started.html" /> 
+    <link rel="prev" title="ProGraML" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,7 +93,6 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-programl.create_ops">Graph Creation Ops</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#llvm-clang">LLVM / Clang</a></li>
@@ -272,12 +271,13 @@ using the default search path of the system compiler. See
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 clang invocation before raising an error. If multiple <code class="code docutils literal notranslate"><span class="pre">srcs</span></code>
 inputs are provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">srcs</span></code>
-is a single input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory.</p></li>
@@ -335,12 +335,13 @@ using the default search path of the system compiler. See
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 clang invocation before raising an error. If multiple inputs are
 provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">args</span></code>
-is a single input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory.</p></li>
@@ -394,12 +395,13 @@ processed in parallel. For example:</p>
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph construction invocation before raising an error. If multiple
 inputs are provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">irs</span></code>
-is a single input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory.</p></li>
@@ -453,12 +455,13 @@ instances.</p></li>
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph construction invocation before raising an error. If multiple
 inputs are provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is unused when <code class="code docutils literal notranslate"><span class="pre">hlos</span></code>
-is a single input.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory.</p></li>
@@ -509,12 +512,13 @@ another representation.</p>
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph conversion before raising an error. If multiple inputs are
 provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is only used when multiple
-inputs are given.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory. This is only used when multiple
@@ -549,12 +553,13 @@ inputs are given.</p></li>
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph conversion before raising an error. If multiple inputs are
 provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is only used when multiple
-inputs are given.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory. This is only used when multiple
@@ -591,12 +596,13 @@ then be rendered using the graphviz command line tools, or parsed using
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph conversion before raising an error. If multiple inputs are
 provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is only used when multiple
-inputs are given.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory. This is only used when multiple
@@ -630,12 +636,13 @@ iterable sequence of graphviz dot strings.</p>
 <li><p><strong>timeout</strong> – The maximum number of seconds to wait for an individual
 graph conversion before raising an error. If multiple inputs are
 provided, this timeout is per-input.</p></li>
-<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">map(callable,</span>
-<span class="pre">*inputs)</span></code> that returns an iterator over results. The executor’s role is
-to dispatch the execution of jobs with multithreading depending on the
-implementation. Eg: <code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>.
-Defaults to single threaded execution. This is only used when multiple
-inputs are given.</p></li>
+<li><p><strong>executor</strong> – An executor object, with method <code class="code docutils literal notranslate"><span class="pre">submit(callable,</span>
+<span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> and returning a Future-like object with methods
+<code class="code docutils literal notranslate"><span class="pre">done()</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> and <code class="code docutils literal notranslate"><span class="pre">result()</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>. The executor role
+is to dispatch the execution of the jobs locally/on a cluster/with
+multithreading depending on the implementation. Eg:
+<code class="code docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>. Defaults to single
+threaded execution. This is only used when multiple inputs are given.</p></li>
 <li><p><strong>chunksize</strong> – The number of inputs to read and process at a time. A
 larger chunksize improves parallelism but increases memory consumption
 as more inputs must be stored in memory. This is only used when multiple
@@ -817,7 +824,7 @@ provided, all graphs are returned.</p></li>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="protocol-buffers.html" class="btn btn-neutral float-right" title="Protocol Buffers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="../getting-started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="ProGraML" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
