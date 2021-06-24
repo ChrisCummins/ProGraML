@@ -23,16 +23,3 @@ cc_test(
         "@labm8//labm8/cpp:test",
     ],
 )
-
-py_test(
-    name = "inst2vec_encoder_test",
-    timeout = "long",
-    srcs = ["inst2vec_encoder_test.py"],
-    deps = [
-        "//programl/graph/py:program_graph_builder",
-        "//programl/ir/llvm:inst2vec_encoder",
-        "//programl/proto",
-        "//tests:test_main",
-        "//tests/plugins:llvm_program_graph",
-    ],
-)

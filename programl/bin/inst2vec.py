@@ -24,8 +24,6 @@ Example usage:
 
     $ inst2vec --ir=/tmp/source.ll < program.pbtxt > inst2vec.pbtxt
 """
-from pathlib import Path
-
 from absl import app, flags
 
 from programl.ir.llvm import inst2vec_encoder
@@ -65,14 +63,6 @@ FLAGS = flags.FLAGS
 def main(argv):
     init_app(argv)
     encoder = inst2vec_encoder.Inst2vecEncoder()
-
-    if FLAGS.dataset:
-        encoder.RunOnDataset(Path(FLAGS.dataset))
-        return
-
-    if FLAGS.directory:
-        encoder.RunOnDirectory(Path(FLAGS.directory))
-        return
 
     proto = ParseStdinOrDie(ProgramGraph())
     if FLAGS.ir:

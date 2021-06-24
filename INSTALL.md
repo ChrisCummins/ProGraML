@@ -9,25 +9,6 @@ Install the ProGraML python package release using:
 ProGraML requires Python >= 3.6. The binary works on macOS and Linux (on Ubuntu
 18.04, Fedora 28, Debian 10 or newer equivalents).
 
-## Installing the prebuilt binaries
-
-Download the latest macOS or Linux release archive from the [releases
-page](https://github.com/ChrisCummins/ProGraML/releases).
-
-Unpack the release archive to `~/.local/opt/programl` (or a directory of your
-choice) using:
-```sh
-mkdir -p ~/.local/opt/programl
-tar xjvf ~/Downloads/programl-*.tar.bz2 -C ~/.local/opt/programl
-```
-
-Add the installed binaries to your PATH. You may want to add this to your
-`~/.bashrc`:
-```sh
-# ProGraML <https://github.com/ChrisCummins/ProGraML>.
-export PATH=$HOME/.local/opt/programl/bin:$PATH
-```
-
 
 ## Building from Source
 

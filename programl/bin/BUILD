@@ -3,12 +3,8 @@
 # #####################################################
 # House keeping notes:
 #
-#   1) When you add a new command line tool, consider adding
-#      it to the //:install target so that it is installed
-#      into the user path.
-#
-#   2) Run ./bin/update_docs.sh and commit any
-#      changes.
+#   1) When you add a new command line tool, run
+#      ./bin/update_docs.sh and commit any changes.
 # #####################################################
 #
 # Copyright 2019-2020 the ProGraML authors.
@@ -31,16 +27,16 @@ filegroup(
     name = "bin",
     srcs = [
         ":clang2graph-10",
-        # Not used by current Python API: ":graph2cdfg",
         ":graph2dot",
         ":graph2json",
-        # Not used by current Python API: ":graph2seq",
+        ":llvm2graph-10",
         ":llvm2graph-3.8",
         ":llvm2graph-6",
-        ":llvm2graph-10",
-        # Not used by current Python API: ":pbq",
         ":xla2graph",
         # Not used by current Python API: ":analyze",
+        # Not used by current Python API: ":graph2cdfg",
+        # Not used by current Python API: ":graph2seq",
+        # Not used by current Python API: ":pbq",
     ] + select({
         "@llvm//:darwin": [],
         "//conditions:default": [

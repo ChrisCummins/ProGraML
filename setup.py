@@ -58,10 +58,6 @@ setuptools.setup(
     url="https://github.com/ChrisCummins/ProGraML",
     license="Apache 2.0",
     packages=[
-        "programl.graph.analysis.py",
-        "programl.graph.format.py",
-        "programl.graph.py",
-        "programl.graph",
         "programl.ir.llvm",
         "programl.proto",
         "programl.third_party.inst2vec",
@@ -75,9 +71,6 @@ setuptools.setup(
     package_data={
         "programl": [
             "bin/*",
-            "graph/analysis/py/*.so",
-            "graph/format/py/*.so",
-            "graph/py/*.so",
             "ir/llvm/internal/*.pickle",
         ],
     },

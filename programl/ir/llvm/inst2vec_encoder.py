@@ -14,19 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A module for encoding LLVM-IR program graphs using inst2vec."""
-import itertools
-import multiprocessing
-import pathlib
 import pickle
-import random
-import time
-from typing import Any, Iterable, List, Optional, Tuple
+from typing import List, Optional
 
 import numpy as np
 
 from programl.proto import Node, ProgramGraph
 from programl.third_party.inst2vec import inst2vec_preprocess
-from programl.util.py import decorators, pbutil, progress
+from programl.util.py import decorators
 from programl.util.py.runfiles_path import runfiles_path
 
 DICTIONARY = runfiles_path(
@@ -53,12 +48,6 @@ class Inst2vecEncoder(object):
 
         with open(str(AUGMENTED_INST2VEC_EMBEDDINGS), "rb") as f:
             self.node_text_embeddings = pickle.load(f)
-
-    def RunOnDataset(self, dataset_root: pathlib.Path) -> None:
-        progress.Run(_Inst2vecEncodeDataset(self, dataset_root))
-
-    def RunOnDirectory(self, directory: pathlib.Path) -> None:
-        progress.Run(_Inst2vecEncodeDirectory(self, directory))
 
     def Encode(self, proto: ProgramGraph, ir: Optional[str] = None) -> ProgramGraph:
         """Pre-process the node text and set the text embedding index.
@@ -138,150 +127,3 @@ class Inst2vecEncoder(object):
             ]
         ).astype(np.float64)
         return [self.node_text_embeddings, node_selector]
-
-
-@decorators.timeout(seconds=60)
-def _EncodeOne(
-    encoder: Inst2vecEncoder,
-    graph: ProgramGraph,
-    graph_path: pathlib.Path,
-    ir_path: Optional[pathlib.Path],
-):
-    if ir_path:
-        with open(str(ir_path)) as f:
-            ir = f.read()
-    else:
-        ir = None
-    encoder.Encode(graph, ir=ir)
-    pbutil.ToFile(graph, graph_path)
-
-
-def _ProcessRows(job) -> Tuple[int, int, float]:
-    start_time = time.time()
-    encoded_count = 0
-
-    encoder: Inst2vecEncoder = job[0]
-    paths: List[Tuple[pathlib.Path, pathlib.Path]] = job[1]
-    for graph_path, ir_path in paths:
-        graph = pbutil.FromFile(graph_path, ProgramGraph())
-        # Check to see if we have already processed this file.
-        if len(graph.features.feature["inst2vec_annotated"].int64_list.value):
-            continue
-
-        encoded_count += 1
-        try:
-            _EncodeOne(encoder, graph, graph_path, ir_path)
-        except AssertionError:
-            # NCC codebase uses assertions in place of regular exceptions.
-            pass
-        except TimeoutError:
-            pass
-    return len(paths), encoded_count, time.time() - start_time
-
-
-def chunkify(iterable: Iterable[Any], chunk_size: int) -> Iterable[List[Any]]:
-    """Split an iterable into chunks of a given size.
-    Args:
-      iterable: The iterable to split into chunks.
-      chunk_size: The size of the chunks to return.
-    Returns:
-      An iterator over chunks of the input iterable.
-    """
-    i = iter(iterable)
-    piece = list(itertools.islice(i, chunk_size))
-    while piece:
-        yield piece
-        piece = list(itertools.islice(i, chunk_size))
-
-
-class _Inst2vecEncodeJob(progress.Progress):
-    """Run inst2vec encoder on all graphs in the dataset."""
-
-    def __init__(
-        self,
-        encoder: Inst2vecEncoder,
-        graph_ir_paths: List[Tuple[pathlib.Path, pathlib.Path]],
-        logfile: Optional[pathlib.Path] = None,
-    ):
-        self.encoder = encoder
-        self.graph_ir_paths = graph_ir_paths
-        self.logfile = logfile
-
-        # Load balance.
-        random.shuffle(self.graph_ir_paths)
-
-        super(_Inst2vecEncodeJob, self).__init__(
-            "inst2vec", i=0, n=len(self.graph_ir_paths), unit="graphs"
-        )
-
-    def Run(self):
-        jobs = [
-            (self.encoder, chunk) for chunk in list(chunkify(self.graph_ir_paths, 128))
-        ]
-        logfile = None
-        if self.logfile:
-            logfile = open(str(self.logfile), "a")
-
-        with multiprocessing.Pool() as pool:
-            for processed_count, encoded_count, runtime in pool.imap_unordered(
-                _ProcessRows, jobs
-            ):
-                self.ctx.i += processed_count
-                if self.logfile:
-                    logfile.write(
-                        f"{processed_count}\t{encoded_count}\t{runtime:.4f}\t{runtime / processed_count:.4f}\n"
-                    )
-                    logfile.flush()
-
-        if self.logfile:
-            logfile.close()
-        self.ctx.i = self.ctx.n
-
-
-class _Inst2vecEncodeDataset(_Inst2vecEncodeJob):
-    """Run inst2vec encoder on all graphs in the dataset."""
-
-    def __init__(self, encoder: Inst2vecEncoder, path: pathlib.Path):
-        self.encoder = encoder
-        if not (path / "graphs").is_dir():
-            raise FileNotFoundError(str(path / "graphs"))
-        if not (path / "ir").is_dir():
-            raise FileNotFoundError(str(path / "ir"))
-
-        graph_paths = [
-            p
-            for p in (path / "graphs").iterdir()
-            if p.name.endswith(".ProgramGraph.pb")
-        ]
-        ir_paths = [
-            path / "ir" / f"{p.name[:-len('.ProgramGraph.pb')]}.ll" for p in graph_paths
-        ]
-        ir_paths = [p if p.is_file() else None for p in ir_paths]
-        graph_ir_paths = list(zip(graph_paths, ir_paths))
-
-        super(_Inst2vecEncodeDataset, self).__init__(
-            encoder=encoder,
-            graph_ir_paths=graph_ir_paths,
-            logfile=path / "inst2vec_log.txt",
-        )
-
-
-class _Inst2vecEncodeDirectory(_Inst2vecEncodeJob):
-    """Run inst2vec encoder on all graphs in the dataset."""
-
-    def __init__(self, encoder: Inst2vecEncoder, path: pathlib.Path):
-        self.encoder = encoder
-        if not path.is_dir():
-            raise FileNotFoundError(str(path))
-
-        graph_paths = [p for p in path.iterdir() if p.name.endswith(".ProgramGraph.pb")]
-        ir_paths = [
-            path / f"{p.name[:-len('.ProgramGraph.pb')]}.ll" for p in graph_paths
-        ]
-        ir_paths = [p if p.is_file() else None for p in ir_paths]
-        graph_ir_paths = list(zip(graph_paths, ir_paths))
-
-        super(_Inst2vecEncodeDirectory, self).__init__(
-            encoder=encoder,
-            graph_ir_paths=graph_ir_paths,
-        )

@@ -2,8 +2,8 @@
 # Configuration for Better Code analysis.
 # See https://bettercodehub.com/docs/configuration-manual
 exclude:
+    - /setup.py
     - /benchmarks/.*
-    - /bin/.*
     - /models/.*
     - /programl/third_party/.*
     - /tasks/.*

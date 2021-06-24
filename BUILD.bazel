@@ -45,38 +45,3 @@ genrule(
     outs = ["empty.py"],
     cmd = "touch $@",
 )
-
-sh_binary(
-    name = "install",
-    srcs = ["install.sh"],
-    data = [
-        ":tar_package",
-        "@bazel_tools//tools/bash/runfiles",
-    ],
-)
-
-genrule(
-    name = "tar_package",
-    srcs = [
-        "//programl/bin",
-        "//programl/bin:graph2dot",
-        ":LICENSE",
-        ":version.txt",
-    ],
-    outs = ["package.tar.bz2"],
-    cmd = (
-        # Create the LICENSE and README files.
-        "mkdir package && " +
-        "cp $(location :LICENSE) package && " +
-        "echo \"ProGraML version $$(tr -d '\n' < $(location :version.txt)) <http://github.com/ChrisCummins/ProGraML>\" > package/README &&"
-    ) + (
-        # Copy the binaries to package/bin.
-        "rsync -ah --copy-links $$(dirname $(location //programl/bin:graph2dot)) package &&"
-    ) + (
-        # Create the clang2graph and llvm2graph symlinks in package/bin.
-        "ln -s clang2graph-10 package/bin/clang2graph &&" +
-        "ln -s llvm2graph-10 package/bin/llvm2graph &&" +
-        # Create the package archive.
-        "tar cjf $@ -C package ."
-    ),
-)
