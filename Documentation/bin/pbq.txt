@@ -35,12 +35,6 @@ Supported Queries
     pbq SourceFile
       Prints an entire SourceFile message.
 
-    pbq Checkpoint
-      Prints an entire Checkpoint message.
-
-    pbq NodeIndexList
-      Prints an entire NodeIndexList message.
-
     pbq 'SELECT COUNT(graph) FROM ProgramGraphFeaturesList'
       Count the number of program graphs in a list of program graph features.
 

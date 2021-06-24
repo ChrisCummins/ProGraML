@@ -1,17 +1,21 @@
-xla2graph: Generate program graph from a HLO module.
+llvm2graph-6: Generate a program graph from LLVM-IR.
 
-Read a HloProto message from file and print the program graph to stdout.
+Read an LLVM-IR module from stdin and print the program graph to stdout. For example:
 
-Tensorflow, JAX, Julia, and PyTorch can all be used as XLA frontends. To
-run TensorFlow using XLA and dump HloProto files, run:
+  $ llvm2graph < /path/to/llvm.ll
 
-  $ TF_XLA_FLAGS=--tf_xla_auto_jit=2 \
-    XLA_FLAGS="--xla_dump_hlo_as_proto --xla_dump_to=/tmp/hlo" \
-    path/to/your/tf/program
+Or pipe the output directly from clang:
 
-Then read and convert the HloProto to a ProgramGraph using:
+  $ clang foo.c -emit-llvm -o - | llvm2graph -
 
-  $ xla2graph /tmp/hlo/module_0000.before_optimizations.hlo.pb
+If the filename has suffix '.Ir.pb', the file is parsed as an Ir protocol buffer:
+
+  $ llvm2graph /path/to/llvm.Ir.pb
+
+If the filename has suffix '.IrList.pb', the file is parsed as an IrList protocol buffer
+and the IR at position --ir_list_index (zero-based) is used:
+
+  $ llvm2graph /path/to/list.IrList.pb --ir_list_index=2
 
   Flags from external/com_github_gflags_gflags/src/gflags.cc:
     -flagfile (load flags from file) type: string default: ""
@@ -49,11 +53,19 @@ Then read and convert the HloProto to a ProgramGraph using:
 
 
 
-  Flags from programl/util/stdin_fmt.cc:
-    -stdin_fmt (The type of input format to use. Valid options are: "pbtxt"
-      which reads a text format protocol buffer, "pb" which reads a binary
-      format protocol buffer, or "json" which reads a JSON format protocol
-      buffer.) type: string default: "pbtxt"
+  Flags from programl/bin/llvm2graph.cc:
+    -ignore_call_returns (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -instructions_only (Include only instructions in the generated program
+      graph.) type: bool default: false
+    -ir_list_index (If reading an IrList protocol buffer, use this value to
+      index into the list.) type: int32 default: 0
+    -strict (Validate that the generated graph conforms to expectations of what
+      a graph should look like - i.e. the module is not empty, every function
+      contains instructions, and it does not contain unreachable code.)
+      type: bool default: false
+
+
 
   Flags from programl/util/stdout_fmt.cc:
     -stdout_fmt (The format of output. Valid options are: "pbtxt" for a
