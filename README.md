@@ -77,9 +77,8 @@ Install the latest release of the Python package using:
 pip install -U programl
 ```
 
-The python API is very simple, comprising three types of operations: graph
-*creation* ops, graph *transform* ops, and graph *serialization* ops. Here is a
-quick demo of each:
+The API is very simple, comprising graph *creation* ops, graph *transform* ops,
+and graph *serialization* ops. Here is a quick demo of each:
 
 ```py
 >>> import programl as pg
