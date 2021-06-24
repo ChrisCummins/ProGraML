@@ -60,7 +60,6 @@ setuptools.setup(
     packages=[
         "programl.graph.analysis.py",
         "programl.graph.format.py",
-        "programl.graph.py",
         "programl.graph",
         "programl.ir.llvm",
         "programl.proto",

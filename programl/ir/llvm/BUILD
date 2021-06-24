@@ -60,7 +60,6 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//programl/graph/py:program_graph_builder",
         "//programl/proto",
         "//programl/third_party/inst2vec",
         "//programl/util/py:decorators",
