@@ -72,14 +72,6 @@ def programl_deps():
   )
 
   http_archive(
-    name="pybind11_json",
-    build_file="@programl//:third_party/pybind11_json.BUILD",
-    sha256="2eaf4c294aaf449ed6de83ae81d23f9275d6286cf184834c7cf6ea6087d98794",
-    strip_prefix="pybind11_json-0.2.10/include",
-    urls=["https://github.com/pybind/pybind11_json/archive/0.2.10.tar.gz"],
-  )
-
-  http_archive(
     name="nlohmann_json",
     build_file="@programl//:third_party/nlohmann_json.BUILD",
     sha256="87b5884741427220d3a33df1363ae0e8b898099fbc59f1c451113f6732891014",
@@ -126,14 +118,6 @@ def programl_deps():
     urls=[
       "https://github.com/01org/tbb/releases/download/2017_U5/tbb2017_20170226oss_lin.tgz"
     ],
-  )
-
-  http_archive(
-    name="pybind11",
-    build_file="@programl//:third_party/pybind11_bazel/pybind11.BUILD",
-    sha256="8ff2fff22df038f5cd02cea8af56622bc67f5b64534f1b83b9f133b8366acff2",
-    strip_prefix="pybind11-2.6.2",
-    urls=["https://github.com/pybind/pybind11/archive/v2.6.2.tar.gz"],
   )
 
   http_archive(
