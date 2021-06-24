@@ -77,12 +77,14 @@ Install the latest release of the Python package using:
 pip install -U programl
 ```
 
-Then, inIn a Python interpreter of choice:
+The python API is very simple, comprising three types of operations: graph
+*creation* ops, graph *transform* ops, and graph *serialization* ops. Here is a
+quick demo of each:
 
 ```py
 >>> import programl as pg
 
-# Graphs can be constructed from C/C++/LLVM/XLA:
+# Construct a program graph from C++:
 >>> G = pg.from_cpp("""
 ... #include <iostream>
 ...
@@ -96,14 +98,16 @@ Then, inIn a Python interpreter of choice:
 >>> type(G).__name__
 'ProgramGraph'
 
-# The API contains to convert to NetworkX, DGL, etc:
+# Convert the graph to NetworkX:
 >>> pg.to_networkx(G)
 <networkx.classes.multidigraph.MultiDiGraph at 0x7fbcf40a2fa0>
 
-# There are also serialization functions for I/O:
+# Save the graph for later:
 >>> pg.save_graphs('file.data', [G])
 ```
 
+For further details check out the [API
+reference](https://chriscummins.cc/ProGraML/api/python.html).
 
 ## Supported Programming Languages
 
