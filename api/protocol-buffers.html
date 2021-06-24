@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Protocol Buffers &mdash; ProGraML 0.2.0 documentation</title>
+  <title>Protocol Buffers &mdash; ProGraML 0.3.0 documentation</title>
   
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.3.0
               </div>
             
           
@@ -166,7 +167,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="protocol-buffers">
+  <section id="protocol-buffers">
 <h1>Protocol Buffers<a class="headerlink" href="#protocol-buffers" title="Permalink to this headline">¶</a></h1>
 <p>ProGraML uses <a class="reference external" href="https://developers.google.com/protocol-buffers">Protocol Buffers</a> for representing the
 structured data of program graphs.</p>
@@ -178,111 +179,670 @@ structured data of program graphs.</p>
 <li><p><a class="reference internal" href="#util" id="id4">Util</a></p></li>
 </ul>
 </div>
-<div class="section" id="the-program-graph">
+<section id="the-program-graph">
 <h2><a class="toc-backref" href="#id2">The Program Graph</a><a class="headerlink" href="#the-program-graph" title="Permalink to this headline">¶</a></h2>
 <p>These protocol buffer definitions are available in:</p>
 <ul class="simple">
 <li><p>Python: <code class="code docutils literal notranslate"><span class="pre">from</span> <span class="pre">programl.proto</span> <span class="pre">import</span> <span class="pre">*</span></code></p></li>
 <li><p>C++: <code class="code docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;programl/proto/program_graph.pb.h&quot;</span></code></p></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “ProgramGraph” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv412ProgramGraph">
+<span id="_CPPv312ProgramGraph"></span><span id="_CPPv212ProgramGraph"></span><span id="ProgramGraph"></span><span class="target" id="struct_program_graph"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ProgramGraph</span></span></span><a class="headerlink" href="#_CPPv412ProgramGraph" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A program graph. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_1ac06a14d50ce9ae300557222d85901630"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Node</span> <span class="pre">node</span>&#160;&#160; <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>The nodes of the program. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_1add6c43e3a61c4e4f3109a7d030f2aba8"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Edge</span> <span class="pre">edge</span>&#160;&#160; <span class="pre">=</span> <span class="pre">2</span></span></dt>
+<dd><p>The edge relations between nodes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_1aeeb6c835a0afa6e9709ca808bfe0a748"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Function</span> <span class="pre">function</span>&#160;&#160; <span class="pre">=</span> <span class="pre">4</span></span></dt>
+<dd><p>The functions that are defined in the program. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_1ab32333c2f3efea870d49215a6ec2e8bd"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Module</span> <span class="pre">module</span>&#160;&#160; <span class="pre">=</span> <span class="pre">5</span></span></dt>
+<dd><p>The modules defined in the program. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12ProgramGraph8featuresE">
+<span id="_CPPv3N12ProgramGraph8featuresE"></span><span id="_CPPv2N12ProgramGraph8featuresE"></span><span id="ProgramGraph::features__Features"></span><span class="target" id="struct_program_graph_1a412e361ad21102598b51a57ecbd581aa"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">6</span></span><a class="headerlink" href="#_CPPv4N12ProgramGraph8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of graph-level features. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Node” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv44Node">
+<span id="_CPPv34Node"></span><span id="_CPPv24Node"></span><span id="Node"></span><span class="target" id="struct_node"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><a class="headerlink" href="#_CPPv44Node" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A node represents an instruction, variable, or constant. </p>
+<p>A conformant node must:<ul class="simple">
+<li><p>Have the <code class="docutils literal notranslate"><span class="pre">type</span></code> field set.</p></li>
+<li><p>Have the <code class="docutils literal notranslate"><span class="pre">text</span></code> field set. </p></li>
+</ul>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4TypeE">
+<span id="_CPPv3N4Node4TypeE"></span><span id="_CPPv2N4Node4TypeE"></span><span class="target" id="struct_node_1a8dad370be1595f49e0a7c2406a91e867"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Type</span></span></span><a class="headerlink" href="#_CPPv4N4Node4TypeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The type of node. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4Type11INSTRUCTIONE">
+<span id="_CPPv3N4Node4Type11INSTRUCTIONE"></span><span id="_CPPv2N4Node4Type11INSTRUCTIONE"></span><span class="target" id="struct_node_1a8dad370be1595f49e0a7c2406a91e867a42ad6109b60696cb534c62009f329dfa"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INSTRUCTION</span></span></span><a class="headerlink" href="#_CPPv4N4Node4Type11INSTRUCTIONE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An instruction. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4Type8VARIABLEE">
+<span id="_CPPv3N4Node4Type8VARIABLEE"></span><span id="_CPPv2N4Node4Type8VARIABLEE"></span><span class="target" id="struct_node_1a8dad370be1595f49e0a7c2406a91e867a9a97ef3786ed0a8871cb33c8d67cd0f6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VARIABLE</span></span></span><a class="headerlink" href="#_CPPv4N4Node4Type8VARIABLEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A variable. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4Type8CONSTANTE">
+<span id="_CPPv3N4Node4Type8CONSTANTE"></span><span id="_CPPv2N4Node4Type8CONSTANTE"></span><span class="target" id="struct_node_1a8dad370be1595f49e0a7c2406a91e867ab0a99878caea049e99a3ef5b2a344e8a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONSTANT</span></span></span><a class="headerlink" href="#_CPPv4N4Node4Type8CONSTANTE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A constant. </p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Edge” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4typeE">
+<span id="_CPPv3N4Node4typeE"></span><span id="_CPPv2N4Node4typeE"></span><span id="Node::type__Type"></span><span class="target" id="struct_node_1adcaf01927a597ad0e6025b173fe5e552"></span><a class="reference internal" href="#_CPPv4N4Node4TypeE" title="Node::Type"><span class="n"><span class="pre">Type</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N4Node4typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The type of the node. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node4textE">
+<span id="_CPPv3N4Node4textE"></span><span id="_CPPv2N4Node4textE"></span><span id="Node::text__string"></span><span class="target" id="struct_node_1a6110d439cfb46f472bd65fb483d3b205"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">text</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N4Node4textE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The text of a node. </p>
+<p>This is the raw representation of a node, such as the contents of a statement, or the name of an identifier. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node8functionE">
+<span id="_CPPv3N4Node8functionE"></span><span id="_CPPv2N4Node8functionE"></span><span id="Node::function__int32"></span><span class="target" id="struct_node_1ae49dd6b6689e1f136a8e4b364eafe4a6"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">function</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">4</span></span><a class="headerlink" href="#_CPPv4N4Node8functionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An index into the parent <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> message’s function list indicating the source <a class="reference internal" href="#struct_function"><span class="std std-ref">Function</span></a> for this node. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node5blockE">
+<span id="_CPPv3N4Node5blockE"></span><span id="_CPPv2N4Node5blockE"></span><span id="Node::block__int32"></span><span class="target" id="struct_node_1a2f2b9409cfaf0c101fda9173d7621388"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">block</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">7</span></span><a class="headerlink" href="#_CPPv4N4Node5blockE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The basic block of this node. </p>
+<p>For IRs with a basic block abstraction, this value can be used to group nodes by the basic block that they are defined in. This value is optional, and when set, is used to define an ID for the block. IDs should be unique across the entire program, i.e. when two nodes have the same block, they should also have the same <a class="reference internal" href="#struct_function"><span class="std std-ref">Function</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Node8featuresE">
+<span id="_CPPv3N4Node8featuresE"></span><span id="_CPPv2N4Node8featuresE"></span><span id="Node::features__Features"></span><span class="target" id="struct_node_1a75c8427a8d734601f5c58c18c6329d67"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">8</span></span><a class="headerlink" href="#_CPPv4N4Node8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this node. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Function” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv44Edge">
+<span id="_CPPv34Edge"></span><span id="_CPPv24Edge"></span><span id="Edge"></span><span class="target" id="struct_edge"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Edge</span></span></span><a class="headerlink" href="#_CPPv44Edge" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An edge is a relation between two Nodes in a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>. </p>
+<p>A conformant edge must:<ul class="simple">
+<li><p>Have the <code class="docutils literal notranslate"><span class="pre">flow</span></code> field set.</p></li>
+<li><p>Have <code class="docutils literal notranslate"><span class="pre">source</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> field values that are indices into the parent <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> message’s <a class="reference internal" href="#struct_node"><span class="std std-ref">Node</span></a> list.</p></li>
+<li><p>Have a position of zero if the flow is <code class="docutils literal notranslate"><span class="pre">CALL</span></code>. </p></li>
+</ul>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge4FlowE">
+<span id="_CPPv3N4Edge4FlowE"></span><span id="_CPPv2N4Edge4FlowE"></span><span class="target" id="struct_edge_1a050afbf358f916457a5961a6841b656e"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Flow</span></span></span><a class="headerlink" href="#_CPPv4N4Edge4FlowE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The edge flow type. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge4Flow7CONTROLE">
+<span id="_CPPv3N4Edge4Flow7CONTROLE"></span><span id="_CPPv2N4Edge4Flow7CONTROLE"></span><span class="target" id="struct_edge_1a050afbf358f916457a5961a6841b656ea7e08b65fc34c082acbc544594b969ed1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONTROL</span></span></span><a class="headerlink" href="#_CPPv4N4Edge4Flow7CONTROLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A control flow relation. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge4Flow4DATAE">
+<span id="_CPPv3N4Edge4Flow4DATAE"></span><span id="_CPPv2N4Edge4Flow4DATAE"></span><span class="target" id="struct_edge_1a050afbf358f916457a5961a6841b656ea6165dbd486fb3682956bfa7e412b7dca"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DATA</span></span></span><a class="headerlink" href="#_CPPv4N4Edge4Flow4DATAE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A data flow relation. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge4Flow4CALLE">
+<span id="_CPPv3N4Edge4Flow4CALLE"></span><span id="_CPPv2N4Edge4Flow4CALLE"></span><span class="target" id="struct_edge_1a050afbf358f916457a5961a6841b656eadb517c95198d2a26211a8337fdbeb98a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CALL</span></span></span><a class="headerlink" href="#_CPPv4N4Edge4Flow4CALLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A call relation. </p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Module” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge4flowE">
+<span id="_CPPv3N4Edge4flowE"></span><span id="_CPPv2N4Edge4flowE"></span><span id="Edge::flow__Flow"></span><span class="target" id="struct_edge_1a519f69a329ec1ec7946babe87090b88a"></span><a class="reference internal" href="#_CPPv4N4Edge4FlowE" title="Edge::Flow"><span class="n"><span class="pre">Flow</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flow</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N4Edge4flowE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The type of relation of this edge. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge8positionE">
+<span id="_CPPv3N4Edge8positionE"></span><span id="_CPPv2N4Edge8positionE"></span><span id="Edge::position__int32"></span><span class="target" id="struct_edge_1ac15006463030ccffa2992f74d85b54b1"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">position</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N4Edge8positionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A numeric position for this edge, used to differentiate, for example, multiple incoming data edges to an instruction order by their operand order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge6sourceE">
+<span id="_CPPv3N4Edge6sourceE"></span><span id="_CPPv2N4Edge6sourceE"></span><span id="Edge::source__int32"></span><span class="target" id="struct_edge_1af00783cd97b4a24b39589c63b3d63a9f"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">source</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N4Edge6sourceE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An index into the parent <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> message’s node list for the source of this relation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge6targetE">
+<span id="_CPPv3N4Edge6targetE"></span><span id="_CPPv2N4Edge6targetE"></span><span id="Edge::target__int32"></span><span class="target" id="struct_edge_1a255993868a232e7999ba235fed96ae9a"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">target</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">4</span></span><a class="headerlink" href="#_CPPv4N4Edge6targetE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An index into the parent <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> message’s node list for the target of this relation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Edge8featuresE">
+<span id="_CPPv3N4Edge8featuresE"></span><span id="_CPPv2N4Edge8featuresE"></span><span id="Edge::features__Features"></span><span class="target" id="struct_edge_1a59e6c902a2297f344e3e97124fa0d291"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><a class="headerlink" href="#_CPPv4N4Edge8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this edge. </p>
+</dd></dl>
+
 </div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv48Function">
+<span id="_CPPv38Function"></span><span id="_CPPv28Function"></span><span id="Function"></span><span class="target" id="struct_function"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Function</span></span></span><a class="headerlink" href="#_CPPv48Function" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A function in a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>. </p>
+<p>A function contains one or more <code class="docutils literal notranslate"><span class="pre">INSTRUCTION</span></code> Nodes. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Function4nameE">
+<span id="_CPPv3N8Function4nameE"></span><span id="_CPPv2N8Function4nameE"></span><span id="Function::name__string"></span><span class="target" id="struct_function_1af154c76ad0cec805f3ec7da2b173de58"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N8Function4nameE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The name of the function. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Function6moduleE">
+<span id="_CPPv3N8Function6moduleE"></span><span id="_CPPv2N8Function6moduleE"></span><span id="Function::module__int32"></span><span class="target" id="struct_function_1a2e12933779e1355865b99cc3b6de38a0"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">module</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N8Function6moduleE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The source module of the function, as an index into the parent <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> message’s <a class="reference internal" href="#struct_module"><span class="std std-ref">Module</span></a> list. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Function8featuresE">
+<span id="_CPPv3N8Function8featuresE"></span><span id="_CPPv2N8Function8featuresE"></span><span id="Function::features__Features"></span><span class="target" id="struct_function_1ab659f2b41705cee319121566d606c6b2"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N8Function8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this function. </p>
+</dd></dl>
+
 </div>
-<div class="section" id="features">
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv46Module">
+<span id="_CPPv36Module"></span><span id="_CPPv26Module"></span><span id="Module"></span><span class="target" id="struct_module"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Module</span></span></span><a class="headerlink" href="#_CPPv46Module" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A module in a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>. </p>
+<p>A module represents a logical grouping of functions within a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>, usually equivalent to a Translation Unit. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Module4nameE">
+<span id="_CPPv3N6Module4nameE"></span><span id="_CPPv2N6Module4nameE"></span><span id="Module::name__string"></span><span class="target" id="struct_module_1a06c326572272c938b3f2a01ee75e56c9"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N6Module4nameE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The name of the module. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Module8featuresE">
+<span id="_CPPv3N6Module8featuresE"></span><span id="_CPPv2N6Module8featuresE"></span><span id="Module::features__Features"></span><span class="target" id="struct_module_1afd9ac8bf0075b6fe3da56629ab8cae95"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N6Module8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this module. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="features">
 <h2><a class="toc-backref" href="#id3">Features</a><a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <p>These protocol buffer definitions are available in:</p>
 <ul class="simple">
 <li><p>Python: <code class="code docutils literal notranslate"><span class="pre">from</span> <span class="pre">programl.proto</span> <span class="pre">import</span> <span class="pre">*</span></code></p></li>
 <li><p>C++: <code class="code docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;programl/third_party/tesnroflow/features.pb.h&quot;</span></code></p></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Feature” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv47Feature">
+<span id="_CPPv37Feature"></span><span id="_CPPv27Feature"></span><span id="Feature"></span><span class="target" id="struct_feature"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Feature</span></span></span><a class="headerlink" href="#_CPPv47Feature" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Containers for non-sequential data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_feature_1a597388f891bee9d4b4ee36edfacac8ef"></span><span class="sig-name descname"><span class="pre">oneof</span> <span class="pre">kind</span>&#160;&#160; <span class="pre">=</span> <span class="pre">{</span>&#160;&#160;&#160;&#160; <span class="pre">BytesList</span> <span class="pre">bytes_list</span> <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>Each feature can be exactly one kind. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “FeatureList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411FeatureList">
+<span id="_CPPv311FeatureList"></span><span id="_CPPv211FeatureList"></span><span id="FeatureList"></span><span class="target" id="struct_feature_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FeatureList</span></span></span><a class="headerlink" href="#_CPPv411FeatureList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Containers for sequential data. </p>
+<p>A <a class="reference internal" href="#struct_feature_list"><span class="std std-ref">FeatureList</span></a> contains lists of Features. These may hold zero or more <a class="reference internal" href="#struct_feature"><span class="std std-ref">Feature</span></a> values.</p>
+<p><a class="reference internal" href="#struct_feature_lists"><span class="std std-ref">FeatureLists</span></a> are organized into categories by name. The <a class="reference internal" href="#struct_feature_lists"><span class="std std-ref">FeatureLists</span></a> message contains the mapping from name to <a class="reference internal" href="#struct_feature_list"><span class="std std-ref">FeatureList</span></a>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_feature_list_1a219cb6f1ad05a620fae1fcb574531856"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Feature</span> <span class="pre">feature</span>&#160;&#160; <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>A list of <a class="reference internal" href="#struct_feature"><span class="std std-ref">Feature</span></a> messages. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “FeatureLists” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv412FeatureLists">
+<span id="_CPPv312FeatureLists"></span><span id="_CPPv212FeatureLists"></span><span id="FeatureLists"></span><span class="target" id="struct_feature_lists"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FeatureLists</span></span></span><a class="headerlink" href="#_CPPv412FeatureLists" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12FeatureLists12feature_listE">
+<span id="_CPPv3N12FeatureLists12feature_listE"></span><span id="_CPPv2N12FeatureLists12feature_listE"></span><span id="FeatureLists::feature_list__map:string.FeatureList:"></span><span class="target" id="struct_feature_lists_1a10f263237ebfc01170e9508dcb2ba4f5"></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411FeatureList" title="FeatureList"><span class="n"><span class="pre">FeatureList</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature_list</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N12FeatureLists12feature_listE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Map from feature name to feature list. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “BytesList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv49BytesList">
+<span id="_CPPv39BytesList"></span><span id="_CPPv29BytesList"></span><span id="BytesList"></span><span class="target" id="struct_bytes_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BytesList</span></span></span><a class="headerlink" href="#_CPPv49BytesList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Containers to hold repeated fundamental values. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_bytes_list_1a2514739a220b386e133b4913b4bc8db9"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">bytes</span> <span class="pre">value</span>&#160;&#160; <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>Features data. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Features” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv48Features">
+<span id="_CPPv38Features"></span><span id="_CPPv28Features"></span><span id="Features"></span><span class="target" id="struct_features"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Features</span></span></span><a class="headerlink" href="#_CPPv48Features" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Features7featureE">
+<span id="_CPPv3N8Features7featureE"></span><span id="_CPPv2N8Features7featureE"></span><span id="Features::feature__map:string.Feature:"></span><span class="target" id="struct_features_1a01b0dcc5c3b79f595f70625b6405bb54"></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv47Feature" title="Feature"><span class="n"><span class="pre">Feature</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N8Features7featureE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Map from feature name to feature. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Features” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_features"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Features</span></span></span><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_features_1a01b0dcc5c3b79f595f70625b6405bb54"></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv47Feature" title="Feature"><span class="n"><span class="pre">Feature</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><br /></dt>
+<dd><p>Map from feature name to feature. </p>
+</dd></dl>
+
 </div>
-</div>
-<div class="section" id="util">
+</dd></dl>
+
+</section>
+<section id="util">
 <h2><a class="toc-backref" href="#id4">Util</a><a class="headerlink" href="#util" title="Permalink to this headline">¶</a></h2>
 <p>These protocol buffer definitions are available in:</p>
 <ul class="simple">
 <li><p>Python: <code class="code docutils literal notranslate"><span class="pre">from</span> <span class="pre">programl.proto</span> <span class="pre">import</span> <span class="pre">*</span></code></p></li>
 <li><p>C++: <code class="code docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;programl/proto/util.pb.h&quot;</span></code></p></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “ProgramGraphOptions” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419ProgramGraphOptions">
+<span id="_CPPv319ProgramGraphOptions"></span><span id="_CPPv219ProgramGraphOptions"></span><span id="ProgramGraphOptions"></span><span class="target" id="struct_program_graph_options"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ProgramGraphOptions</span></span></span><a class="headerlink" href="#_CPPv419ProgramGraphOptions" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Options used to generate a program graph. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19ProgramGraphOptions6strictE">
+<span id="_CPPv3N19ProgramGraphOptions6strictE"></span><span id="_CPPv2N19ProgramGraphOptions6strictE"></span><span id="ProgramGraphOptions::strict__b"></span><span class="target" id="struct_program_graph_options_1a7b69e2dbdc1447b7a883640ae220391a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">strict</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N19ProgramGraphOptions6strictE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>If set, the program graph builder will reject graphs where: </p>
+<p><ol class="lowerroman simple">
+<li><p>A module contains no nodes.</p></li>
+<li><p>A function contains no nodes.</p></li>
+<li><p>A node is unnconnected. </p></li>
+</ol>
+</p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19ProgramGraphOptions17instructions_onlyE">
+<span id="_CPPv3N19ProgramGraphOptions17instructions_onlyE"></span><span id="_CPPv2N19ProgramGraphOptions17instructions_onlyE"></span><span id="ProgramGraphOptions::instructions_only__b"></span><span class="target" id="struct_program_graph_options_1ae7a7af57074b7e37cfa1c1e7a7227f76"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">instructions_only</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N19ProgramGraphOptions17instructions_onlyE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Generate only nodes for instructions. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19ProgramGraphOptions19ignore_call_returnsE">
+<span id="_CPPv3N19ProgramGraphOptions19ignore_call_returnsE"></span><span id="_CPPv2N19ProgramGraphOptions19ignore_call_returnsE"></span><span id="ProgramGraphOptions::ignore_call_returns__b"></span><span class="target" id="struct_program_graph_options_1ae3a1f174fa830ae4720f7259f9cfbb74"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ignore_call_returns</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N19ProgramGraphOptions19ignore_call_returnsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Omit return call edges from call sites. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19ProgramGraphOptions9opt_levelE">
+<span id="_CPPv3N19ProgramGraphOptions9opt_levelE"></span><span id="_CPPv2N19ProgramGraphOptions9opt_levelE"></span><span id="ProgramGraphOptions::opt_level__int32"></span><span class="target" id="struct_program_graph_options_1a9b1ccbf35b4d389211855c5127441b44"></span><span class="n"><span class="pre">int32</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opt_level</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">4</span></span><a class="headerlink" href="#_CPPv4N19ProgramGraphOptions9opt_levelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The optimization level when generating an IR from a source file. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19ProgramGraphOptions7ir_pathE">
+<span id="_CPPv3N19ProgramGraphOptions7ir_pathE"></span><span id="_CPPv2N19ProgramGraphOptions7ir_pathE"></span><span id="ProgramGraphOptions::ir_path__string"></span><span class="target" id="struct_program_graph_options_1acf1d4650a4bb09cac6c5eb80ad088acd"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ir_path</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">10</span></span><a class="headerlink" href="#_CPPv4N19ProgramGraphOptions7ir_pathE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The path of an IR to read. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “ProgramGraphList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416ProgramGraphList">
+<span id="_CPPv316ProgramGraphList"></span><span id="_CPPv216ProgramGraphList"></span><span id="ProgramGraphList"></span><span class="target" id="struct_program_graph_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ProgramGraphList</span></span></span><a class="headerlink" href="#_CPPv416ProgramGraphList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of program graphs. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16ProgramGraphList7contextE">
+<span id="_CPPv3N16ProgramGraphList7contextE"></span><span id="_CPPv2N16ProgramGraphList7contextE"></span><span id="ProgramGraphList::context__Features"></span><span class="target" id="struct_program_graph_list_1aa559c208fd05605052fc7b05b235e511"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">context</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N16ProgramGraphList7contextE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> list. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_list_1a3d76fa19bd41fcda0f17c8650d52452e"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">ProgramGraph</span> <span class="pre">graph</span>&#160;&#160; <span class="pre">=</span> <span class="pre">2</span></span></dt>
+<dd><p>A list of <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> messages. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “ProgramGraphFeatures” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420ProgramGraphFeatures">
+<span id="_CPPv320ProgramGraphFeatures"></span><span id="_CPPv220ProgramGraphFeatures"></span><span id="ProgramGraphFeatures"></span><span class="target" id="struct_program_graph_features"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ProgramGraphFeatures</span></span></span><a class="headerlink" href="#_CPPv420ProgramGraphFeatures" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Features describing a program. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ProgramGraphFeatures13node_featuresE">
+<span id="_CPPv3N20ProgramGraphFeatures13node_featuresE"></span><span id="_CPPv2N20ProgramGraphFeatures13node_featuresE"></span><span id="ProgramGraphFeatures::node_features__FeatureLists"></span><span class="target" id="struct_program_graph_features_1a176bb9759cc343bb2132e07d5d5a0f04"></span><a class="reference internal" href="#_CPPv412FeatureLists" title="FeatureLists"><span class="n"><span class="pre">FeatureLists</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">node_features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N20ProgramGraphFeatures13node_featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of features corresponding a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>’s list of <a class="reference internal" href="#struct_node"><span class="std std-ref">Node</span></a> messages. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ProgramGraphFeatures13edge_featuresE">
+<span id="_CPPv3N20ProgramGraphFeatures13edge_featuresE"></span><span id="_CPPv2N20ProgramGraphFeatures13edge_featuresE"></span><span id="ProgramGraphFeatures::edge_features__FeatureLists"></span><span class="target" id="struct_program_graph_features_1ade8ba948b7ee4e48e1fc7208e7c78ae7"></span><a class="reference internal" href="#_CPPv412FeatureLists" title="FeatureLists"><span class="n"><span class="pre">FeatureLists</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">edge_features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N20ProgramGraphFeatures13edge_featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of features corresponding a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>’s list of <a class="reference internal" href="#struct_edge"><span class="std std-ref">Edge</span></a> messages. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ProgramGraphFeatures17function_featuresE">
+<span id="_CPPv3N20ProgramGraphFeatures17function_featuresE"></span><span id="_CPPv2N20ProgramGraphFeatures17function_featuresE"></span><span id="ProgramGraphFeatures::function_features__FeatureLists"></span><span class="target" id="struct_program_graph_features_1ab07ea44db041e62f64ce96572267ebaf"></span><a class="reference internal" href="#_CPPv412FeatureLists" title="FeatureLists"><span class="n"><span class="pre">FeatureLists</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">function_features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N20ProgramGraphFeatures17function_featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of features corresponding a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>’s list of <a class="reference internal" href="#struct_function"><span class="std std-ref">Function</span></a> messages. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ProgramGraphFeatures15module_featuresE">
+<span id="_CPPv3N20ProgramGraphFeatures15module_featuresE"></span><span id="_CPPv2N20ProgramGraphFeatures15module_featuresE"></span><span id="ProgramGraphFeatures::module_features__FeatureLists"></span><span class="target" id="struct_program_graph_features_1a42dde65083aa70dbd691a3dff4d4bd37"></span><a class="reference internal" href="#_CPPv412FeatureLists" title="FeatureLists"><span class="n"><span class="pre">FeatureLists</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">module_features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">4</span></span><a class="headerlink" href="#_CPPv4N20ProgramGraphFeatures15module_featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of features corresponding a <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a>’s list of <a class="reference internal" href="#struct_module"><span class="std std-ref">Module</span></a> messages. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20ProgramGraphFeatures8featuresE">
+<span id="_CPPv3N20ProgramGraphFeatures8featuresE"></span><span id="_CPPv2N20ProgramGraphFeatures8featuresE"></span><span id="ProgramGraphFeatures::features__Features"></span><span class="target" id="struct_program_graph_features_1a5f03439005da1f8e96f774d65c3febdd"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">features</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><a class="headerlink" href="#_CPPv4N20ProgramGraphFeatures8featuresE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A set of graph-level features. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “ProgramGraphFeaturesList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv424ProgramGraphFeaturesList">
+<span id="_CPPv324ProgramGraphFeaturesList"></span><span id="_CPPv224ProgramGraphFeaturesList"></span><span id="ProgramGraphFeaturesList"></span><span class="target" id="struct_program_graph_features_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ProgramGraphFeaturesList</span></span></span><a class="headerlink" href="#_CPPv424ProgramGraphFeaturesList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of program graphs. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24ProgramGraphFeaturesList7contextE">
+<span id="_CPPv3N24ProgramGraphFeaturesList7contextE"></span><span id="_CPPv2N24ProgramGraphFeaturesList7contextE"></span><span id="ProgramGraphFeaturesList::context__Features"></span><span class="target" id="struct_program_graph_features_list_1a6cf778375625a3dfa5cf49fe19ba4bf0"></span><a class="reference internal" href="#_CPPv48Features" title="Features"><span class="n"><span class="pre">Features</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">context</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N24ProgramGraphFeaturesList7contextE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">&lt;key,</span> <span class="pre">value&gt;</span></code> mapping of features for this <a class="reference internal" href="#struct_program_graph_features"><span class="std std-ref">ProgramGraphFeatures</span></a> list. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_program_graph_features_list_1aac37a871bf5b1ea929e90cf5d1e986c5"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">ProgramGraphFeatures</span> <span class="pre">graph</span>&#160;&#160; <span class="pre">=</span> <span class="pre">2</span></span></dt>
+<dd><p>A list of <a class="reference internal" href="#struct_program_graph_features"><span class="std std-ref">ProgramGraphFeatures</span></a> messages. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Ir” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv42Ir">
+<span id="_CPPv32Ir"></span><span id="_CPPv22Ir"></span><span id="Ir"></span><span class="target" id="struct_ir"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ir</span></span></span><a class="headerlink" href="#_CPPv42Ir" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A compiler intermediate representation. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4TypeE">
+<span id="_CPPv3N2Ir4TypeE"></span><span id="_CPPv2N2Ir4TypeE"></span><span class="target" id="struct_ir_1a7f623f04c9e68c234e2dbe885a4ff767"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Type</span></span></span><a class="headerlink" href="#_CPPv4N2Ir4TypeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The type of IR. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4Type7UNKNOWNE">
+<span id="_CPPv3N2Ir4Type7UNKNOWNE"></span><span id="_CPPv2N2Ir4Type7UNKNOWNE"></span><span class="target" id="struct_ir_1a7f623f04c9e68c234e2dbe885a4ff767a78889670660f8f59de7e67098af1fe69"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UNKNOWN</span></span></span><a class="headerlink" href="#_CPPv4N2Ir4Type7UNKNOWNE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4Type4LLVME">
+<span id="_CPPv3N2Ir4Type4LLVME"></span><span id="_CPPv2N2Ir4Type4LLVME"></span><span class="target" id="struct_ir_1a7f623f04c9e68c234e2dbe885a4ff767a474b5c0f20d4e6d7a6a65da0c82e908a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LLVM</span></span></span><a class="headerlink" href="#_CPPv4N2Ir4Type4LLVME" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4Type7XLA_HLOE">
+<span id="_CPPv3N2Ir4Type7XLA_HLOE"></span><span id="_CPPv2N2Ir4Type7XLA_HLOE"></span><span class="target" id="struct_ir_1a7f623f04c9e68c234e2dbe885a4ff767a0d66ee764881ee5716a24a0d5d54cf48"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XLA_HLO</span></span></span><a class="headerlink" href="#_CPPv4N2Ir4Type7XLA_HLOE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “IrList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4typeE">
+<span id="_CPPv3N2Ir4typeE"></span><span id="_CPPv2N2Ir4typeE"></span><span id="Ir::type__Type"></span><span class="target" id="struct_ir_1a23c2219584ca05576afd4862d8a0558e"></span><a class="reference internal" href="#_CPPv4N2Ir4TypeE" title="Ir::Type"><span class="n"><span class="pre">Type</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N2Ir4typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The type of IR. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir16compiler_versionE">
+<span id="_CPPv3N2Ir16compiler_versionE"></span><span id="_CPPv2N2Ir16compiler_versionE"></span><span id="Ir::compiler_version__int64"></span><span class="target" id="struct_ir_1a8743ca56966e74d3b04a41e38750093c"></span><span class="n"><span class="pre">int64</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">compiler_version</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N2Ir16compiler_versionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The compiler version, as a single integer. </p>
+<p>Major + minor versions should be converted to this single number, e.g. 6.0.0 -&gt; 600. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir3cmdE">
+<span id="_CPPv3N2Ir3cmdE"></span><span id="_CPPv2N2Ir3cmdE"></span><span id="Ir::cmd__string"></span><span class="target" id="struct_ir_1a077607e5db16f4c7e7e64c3a746daea2"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmd</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N2Ir3cmdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The command that was used to produce this IR. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N2Ir4textE">
+<span id="_CPPv3N2Ir4textE"></span><span id="_CPPv2N2Ir4textE"></span><span id="Ir::text__string"></span><span class="target" id="struct_ir_1acb40e054d5a22f5f2b97e9fa9f7c4921"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">text</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">4</span></span><a class="headerlink" href="#_CPPv4N2Ir4textE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The text of the IR. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “SourceFile” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv46IrList">
+<span id="_CPPv36IrList"></span><span id="_CPPv26IrList"></span><span id="IrList"></span><span class="target" id="struct_ir_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IrList</span></span></span><a class="headerlink" href="#_CPPv46IrList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A list of compiler IRs. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_ir_list_1aa962a2c12f37f160d1ec245307561ea2"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">Ir</span> <span class="pre">ir</span>&#160;&#160; <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>A list of <a class="reference internal" href="#struct_ir"><span class="std std-ref">Ir</span></a> messages. </p>
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “Repo” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410SourceFile">
+<span id="_CPPv310SourceFile"></span><span id="_CPPv210SourceFile"></span><span id="SourceFile"></span><span class="target" id="struct_source_file"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SourceFile</span></span></span><a class="headerlink" href="#_CPPv410SourceFile" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A source file. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8LanguageE">
+<span id="_CPPv3N10SourceFile8LanguageE"></span><span id="_CPPv2N10SourceFile8LanguageE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aa"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Language</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8LanguageE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The source programming language. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language7UNKNOWNE">
+<span id="_CPPv3N10SourceFile8Language7UNKNOWNE"></span><span id="_CPPv2N10SourceFile8Language7UNKNOWNE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaaa9fbd42d328d1c28c3c2eca4a6168797"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UNKNOWN</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language7UNKNOWNE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language1CE">
+<span id="_CPPv3N10SourceFile8Language1CE"></span><span id="_CPPv2N10SourceFile8Language1CE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaa3068f06e90ab80be3054d461ada62568"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language1CE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language3CXXE">
+<span id="_CPPv3N10SourceFile8Language3CXXE"></span><span id="_CPPv2N10SourceFile8Language3CXXE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaa52b0d0b1ed20bc85b743b582e37e5676"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CXX</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language3CXXE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language6OPENCLE">
+<span id="_CPPv3N10SourceFile8Language6OPENCLE"></span><span id="_CPPv2N10SourceFile8Language6OPENCLE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaa53a0afaf4f27c840b46a0f7232fd0f5a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OPENCL</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language6OPENCLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language5SWIFTE">
+<span id="_CPPv3N10SourceFile8Language5SWIFTE"></span><span id="_CPPv2N10SourceFile8Language5SWIFTE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaa750e301d80ce71dc74d504e957d44a38"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SWIFT</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language5SWIFTE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language7HASKELLE">
+<span id="_CPPv3N10SourceFile8Language7HASKELLE"></span><span id="_CPPv2N10SourceFile8Language7HASKELLE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaa2a085c83bcb780f68e5b78fcea6df3e2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HASKELL</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language7HASKELLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8Language7FORTRANE">
+<span id="_CPPv3N10SourceFile8Language7FORTRANE"></span><span id="_CPPv2N10SourceFile8Language7FORTRANE"></span><span class="target" id="struct_source_file_1abf6c5279db0e775b016bc869109328aaacf53b5fed04976392e7d4ee523969be2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FORTRAN</span></span></span><a class="headerlink" href="#_CPPv4N10SourceFile8Language7FORTRANE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenstruct: Cannot find class “NodeIndexList” in doxygen xml output for project “ProGraML” from directory: ../doxygen/xml</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile8languageE">
+<span id="_CPPv3N10SourceFile8languageE"></span><span id="_CPPv2N10SourceFile8languageE"></span><span id="SourceFile::language__Language"></span><span class="target" id="struct_source_file_1af0f37486ea8236eb66c4a7a544230d07"></span><a class="reference internal" href="#_CPPv4N10SourceFile8LanguageE" title="SourceFile::Language"><span class="n"><span class="pre">Language</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">language</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N10SourceFile8languageE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The source programming language. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile7relpathE">
+<span id="_CPPv3N10SourceFile7relpathE"></span><span id="_CPPv2N10SourceFile7relpathE"></span><span id="SourceFile::relpath__string"></span><span class="target" id="struct_source_file_1a16388be2617f82d7f16578c1e4066213"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relpath</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N10SourceFile7relpathE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The relative path of the file. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10SourceFile4textE">
+<span id="_CPPv3N10SourceFile4textE"></span><span id="_CPPv2N10SourceFile4textE"></span><span id="SourceFile::text__string"></span><span class="target" id="struct_source_file_1add4fbd2f3c22476d81bd52f80686906f"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">text</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N10SourceFile4textE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The text of the file. </p>
+</dd></dl>
+
 </div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv44Repo">
+<span id="_CPPv34Repo"></span><span id="_CPPv24Repo"></span><span id="Repo"></span><span class="target" id="struct_repo"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Repo</span></span></span><a class="headerlink" href="#_CPPv44Repo" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A repository of source files. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Repo3urlE">
+<span id="_CPPv3N4Repo3urlE"></span><span id="_CPPv2N4Repo3urlE"></span><span id="Repo::url__string"></span><span class="target" id="struct_repo_1acf6ef46cd6dbf1951c4ec087ea4aaa81"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">url</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N4Repo3urlE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The URL of the repository. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Repo4sha1E">
+<span id="_CPPv3N4Repo4sha1E"></span><span id="_CPPv2N4Repo4sha1E"></span><span id="Repo::sha1__string"></span><span class="target" id="struct_repo_1aa9b1de5c86c846b561ba8e92ad7f533a"></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sha1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N4Repo4sha1E" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The sha1 of the repository’s HEAD commit. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4Repo20created_ms_timestampE">
+<span id="_CPPv3N4Repo20created_ms_timestampE"></span><span id="_CPPv2N4Repo20created_ms_timestampE"></span><span id="Repo::created_ms_timestamp__int64"></span><span class="target" id="struct_repo_1aa5c30c35add8d1c1f4db707102bf2aed"></span><span class="n"><span class="pre">int64</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">created_ms_timestamp</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#_CPPv4N4Repo20created_ms_timestampE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The timestamp that this repository was created. </p>
+</dd></dl>
+
 </div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv413NodeIndexList">
+<span id="_CPPv313NodeIndexList"></span><span id="_CPPv213NodeIndexList"></span><span id="NodeIndexList"></span><span class="target" id="struct_node_index_list"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NodeIndexList</span></span></span><a class="headerlink" href="#_CPPv413NodeIndexList" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A node map is used to translate node indices between <a class="reference internal" href="#struct_program_graph"><span class="std std-ref">ProgramGraph</span></a> instances. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp">
+<span class="target" id="struct_node_index_list_1a9495761361e047e5b74acb80b498a009"></span><span class="sig-name descname"><span class="pre">repeated</span> <span class="pre">int32</span> <span class="pre">node</span>&#160;&#160; <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dd><p>The keys are node indices in the old graph representation, the values are node inidices in the new graph representation. </p>
+</dd></dl>
+
 </div>
+</dd></dl>
+
+</section>
+</section>
 
 
            </div>

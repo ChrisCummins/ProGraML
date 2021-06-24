@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Python API Reference &mdash; ProGraML 0.2.0 documentation</title>
+  <title>Python API Reference &mdash; ProGraML 0.3.0 documentation</title>
   
 
   
@@ -67,7 +68,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.3.0
               </div>
             
           
@@ -182,7 +183,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-programl">
+  <section id="module-programl">
 <span id="python-api-reference"></span><h1>Python API Reference<a class="headerlink" href="#module-programl" title="Permalink to this headline">¶</a></h1>
 <p>ProGraML is a graph-based program representation for data flow analysis and
 compiler optimizations.</p>
@@ -222,11 +223,11 @@ Machine Learning (ICML).</p>
 </li>
 </ul>
 </div>
-<div class="section" id="module-programl.create_ops">
+<section id="module-programl.create_ops">
 <span id="graph-creation-ops"></span><h2><a class="toc-backref" href="#id1">Graph Creation Ops</a><a class="headerlink" href="#module-programl.create_ops" title="Permalink to this headline">¶</a></h2>
 <p>Graph creation operations are used to construct Program Graphs from source
 code or compiler intermediate representations (IRs).</p>
-<div class="section" id="llvm-clang">
+<section id="llvm-clang">
 <h3><a class="toc-backref" href="#id2">LLVM / Clang</a><a class="headerlink" href="#llvm-clang" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.from_cpp">
@@ -440,8 +441,8 @@ determined.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="xla">
+</section>
+<section id="xla">
 <h3><a class="toc-backref" href="#id3">XLA</a><a class="headerlink" href="#xla" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.from_xla_hlo_proto">
@@ -493,13 +494,13 @@ as more inputs must be stored in memory.</p></li>
 <dd><p>Exception raised if the requested compiler is not supported.</p>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-programl.transform_ops">
+</section>
+</section>
+<section id="module-programl.transform_ops">
 <span id="graph-transform-ops"></span><h2><a class="toc-backref" href="#id4">Graph Transform Ops</a><a class="headerlink" href="#module-programl.transform_ops" title="Permalink to this headline">¶</a></h2>
 <p>The graph transform ops are used to modify or convert Program Graphs to
 another representation.</p>
-<div class="section" id="dgl">
+<section id="dgl">
 <h3><a class="toc-backref" href="#id5">DGL</a><a class="headerlink" href="#dgl" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_dgl">
@@ -539,8 +540,8 @@ inputs are given.</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="networkx">
+</section>
+<section id="networkx">
 <h3><a class="toc-backref" href="#id6">NetworkX</a><a class="headerlink" href="#networkx" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_networkx">
@@ -579,8 +580,8 @@ Else returns an iterable sequence of <code class="code docutils literal notransl
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="graphviz">
+</section>
+<section id="graphviz">
 <h3><a class="toc-backref" href="#id7">Graphviz</a><a class="headerlink" href="#graphviz" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_dot">
@@ -622,8 +623,8 @@ iterable sequence of graphviz dot strings.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="json">
+</section>
+<section id="json">
 <h3><a class="toc-backref" href="#id8">JSON</a><a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_json">
@@ -668,13 +669,13 @@ Else returns an iterable sequence of JSON dictionaries.</p>
 <dd><p>Exception raised if a graph transform op fails.</p>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-programl.serialize_ops">
+</section>
+</section>
+<section id="module-programl.serialize_ops">
 <span id="graph-serialization"></span><h2><a class="toc-backref" href="#id9">Graph Serialization</a><a class="headerlink" href="#module-programl.serialize_ops" title="Permalink to this headline">¶</a></h2>
 <p>Graph serialization ops are used for storing or transferring Program
 Graphs.</p>
-<div class="section" id="file">
+<section id="file">
 <h3><a class="toc-backref" href="#id10">File</a><a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.save_graphs">
@@ -725,8 +726,8 @@ serialized graphs.</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="byte-array">
+</section>
+<section id="byte-array">
 <h3><a class="toc-backref" href="#id11">Byte Array</a><a class="headerlink" href="#byte-array" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_bytes">
@@ -773,8 +774,8 @@ serialized graphs.</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="string">
+</section>
+<section id="string">
 <h3><a class="toc-backref" href="#id12">String</a><a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="programl.to_string">
@@ -813,9 +814,9 @@ provided, all graphs are returned.</p></li>
 </dl>
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

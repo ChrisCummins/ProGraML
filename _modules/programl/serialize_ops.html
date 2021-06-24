@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>programl.serialize_ops &mdash; ProGraML 0.2.0 documentation</title>
+  <title>programl.serialize_ops &mdash; ProGraML 0.3.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.3.0
               </div>
             
           
@@ -178,14 +178,14 @@
 <span class="sd">Graphs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">google.protobuf.message</span>
 <span class="kn">import</span> <span class="nn">google.protobuf.text_format</span>
 
-<span class="kn">from</span> <span class="nn">programl.exceptions</span> <span class="kn">import</span> <span class="n">GraphCreationError</span>
-<span class="kn">from</span> <span class="nn">programl.proto</span> <span class="kn">import</span> <span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">ProgramGraphList</span>
+<span class="kn">from</span> <span class="nn">programl.exceptions</span> <span class="k">import</span> <span class="n">GraphCreationError</span>
+<span class="kn">from</span> <span class="nn">programl.proto</span> <span class="k">import</span> <span class="n">ProgramGraph</span><span class="p">,</span> <span class="n">ProgramGraphList</span>
 
 
 <div class="viewcode-block" id="save_graphs"><a class="viewcode-back" href="../../api/python.html#programl.save_graphs">[docs]</a><span class="k">def</span> <span class="nf">save_graphs</span><span class="p">(</span>
@@ -254,8 +254,8 @@
     <span class="k">if</span> <span class="n">compression</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compressors</span><span class="p">:</span>
         <span class="n">compressors</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">compressors</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid compression argument: </span><span class="si">{</span><span class="n">compression</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Supported compressions: </span><span class="si">{</span><span class="n">compressors</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">f</span><span class="s2">&quot;Invalid compression argument: </span><span class="si">{compression}</span><span class="s2">. &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;Supported compressions: </span><span class="si">{compressors}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="n">compress</span> <span class="o">=</span> <span class="n">compressors</span><span class="p">[</span><span class="n">compression</span><span class="p">]</span>
 
@@ -288,8 +288,8 @@
     <span class="k">if</span> <span class="n">compression</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">decompressors</span><span class="p">:</span>
         <span class="n">decompressors</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">decompressors</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid compression argument: </span><span class="si">{</span><span class="n">compression</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Supported compressions: </span><span class="si">{</span><span class="n">decompressors</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">f</span><span class="s2">&quot;Invalid compression argument: </span><span class="si">{compression}</span><span class="s2">. &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;Supported compressions: </span><span class="si">{decompressors}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="n">decompress</span> <span class="o">=</span> <span class="n">decompressors</span><span class="p">[</span><span class="n">compression</span><span class="p">]</span>
 
