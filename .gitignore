@@ -9,5 +9,6 @@ __pycache__
 /build
 /coverage.xml
 /dist
+/log.txt
 /node_modules
 /package-lock.json
