@@ -163,7 +163,8 @@ bazel-build:
 	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) $(BUILD_TARGET)
 
 install-test-data:
-	if ! $(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>log.txt ; then \
+	@echo "$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data"
+	@if ! $(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) //tests/data 2>log.txt ; then \
 		cat log.txt >&2; \
 		rm log.txt; \
 		false; \
