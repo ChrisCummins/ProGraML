@@ -36,6 +36,10 @@ from programl.models.ggnn.readout import Readout
 from programl.models.model import Model
 from programl.proto import epoch_pb2
 
+# For model explainability
+from captum.attr import IntegratedGradients
+from copy import deepcopy
+
 FLAGS = app.FLAGS
 
 # Graph unrolling flags.
@@ -356,9 +360,13 @@ class Ggnn(Model):
             torch.from_numpy(x).to(self.model.dev, torch.long)
             for x in graph_tuple.edge_positions
         ]
+
+
+        raw_in = self.model.node_embeddings(vocab_ids, selector_ids)
         model_inputs = {
-            "vocab_ids": vocab_ids,
-            "selector_ids": selector_ids,
+            #"vocab_ids": vocab_ids,
+            #"selector_ids": selector_ids,
+            "raw_in": raw_in,
             "labels": labels,
             "edge_lists": edge_lists,
             "pos_lists": edge_positions,
@@ -424,6 +432,12 @@ class Ggnn(Model):
                 self.model.opt.zero_grad()
             # Inference only, don't trace the computation graph.
             with torch.no_grad():
+                # Let's make a copy in case any parameter is altered in place
+                raw_in_copy = model_inputs["raw_in"].clone()
+                labels_copy = model_inputs["labels"].clone()
+                edge_lists_copy = deepcopy(model_inputs["edge_lists"])
+                pos_lists_copy = deepcopy(model_inputs["pos_lists"])
+
                 outputs = self.model(**model_inputs)
 
         (
@@ -432,6 +446,19 @@ class Ggnn(Model):
             graph_features,
             *unroll_stats,
         ) = outputs
+
+        print("Starting IG explanation...")
+
+        ig = IntegratedGradients(self.model)
+        attributions, approximation_error = ig.attribute(
+            raw_in_copy,
+            additional_forward_args=(labels_copy, edge_lists_copy, pos_lists_copy),
+            method='gausslegendre',
+            return_convergence_delta=True,
+            target=targets,
+        )
+
+        print("IG steps finished.")
 
         loss = self.model.loss((logits, graph_features), targets)
 

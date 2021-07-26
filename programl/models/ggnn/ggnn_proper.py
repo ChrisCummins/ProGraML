@@ -106,8 +106,8 @@ class GGNNProper(nn.Module):
 
     def forward(
         self,
-        edge_lists,
         node_states,
+        edge_lists,
         pos_lists=None,
         node_types=None,
     ):

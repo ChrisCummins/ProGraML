@@ -91,6 +91,8 @@ class MessagingLayer(nn.Module):
         )
 
         messages_by_targets = torch.zeros_like(node_states)
+        
+        print("Length of edge_lists: %d | shape of states: %s" % (len(edge_lists), str(propagated_states.shape)))
 
         for i, edge_list in enumerate(edge_lists):
             edge_sources = edge_list[:, 0]

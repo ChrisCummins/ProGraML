@@ -26,6 +26,9 @@ from programl.models.ggnn.loss import Loss
 from programl.models.ggnn.metrics import Metrics
 from programl.models.ggnn.node_embeddings import NodeEmbeddings
 
+from captum.attr import IntegratedGradients
+from copy import deepcopy
+
 FLAGS = app.FLAGS
 
 app.DEFINE_boolean(
@@ -60,7 +63,8 @@ class GGNNModel(nn.Module):
             self.dev = (
                 torch.device("cuda")
                 if gpu_scheduler.LockExclusiveProcessGpuAccess()
-                else torch.device("cpu")
+                else 
+                torch.device("cpu")
             )
         else:
             self.dev = torch.device("cuda")
@@ -95,22 +99,19 @@ class GGNNModel(nn.Module):
 
     def forward(
         self,
-        vocab_ids,
+        raw_in,
         labels,
         edge_lists,
-        selector_ids=None,
         pos_lists=None,
         num_graphs=None,
         graph_nodes_list=None,
         node_types=None,
         aux_in=None,
     ):
-        raw_in = self.node_embeddings(vocab_ids, selector_ids)
-        # self.ggnn might change raw_in inplace, so use the two outputs instead!
         raw_out, raw_in, *unroll_stats = self.ggnn(
-            edge_lists, raw_in, pos_lists, node_types
+            raw_in, edge_lists, pos_lists, node_types
         )
-
+        
         if self.has_graph_labels:
             assert (
                 graph_nodes_list is not None and num_graphs is not None

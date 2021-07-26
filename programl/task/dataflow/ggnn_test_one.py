@@ -31,7 +31,6 @@ from programl.proto import (
     program_graph_pb2,
 )
 from programl.task.dataflow import dataflow, vocabulary
-from programl.task.dataflow.dataset import pathflag
 from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 
 app.DEFINE_boolean(
@@ -85,8 +84,8 @@ def TestOne(
     features_list_index: int,
     checkpoint_path: pathlib.Path,
 ) -> BatchResults:
-    path = pathlib.Path(pathflag.path())
-
+    path = pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow")
+    
     features_list = pbutil.FromFile(
         features_list_path,
         program_graph_features_pb2.ProgramGraphFeaturesList(),
@@ -181,13 +180,12 @@ def Main():
     """Main entry point."""
     dataflow.PatchWarnings()
 
-    features_list_path, features_list_index = FLAGS.input.split(":")
     graph = TestOne(
-        features_list_path=pathlib.Path(features_list_path),
-        features_list_index=int(features_list_index),
-        checkpoint_path=FLAGS.model,
+        features_list_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/labels/datadep/tensorflow.71856.cc.ProgramGraphFeaturesList.pb"),
+        features_list_index=1,
+        checkpoint_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/logs/programl/datadep/ddf_30/checkpoints/015.Checkpoint.pb"),
     )
-    print(graph)
+    #print(graph)
 
 
 if __name__ == "__main__":
