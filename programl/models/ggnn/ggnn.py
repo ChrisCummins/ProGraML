@@ -364,8 +364,6 @@ class Ggnn(Model):
 
         raw_in = self.model.node_embeddings(vocab_ids, selector_ids)
         model_inputs = {
-            #"vocab_ids": vocab_ids,
-            #"selector_ids": selector_ids,
             "raw_in": raw_in,
             "labels": labels,
             "edge_lists": edge_lists,
@@ -433,10 +431,10 @@ class Ggnn(Model):
             # Inference only, don't trace the computation graph.
             with torch.no_grad():
                 # Let's make a copy in case any parameter is altered in place
-                raw_in_copy = model_inputs["raw_in"].clone()
-                labels_copy = model_inputs["labels"].clone()
-                edge_lists_copy = deepcopy(model_inputs["edge_lists"])
-                pos_lists_copy = deepcopy(model_inputs["pos_lists"])
+                raw_in = model_inputs["raw_in"]
+                labels = model_inputs["labels"]
+                edge_lists = model_inputs["edge_lists"]
+                pos_lists = model_inputs["pos_lists"]
 
                 outputs = self.model(**model_inputs)
 
@@ -448,16 +446,18 @@ class Ggnn(Model):
         ) = outputs
 
         print("Starting IG explanation...")
+        print("Dim of input: %s" % str(raw_in.shape))
 
         ig = IntegratedGradients(self.model)
         attributions, approximation_error = ig.attribute(
-            raw_in_copy,
-            additional_forward_args=(labels_copy, edge_lists_copy, pos_lists_copy),
+            raw_in,
+            additional_forward_args=(labels, edge_lists, pos_lists),
             method='gausslegendre',
             return_convergence_delta=True,
             target=targets,
         )
 
+        print("Dim of attributions (w.r.t. input): %s" % str(attributions.shape))
         print("IG steps finished.")
 
         loss = self.model.loss((logits, graph_features), targets)

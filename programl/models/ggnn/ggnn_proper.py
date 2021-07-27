@@ -24,6 +24,8 @@ from programl.models.ggnn.ggnn_layer import GGNNLayer
 from programl.models.ggnn.messaging_layer import MessagingLayer
 from programl.models.ggnn.readout import Readout
 
+from copy import deepcopy  # for avoiding side-effects from forward pass
+
 
 class GGNNProper(nn.Module):
     def __init__(
@@ -112,17 +114,20 @@ class GGNNProper(nn.Module):
         node_types=None,
     ):
         old_node_states = node_states.clone()
-
+        # edge_lists will also be manipulated in forward pass 
+        # so we need to first make a copy
+        old_edge_lists = deepcopy(edge_lists)
+        
         if self.use_backward_edges:
-            back_edge_lists = [x.flip([1]) for x in edge_lists]
-            edge_lists.extend(back_edge_lists)
+            back_edge_lists = [x.flip([1]) for x in old_edge_lists]
+            old_edge_lists.extend(back_edge_lists)
             # For backward edges we keep the positions of the forward edge.
             if self.position_embeddings:
                 pos_lists.extend(pos_lists)
 
         if self.unroll_strategy == "label_convergence":
             node_states, unroll_steps, converged = self.label_convergence_forward(
-                edge_lists,
+                old_edge_lists,
                 node_states,
                 pos_lists,
                 node_types,
@@ -135,7 +140,7 @@ class GGNNProper(nn.Module):
             bincount = torch.zeros(
                 node_states.size()[0], dtype=torch.long, device=node_states.device
             )
-            for edge_list in edge_lists:
+            for edge_list in old_edge_lists:
                 edge_targets = edge_list[:, 1]
                 edge_bincount = edge_targets.bincount(minlength=node_states.size()[0])
                 bincount += edge_bincount
@@ -154,7 +159,7 @@ class GGNNProper(nn.Module):
         for (layer_idx, num_timesteps) in enumerate(self.layer_timesteps):
             for t in range(num_timesteps):
                 messages = self.message[layer_idx](
-                    edge_lists,
+                    old_edge_lists,
                     node_states,
                     msg_mean_divisor=msg_mean_divisor,
                     pos_lists=pos_lists,

@@ -61,9 +61,9 @@ class GGNNModel(nn.Module):
         # Move the model to device before making the optimizer.
         if FLAGS.block_gpu:
             self.dev = (
-                torch.device("cuda")
-                if gpu_scheduler.LockExclusiveProcessGpuAccess()
-                else 
+                #torch.device("cuda")
+                #if gpu_scheduler.LockExclusiveProcessGpuAccess()
+                #else 
                 torch.device("cpu")
             )
         else:
@@ -111,7 +111,7 @@ class GGNNModel(nn.Module):
         raw_out, raw_in, *unroll_stats = self.ggnn(
             raw_in, edge_lists, pos_lists, node_types
         )
-        
+
         if self.has_graph_labels:
             assert (
                 graph_nodes_list is not None and num_graphs is not None

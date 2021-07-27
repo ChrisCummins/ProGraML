@@ -181,8 +181,8 @@ def Main():
     dataflow.PatchWarnings()
 
     graph = TestOne(
-        features_list_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/labels/datadep/tensorflow.71856.cc.ProgramGraphFeaturesList.pb"),
-        features_list_index=1,
+        features_list_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/labels/datadep/linux-4_19.3912.c.ProgramGraphFeaturesList.pb"),
+        features_list_index=0,
         checkpoint_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/logs/programl/datadep/ddf_30/checkpoints/015.Checkpoint.pb"),
     )
     #print(graph)
