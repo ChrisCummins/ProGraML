@@ -402,6 +402,7 @@ class Ggnn(Model):
         epoch_type: epoch_pb2.EpochType,
         batch: BatchData,
         ctx: ProgressContext = NullContext,
+        run_ig=False,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -430,11 +431,12 @@ class Ggnn(Model):
                 self.model.opt.zero_grad()
             # Inference only, don't trace the computation graph.
             with torch.no_grad():
-                # Let's make a copy in case any parameter is altered in place
-                raw_in = model_inputs["raw_in"]
-                labels = model_inputs["labels"]
-                edge_lists = model_inputs["edge_lists"]
-                pos_lists = model_inputs["pos_lists"]
+                if run_ig:
+                    # Let's make a copy in case any parameter is altered in place
+                    raw_in = model_inputs["raw_in"]
+                    labels = model_inputs["labels"]
+                    edge_lists = model_inputs["edge_lists"]
+                    pos_lists = model_inputs["pos_lists"]
 
                 outputs = self.model(**model_inputs)
 
@@ -445,20 +447,22 @@ class Ggnn(Model):
             *unroll_stats,
         ) = outputs
 
-        print("Starting IG explanation...")
-        print("Dim of input: %s" % str(raw_in.shape))
+        if run_ig:
+            print("Starting IG explanation...")
+            print("Dim of input: %s" % str(raw_in.shape))
 
-        ig = IntegratedGradients(self.model)
-        attributions, approximation_error = ig.attribute(
-            raw_in,
-            additional_forward_args=(labels, edge_lists, pos_lists),
-            method='gausslegendre',
-            return_convergence_delta=True,
-            target=targets,
-        )
+            ig = IntegratedGradients(self.model)
+            attributions, approximation_error = ig.attribute(
+                raw_in,
+                additional_forward_args=(labels, edge_lists, pos_lists),
+                method='gausslegendre',
+                return_convergence_delta=True,
+                target=targets,
+            )
+            summerized_attributions = torch.mean(attributions, dim=1)
 
-        print("Dim of attributions (w.r.t. input): %s" % str(attributions.shape))
-        print("IG steps finished.")
+            print("Dim of summerized attributions (w.r.t. input): %s" % str(summerized_attributions.shape))
+            print("IG steps finished.")
 
         loss = self.model.loss((logits, graph_features), targets)
 
