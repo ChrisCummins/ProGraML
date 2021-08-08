@@ -221,6 +221,27 @@ def TestOneGraph(graph_path, graph_idx):
     return graph
 
 
+def DrawAndSaveGraph(graph, graph_fname):
+    save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
+    print("Saving annotated graph to %s..." % save_path)
+    if not FLAGS.dryrun:
+        serialize_ops.save_graphs(save_path, [graph])
+    networkx_graph = ProgramGraphToNetworkX(graph)
+    labels = nx.get_node_attributes(networkx_graph, "features")
+    for node, features in labels.items():
+        node_attrs = {}
+        node_attrs["pred_y"] = features["pred_y"]
+        node_attrs["true_y"] = features["true_y"]
+        node_attrs["attribution_order"] = features["pred_y"]
+        node_attrs["data_flow_root_node"] = features["data_flow_root_node"]
+        labels[node] = node_attrs
+    nx.draw(networkx_graph, labels=labels, node_size=640)
+    if not FLAGS.dryrun:
+        save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
+        plt.show(block=False)
+        plt.savefig(save_img_path, format="PNG")
+
+
 def Main():
     """Main entry point."""
     dataflow.PatchWarnings()
@@ -234,35 +255,15 @@ def Main():
             graph = TestOneGraph(graph_path, '0')
 
             if FLAGS.ig:
-                save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
-                print("Save annotated graph to %s..." % save_path)
-                if not FLAGS.dryrun:
-                    serialize_ops.save_graphs(save_path, [graph])
-                networkx_graph = ProgramGraphToNetworkX(graph)
-                labels = nx.get_node_attributes(networkx_graph, "features")
-                nx.draw(networkx_graph, labels=labels)
-                if not FLAGS.dryrun:
-                    save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
-                    plt.show(block=False)
-                    plt.savefig(save_img_path, format="PNG")
-
+                DrawAndSaveGraph(graph, graph_fname)
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
-        original_graph_name = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+        original_graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
         graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
 
         if FLAGS.ig:
-            save_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraphFeaturesList.pb"
-            print("Save annotated graph to %s..." % save_path)
-            if not FLAGS.dryrun:
-                serialize_ops.save_graphs(save_path, [graph])
-            networkx_graph = ProgramGraphToNetworkX(graph)
-            nx.draw(networkx_graph, with_labels=True)
-            if not FLAGS.dryrun:
-                save_img_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraph.png"
-                plt.show(block=False)
-                plt.savefig(save_img_path, format="PNG")
-
+            DrawAndSaveGraph(graph, original_graph_fname)
+            
 
 if __name__ == "__main__":
     app.Run(Main)
