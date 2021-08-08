@@ -232,6 +232,12 @@ def Main():
                 save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
                 print("Save annotated graph to %s..." % save_path)
                 serialize_ops.save_graphs(save_path, [graph])
+                networkx_graph = ProgramGraphToNetworkX(graph)
+                nx.draw(networkx_graph, with_labels=True)
+                save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
+                plt.show(block=False)
+                plt.savefig(save_img_path, format="PNG")
+
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
         original_graph_name = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
@@ -242,7 +248,7 @@ def Main():
             print("Save annotated graph to %s..." % save_path)
             serialize_ops.save_graphs(save_path, [graph])
             networkx_graph = ProgramGraphToNetworkX(graph)
-            nx.draw(networkx_graph)
+            nx.draw(networkx_graph, with_labels=True)
             save_img_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraph.png"
             plt.show(block=False)
             plt.savefig(save_img_path, format="PNG")
