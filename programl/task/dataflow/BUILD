@@ -74,8 +74,8 @@ py_binary(
 )
 
 py_binary(
-    name = "ggnn_test_one",
-    srcs = ["ggnn_test_one.py"],
+    name = "ggnn_test",
+    srcs = ["ggnn_test.py"],
     deps = [
         "//programl/models:base_graph_loader",
         "//programl/models:batch_results",

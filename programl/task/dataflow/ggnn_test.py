@@ -17,6 +17,7 @@
 """
 import pathlib
 from typing import Any, Iterable
+from os import listdir
 
 import numpy as np
 from labm8.py import app, pbutil
@@ -47,6 +48,11 @@ app.DEFINE_boolean(
     "ig",
     False,
     "If set, run IG analysis.",
+)
+app.DEFINE_boolean(
+    "batch",
+    False,
+    "If set, test samples in batch.",
 )
 app.DEFINE_integer(
     "max_vocab_size",
@@ -198,24 +204,42 @@ def AnnotateGraphWithBatchResults(
     return graph
 
 
-def Main():
-    """Main entry point."""
-    dataflow.PatchWarnings()
-    
-    features_list_path, features_list_index = FLAGS.input.split(":")
-    original_graph_name = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+def TestOneGraph(graph_path, graph_idx):
     graph = TestOne(
-        features_list_path=pathlib.Path(FLAGS.ds_path + features_list_path),
-        features_list_index=int(features_list_index),
+        features_list_path=pathlib.Path(graph_path),
+        features_list_index=int(graph_idx),
         checkpoint_path=pathlib.Path(FLAGS.ds_path + FLAGS.model),
         run_ig=FLAGS.ig,
     )
-    
-    if FLAGS.ig:
-        save_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraphFeaturesList.pb"
-        print("Save annotated graph to %s..." % save_path)
-        serialize_ops.save_graphs(save_path, [graph])
-        networkx_graph = ProgramGraphToNetworkX(graph)
+    return graph
+
+
+def Main():
+    """Main entry point."""
+    dataflow.PatchWarnings()
+
+    if FLAGS.batch:
+        graphs_dir = FLAGS.ds_path + '/labels/datadep/'
+        graph_fnames = listdir(graphs_dir)
+        for graph_fname in graph_fnames:
+            print("Processing graph file: %s..." % graph_fname)
+            graph_path = graphs_dir + graph_fname
+            graph = TestOneGraph(graph_path, '0')
+
+            if FLAGS.ig:
+                save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
+                print("Save annotated graph to %s..." % save_path)
+                serialize_ops.save_graphs(save_path, [graph])
+    else:
+        features_list_path, features_list_index = FLAGS.input.split(":")
+        original_graph_name = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+        graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
+
+        if FLAGS.ig:
+            save_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraphFeaturesList.pb"
+            print("Save annotated graph to %s..." % save_path)
+            serialize_ops.save_graphs(save_path, [graph])
+            networkx_graph = ProgramGraphToNetworkX(graph)
 
 
 if __name__ == "__main__":
