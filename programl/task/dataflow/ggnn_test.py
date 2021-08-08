@@ -56,6 +56,11 @@ app.DEFINE_boolean(
     False,
     "If set, test samples in batch.",
 )
+app.DEFINE_boolean(
+    "dryrun",
+    False,
+    "If set, do not save anything.",
+)
 app.DEFINE_integer(
     "max_vocab_size",
     0,
@@ -231,12 +236,15 @@ def Main():
             if FLAGS.ig:
                 save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
                 print("Save annotated graph to %s..." % save_path)
-                serialize_ops.save_graphs(save_path, [graph])
+                if not FLAGS.dryrun:
+                    serialize_ops.save_graphs(save_path, [graph])
                 networkx_graph = ProgramGraphToNetworkX(graph)
-                nx.draw(networkx_graph, with_labels=True)
-                save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
-                plt.show(block=False)
-                plt.savefig(save_img_path, format="PNG")
+                labels = nx.get_node_attributes(networkx_graph, "features")
+                nx.draw(networkx_graph, labels=labels)
+                if not FLAGS.dryrun:
+                    save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
+                    plt.show(block=False)
+                    plt.savefig(save_img_path, format="PNG")
 
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
@@ -246,12 +254,14 @@ def Main():
         if FLAGS.ig:
             save_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraphFeaturesList.pb"
             print("Save annotated graph to %s..." % save_path)
-            serialize_ops.save_graphs(save_path, [graph])
+            if not FLAGS.dryrun:
+                serialize_ops.save_graphs(save_path, [graph])
             networkx_graph = ProgramGraphToNetworkX(graph)
             nx.draw(networkx_graph, with_labels=True)
-            save_img_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraph.png"
-            plt.show(block=False)
-            plt.savefig(save_img_path, format="PNG")
+            if not FLAGS.dryrun:
+                save_img_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraph.png"
+                plt.show(block=False)
+                plt.savefig(save_img_path, format="PNG")
 
 
 if __name__ == "__main__":
