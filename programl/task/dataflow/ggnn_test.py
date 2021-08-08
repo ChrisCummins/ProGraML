@@ -22,6 +22,8 @@ from os import listdir
 import numpy as np
 from labm8.py import app, pbutil
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
 
 from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
@@ -240,6 +242,10 @@ def Main():
             print("Save annotated graph to %s..." % save_path)
             serialize_ops.save_graphs(save_path, [graph])
             networkx_graph = ProgramGraphToNetworkX(graph)
+            nx.draw(networkx_graph)
+            save_img_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraph.png"
+            plt.show(block=False)
+            plt.savefig(save_img_path, format="PNG")
 
 
 if __name__ == "__main__":
