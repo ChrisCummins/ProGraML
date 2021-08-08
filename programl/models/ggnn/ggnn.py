@@ -414,6 +414,12 @@ class Ggnn(Model):
         Returns:
           A batch results instance.
         """
+        def get_sorted_indices(array):
+            a = np.argsort(array)
+            a[a.copy()] = np.arange(len(a))
+            a = len(a) - a - 1  # remember to reserve the index
+            return a
+
         model_inputs = self.PrepareModelInputs(epoch_type, batch)
         unroll_steps = np.array(
             GetUnrollSteps(epoch_type, batch, FLAGS.unroll_strategy),
@@ -460,8 +466,10 @@ class Ggnn(Model):
                 target=targets,
             )
             summerized_attributions = torch.mean(attributions, dim=1)
+            summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().numpy())
 
-            print("Dim of summerized attributions (w.r.t. input): %s" % str(summerized_attributions.shape))
+            print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
+            print("Summerized attributions indices: %s" % str(summerized_attributions_indices))
             print("IG steps finished.")
 
         loss = self.model.loss((logits, graph_features), targets)
@@ -495,14 +503,25 @@ class Ggnn(Model):
         model_converged = unroll_stats[1] if unroll_stats else False
         iteration_count = unroll_stats[0] if unroll_stats else unroll_steps
 
-        return BatchResults.Create(
-            targets=batch.model_data.node_labels,
-            predictions=logits.detach().cpu().numpy(),
-            model_converged=model_converged,
-            learning_rate=self.model.learning_rate,
-            iteration_count=iteration_count,
-            loss=loss.item(),
-        )
+        if run_ig:
+            return BatchResults.Create(
+                targets=batch.model_data.node_labels,
+                predictions=logits.detach().cpu().numpy(),
+                model_converged=model_converged,
+                learning_rate=self.model.learning_rate,
+                iteration_count=iteration_count,
+                loss=loss.item(),
+                attributions=summerized_attributions_indices,
+            )
+        else:
+            return BatchResults.Create(
+                targets=batch.model_data.node_labels,
+                predictions=logits.detach().cpu().numpy(),
+                model_converged=model_converged,
+                learning_rate=self.model.learning_rate,
+                iteration_count=iteration_count,
+                loss=loss.item(),
+            )
 
     def GetModelData(self) -> typing.Any:
         return {

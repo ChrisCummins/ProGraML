@@ -88,8 +88,7 @@ py_binary(
         "//programl/task/dataflow:ggnn_batch_builder",
         "//programl/task/dataflow:vocabulary",
         "//programl/task/dataflow/dataset:pathflag",
-        "//third_party/py/labm8",
-        "//third_party/py/numpy",
+	"//programl:serialize_ops",
     ],
 )
 
@@ -99,6 +98,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//programl/graph/format/py:cdfg",
+	"//programl/graph/format/py:nx_format",
         "//programl/models:base_graph_loader",
         "//programl/proto:epoch_py",
         "//programl/proto:program_graph_features_py",

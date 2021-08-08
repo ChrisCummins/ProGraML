@@ -20,7 +20,10 @@ from typing import Any, Iterable
 
 import numpy as np
 from labm8.py import app, pbutil
+import networkx as nx
+import matplotlib.pyplot as plt
 
+from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
 from programl.models.base_graph_loader import BaseGraphLoader
 from programl.models.batch_results import BatchResults
 from programl.models.ggnn.ggnn import Ggnn
@@ -32,6 +35,7 @@ from programl.proto import (
 )
 from programl.task.dataflow import dataflow, vocabulary
 from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from programl import serialize_ops
 
 app.DEFINE_boolean(
     "cdfg",
@@ -39,13 +43,23 @@ app.DEFINE_boolean(
     "If set, use the CDFG representation for programs. Defaults to ProGraML "
     "representations.",
 )
+app.DEFINE_boolean(
+    "ig",
+    False,
+    "If set, run IG analysis.",
+)
 app.DEFINE_integer(
     "max_vocab_size",
     0,
     "If > 0, limit the size of the vocabulary to this number.",
 )
 app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
-app.DEFINE_input_path("model", None, "The model checkpoint to restore")
+app.DEFINE_string(
+    "ds_path",
+    str(pathlib.Path("~/code-model-interpretation/ProGraML/dataset/dataflow").expanduser()),
+    "The dataset directory.",
+)
+app.DEFINE_string("model", None, "The model checkpoint to restore")
 app.DEFINE_string(
     "input",
     None,
@@ -85,7 +99,7 @@ def TestOne(
     checkpoint_path: pathlib.Path,
     run_ig: bool,
 ) -> BatchResults:
-    path = pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow")
+    path = pathlib.Path(FLAGS.ds_path)
     
     features_list = pbutil.FromFile(
         features_list_path,
@@ -149,11 +163,16 @@ def AnnotateGraphWithBatchResults(
         features.node_features.feature_list["data_flow_root_node"].feature
     )
     assert len(graph.node) == results.targets.shape[0]
+    if FLAGS.ig:
+        assert len(graph.node) == results.attributions.shape[0]
 
     true_y = np.argmax(results.targets, axis=1)
     pred_y = np.argmax(results.predictions, axis=1)
 
     for i, node in enumerate(graph.node):
+        # Fix empty node feature errors so that we can persist graphs
+        if node.features.feature["full_text"].bytes_list.value == []:
+            node.features.feature["full_text"].bytes_list.value.append(b'')
         node.features.feature["data_flow_value"].CopyFrom(
             features.node_features.feature_list["data_flow_value"].feature[i]
         )
@@ -165,6 +184,8 @@ def AnnotateGraphWithBatchResults(
         node.features.feature["true_y"].int64_list.value.append(true_y[i])
         node.features.feature["pred_y"].int64_list.value.append(pred_y[i])
         node.features.feature["correct"].int64_list.value.append(true_y[i] == pred_y[i])
+        if FLAGS.ig:
+            node.features.feature["attribution_order"].int64_list.value.append(results.attributions[i])
 
     graph.features.feature["loss"].float_list.value.append(results.loss)
     graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
@@ -180,14 +201,21 @@ def AnnotateGraphWithBatchResults(
 def Main():
     """Main entry point."""
     dataflow.PatchWarnings()
-
+    
+    features_list_path, features_list_index = FLAGS.input.split(":")
+    original_graph_name = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
     graph = TestOne(
-        features_list_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/labels/datadep/linux-4_19.3912.c.ProgramGraphFeaturesList.pb"),
-        features_list_index=0,
-        checkpoint_path=pathlib.Path("/home/szhu014/code-model-interpretation/ProGraML/tasks/dataflow/dataset/dataflow/logs/programl/datadep/ddf_30/checkpoints/015.Checkpoint.pb"),
-        run_ig=True
+        features_list_path=pathlib.Path(FLAGS.ds_path + features_list_path),
+        features_list_index=int(features_list_index),
+        checkpoint_path=pathlib.Path(FLAGS.ds_path + FLAGS.model),
+        run_ig=FLAGS.ig,
     )
-    #print(graph)
+    
+    if FLAGS.ig:
+        save_path = FLAGS.ds_path + '/vis_res/' + original_graph_name + ".AttributedProgramGraphFeaturesList.pb"
+        print("Save annotated graph to %s..." % save_path)
+        serialize_ops.save_graphs(save_path, [graph])
+        networkx_graph = ProgramGraphToNetworkX(graph)
 
 
 if __name__ == "__main__":

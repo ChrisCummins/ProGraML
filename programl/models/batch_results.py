@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This module defines data structures for model results for a mini-batch."""
-from typing import NamedTuple, Optional
+from typing import NamedTuple, Optional, List
 
 import numpy as np
 import sklearn.metrics
@@ -55,6 +55,8 @@ class BatchResults(NamedTuple):
     f1: float
     # The confusion matrix.
     confusion_matrix: np.array
+    # Attributions.
+    attributions: np.array
 
     @property
     def has_learning_rate(self) -> bool:
@@ -99,6 +101,7 @@ class BatchResults(NamedTuple):
         model_converged: bool = False,
         learning_rate: Optional[float] = None,
         loss: Optional[float] = None,
+        attributions: List[int] = None,
     ):
         """Construct a results instance from 1-hot targets and predictions.
 
@@ -169,6 +172,7 @@ class BatchResults(NamedTuple):
             confusion_matrix=BuildConfusionMatrix(
                 targets=true_y, predictions=pred_y, num_classes=y_dimensionality
             ),
+            attributions=attributions,
         )
 
 
