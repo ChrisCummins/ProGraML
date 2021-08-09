@@ -72,6 +72,11 @@ app.DEFINE_integer(
     0,
     "If > 0, limit the size of the vocabulary to this number.",
 )
+app.DEFINE_integer(
+    "max_num_nodes",
+    0,
+    "If > 0, limit the max number of nodes to attribute.",
+)
 app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
 app.DEFINE_string(
     "ds_path",
@@ -112,6 +117,10 @@ class SingleGraphLoader(BaseGraphLoader):
         pass
 
 
+class TooManyNodesError(Exception):
+    pass
+
+
 def TestOne(
     features_list_path: pathlib.Path,
     features_list_index: int,
@@ -131,6 +140,10 @@ def TestOne(
         path / "graphs" / f"{graph_name}.ProgramGraph.pb",
         program_graph_pb2.ProgramGraph(),
     )
+
+    if FLAGS.max_num_nodes != 0:
+        if (len(graph.node)) > FLAGS.max_num_nodes:
+            raise TooManyNodesError
 
     # Instantiate and restore the model.
     vocab = vocabulary.LoadVocabulary(
@@ -228,11 +241,13 @@ def TestOneGraph(graph_path, graph_idx):
 
 
 def DrawAndSaveGraph(graph, graph_fname):
-    save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
-    print("Saving annotated graph to %s..." % save_path)
-    if not FLAGS.save_graph:
+    save_graph_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
+    if FLAGS.save_graph:
+        print("Saving annotated graph to %s..." % save_graph_path)
         serialize_ops.save_graphs(save_path, [graph])
+    
     networkx_graph = ProgramGraphToNetworkX(graph)
+    
     original_labels = nx.get_node_attributes(networkx_graph, "features")
 
     labels = {}
@@ -269,19 +284,28 @@ def Main():
         graphs_dir = FLAGS.ds_path + '/labels/datadep/'
         graph_fnames = listdir(graphs_dir)
         for graph_fname in graph_fnames:
+            original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
             print("Processing graph file: %s..." % graph_fname)
             graph_path = graphs_dir + graph_fname
-            graph = TestOneGraph(graph_path, '0')
+            try:
+                graph = TestOneGraph(graph_path, '0')
+            except TooManyNodesError:
+                print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+                continue
 
             if FLAGS.ig:
-                DrawAndSaveGraph(graph, graph_fname)
+                DrawAndSaveGraph(graph, original_graph_fname)
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
-        original_graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
-        graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
+        graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+        try:
+            graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
+        except TooManyNodesError:
+            print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+            exit()
 
         if FLAGS.ig:
-            DrawAndSaveGraph(graph, original_graph_fname)
+            DrawAndSaveGraph(graph, graph_fname)
             
 
 if __name__ == "__main__":
