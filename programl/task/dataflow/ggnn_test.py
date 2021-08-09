@@ -241,7 +241,7 @@ def DrawAndSaveGraph(graph, graph_fname):
 
     color = []
     for node in networkx_graph.nodes():
-        if original_labels[node]["data_flow_root_node"] == 0:
+        if original_labels[node]["data_flow_root_node"] == [0]:
             color.append('blue')
         else:
             color.append('red')
