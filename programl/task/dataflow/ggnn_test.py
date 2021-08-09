@@ -25,6 +25,7 @@ import networkx as nx
 import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
+from networkx.drawing.nx_agraph import graphviz_layout
 
 from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
 from programl.models.base_graph_loader import BaseGraphLoader
@@ -246,7 +247,9 @@ def DrawAndSaveGraph(graph, graph_fname):
         else:
             color.append('red')
 
-    nx.draw(networkx_graph, labels=labels, node_size=500, node_color=color)
+    pos = graphviz_layout(networkx_graph, prog='dot')
+    nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
+    
     if not FLAGS.dryrun:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
         plt.show(block=False)
