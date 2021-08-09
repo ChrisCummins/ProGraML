@@ -121,6 +121,10 @@ class TooManyNodesError(Exception):
     pass
 
 
+class TooManyRootNodesError(Exception):
+    pass
+
+
 def TestOne(
     features_list_path: pathlib.Path,
     features_list_index: int,
@@ -144,6 +148,16 @@ def TestOne(
     if FLAGS.max_num_nodes != 0:
         if (len(graph.node)) > FLAGS.max_num_nodes:
             raise TooManyNodesError
+        if (len(graph.edge)) > FLAGS.max_num_nodes:
+            raise TooManyNodesError
+
+
+    num_root_nodes = 0
+    for i in range(len(graph.node)):
+        if features.node_features.feature_list["data_flow_root_node"].feature[i] == [1]:
+            num_root_nodes +=1 
+    if num_root_nodes > 1:
+        raise TooManyRootNodesError
 
     # Instantiate and restore the model.
     vocab = vocabulary.LoadVocabulary(
