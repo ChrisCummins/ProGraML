@@ -236,7 +236,7 @@ def DrawAndSaveGraph(graph, graph_fname):
         node_attrs["attribution_order"] = features["pred_y"]
         node_attrs["data_flow_root_node"] = features["data_flow_root_node"]
         labels[node] = node_attrs
-    nx.draw(networkx_graph, labels=labels, node_size=640)
+    nx.draw(networkx_graph, labels=labels, node_size=2000)
     if not FLAGS.dryrun:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
         plt.show(block=False)
