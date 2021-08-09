@@ -62,6 +62,11 @@ app.DEFINE_boolean(
     False,
     "If set, do not save anything.",
 )
+app.DEFINE_boolean(
+    "only_vis",
+    False,
+    "If set, only save images.",
+)
 app.DEFINE_integer(
     "max_vocab_size",
     0,
@@ -250,7 +255,7 @@ def DrawAndSaveGraph(graph, graph_fname):
     pos = graphviz_layout(networkx_graph, prog='dot')
     nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
     
-    if not FLAGS.dryrun:
+    if not FLAGS.dryrun and not FLAGS.only_vis:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
         plt.show(block=False)
         plt.savefig(save_img_path, format="PNG")
