@@ -254,7 +254,7 @@ def DrawAndSaveGraph(graph, graph_fname):
     for node, features in original_labels.items():
         curr_label = ""
         curr_label += "Pred: " + str(features["pred_y"]) + " | "
-        curr_label += "True: " + str(features["true_y"]) + " | /n"
+        curr_label += "True: " + str(features["true_y"]) + " | \n"
         curr_label += "Attr: " + str(features["attribution_order"]) + " | "
         if features["data_flow_root_node"] == 0:
             curr_label += "Target"
