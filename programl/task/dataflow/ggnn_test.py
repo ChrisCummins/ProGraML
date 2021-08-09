@@ -288,7 +288,7 @@ def Main():
             print("Processing graph file: %s..." % graph_fname)
             graph_path = graphs_dir + graph_fname
             try:
-                graph = TestOneGraph(graph_path, '0')
+                graph = TestOneGraph(graph_path, '-1')
             except TooManyNodesError:
                 print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
                 continue
