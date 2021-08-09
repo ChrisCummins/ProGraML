@@ -73,9 +73,9 @@ app.DEFINE_integer(
     "If > 0, limit the size of the vocabulary to this number.",
 )
 app.DEFINE_integer(
-    "max_num_nodes",
+    "max_vis_graph_complexity",
     0,
-    "If > 0, limit the max number of nodes to attribute.",
+    "If > 0, limit the max complexity of visualized graphs.",
 )
 app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
 app.DEFINE_string(
@@ -117,7 +117,7 @@ class SingleGraphLoader(BaseGraphLoader):
         pass
 
 
-class TooManyNodesError(Exception):
+class TooComplexGraphError(Exception):
     pass
 
 
@@ -145,16 +145,16 @@ def TestOne(
         program_graph_pb2.ProgramGraph(),
     )
 
-    if FLAGS.max_num_nodes != 0:
-        if (len(graph.node)) > FLAGS.max_num_nodes:
-            raise TooManyNodesError
-        if (len(graph.edge)) > FLAGS.max_num_nodes:
-            raise TooManyNodesError
+    if FLAGS.max_vis_graph_complexity != 0:
+        if (len(graph.node)) > FLAGS.max_vis_graph_complexity:
+            raise TooComplexGraphError
+        if (len(graph.edge)) > FLAGS.max_vis_graph_complexity:
+            raise TooComplexGraphError
 
 
     num_root_nodes = 0
     for i in range(len(graph.node)):
-        if features.node_features.feature_list["data_flow_root_node"].feature[i] == [1]:
+        if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
             num_root_nodes +=1 
     if num_root_nodes > 1:
         raise TooManyRootNodesError
@@ -303,7 +303,7 @@ def Main():
             graph_path = graphs_dir + graph_fname
             try:
                 graph = TestOneGraph(graph_path, '-1')
-            except TooManyNodesError:
+            except TooComplexGraphError:
                 print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
                 continue
 
@@ -314,7 +314,7 @@ def Main():
         graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
         try:
             graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
-        except TooManyNodesError:
+        except TooComplexGraphError:
             print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
             exit()
 
