@@ -227,8 +227,9 @@ def DrawAndSaveGraph(graph, graph_fname):
     if not FLAGS.dryrun:
         serialize_ops.save_graphs(save_path, [graph])
     networkx_graph = ProgramGraphToNetworkX(graph)
-    labels = nx.get_node_attributes(networkx_graph, "features")
-    for node, features in labels.items():
+    original_labels = nx.get_node_attributes(networkx_graph, "features")
+    labels = {}
+    for node, features in original_labels.items():
         node_attrs = {}
         node_attrs["pred_y"] = features["pred_y"]
         node_attrs["true_y"] = features["true_y"]
