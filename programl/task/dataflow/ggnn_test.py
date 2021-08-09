@@ -286,8 +286,9 @@ def DrawAndSaveGraph(graph, graph_fname):
     
     if FLAGS.save_vis:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
-        plt.show(block=False)
+        plt.show()
         plt.savefig(save_img_path, format="PNG")
+        plt.clf()
 
 
 def Main():
