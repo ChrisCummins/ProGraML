@@ -254,7 +254,7 @@ def DrawAndSaveGraph(graph, graph_fname):
     for node, features in original_labels.items():
         curr_label = ""
         curr_label += "Pred: " + str(features["pred_y"]) + " | "
-        curr_label += "True: " + str(features["true_y"]) + " | "
+        curr_label += "True: " + str(features["true_y"]) + " | /n"
         curr_label += "Attr: " + str(features["attribution_order"]) + " | "
         if features["data_flow_root_node"] == 0:
             curr_label += "Target"
@@ -267,7 +267,7 @@ def DrawAndSaveGraph(graph, graph_fname):
         else:
             color.append('red')
 
-    pos = graphviz_layout(networkx_graph, prog='dot')
+    pos = graphviz_layout(networkx_graph, prog='neato')
     nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
     
     if FLAGS.save_vis:
