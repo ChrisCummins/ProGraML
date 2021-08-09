@@ -228,15 +228,25 @@ def DrawAndSaveGraph(graph, graph_fname):
         serialize_ops.save_graphs(save_path, [graph])
     networkx_graph = ProgramGraphToNetworkX(graph)
     original_labels = nx.get_node_attributes(networkx_graph, "features")
+
     labels = {}
     for node, features in original_labels.items():
-        node_attrs = {}
-        node_attrs["pred_y"] = features["pred_y"]
-        node_attrs["true_y"] = features["true_y"]
-        node_attrs["attribution_order"] = features["pred_y"]
-        node_attrs["data_flow_root_node"] = features["data_flow_root_node"]
-        labels[node] = node_attrs
-    nx.draw(networkx_graph, labels=labels, node_size=2000)
+        curr_label = ""
+        curr_label += "Pred: " + str(features["pred_y"]) + " | "
+        curr_label += "True: " + str(features["true_y"]) + " | "
+        curr_label += "Attr: " + str(features["attribution_order"]) + " | "
+        if features["data_flow_root_node"] == 0:
+            curr_label += "Target"
+        labels[node] = '[' + curr_label + ']'
+
+    color = []
+    for node in networkx_graph.nodes():
+        if original_labels[node]["data_flow_root_node"] == 0:
+            color.append('blue')
+        else:
+            color.append('red')
+
+    nx.draw(networkx_graph, labels=labels, node_size=500, node_color=color)
     if not FLAGS.dryrun:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
         plt.show(block=False)
