@@ -58,14 +58,14 @@ app.DEFINE_boolean(
     "If set, test samples in batch.",
 )
 app.DEFINE_boolean(
-    "dryrun",
+    "save_graph",
     False,
-    "If set, do not save anything.",
+    "If set, save annotated graphs.",
 )
 app.DEFINE_boolean(
-    "only_vis",
+    "save_vis",
     False,
-    "If set, only save images.",
+    "If set, save visualization images.",
 )
 app.DEFINE_integer(
     "max_vocab_size",
@@ -230,7 +230,7 @@ def TestOneGraph(graph_path, graph_idx):
 def DrawAndSaveGraph(graph, graph_fname):
     save_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
     print("Saving annotated graph to %s..." % save_path)
-    if not FLAGS.dryrun:
+    if not FLAGS.save_graph:
         serialize_ops.save_graphs(save_path, [graph])
     networkx_graph = ProgramGraphToNetworkX(graph)
     original_labels = nx.get_node_attributes(networkx_graph, "features")
@@ -255,7 +255,7 @@ def DrawAndSaveGraph(graph, graph_fname):
     pos = graphviz_layout(networkx_graph, prog='dot')
     nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
     
-    if not FLAGS.dryrun and not FLAGS.only_vis:
+    if FLAGS.save_vis:
         save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
         plt.show(block=False)
         plt.savefig(save_img_path, format="PNG")
