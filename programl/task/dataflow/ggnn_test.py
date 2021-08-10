@@ -276,10 +276,12 @@ def DrawAndSaveGraph(graph, graph_fname):
 
     color = []
     for node in networkx_graph.nodes():
-        if original_labels[node]["data_flow_root_node"] == [0]:
-            color.append('blue')
-        else:
+        if original_labels[node]["data_flow_root_node"] == [1]:
             color.append('red')
+        elif original_labels[node]["pred_y"] == [1]:
+            color.append('purple')
+        else:
+            color.append('grey')
 
     pos = graphviz_layout(networkx_graph, prog='neato')
     nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
