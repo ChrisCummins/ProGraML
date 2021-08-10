@@ -301,17 +301,21 @@ def Main():
         graphs_dir = FLAGS.ds_path + '/labels/datadep/'
         graph_fnames = listdir(graphs_dir)
         for graph_fname in graph_fnames:
-            original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
-            print("Processing graph file: %s..." % graph_fname)
-            graph_path = graphs_dir + graph_fname
             try:
-                graph = TestOneGraph(graph_path, '-1')
-            except TooComplexGraphError:
-                print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
-                continue
+                original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+                print("Processing graph file: %s..." % graph_fname)
+                graph_path = graphs_dir + graph_fname
+                try:
+                    graph = TestOneGraph(graph_path, '-1')
+                except TooComplexGraphError:
+                    print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+                    continue
 
-            if FLAGS.ig:
-                DrawAndSaveGraph(graph, original_graph_fname)
+                if FLAGS.ig:
+                    DrawAndSaveGraph(graph, original_graph_fname)
+            except Exception as err:
+                print("Error testing %s -- %s" % (graph_fname, str(err)))
+                continue
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
         graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
