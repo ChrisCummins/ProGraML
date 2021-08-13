@@ -361,7 +361,6 @@ class Ggnn(Model):
             for x in graph_tuple.edge_positions
         ]
 
-
         raw_in = self.model.node_embeddings(vocab_ids, selector_ids)
         model_inputs = {
             "raw_in": raw_in,
@@ -403,6 +402,8 @@ class Ggnn(Model):
         batch: BatchData,
         ctx: ProgressContext = NullContext,
         run_ig=False,
+        dep_guided_ig=False,
+        interpolation_order=None,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -419,6 +420,8 @@ class Ggnn(Model):
             a[a.copy()] = np.arange(len(a))
             a = len(a) - a - 1  # remember to reserve the index
             return a
+
+        assert dep_guided_ig == (interpolation_order is not None), "Invalid dep_guided_ig/interpolation_order combination!"
 
         model_inputs = self.PrepareModelInputs(epoch_type, batch)
         unroll_steps = np.array(
@@ -458,12 +461,23 @@ class Ggnn(Model):
             print("Dim of input: %s" % str(raw_in.shape))
 
             ig = IntegratedGradients(self.model)
+            
+            if dep_guided_ig:
+                print("Using dependency-guided IG.")
+                method = "dependency_guided_ig"
+                n_steps = len(interpolation_order)
+            else:
+                method='gausslegendre'
+                n_steps = 50
+            
             attributions, approximation_error = ig.attribute(
                 raw_in,
                 additional_forward_args=(labels, edge_lists, pos_lists),
-                method='gausslegendre',
+                method=method,
                 return_convergence_delta=True,
                 target=targets,
+                interpolation_order=interpolation_order,
+                n_steps=n_steps,
             )
             summerized_attributions = torch.mean(attributions, dim=1)
             summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().numpy())

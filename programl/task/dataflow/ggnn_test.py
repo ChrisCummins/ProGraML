@@ -16,7 +16,7 @@
 """Run inference of a trained GGNN model on a single graph input.
 """
 import pathlib
-from typing import Any, Iterable
+from typing import Any, Iterable, List
 from os import listdir
 
 import numpy as np
@@ -26,6 +26,7 @@ import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
+#from sagemath.graphs.digraph import DiGraph, feedback_edge_set  # for removing cycles
 
 from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
 from programl.models.base_graph_loader import BaseGraphLoader
@@ -66,6 +67,11 @@ app.DEFINE_boolean(
     "save_vis",
     False,
     "If set, save visualization images.",
+)
+app.DEFINE_boolean(
+    "dep_guided_ig",
+    False,
+    "If set, enable dependency-guided IG attribution.",
 )
 app.DEFINE_integer(
     "max_vocab_size",
@@ -125,12 +131,72 @@ class TooManyRootNodesError(Exception):
     pass
 
 
+class CycleInGraphError(Exception):
+    pass
+
+
+def RemoveCyclesFromGraphSimple(
+    graph: nx.DiGraph,
+) -> nx.DiGraph:
+    # This is an overly simplied solution, without either correctness or optimality
+    # guarantee. The original minimum feeback arc set problem is NP-hard and has better
+    # approximation algorithms. I will replace this function in the future.
+    while not nx.algorithms.dag.is_directed_acyclic_graph(graph):
+        cycle = nx.find_cycle(graph)
+        for edge in cycle:
+            tail, head, key = edge
+            edge_data = graph.get_edge_data(tail, head, key=key)
+            graph.remove_edge(tail, head, key=key)
+            print("Removed an edge: (%d --> %d)" % (tail, head))
+            if not nx.algorithms.components.is_weakly_connected(graph):
+                graph.add_edge(tail, head, key=key)
+                for attr_key, attr_value in edge_data.items():
+                    graph[tail][head][key][attr_key] = attr_value
+                print("Added back an edge: (%d --> %d)" % (tail, head))
+    return graph
+
+
+def CalculateInterpolationOrderFromGraph(
+    graph: program_graph_pb2.ProgramGraph,
+    use_simple_removal: bool = True,
+    reverse: bool = False,
+) -> List[int]:
+    # This function returns the (topological) order of nodes to evaluate
+    # for interpolations in IG
+    networkx_graph = ProgramGraphToNetworkX(graph)
+    is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(networkx_graph)
+    if is_acyclic:
+        ordered_nodes = nx.topological_sort(networkx_graph)
+        return list(ordered_nodes)
+    else:
+        # Cycle(s) detected and we need to remove them now
+        if not use_simple_removal:
+            sage_graph = DiGragh(networkx_graph)
+            acyclic_sage_graph = sage_graph.feedback_edge_set()
+            acyclic_networkx_graph = acyclic_sage_graph.networkx_graph()
+        else:
+            acyclic_networkx_graph = RemoveCyclesFromGraphSimple(networkx_graph)
+
+        # Sanity check, only return the graph if it is acyclic
+        is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(acyclic_networkx_graph)
+        if not is_acyclic:
+            raise CycleInGraphError
+        else:
+            ordered_nodes = nx.topological_sort(acyclic_networkx_graph)
+            return list(ordered_nodes)
+
+
 def TestOne(
     features_list_path: pathlib.Path,
     features_list_index: int,
     checkpoint_path: pathlib.Path,
     run_ig: bool,
+    dep_guided_ig: bool,
 ) -> BatchResults:
+    if dep_guided_ig and not run_ig:
+            print("run_ig and dep_guided_ig args take different values which is invalid!")
+            raise RuntimeError
+
     path = pathlib.Path(FLAGS.ds_path)
     
     features_list = pbutil.FromFile(
@@ -145,12 +211,19 @@ def TestOne(
         program_graph_pb2.ProgramGraph(),
     )
 
+    # First, we need to fix empty node features
+    graph = FixEmptyNodeFeatures(graph, features)
+    
+    if dep_guided_ig:
+        interpolation_order = CalculateInterpolationOrderFromGraph(graph)
+    else:
+        interpolation_order = None
+
     if FLAGS.max_vis_graph_complexity != 0:
         if (len(graph.node)) > FLAGS.max_vis_graph_complexity:
             raise TooComplexGraphError
         if (len(graph.edge)) > FLAGS.max_vis_graph_complexity:
             raise TooComplexGraphError
-
 
     num_root_nodes = 0
     for i in range(len(graph.node)):
@@ -191,16 +264,41 @@ def TestOne(
         )
     )[0]
 
-    results = model.RunBatch(epoch_pb2.TEST, batch, run_ig=run_ig)
+    results = model.RunBatch(
+        epoch_pb2.TEST, 
+        batch, 
+        run_ig=run_ig, 
+        dep_guided_ig=dep_guided_ig, 
+        interpolation_order=interpolation_order
+    )
 
     return AnnotateGraphWithBatchResults(graph, features, results)
+
+
+def FixEmptyNodeFeatures(
+    graph: program_graph_pb2.ProgramGraph,
+    features: program_graph_features_pb2.ProgramGraphFeatures,
+) -> program_graph_pb2.ProgramGraph:
+    assert len(graph.node) == len(
+        features.node_features.feature_list["data_flow_value"].feature
+    )
+    assert len(graph.node) == len(
+        features.node_features.feature_list["data_flow_root_node"].feature
+    )
+
+    for i, node in enumerate(graph.node):
+        # Fix empty node feature errors so that we can persist graphs
+        if node.features.feature["full_text"].bytes_list.value == []:
+            node.features.feature["full_text"].bytes_list.value.append(b'')
+
+    return graph
 
 
 def AnnotateGraphWithBatchResults(
     graph: program_graph_pb2.ProgramGraph,
     features: program_graph_features_pb2.ProgramGraphFeatures,
     results: BatchResults,
-):
+) -> program_graph_pb2.ProgramGraph:
     """Annotate graph with features describing the target labels and predicted outcomes."""
     assert len(graph.node) == len(
         features.node_features.feature_list["data_flow_value"].feature
@@ -216,9 +314,6 @@ def AnnotateGraphWithBatchResults(
     pred_y = np.argmax(results.predictions, axis=1)
 
     for i, node in enumerate(graph.node):
-        # Fix empty node feature errors so that we can persist graphs
-        if node.features.feature["full_text"].bytes_list.value == []:
-            node.features.feature["full_text"].bytes_list.value.append(b'')
         node.features.feature["data_flow_value"].CopyFrom(
             features.node_features.feature_list["data_flow_value"].feature[i]
         )
@@ -250,6 +345,7 @@ def TestOneGraph(graph_path, graph_idx):
         features_list_index=int(graph_idx),
         checkpoint_path=pathlib.Path(FLAGS.ds_path + FLAGS.model),
         run_ig=FLAGS.ig,
+        dep_guided_ig=FLAGS.dep_guided_ig,
     )
     return graph
 
@@ -307,8 +403,12 @@ def Main():
                 graph_path = graphs_dir + graph_fname
                 try:
                     graph = TestOneGraph(graph_path, '-1')
+                    input("Acyclic graph found!")
                 except TooComplexGraphError:
                     print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+                    continue
+                except CycleInGraphError:
+                    print("Skipping graph %s due to presence of graph cycle(s)..." % original_graph_fname)
                     continue
 
                 if FLAGS.ig:
