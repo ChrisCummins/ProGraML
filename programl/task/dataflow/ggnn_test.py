@@ -190,14 +190,16 @@ def TestOne(
     features_list_path: pathlib.Path,
     features_list_index: int,
     checkpoint_path: pathlib.Path,
+    ds_path: str,
     run_ig: bool,
+    max_vis_graph_complexity: int,
     dep_guided_ig: bool,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
             print("run_ig and dep_guided_ig args take different values which is invalid!")
             raise RuntimeError
 
-    path = pathlib.Path(FLAGS.ds_path)
+    path = pathlib.Path(ds_path)
     
     features_list = pbutil.FromFile(
         features_list_path,
@@ -219,10 +221,10 @@ def TestOne(
     else:
         interpolation_order = None
 
-    if FLAGS.max_vis_graph_complexity != 0:
-        if (len(graph.node)) > FLAGS.max_vis_graph_complexity:
+    if max_vis_graph_complexity != 0:
+        if (len(graph.node)) > max_vis_graph_complexity:
             raise TooComplexGraphError
-        if (len(graph.edge)) > FLAGS.max_vis_graph_complexity:
+        if (len(graph.edge)) > max_vis_graph_complexity:
             raise TooComplexGraphError
 
     num_root_nodes = 0
@@ -272,7 +274,7 @@ def TestOne(
         interpolation_order=interpolation_order
     )
 
-    return AnnotateGraphWithBatchResults(graph, features, results)
+    return AnnotateGraphWithBatchResults(graph, features, results, run_ig)
 
 
 def FixEmptyNodeFeatures(
@@ -298,6 +300,7 @@ def AnnotateGraphWithBatchResults(
     graph: program_graph_pb2.ProgramGraph,
     features: program_graph_features_pb2.ProgramGraphFeatures,
     results: BatchResults,
+    run_ig: bool,
 ) -> program_graph_pb2.ProgramGraph:
     """Annotate graph with features describing the target labels and predicted outcomes."""
     assert len(graph.node) == len(
@@ -307,7 +310,7 @@ def AnnotateGraphWithBatchResults(
         features.node_features.feature_list["data_flow_root_node"].feature
     )
     assert len(graph.node) == results.targets.shape[0]
-    if FLAGS.ig:
+    if run_ig:
         assert len(graph.node) == results.attributions.shape[0]
 
     true_y = np.argmax(results.targets, axis=1)
@@ -325,7 +328,7 @@ def AnnotateGraphWithBatchResults(
         node.features.feature["true_y"].int64_list.value.append(true_y[i])
         node.features.feature["pred_y"].int64_list.value.append(pred_y[i])
         node.features.feature["correct"].int64_list.value.append(true_y[i] == pred_y[i])
-        if FLAGS.ig:
+        if run_ig:
             node.features.feature["attribution_order"].int64_list.value.append(results.attributions[i])
 
     graph.features.feature["loss"].float_list.value.append(results.loss)
@@ -339,20 +342,37 @@ def AnnotateGraphWithBatchResults(
     return graph
 
 
-def TestOneGraph(graph_path, graph_idx):
+def TestOneGraph(
+    ds_path, 
+    model_path, 
+    graph_path, 
+    graph_idx, 
+    max_vis_graph_complexity,
+    run_ig=False,
+    dep_guided_ig=False,
+):
     graph = TestOne(
         features_list_path=pathlib.Path(graph_path),
         features_list_index=int(graph_idx),
-        checkpoint_path=pathlib.Path(FLAGS.ds_path + FLAGS.model),
-        run_ig=FLAGS.ig,
-        dep_guided_ig=FLAGS.dep_guided_ig,
+        checkpoint_path=pathlib.Path(ds_path + model_path),
+        ds_path=ds_path,
+        run_ig=run_ig,
+        max_vis_graph_complexity=max_vis_graph_complexity,
+        dep_guided_ig=dep_guided_ig,
     )
     return graph
 
 
-def DrawAndSaveGraph(graph, graph_fname):
-    save_graph_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.pb"
-    if FLAGS.save_graph:
+def DrawAndSaveGraph(
+    graph, 
+    ds_path, 
+    graph_fname, 
+    save_graph=False,
+    save_vis=False,
+    suffix=''
+):
+    save_graph_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.%s.pb" % suffix
+    if save_graph:
         print("Saving annotated graph to %s..." % save_graph_path)
         serialize_ops.save_graphs(save_path, [graph])
     
@@ -382,8 +402,9 @@ def DrawAndSaveGraph(graph, graph_fname):
     pos = graphviz_layout(networkx_graph, prog='neato')
     nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
     
-    if FLAGS.save_vis:
-        save_img_path = FLAGS.ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.png"
+    if save_vis:
+        save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.png" % suffix
+        print("Saving visualization of annotated graph to %s..." % save_img_path)
         plt.show()
         plt.savefig(save_img_path, format="PNG")
         plt.clf()
@@ -402,8 +423,25 @@ def Main():
                 print("Processing graph file: %s..." % graph_fname)
                 graph_path = graphs_dir + graph_fname
                 try:
-                    graph = TestOneGraph(graph_path, '-1')
-                    input("Acyclic graph found!")
+                    graph_std_ig = TestOneGraph(
+                        FLAGS.ds_path, 
+                        FLAGS.model, 
+                        graph_path, 
+                        '-1', 
+                        FLAGS.max_vis_graph_complexity,
+                        run_ig=FLAGS.ig,
+                        dep_guided_ig=False,
+                    )
+                    graph_dep_guided_ig = TestOneGraph(
+                        FLAGS.ds_path,
+                        FLAGS.model,
+                        graph_path, 
+                        '-1', 
+                        FLAGS.max_vis_graph_complexity,
+                        run_ig=FLAGS.ig,
+                        dep_guided_ig=True,
+                    )
+                    print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
                     print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
                     continue
@@ -411,8 +449,17 @@ def Main():
                     print("Skipping graph %s due to presence of graph cycle(s)..." % original_graph_fname)
                     continue
 
-                if FLAGS.ig:
-                    DrawAndSaveGraph(graph, original_graph_fname)
+                if FLAGS.ig and FLAGS.dep_guided_ig:
+                    DrawAndSaveGraph(
+                        graph_std_ig, FLAGS.ds_path,
+                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        save_vis=FLAGS.save_vis, suffix='std_ig'
+                    )
+                    DrawAndSaveGraph(
+                        graph_dep_guided_ig, FLAGS.ds_path,
+                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+                    )
             except Exception as err:
                 print("Error testing %s -- %s" % (graph_fname, str(err)))
                 continue
@@ -420,14 +467,43 @@ def Main():
         features_list_path, features_list_index = FLAGS.input.split(":")
         graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
         try:
-            graph = TestOneGraph(FLAGS.ds_path + features_list_path, features_list_index)
+            graph_std_ig = TestOneGraph(
+                FLAGS.ds_path, 
+                FLAGS.model, 
+                FLAGS.ds_path + features_list_path, 
+                features_list_index, 
+                FLAGS.max_vis_graph_complexity,
+                run_ig=FLAGS.ig,
+                dep_guided_ig=False,
+            )
+            graph_dep_guided_ig = TestOneGraph(
+                FLAGS.ds_path,
+                FLAGS.model,
+                FLAGS.ds_path + features_list_path, 
+                features_list_index, 
+                FLAGS.max_vis_graph_complexity,
+                run_ig=FLAGS.ig,
+                dep_guided_ig=True,
+            )
         except TooComplexGraphError:
-            print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+            print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
+            exit()
+        except CycleInGraphError:
+            print("Skipping graph %s due to presence of graph cycle(s)..." % graph_fname)
             exit()
 
-        if FLAGS.ig:
-            DrawAndSaveGraph(graph, graph_fname)
-            
+        if FLAGS.ig and FLAGS.dep_guided_ig:
+            DrawAndSaveGraph(
+                graph_std_ig, FLAGS.ds_path, 
+                graph_fname, save_graph=FLAGS.save_graph, 
+                save_vis=FLAGS.save_vis, suffix='std_ig'
+            )
+            DrawAndSaveGraph(
+                graph_dep_guided_ig, FLAGS.ds_path, 
+                graph_fname, save_graph=FLAGS.save_graph, 
+                save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+            )
+
 
 if __name__ == "__main__":
     app.Run(Main)
