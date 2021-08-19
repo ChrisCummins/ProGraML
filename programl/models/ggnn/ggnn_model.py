@@ -102,6 +102,7 @@ class GGNNModel(nn.Module):
         raw_in,
         labels,
         edge_lists,
+        node_out=None,
         pos_lists=None,
         num_graphs=None,
         graph_nodes_list=None,
@@ -129,6 +130,10 @@ class GGNNModel(nn.Module):
         # accuracy, pred_targets, correct, targets
         # metrics_tuple = self.metrics(logits, labels)
         targets = labels.argmax(dim=1)
+        
+        if node_out is not None and not isinstance(node_out, list):
+            targets = torch.unsqueeze(targets[node_out], 0)
+            logits = torch.unsqueeze(logits[node_out], 0)
 
         outputs = (
             targets,

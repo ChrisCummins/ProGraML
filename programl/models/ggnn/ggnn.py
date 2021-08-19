@@ -322,7 +322,7 @@ class Ggnn(Model):
         return self.model.trainable_parameter_count
 
     def PrepareModelInputs(
-        self, epoch_type: epoch_pb2.EpochType, batch: BatchData
+        self, epoch_type: epoch_pb2.EpochType, batch: BatchData, node_out=None
     ) -> Dict[str, torch.Tensor]:
         """RunBatch() helper method to prepare inputs to model.
 
@@ -366,33 +366,9 @@ class Ggnn(Model):
             "raw_in": raw_in,
             "labels": labels,
             "edge_lists": edge_lists,
+            "node_out": node_out,
             "pos_lists": edge_positions,
         }
-
-        # maybe fetch more inputs.
-        # TODO:
-        # if graph_tuple.has_graph_y:
-        #   assert (
-        #     epoch_type != epoch_pb2.TRAIN
-        #     or graph_tuple.graph_tuple_count > 1
-        #   ), f"graph_count is {graph_tuple.graph_tuple_count}"
-        #   num_graphs = torch.tensor(graph_tuple.graph_tuple_count).to(
-        #     self.model.dev, torch.long
-        #   )
-        #   graph_nodes_list = torch.from_numpy(
-        #     graph_tuple.disjoint_nodes_list
-        #   ).to(self.model.dev, torch.long)
-        #
-        #   aux_in = torch.from_numpy(graph_tuple.graph_x).to(
-        #     self.model.dev, torch.get_default_dtype()
-        #   )
-        #   model_inputs.update(
-        #     {
-        #       "num_graphs": num_graphs,
-        #       "graph_nodes_list": graph_nodes_list,
-        #       "aux_in": aux_in,
-        #     }
-        #   )
 
         return model_inputs
 
@@ -404,6 +380,7 @@ class Ggnn(Model):
         run_ig=False,
         dep_guided_ig=False,
         interpolation_order=None,
+        node_out=None,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -423,7 +400,7 @@ class Ggnn(Model):
 
         assert dep_guided_ig == (interpolation_order is not None), "Invalid dep_guided_ig/interpolation_order combination!"
 
-        model_inputs = self.PrepareModelInputs(epoch_type, batch)
+        model_inputs = self.PrepareModelInputs(epoch_type, batch, node_out)
         unroll_steps = np.array(
             GetUnrollSteps(epoch_type, batch, FLAGS.unroll_strategy),
             dtype=np.int64,
@@ -445,6 +422,7 @@ class Ggnn(Model):
                     raw_in = model_inputs["raw_in"]
                     labels = model_inputs["labels"]
                     edge_lists = model_inputs["edge_lists"]
+                    node_out = model_inputs["node_out"]
                     pos_lists = model_inputs["pos_lists"]
 
                 outputs = self.model(**model_inputs)
@@ -467,12 +445,15 @@ class Ggnn(Model):
                 method = "dependency_guided_ig"
                 n_steps = len(interpolation_order)
             else:
-                method='gausslegendre'
+                print("Using stock IG.")
+                method = 'gausslegendre'
                 n_steps = 50
+            if node_out is not None:
+                node_outs = [node_out] * n_steps
             
             attributions, approximation_error = ig.attribute(
                 raw_in,
-                additional_forward_args=(labels, edge_lists, pos_lists),
+                additional_forward_args=(labels, edge_lists, node_outs, pos_lists),
                 method=method,
                 return_convergence_delta=True,
                 target=targets,
@@ -518,15 +499,26 @@ class Ggnn(Model):
         iteration_count = unroll_stats[0] if unroll_stats else unroll_steps
 
         if run_ig:
-            return BatchResults.Create(
-                targets=batch.model_data.node_labels,
-                predictions=logits.detach().cpu().numpy(),
-                model_converged=model_converged,
-                learning_rate=self.model.learning_rate,
-                iteration_count=iteration_count,
-                loss=loss.item(),
-                attributions=summerized_attributions_indices,
-            )
+            if node_out is not None:
+                return BatchResults.Create(
+                    targets=np.expand_dims(batch.model_data.node_labels[node_out], axis=0),
+                    predictions=logits.detach().cpu().numpy(),
+                    model_converged=model_converged,
+                    learning_rate=self.model.learning_rate,
+                    iteration_count=iteration_count,
+                    loss=loss.item(),
+                    attributions=summerized_attributions_indices,
+                )
+            else:
+                return BatchResults.Create(
+                    targets=batch.model_data.node_labels,
+                    predictions=logits.detach().cpu().numpy(),
+                    model_converged=model_converged,
+                    learning_rate=self.model.learning_rate,
+                    iteration_count=iteration_count,
+                    loss=loss.item(),
+                    attributions=summerized_attributions_indices,
+                )
         else:
             return BatchResults.Create(
                 targets=batch.model_data.node_labels,

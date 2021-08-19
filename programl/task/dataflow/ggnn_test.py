@@ -26,6 +26,7 @@ import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
+from copy import deepcopy
 #from sagemath.graphs.digraph import DiGraph, feedback_edge_set  # for removing cycles
 
 from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
@@ -72,6 +73,11 @@ app.DEFINE_boolean(
     "dep_guided_ig",
     False,
     "If set, enable dependency-guided IG attribution.",
+)
+app.DEFINE_boolean(
+    "only_pred_y",
+    False,
+    "If set, only calculate IG attributions for pred_y=1 nodes.",
 )
 app.DEFINE_integer(
     "max_vocab_size",
@@ -194,10 +200,11 @@ def TestOne(
     run_ig: bool,
     max_vis_graph_complexity: int,
     dep_guided_ig: bool,
+    all_nodes_out: bool,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
-            print("run_ig and dep_guided_ig args take different values which is invalid!")
-            raise RuntimeError
+        print("run_ig and dep_guided_ig args take different values which is invalid!")
+        raise RuntimeError
 
     path = pathlib.Path(ds_path)
     
@@ -228,9 +235,17 @@ def TestOne(
             raise TooComplexGraphError
 
     num_root_nodes = 0
-    for i in range(len(graph.node)):
-        if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
-            num_root_nodes +=1 
+    if all_nodes_out:
+        nodes_out = []
+        for i in range(len(graph.node)):
+            if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
+                num_root_nodes +=1 
+            if features.node_features.feature_list["data_flow_value"].feature[i].int64_list.value == [1]:
+                nodes_out.append(i)
+    else:
+        for i in range(len(graph.node)):
+            if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
+                num_root_nodes +=1
     if num_root_nodes > 1:
         raise TooManyRootNodesError
 
@@ -265,16 +280,30 @@ def TestOne(
             max_batch_count=1,
         )
     )[0]
+    
+    if all_nodes_out:
+        results_predicted_nodes = []
+        for node_out in nodes_out:
+            results = model.RunBatch(
+                epoch_pb2.TEST, 
+                batch, 
+                run_ig=run_ig, 
+                dep_guided_ig=dep_guided_ig, 
+                interpolation_order=interpolation_order,
+                node_out=node_out,
+            )
+            results_predicted_nodes.append(results)
+        return AnnotateGraphWithBatchResultsForPredictedNodes(graph, features, results_predicted_nodes, nodes_out, run_ig)
+    else:
+        results = model.RunBatch(
+            epoch_pb2.TEST, 
+            batch, 
+            run_ig=run_ig, 
+            dep_guided_ig=dep_guided_ig, 
+            interpolation_order=interpolation_order,
+        )
+        return AnnotateGraphWithBatchResults(graph, features, results, run_ig)
 
-    results = model.RunBatch(
-        epoch_pb2.TEST, 
-        batch, 
-        run_ig=run_ig, 
-        dep_guided_ig=dep_guided_ig, 
-        interpolation_order=interpolation_order
-    )
-
-    return AnnotateGraphWithBatchResults(graph, features, results, run_ig)
 
 
 def FixEmptyNodeFeatures(
@@ -294,6 +323,58 @@ def FixEmptyNodeFeatures(
             node.features.feature["full_text"].bytes_list.value.append(b'')
 
     return graph
+
+
+def AnnotateGraphWithBatchResultsForPredictedNodes(
+    base_graph: program_graph_pb2.ProgramGraph,
+    features: program_graph_features_pb2.ProgramGraphFeatures,
+    results_predicted_nodes: List[BatchResults],
+    nodes_out: List[int],
+    run_ig: bool,
+) -> program_graph_pb2.ProgramGraph:
+    """Annotate graph with features describing the target labels and predicted outcomes."""
+    assert len(base_graph.node) == len(
+        features.node_features.feature_list["data_flow_value"].feature
+    )
+    assert len(base_graph.node) == len(
+        features.node_features.feature_list["data_flow_root_node"].feature
+    )
+
+    graphs = []
+    
+    for results in results_predicted_nodes:
+        graph = deepcopy(base_graph)
+        if run_ig:
+            assert len(graph.node) == results.attributions.shape[0]
+
+        true_y = np.argmax(results.targets, axis=1)
+        pred_y = np.argmax(results.predictions, axis=1)
+
+        for i, node in enumerate(graph.node):
+            node.features.feature["data_flow_root_node"].CopyFrom(
+                features.node_features.feature_list["data_flow_root_node"].feature[i]
+            )
+            if i in set(nodes_out):
+                node.features.feature["true_y"].int64_list.value.append(true_y[0])
+                node.features.feature["pred_y"].int64_list.value.append(pred_y[0])
+            else:
+                node.features.feature["true_y"].int64_list.value.append(0)
+                node.features.feature["pred_y"].int64_list.value.append(0)
+            if run_ig:
+                node.features.feature["attribution_order"].int64_list.value.append(results.attributions[i])
+
+        graph.features.feature["loss"].float_list.value.append(results.loss)
+        graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
+        graph.features.feature["precision"].float_list.value.append(results.precision)
+        graph.features.feature["recall"].float_list.value.append(results.recall)
+        graph.features.feature["f1"].float_list.value.append(results.f1)
+        graph.features.feature["confusion_matrix"].int64_list.value[:] = np.hstack(
+            results.confusion_matrix
+        )
+
+        graphs.append(graph)
+
+    return graphs
 
 
 def AnnotateGraphWithBatchResults(
@@ -339,6 +420,7 @@ def AnnotateGraphWithBatchResults(
     graph.features.feature["confusion_matrix"].int64_list.value[:] = np.hstack(
         results.confusion_matrix
     )
+
     return graph
 
 
@@ -350,17 +432,32 @@ def TestOneGraph(
     max_vis_graph_complexity,
     run_ig=False,
     dep_guided_ig=False,
+    all_nodes_out=False,
 ):
-    graph = TestOne(
-        features_list_path=pathlib.Path(graph_path),
-        features_list_index=int(graph_idx),
-        checkpoint_path=pathlib.Path(ds_path + model_path),
-        ds_path=ds_path,
-        run_ig=run_ig,
-        max_vis_graph_complexity=max_vis_graph_complexity,
-        dep_guided_ig=dep_guided_ig,
-    )
-    return graph
+    if all_nodes_out:
+        graphs = TestOne(
+            features_list_path=pathlib.Path(graph_path),
+            features_list_index=int(graph_idx),
+            checkpoint_path=pathlib.Path(ds_path + model_path),
+            ds_path=ds_path,
+            run_ig=run_ig,
+            max_vis_graph_complexity=max_vis_graph_complexity,
+            dep_guided_ig=dep_guided_ig,
+            all_nodes_out=all_nodes_out,
+        )
+        return graphs
+    else:
+        graph = TestOne(
+            features_list_path=pathlib.Path(graph_path),
+            features_list_index=int(graph_idx),
+            checkpoint_path=pathlib.Path(ds_path + model_path),
+            ds_path=ds_path,
+            run_ig=run_ig,
+            max_vis_graph_complexity=max_vis_graph_complexity,
+            dep_guided_ig=dep_guided_ig,
+            all_nodes_out=all_nodes_out,
+        )
+        return graph
 
 
 def DrawAndSaveGraph(
@@ -371,43 +468,51 @@ def DrawAndSaveGraph(
     save_vis=False,
     suffix=''
 ):
-    save_graph_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.%s.pb" % suffix
-    if save_graph:
-        print("Saving annotated graph to %s..." % save_graph_path)
-        serialize_ops.save_graphs(save_path, [graph])
-    
-    networkx_graph = ProgramGraphToNetworkX(graph)
-    
-    original_labels = nx.get_node_attributes(networkx_graph, "features")
+    if not isinstance(graph, list):
+        # Meaning we are handling per-node IG
+        graphs = [graph]
+    else:
+        graphs = graph
 
-    labels = {}
-    for node, features in original_labels.items():
-        curr_label = ""
-        curr_label += "Pred: " + str(features["pred_y"]) + " | "
-        curr_label += "True: " + str(features["true_y"]) + " | \n"
-        curr_label += "Attr: " + str(features["attribution_order"]) + " | "
-        if features["data_flow_root_node"] == 0:
-            curr_label += "Target"
-        labels[node] = '[' + curr_label + ']'
+    for i in range(len(graphs)):
+        graph = graphs[i]
+        save_graph_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.%s.%d.pb" % (suffix, i)
+        if save_graph:
+            print("Saving annotated graph to %s..." % save_graph_path)
+            serialize_ops.save_graphs(save_path, [graph])
+        
+        networkx_graph = ProgramGraphToNetworkX(graph)
+        
+        original_labels = nx.get_node_attributes(networkx_graph, "features")
 
-    color = []
-    for node in networkx_graph.nodes():
-        if original_labels[node]["data_flow_root_node"] == [1]:
-            color.append('red')
-        elif original_labels[node]["pred_y"] == [1]:
-            color.append('purple')
-        else:
-            color.append('grey')
+        labels = {}
+        for node, features in original_labels.items():
+            curr_label = ""
+            curr_label += "Pred: " + str(features["pred_y"]) + " | "
+            curr_label += "True: " + str(features["true_y"]) + " | \n"
+            curr_label += "Attr: " + str(features["attribution_order"]) + " | "
+            if features["data_flow_root_node"] == 0:
+                curr_label += "Target"
+            labels[node] = '[' + curr_label + ']'
 
-    pos = graphviz_layout(networkx_graph, prog='neato')
-    nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
-    
-    if save_vis:
-        save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.png" % suffix
-        print("Saving visualization of annotated graph to %s..." % save_img_path)
-        plt.show()
-        plt.savefig(save_img_path, format="PNG")
-        plt.clf()
+        color = []
+        for node in networkx_graph.nodes():
+            if original_labels[node]["data_flow_root_node"] == [1]:
+                color.append('red')
+            elif original_labels[node]["pred_y"] == [1]:
+                color.append('purple')
+            else:
+                color.append('grey')
+
+        pos = graphviz_layout(networkx_graph, prog='neato')
+        nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
+        
+        if save_vis:
+            save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.%d.png" % (suffix, i)
+            print("Saving visualization of annotated graph to %s..." % save_img_path)
+            plt.show()
+            plt.savefig(save_img_path, format="PNG")
+            plt.clf()
 
 
 def Main():
@@ -431,6 +536,7 @@ def Main():
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=False,
+                        all_nodes_out=FLAGS.only_pred_y,
                     )
                     graph_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -440,6 +546,7 @@ def Main():
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
+                        all_nodes_out=FLAGS.only_pred_y,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -475,6 +582,7 @@ def Main():
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=False,
+                all_nodes_out=FLAGS.only_pred_y,
             )
             graph_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,
@@ -484,6 +592,7 @@ def Main():
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=True,
+                all_nodes_out=FLAGS.only_pred_y,
             )
         except TooComplexGraphError:
             print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
