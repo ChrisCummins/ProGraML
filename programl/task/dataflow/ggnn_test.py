@@ -342,7 +342,8 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
 
     graphs = []
     
-    for results in results_predicted_nodes:
+    for i in range(len(results_predicted_nodes)):
+        results = results_predicted_nodes[i]
         graph = deepcopy(base_graph)
         if run_ig:
             assert len(graph.node) == results.attributions.shape[0]
@@ -350,18 +351,18 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
         true_y = np.argmax(results.targets, axis=1)
         pred_y = np.argmax(results.predictions, axis=1)
 
-        for i, node in enumerate(graph.node):
+        for j, node in enumerate(graph.node):
             node.features.feature["data_flow_root_node"].CopyFrom(
-                features.node_features.feature_list["data_flow_root_node"].feature[i]
+                features.node_features.feature_list["data_flow_root_node"].feature[j]
             )
-            if i in set(nodes_out):
+            if j == nodes_out[i]:
                 node.features.feature["true_y"].int64_list.value.append(true_y[0])
                 node.features.feature["pred_y"].int64_list.value.append(pred_y[0])
             else:
                 node.features.feature["true_y"].int64_list.value.append(0)
                 node.features.feature["pred_y"].int64_list.value.append(0)
             if run_ig:
-                node.features.feature["attribution_order"].int64_list.value.append(results.attributions[i])
+                node.features.feature["attribution_order"].int64_list.value.append(results.attributions[j])
 
         graph.features.feature["loss"].float_list.value.append(results.loss)
         graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
