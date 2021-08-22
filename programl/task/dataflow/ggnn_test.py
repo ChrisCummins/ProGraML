@@ -79,6 +79,11 @@ app.DEFINE_boolean(
     False,
     "If set, only calculate IG attributions for pred_y=1 nodes.",
 )
+app.DEFINE_boolean(
+    "use_acyclic_for_std_ig",
+    False,
+    "If set, use acyclicalized graphs to standard IG as well.",
+)
 app.DEFINE_integer(
     "max_vocab_size",
     0,
@@ -88,6 +93,11 @@ app.DEFINE_integer(
     "max_vis_graph_complexity",
     0,
     "If > 0, limit the max complexity of visualized graphs.",
+)
+app.DEFINE_integer(
+    "max_removed_edges",
+    -1,
+    "If > -1, limit the max number of removed edges.",
 )
 app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
 app.DEFINE_string(
@@ -141,6 +151,10 @@ class CycleInGraphError(Exception):
     pass
 
 
+class TooManyEdgesRemoved(Exception):
+    pass
+
+
 def RemoveCyclesFromGraphSimple(
     graph: nx.DiGraph,
 ) -> nx.DiGraph:
@@ -166,6 +180,7 @@ def CalculateInterpolationOrderFromGraph(
     graph: program_graph_pb2.ProgramGraph,
     use_simple_removal: bool = True,
     reverse: bool = False,
+    max_removed_edges int = -1,
 ) -> List[int]:
     # This function returns the (topological) order of nodes to evaluate
     # for interpolations in IG
@@ -182,6 +197,12 @@ def CalculateInterpolationOrderFromGraph(
             acyclic_networkx_graph = acyclic_sage_graph.networkx_graph()
         else:
             acyclic_networkx_graph = RemoveCyclesFromGraphSimple(networkx_graph)
+            if max_removed_edges != -1:
+                original_num_edges = len(networkx_graph.edges)
+                trimmed_num_edges = len(acyclic_networkx_graph.edges)
+                num_removed_edges = original_num_edges - trimmed_num_edges
+                if num_removed_edges > max_removed_edges:
+                    raise TooManyEdgesRemoved
 
         # Sanity check, only return the graph if it is acyclic
         is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(acyclic_networkx_graph)
@@ -201,6 +222,7 @@ def TestOne(
     max_vis_graph_complexity: int,
     dep_guided_ig: bool,
     all_nodes_out: bool,
+    max_removed_edges: int,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
         print("run_ig and dep_guided_ig args take different values which is invalid!")
@@ -224,7 +246,7 @@ def TestOne(
     graph = FixEmptyNodeFeatures(graph, features)
     
     if dep_guided_ig:
-        interpolation_order = CalculateInterpolationOrderFromGraph(graph)
+        interpolation_order = CalculateInterpolationOrderFromGraph(graph, max_removed_edges=max_removed_edges)
     else:
         interpolation_order = None
 
@@ -434,6 +456,7 @@ def TestOneGraph(
     run_ig=False,
     dep_guided_ig=False,
     all_nodes_out=False,
+    max_removed_edges=-1,
 ):
     if all_nodes_out:
         graphs = TestOne(
@@ -445,6 +468,7 @@ def TestOneGraph(
             max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
+            max_removed_edges=max_removed_edges,
         )
         return graphs
     else:
@@ -457,6 +481,7 @@ def TestOneGraph(
             max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
+            max_removed_edges=max_removed_edges,
         )
         return graph
 
@@ -538,6 +563,7 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=False,
                         all_nodes_out=FLAGS.only_pred_y,
+                        max_removed_edges=FLAGS.max_removed_edges,
                     )
                     graph_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -548,6 +574,7 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
+                        max_removed_edges=FLAGS.max_removed_edges,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -555,6 +582,9 @@ def Main():
                     continue
                 except CycleInGraphError:
                     print("Skipping graph %s due to presence of graph cycle(s)..." % original_graph_fname)
+                    continue
+                except TooManyEdgesRemoved:
+                    print("Skipping graph %s due to exceeding number of removed edges..." % original_graph_fname)
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
