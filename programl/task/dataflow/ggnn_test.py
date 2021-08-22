@@ -180,7 +180,7 @@ def CalculateInterpolationOrderFromGraph(
     graph: program_graph_pb2.ProgramGraph,
     use_simple_removal: bool = True,
     reverse: bool = False,
-    max_removed_edges int = -1,
+    max_removed_edges: int = -1,
 ) -> List[int]:
     # This function returns the (topological) order of nodes to evaluate
     # for interpolations in IG
