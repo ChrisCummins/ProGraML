@@ -196,9 +196,10 @@ def CalculateInterpolationOrderFromGraph(
             acyclic_sage_graph = sage_graph.feedback_edge_set()
             acyclic_networkx_graph = acyclic_sage_graph.networkx_graph()
         else:
-            acyclic_networkx_graph = RemoveCyclesFromGraphSimple(networkx_graph)
             if max_removed_edges != -1:
                 original_num_edges = len(networkx_graph.edges)
+            acyclic_networkx_graph = RemoveCyclesFromGraphSimple(networkx_graph)
+            if max_removed_edges != -1:
                 trimmed_num_edges = len(acyclic_networkx_graph.edges)
                 num_removed_edges = original_num_edges - trimmed_num_edges
                 if num_removed_edges > max_removed_edges:
