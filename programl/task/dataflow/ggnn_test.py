@@ -594,6 +594,19 @@ def Main():
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
                         max_removed_edges=FLAGS.max_removed_edges,
+                        reverse=False,
+                    )
+                    graph_reverse_dep_guided_ig = TestOneGraph(
+                        FLAGS.ds_path,
+                        FLAGS.model,
+                        graph_path, 
+                        '-1', 
+                        FLAGS.max_vis_graph_complexity,
+                        run_ig=FLAGS.ig,
+                        dep_guided_ig=True,
+                        all_nodes_out=FLAGS.only_pred_y,
+                        max_removed_edges=FLAGS.max_removed_edges,
+                        reverse=True,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -616,6 +629,11 @@ def Main():
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+                    )
+                    DrawAndSaveGraph(
+                        graph_dep_guided_ig, FLAGS.ds_path,
+                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
                     )
             except Exception as err:
                 print("Error testing %s -- %s" % (graph_fname, str(err)))
