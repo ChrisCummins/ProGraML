@@ -193,7 +193,9 @@ def CalculateInterpolationOrderFromGraph(
     if is_acyclic:
         ordered_nodes = nx.topological_sort(networkx_graph)
         if reverse:
-            return list(ordered_nodes).reverse()
+            ordered_nodes = list(ordered_nodes)
+            ordered_nodes.reverse()
+            return ordered_nodes
         else:
             return list(ordered_nodes)
     else:
@@ -219,7 +221,9 @@ def CalculateInterpolationOrderFromGraph(
         else:
             ordered_nodes = nx.topological_sort(acyclic_networkx_graph)
             if reverse:
-                return list(ordered_nodes).reverse()
+                ordered_nodes = list(ordered_nodes)
+                ordered_nodes.reverse()
+                return ordered_nodes
             else:
                 return list(ordered_nodes)
 
@@ -263,6 +267,7 @@ def TestOne(
             max_removed_edges=max_removed_edges, 
             reverse=reverse
         )
+        print(interpolation_order)
     else:
         interpolation_order = None
 
