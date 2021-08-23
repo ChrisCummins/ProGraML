@@ -99,6 +99,11 @@ app.DEFINE_integer(
     -1,
     "If > -1, limit the max number of removed edges.",
 )
+app.DEFINE_boolean(
+    "filter_adjacant_nodes",
+    False,
+    "If set, filter out nodes that are too far from source.",
+)
 app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
 app.DEFINE_string(
     "ds_path",
@@ -151,7 +156,11 @@ class CycleInGraphError(Exception):
     pass
 
 
-class TooManyEdgesRemoved(Exception):
+class TooManyEdgesRemovedError(Exception):
+    pass
+
+
+class NoQualifiedOutNodeError(Exception):
     pass
 
 
@@ -178,6 +187,24 @@ def RemoveCyclesFromGraphSimple(
                 if added_back_nodes > 100:
                     raise TooComplexGraphError
     return graph
+
+
+def FilterDistantNodes(
+    nodes_out: List[int],
+    target_node_id: int,
+    graph: program_graph_pb2.ProgramGraph,
+) -> List[int]:
+    filtered_nodes_out = []
+    networkx_graph = ProgramGraphToNetworkX(graph)
+    for source_node_id in nodes_out:
+        dist = nx.algorithms.shortest_paths.generic.shortest_path_length(
+            networkx_graph,
+            source=source_node_id,
+            target=target_node_id,
+        )
+        if dist > 1:
+            filtered_nodes_out.append(source_node_id)
+    return filtered_nodes_out
 
 
 def CalculateInterpolationOrderFromGraph(
@@ -212,7 +239,7 @@ def CalculateInterpolationOrderFromGraph(
                 trimmed_num_edges = len(acyclic_networkx_graph.edges)
                 num_removed_edges = original_num_edges - trimmed_num_edges
                 if num_removed_edges > max_removed_edges:
-                    raise TooManyEdgesRemoved
+                    raise TooManyEdgesRemovedError
 
         # Sanity check, only return the graph if it is acyclic
         is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(acyclic_networkx_graph)
@@ -239,6 +266,7 @@ def TestOne(
     all_nodes_out: bool,
     max_removed_edges: int,
     reverse: bool,
+    filter_adjacant_nodes: bool,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
         print("run_ig and dep_guided_ig args take different values which is invalid!")
@@ -267,7 +295,6 @@ def TestOne(
             max_removed_edges=max_removed_edges, 
             reverse=reverse
         )
-        print(interpolation_order)
     else:
         interpolation_order = None
 
@@ -277,20 +304,26 @@ def TestOne(
         if (len(graph.edge)) > max_vis_graph_complexity:
             raise TooComplexGraphError
 
-    num_root_nodes = 0
+    root_nodes = []
     if all_nodes_out:
         nodes_out = []
         for i in range(len(graph.node)):
             if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
-                num_root_nodes +=1 
+                root_nodes.append(i)
             if features.node_features.feature_list["data_flow_value"].feature[i].int64_list.value == [1]:
                 nodes_out.append(i)
     else:
         for i in range(len(graph.node)):
             if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
-                num_root_nodes +=1
-    if num_root_nodes > 1:
+                root_nodes.append(i)
+    if len(root_nodes) > 1:
         raise TooManyRootNodesError
+
+    # Filter nodes that are not suitable for evaluations (too far).
+    if run_ig and dep_guided_ig and all_nodes_out:
+        nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
+        if len(nodes_out) == 0:
+            raise NoQualifiedOutNodeError
 
     # Instantiate and restore the model.
     vocab = vocabulary.LoadVocabulary(
@@ -479,6 +512,7 @@ def TestOneGraph(
     all_nodes_out=False,
     max_removed_edges=-1,
     reverse=False,
+    filter_adjacant_nodes=False,
 ):
     if all_nodes_out:
         graphs = TestOne(
@@ -492,6 +526,7 @@ def TestOneGraph(
             all_nodes_out=all_nodes_out,
             max_removed_edges=max_removed_edges,
             reverse=reverse,
+            filter_adjacant_nodes=filter_adjacant_nodes,
         )
         return graphs
     else:
@@ -506,6 +541,7 @@ def TestOneGraph(
             all_nodes_out=all_nodes_out,
             max_removed_edges=max_removed_edges,
             reverse=reverse,
+            filter_adjacant_nodes=filter_adjacant_nodes,
         )
         return graph
 
@@ -600,6 +636,7 @@ def Main():
                         all_nodes_out=FLAGS.only_pred_y,
                         max_removed_edges=FLAGS.max_removed_edges,
                         reverse=False,
+                        filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                     )
                     graph_reverse_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -612,6 +649,7 @@ def Main():
                         all_nodes_out=FLAGS.only_pred_y,
                         max_removed_edges=FLAGS.max_removed_edges,
                         reverse=True,
+                        filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -620,7 +658,7 @@ def Main():
                 except CycleInGraphError:
                     print("Skipping graph %s due to presence of graph cycle(s)..." % original_graph_fname)
                     continue
-                except TooManyEdgesRemoved:
+                except TooManyEdgesRemovedError:
                     print("Skipping graph %s due to exceeding number of removed edges..." % original_graph_fname)
                     continue
 
@@ -667,6 +705,7 @@ def Main():
                 dep_guided_ig=True,
                 all_nodes_out=FLAGS.only_pred_y,
                 reverse=False,
+                filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
             )
             graph_reverse_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,
@@ -678,6 +717,7 @@ def Main():
                 dep_guided_ig=True,
                 all_nodes_out=FLAGS.only_pred_y,
                 reverse=True,
+                filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
             )
         except TooComplexGraphError:
             print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
