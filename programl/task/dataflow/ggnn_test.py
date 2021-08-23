@@ -161,6 +161,7 @@ def RemoveCyclesFromGraphSimple(
     # This is an overly simplied solution, without either correctness or optimality
     # guarantee. The original minimum feeback arc set problem is NP-hard and has better
     # approximation algorithms. I will replace this function in the future.
+    added_back_nodes = 0
     while not nx.algorithms.dag.is_directed_acyclic_graph(graph):
         cycle = nx.find_cycle(graph)
         for edge in cycle:
@@ -173,6 +174,9 @@ def RemoveCyclesFromGraphSimple(
                 for attr_key, attr_value in edge_data.items():
                     graph[tail][head][key][attr_key] = attr_value
                 print("Added back an edge: (%d --> %d)" % (tail, head))
+                added_back_nodes += 1
+                if added_back_nodes > 100:
+                    raise TooComplexGraphError
     return graph
 
 
@@ -188,7 +192,10 @@ def CalculateInterpolationOrderFromGraph(
     is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(networkx_graph)
     if is_acyclic:
         ordered_nodes = nx.topological_sort(networkx_graph)
-        return list(ordered_nodes)
+        if reverse:
+            return list(ordered_nodes).reverse()
+        else:
+            return list(ordered_nodes)
     else:
         # Cycle(s) detected and we need to remove them now
         if not use_simple_removal:
@@ -211,7 +218,10 @@ def CalculateInterpolationOrderFromGraph(
             raise CycleInGraphError
         else:
             ordered_nodes = nx.topological_sort(acyclic_networkx_graph)
-            return list(ordered_nodes)
+            if reverse:
+                return list(ordered_nodes).reverse()
+            else:
+                return list(ordered_nodes)
 
 
 def TestOne(
@@ -224,6 +234,7 @@ def TestOne(
     dep_guided_ig: bool,
     all_nodes_out: bool,
     max_removed_edges: int,
+    reverse: bool,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
         print("run_ig and dep_guided_ig args take different values which is invalid!")
@@ -247,7 +258,11 @@ def TestOne(
     graph = FixEmptyNodeFeatures(graph, features)
     
     if dep_guided_ig:
-        interpolation_order = CalculateInterpolationOrderFromGraph(graph, max_removed_edges=max_removed_edges)
+        interpolation_order = CalculateInterpolationOrderFromGraph(
+            graph, 
+            max_removed_edges=max_removed_edges, 
+            reverse=reverse
+        )
     else:
         interpolation_order = None
 
@@ -458,6 +473,7 @@ def TestOneGraph(
     dep_guided_ig=False,
     all_nodes_out=False,
     max_removed_edges=-1,
+    reverse=False,
 ):
     if all_nodes_out:
         graphs = TestOne(
@@ -470,6 +486,7 @@ def TestOneGraph(
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
             max_removed_edges=max_removed_edges,
+            reverse=reverse,
         )
         return graphs
     else:
@@ -483,6 +500,7 @@ def TestOneGraph(
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
             max_removed_edges=max_removed_edges,
+            reverse=reverse,
         )
         return graph
 
@@ -625,6 +643,18 @@ def Main():
                 run_ig=FLAGS.ig,
                 dep_guided_ig=True,
                 all_nodes_out=FLAGS.only_pred_y,
+                reverse=False,
+            )
+            graph_reverse_dep_guided_ig = TestOneGraph(
+                FLAGS.ds_path,
+                FLAGS.model,
+                FLAGS.ds_path + features_list_path, 
+                features_list_index, 
+                FLAGS.max_vis_graph_complexity,
+                run_ig=FLAGS.ig,
+                dep_guided_ig=True,
+                all_nodes_out=FLAGS.only_pred_y,
+                reverse=True,
             )
         except TooComplexGraphError:
             print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
@@ -643,6 +673,11 @@ def Main():
                 graph_dep_guided_ig, FLAGS.ds_path, 
                 graph_fname, save_graph=FLAGS.save_graph, 
                 save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+            )
+            DrawAndSaveGraph(
+                graph_reverse_dep_guided_ig, FLAGS.ds_path, 
+                graph_fname, save_graph=FLAGS.save_graph, 
+                save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
             )
 
 
