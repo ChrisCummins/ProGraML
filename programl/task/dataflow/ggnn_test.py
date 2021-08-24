@@ -362,7 +362,6 @@ def TestOne(
     if all_nodes_out:
         results_predicted_nodes = []
         for node_out in nodes_out:
-            print(accumulate_gradients)
             results = model.RunBatch(
                 epoch_pb2.TEST, 
                 batch, 
