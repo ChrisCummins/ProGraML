@@ -267,6 +267,7 @@ def TestOne(
     max_removed_edges: int,
     reverse: bool,
     filter_adjacant_nodes: bool,
+    accumulate_gradients: bool,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
         print("run_ig and dep_guided_ig args take different values which is invalid!")
@@ -321,7 +322,8 @@ def TestOne(
 
     # Filter nodes that are not suitable for evaluations (too far).
     if run_ig and dep_guided_ig and all_nodes_out:
-        nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
+        if filter_adjacant_nodes:
+            nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
         if len(nodes_out) == 0:
             raise NoQualifiedOutNodeError
 
@@ -360,6 +362,7 @@ def TestOne(
     if all_nodes_out:
         results_predicted_nodes = []
         for node_out in nodes_out:
+            print(accumulate_gradients)
             results = model.RunBatch(
                 epoch_pb2.TEST, 
                 batch, 
@@ -367,6 +370,7 @@ def TestOne(
                 dep_guided_ig=dep_guided_ig, 
                 interpolation_order=interpolation_order,
                 node_out=node_out,
+                accumulate_gradients=accumulate_gradients,
             )
             results_predicted_nodes.append(results)
         return AnnotateGraphWithBatchResultsForPredictedNodes(graph, features, results_predicted_nodes, nodes_out, run_ig)
@@ -513,6 +517,7 @@ def TestOneGraph(
     max_removed_edges=-1,
     reverse=False,
     filter_adjacant_nodes=False,
+    accumulate_gradients=True,
 ):
     if all_nodes_out:
         graphs = TestOne(
@@ -527,6 +532,7 @@ def TestOneGraph(
             max_removed_edges=max_removed_edges,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
+            accumulate_gradients=accumulate_gradients,            
         )
         return graphs
     else:
@@ -542,6 +548,7 @@ def TestOneGraph(
             max_removed_edges=max_removed_edges,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
+            accumulate_gradients=accumulate_gradients,
         )
         return graph
 
@@ -637,6 +644,21 @@ def Main():
                         max_removed_edges=FLAGS.max_removed_edges,
                         reverse=False,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                        accumulate_gradients=True,        
+                    )
+                    graph_dep_guided_ig_unaccumulated = TestOneGraph(
+                        FLAGS.ds_path,
+                        FLAGS.model,
+                        graph_path, 
+                        '-1', 
+                        FLAGS.max_vis_graph_complexity,
+                        run_ig=FLAGS.ig,
+                        dep_guided_ig=True,
+                        all_nodes_out=FLAGS.only_pred_y,
+                        max_removed_edges=FLAGS.max_removed_edges,
+                        reverse=False,
+                        filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                        accumulate_gradients=False,
                     )
                     graph_reverse_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -650,6 +672,7 @@ def Main():
                         max_removed_edges=FLAGS.max_removed_edges,
                         reverse=True,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                        accumulate_gradients=True,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -672,6 +695,11 @@ def Main():
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+                    )
+                    DrawAndSaveGraph(
+                        graph_dep_guided_ig_unaccumulated, FLAGS.ds_path,
+                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
                     )
                     DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
@@ -706,6 +734,20 @@ def Main():
                 all_nodes_out=FLAGS.only_pred_y,
                 reverse=False,
                 filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                accumulate_gradients=True,
+            )
+            graph_dep_guided_ig_unaccumulated = TestOneGraph(
+                FLAGS.ds_path,
+                FLAGS.model,
+                FLAGS.ds_path + features_list_path, 
+                features_list_index, 
+                FLAGS.max_vis_graph_complexity,
+                run_ig=FLAGS.ig,
+                dep_guided_ig=True,
+                all_nodes_out=FLAGS.only_pred_y,
+                reverse=False,
+                filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                accumulate_gradients=False,
             )
             graph_reverse_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,
@@ -718,6 +760,7 @@ def Main():
                 all_nodes_out=FLAGS.only_pred_y,
                 reverse=True,
                 filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                accumulate_gradients=True,
             )
         except TooComplexGraphError:
             print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
@@ -736,6 +779,11 @@ def Main():
                 graph_dep_guided_ig, FLAGS.ds_path, 
                 graph_fname, save_graph=FLAGS.save_graph, 
                 save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
+            )
+            DrawAndSaveGraph(
+                graph_dep_guided_ig, FLAGS.ds_path, 
+                graph_fname, save_graph=FLAGS.save_graph, 
+                save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
             )
             DrawAndSaveGraph(
                 graph_reverse_dep_guided_ig, FLAGS.ds_path, 

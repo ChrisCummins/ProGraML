@@ -381,6 +381,7 @@ class Ggnn(Model):
         dep_guided_ig=False,
         interpolation_order=None,
         node_out=None,
+        accumulate_gradients=True,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -459,6 +460,7 @@ class Ggnn(Model):
                 target=targets,
                 interpolation_order=interpolation_order,
                 n_steps=n_steps,
+                accumulate_gradients=accumulate_gradients,
             )
             summerized_attributions = torch.mean(attributions, dim=1)
             summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().numpy())
