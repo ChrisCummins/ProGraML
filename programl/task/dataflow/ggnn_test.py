@@ -171,12 +171,16 @@ def RemoveCyclesFromGraphSimple(
     # guarantee. The original minimum feeback arc set problem is NP-hard and has better
     # approximation algorithms. I will replace this function in the future.
     added_back_nodes = 0
+    num_of_removed_edges = 0
     while not nx.algorithms.dag.is_directed_acyclic_graph(graph):
         cycle = nx.find_cycle(graph)
         for edge in cycle:
             tail, head, key = edge
             edge_data = graph.get_edge_data(tail, head, key=key)
             graph.remove_edge(tail, head, key=key)
+            num_of_removed_edges += 1
+            if num_of_removed_edges > 100:
+                raise TooComplexGraphError
             print("Removed an edge: (%d --> %d)" % (tail, head))
             if not nx.algorithms.components.is_weakly_connected(graph):
                 graph.add_edge(tail, head, key=key)
@@ -222,9 +226,9 @@ def CalculateInterpolationOrderFromGraph(
         if reverse:
             ordered_nodes = list(ordered_nodes)
             ordered_nodes.reverse()
-            return ordered_nodes
+            return ordered_nodes, networkx_graph
         else:
-            return list(ordered_nodes)
+            return list(ordered_nodes), networkx_graph
     else:
         # Cycle(s) detected and we need to remove them now
         if not use_simple_removal:
@@ -250,9 +254,9 @@ def CalculateInterpolationOrderFromGraph(
             if reverse:
                 ordered_nodes = list(ordered_nodes)
                 ordered_nodes.reverse()
-                return ordered_nodes
+                return ordered_nodes, acyclic_networkx_graph
             else:
-                return list(ordered_nodes)
+                return list(ordered_nodes), acyclic_networkx_graph
 
 
 def TestOne(
@@ -290,12 +294,14 @@ def TestOne(
     # First, we need to fix empty node features
     graph = FixEmptyNodeFeatures(graph, features)
     
-    if dep_guided_ig:
-        interpolation_order = CalculateInterpolationOrderFromGraph(
+    if run_ig:  # we can also compute accuracies for standard IG
+        interpolation_order, acyclic_networkx_graph = CalculateInterpolationOrderFromGraph(
             graph, 
             max_removed_edges=max_removed_edges, 
             reverse=reverse
         )
+        if not dep_guided_ig:
+            interpolation_order = None
     else:
         interpolation_order = None
 
@@ -372,7 +378,14 @@ def TestOne(
                 accumulate_gradients=accumulate_gradients,
             )
             results_predicted_nodes.append(results)
-        return AnnotateGraphWithBatchResultsForPredictedNodes(graph, features, results_predicted_nodes, nodes_out, run_ig)
+        return AnnotateGraphWithBatchResultsForPredictedNodes(
+            graph, 
+            features, 
+            results_predicted_nodes, 
+            nodes_out, 
+            run_ig,
+            acyclic_networkx_graph,
+        )
     else:
         results = model.RunBatch(
             epoch_pb2.TEST, 
@@ -404,12 +417,50 @@ def FixEmptyNodeFeatures(
     return graph
 
 
+def CalculateAttributionAccuracyScore(
+    graph: nx.DiGraph,
+    attribution_order: List[int],
+    source_node_id: int,
+    target_node_id: int,
+) -> float:
+    all_paths = list(
+        nx.algorithms.simple_paths.all_simple_paths(
+            graph, 
+            source=source_node_id, 
+            target=target_node_id
+        )
+    )
+    all_shortest_paths = list(
+        nx.algorithms.shortest_paths.generic.all_shortest_paths(
+            graph, 
+            source=source_node_id, 
+            target=target_node_id
+        )
+    )
+    
+    path_nodes_set = set([node for path in all_paths for node in path])
+    shortest_path_nodes_set = set([node for path in all_shortest_paths for node in path])
+
+    path_score = 0.0
+    shortest_path_score = 0.0
+    for i in range(len(attribution_order)):
+        attr_order = attribution_order[i]
+        if i in path_nodes_set:
+            path_score += 1 / (attr_order + 1)
+        if i in shortest_path_nodes_set:
+            shortest_path_score += 1 / (attr_order + 1)
+    
+    final_score = 0.5 * path_score + 0.5 * shortest_path_score
+    return final_score
+
+
 def AnnotateGraphWithBatchResultsForPredictedNodes(
     base_graph: program_graph_pb2.ProgramGraph,
     features: program_graph_features_pb2.ProgramGraphFeatures,
     results_predicted_nodes: List[BatchResults],
     nodes_out: List[int],
     run_ig: bool,
+    acyclic_networkx_graph: nx.DiGraph,
 ) -> program_graph_pb2.ProgramGraph:
     """Annotate graph with features describing the target labels and predicted outcomes."""
     assert len(base_graph.node) == len(
@@ -424,6 +475,7 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
     for i in range(len(results_predicted_nodes)):
         results = results_predicted_nodes[i]
         graph = deepcopy(base_graph)
+
         if run_ig:
             assert len(graph.node) == results.attributions.shape[0]
 
@@ -442,7 +494,9 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
                 node.features.feature["pred_y"].int64_list.value.append(0)
             if run_ig:
                 node.features.feature["attribution_order"].int64_list.value.append(results.attributions[j])
-
+                if features.node_features.feature_list["data_flow_root_node"].feature[j].int64_list.value == [1]:
+                    target_node_id = j
+        
         graph.features.feature["loss"].float_list.value.append(results.loss)
         graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
         graph.features.feature["precision"].float_list.value.append(results.precision)
@@ -451,6 +505,16 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
         graph.features.feature["confusion_matrix"].int64_list.value[:] = np.hstack(
             results.confusion_matrix
         )
+        
+        if run_ig:
+            source_node_id = nodes_out[i]
+            attribution_acc_score = CalculateAttributionAccuracyScore(
+                acyclic_networkx_graph,
+                results.attributions,
+                source_node_id, 
+                target_node_id,
+            )
+            graph.features.feature["attribution_accuracy"].float_list.value.append(attribution_acc_score)
 
         graphs.append(graph)
 
@@ -602,6 +666,8 @@ def DrawAndSaveGraph(
         if save_vis:
             save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.%d.png" % (suffix, i)
             print("Saving visualization of annotated graph to %s..." % save_img_path)
+            attr_acc_score = graph.features.feature["attribution_accuracy"].float_list.value[0]
+            plt.text(x=0, y=0, s="Attr acc: %f" % attr_acc_score)
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
@@ -682,6 +748,12 @@ def Main():
                     continue
                 except TooManyEdgesRemovedError:
                     print("Skipping graph %s due to exceeding number of removed edges..." % original_graph_fname)
+                    continue
+                except TooManyRootNodesError:
+                    print("Skipping graph %s due to exceeding number of root nodes..." % original_graph_fname)
+                    continue
+                except NoQualifiedOutNodeError:
+                    print("Skipping graph %s due to no out node found..." % original_graph_fname)
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
@@ -766,6 +838,15 @@ def Main():
             exit()
         except CycleInGraphError:
             print("Skipping graph %s due to presence of graph cycle(s)..." % graph_fname)
+            exit()
+        except TooManyEdgesRemovedError:
+            print("Skipping graph %s due to exceeding number of removed edges..." % graph_fname)
+            exit()
+        except TooManyRootNodesError:
+            print("Skipping graph %s due to exceeding number of root nodes..." % graph_fname)
+            exit()
+        except NoQualifiedOutNodeError:
+            print("Skipping graph %s due to no out node found..." % graph_fname)
             exit()
 
         if FLAGS.ig and FLAGS.dep_guided_ig:
