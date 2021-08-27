@@ -16,7 +16,7 @@
 """Run inference of a trained GGNN model on a single graph input.
 """
 import pathlib
-from typing import Any, Iterable, List
+from typing import Any, Iterable, List, Tuple
 from os import listdir
 
 import numpy as np
@@ -27,7 +27,9 @@ matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 from copy import deepcopy
-#from sagemath.graphs.digraph import DiGraph, feedback_edge_set  # for removing cycles
+import logging
+from datetime import datetime
+import igraph as ig
 
 from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
 from programl.models.base_graph_loader import BaseGraphLoader
@@ -94,8 +96,8 @@ app.DEFINE_integer(
     0,
     "If > 0, limit the max complexity of visualized graphs.",
 )
-app.DEFINE_integer(
-    "max_removed_edges",
+app.DEFINE_float(
+    "max_removed_edges_ratio",
     -1,
     "If > -1, limit the max number of removed edges.",
 )
@@ -164,33 +166,22 @@ class NoQualifiedOutNodeError(Exception):
     pass
 
 
-def RemoveCyclesFromGraphSimple(
-    graph: nx.DiGraph,
+def RemoveCyclesFromGraph(
+    networkx_graph: nx.DiGraph,
+    method: str = "eades",
 ) -> nx.DiGraph:
-    # This is an overly simplied solution, without either correctness or optimality
-    # guarantee. The original minimum feeback arc set problem is NP-hard and has better
-    # approximation algorithms. I will replace this function in the future.
-    added_back_nodes = 0
-    num_of_removed_edges = 0
-    while not nx.algorithms.dag.is_directed_acyclic_graph(graph):
-        cycle = nx.find_cycle(graph)
-        for edge in cycle:
-            tail, head, key = edge
-            edge_data = graph.get_edge_data(tail, head, key=key)
-            graph.remove_edge(tail, head, key=key)
-            num_of_removed_edges += 1
-            if num_of_removed_edges > 100:
-                raise TooComplexGraphError
-            print("Removed an edge: (%d --> %d)" % (tail, head))
-            if not nx.algorithms.components.is_weakly_connected(graph):
-                graph.add_edge(tail, head, key=key)
-                for attr_key, attr_value in edge_data.items():
-                    graph[tail][head][key][attr_key] = attr_value
-                print("Added back an edge: (%d --> %d)" % (tail, head))
-                added_back_nodes += 1
-                if added_back_nodes > 100:
-                    raise TooComplexGraphError
-    return graph
+    # This is a sufficint solution, with optimality guarantee if "ip" method
+    # is seleted (but it will be very slow on large graph). A heuristic-based
+    # method "eades" is also provided, with fast speed but only upper bound of 
+    # the number of removed edges of "|E|/2 - |V|/6".
+    print("Removing cycles...")
+    igraph_graph = ig.Graph.from_networkx(networkx_graph)
+    edges_to_remove = ig.Graph.feedback_arc_set(igraph_graph, method=method)
+    edge_list = igraph_graph.get_edgelist()
+    for edge_id in edges_to_remove:
+        tail, head = edge_list[edge_id]
+        networkx_graph.remove_edge(u=tail, v=head)
+    return networkx_graph
 
 
 def FilterDistantNodes(
@@ -213,9 +204,8 @@ def FilterDistantNodes(
 
 def CalculateInterpolationOrderFromGraph(
     graph: program_graph_pb2.ProgramGraph,
-    use_simple_removal: bool = True,
     reverse: bool = False,
-    max_removed_edges: int = -1,
+    max_removed_edges_ratio: float = -1,
 ) -> List[int]:
     # This function returns the (topological) order of nodes to evaluate
     # for interpolations in IG
@@ -231,19 +221,15 @@ def CalculateInterpolationOrderFromGraph(
             return list(ordered_nodes), networkx_graph
     else:
         # Cycle(s) detected and we need to remove them now
-        if not use_simple_removal:
-            sage_graph = DiGragh(networkx_graph)
-            acyclic_sage_graph = sage_graph.feedback_edge_set()
-            acyclic_networkx_graph = acyclic_sage_graph.networkx_graph()
-        else:
-            if max_removed_edges != -1:
-                original_num_edges = len(networkx_graph.edges)
-            acyclic_networkx_graph = RemoveCyclesFromGraphSimple(networkx_graph)
-            if max_removed_edges != -1:
-                trimmed_num_edges = len(acyclic_networkx_graph.edges)
-                num_removed_edges = original_num_edges - trimmed_num_edges
-                if num_removed_edges > max_removed_edges:
-                    raise TooManyEdgesRemovedError
+        if max_removed_edges_ratio != -1:
+            original_num_edges = len(networkx_graph.edges)
+        acyclic_networkx_graph = RemoveCyclesFromGraph(networkx_graph)
+        if max_removed_edges_ratio != -1:
+            trimmed_num_edges = len(acyclic_networkx_graph.edges)
+            num_removed_edges = original_num_edges - trimmed_num_edges
+            print("Total edges: %d | Removed %d edges." % (original_num_edges, num_removed_edges))
+            if (num_removed_edges / original_num_edges) > max_removed_edges_ratio:
+                raise TooManyEdgesRemovedError
 
         # Sanity check, only return the graph if it is acyclic
         is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(acyclic_networkx_graph)
@@ -259,6 +245,36 @@ def CalculateInterpolationOrderFromGraph(
                 return list(ordered_nodes), acyclic_networkx_graph
 
 
+def GenerateInterpolationOrderFromGraph(
+    features_list_path: pathlib.Path,
+    features_list_index: int,
+    ds_path: str,
+    max_removed_edges_ratio: float,
+) -> Tuple[List[int], nx.DiGraph]:
+    path = pathlib.Path(ds_path)
+    
+    features_list = pbutil.FromFile(
+        features_list_path,
+        program_graph_features_pb2.ProgramGraphFeaturesList(),
+    )
+    features = features_list.graph[features_list_index]
+
+    graph_name = features_list_path.name[: -len(".ProgramGraphFeaturesList.pb")]
+    graph = pbutil.FromFile(
+        path / "graphs" / f"{graph_name}.ProgramGraph.pb",
+        program_graph_pb2.ProgramGraph(),
+    )
+
+    # First, we need to fix empty node features
+    graph = FixEmptyNodeFeatures(graph, features)
+    
+    interpolation_order, acyclic_networkx_graph = CalculateInterpolationOrderFromGraph(
+        graph, 
+        max_removed_edges_ratio=max_removed_edges_ratio, 
+    )
+    return interpolation_order, acyclic_networkx_graph
+
+
 def TestOne(
     features_list_path: pathlib.Path,
     features_list_index: int,
@@ -268,10 +284,12 @@ def TestOne(
     max_vis_graph_complexity: int,
     dep_guided_ig: bool,
     all_nodes_out: bool,
-    max_removed_edges: int,
+    max_removed_edges_ratio: float,
     reverse: bool,
     filter_adjacant_nodes: bool,
     accumulate_gradients: bool,
+    interpolation_order: List[int],
+    acyclic_networkx_graph: nx.DiGraph,
 ) -> BatchResults:
     if dep_guided_ig and not run_ig:
         print("run_ig and dep_guided_ig args take different values which is invalid!")
@@ -294,16 +312,17 @@ def TestOne(
     # First, we need to fix empty node features
     graph = FixEmptyNodeFeatures(graph, features)
     
+    interpolation_order = deepcopy(interpolation_order)
+
     if run_ig:  # we can also compute accuracies for standard IG
-        interpolation_order, acyclic_networkx_graph = CalculateInterpolationOrderFromGraph(
-            graph, 
-            max_removed_edges=max_removed_edges, 
-            reverse=reverse
-        )
+        if reverse:
+            interpolation_order.reverse()
         if not dep_guided_ig:
             interpolation_order = None
     else:
         interpolation_order = None
+
+    acyclic_networkx_graph = deepcopy(acyclic_networkx_graph)
 
     if max_vis_graph_complexity != 0:
         if (len(graph.node)) > max_vis_graph_complexity:
@@ -319,19 +338,18 @@ def TestOne(
                 root_nodes.append(i)
             if features.node_features.feature_list["data_flow_value"].feature[i].int64_list.value == [1]:
                 nodes_out.append(i)
+        
+        # Filter nodes that are not suitable for evaluations (too far).
+        if filter_adjacant_nodes:
+            nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
+        if len(nodes_out) == 0:
+            raise NoQualifiedOutNodeError
     else:
         for i in range(len(graph.node)):
             if features.node_features.feature_list["data_flow_root_node"].feature[i].int64_list.value == [1]:
                 root_nodes.append(i)
     if len(root_nodes) > 1:
         raise TooManyRootNodesError
-
-    # Filter nodes that are not suitable for evaluations (too far).
-    if run_ig and dep_guided_ig and all_nodes_out:
-        if filter_adjacant_nodes:
-            nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
-        if len(nodes_out) == 0:
-            raise NoQualifiedOutNodeError
 
     # Instantiate and restore the model.
     vocab = vocabulary.LoadVocabulary(
@@ -577,10 +595,12 @@ def TestOneGraph(
     run_ig=False,
     dep_guided_ig=False,
     all_nodes_out=False,
-    max_removed_edges=-1,
+    max_removed_edges_ratio=-1,
     reverse=False,
     filter_adjacant_nodes=False,
     accumulate_gradients=True,
+    interpolation_order=None,
+    acyclic_networkx_graph=None,
 ):
     if all_nodes_out:
         graphs = TestOne(
@@ -592,10 +612,12 @@ def TestOneGraph(
             max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
-            max_removed_edges=max_removed_edges,
+            max_removed_edges_ratio=max_removed_edges_ratio,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
-            accumulate_gradients=accumulate_gradients,            
+            accumulate_gradients=accumulate_gradients,
+            interpolation_order=interpolation_order,
+            acyclic_networkx_graph=acyclic_networkx_graph,
         )
         return graphs
     else:
@@ -608,10 +630,12 @@ def TestOneGraph(
             max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
-            max_removed_edges=max_removed_edges,
+            max_removed_edges_ratio=max_removed_edges_ratio,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
             accumulate_gradients=accumulate_gradients,
+            interpolation_order=interpolation_order,
+            acyclic_networkx_graph=acyclic_networkx_graph,
         )
         return graph
 
@@ -629,6 +653,8 @@ def DrawAndSaveGraph(
         graphs = [graph]
     else:
         graphs = graph
+
+    scores = []
 
     for i in range(len(graphs)):
         graph = graphs[i]
@@ -667,25 +693,55 @@ def DrawAndSaveGraph(
             save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.%d.png" % (suffix, i)
             print("Saving visualization of annotated graph to %s..." % save_img_path)
             attr_acc_score = graph.features.feature["attribution_accuracy"].float_list.value[0]
-            plt.text(x=0, y=0, s="Attr acc: %f" % attr_acc_score)
+            plt.text(x=20, y=20, s="Attr acc: %f" % attr_acc_score)
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
+
+            scores.append(attr_acc_score)
+
+    return scores
 
 
 def Main():
     """Main entry point."""
     dataflow.PatchWarnings()
 
+    # Handle all logging stuff
+    now = datetime.now()
+    ts_string = now.strftime("%d_%m_%Y_%H_%M_%S")
+    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+
+    log_filepath = FLAGS.ds_path + "/exp_log/batch_%s.log" % ts_string
+    logger = logging.getLogger("logger")
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(log_filepath, mode="w")
+    file_handler.setFormatter(fmt)
+    logger.addHandler(file_handler)
+    logger.debug("Log file being written into at %s" % log_filepath)
+
     if FLAGS.batch:
         graphs_dir = FLAGS.ds_path + '/labels/datadep/'
         graph_fnames = listdir(graphs_dir)
+        variant_ranks = {
+            "STANDARD_IG": [],
+            "ASCENDING_DEPENDENCY_GUIDED_IG": [],
+            "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG": [],
+            "DESCENDING_DEPENDENCY_GUIDED_IG": [],
+        }
+        logger.info("STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG,RUNNING_RANKING")
         for graph_fname in graph_fnames:
             try:
                 original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
                 print("Processing graph file: %s..." % graph_fname)
                 graph_path = graphs_dir + graph_fname
                 try:
+                    interpolation_order, acyclic_networkx_graph = GenerateInterpolationOrderFromGraph(
+                        features_list_path=pathlib.Path(graph_path),
+                        features_list_index=int('-1'),
+                        ds_path=FLAGS.ds_path,
+                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
+                    )
                     graph_std_ig = TestOneGraph(
                         FLAGS.ds_path, 
                         FLAGS.model, 
@@ -695,7 +751,10 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=False,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges=FLAGS.max_removed_edges,
+                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
+                        filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
+                        interpolation_order=interpolation_order,
+                        acyclic_networkx_graph=acyclic_networkx_graph,
                     )
                     graph_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -706,10 +765,12 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges=FLAGS.max_removed_edges,
+                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=False,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
-                        accumulate_gradients=True,        
+                        accumulate_gradients=True,
+                        interpolation_order=interpolation_order,
+                        acyclic_networkx_graph=acyclic_networkx_graph,
                     )
                     graph_dep_guided_ig_unaccumulated = TestOneGraph(
                         FLAGS.ds_path,
@@ -720,10 +781,12 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges=FLAGS.max_removed_edges,
+                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=False,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         accumulate_gradients=False,
+                        interpolation_order=interpolation_order,
+                        acyclic_networkx_graph=acyclic_networkx_graph,
                     )
                     graph_reverse_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
@@ -734,10 +797,12 @@ def Main():
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges=FLAGS.max_removed_edges,
+                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=True,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         accumulate_gradients=True,
+                        interpolation_order=interpolation_order,
+                        acyclic_networkx_graph=acyclic_networkx_graph,
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
@@ -757,26 +822,59 @@ def Main():
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
-                    DrawAndSaveGraph(
+                    attr_acc_std_ig = DrawAndSaveGraph(
                         graph_std_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='std_ig'
                     )
-                    DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
                     )
-                    DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
                         graph_dep_guided_ig_unaccumulated, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
                     )
-                    DrawAndSaveGraph(
+                    attr_acc_reverse_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph, 
                         save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
                     )
+
+                    for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig in zip(attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig):
+                        sorted_acc_scores = sorted([
+                            attr_acc_std_ig, 
+                            attr_acc_dep_guided_ig, 
+                            attr_acc_dep_guided_ig_unaccumulated, 
+                            attr_acc_reverse_dep_guided_ig,
+                        ])
+                        variant_rank = list(map(lambda x: sorted_acc_scores.index(x), [
+                            attr_acc_std_ig, 
+                            attr_acc_dep_guided_ig, 
+                            attr_acc_dep_guided_ig_unaccumulated, 
+                            attr_acc_reverse_dep_guided_ig
+                        ]))
+                        variant_ranks["STANDARD_IG"].append(variant_rank[0])
+                        variant_ranks["ASCENDING_DEPENDENCY_GUIDED_IG"].append(variant_rank[1])
+                        variant_ranks["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(variant_rank[2])
+                        variant_ranks["DESCENDING_DEPENDENCY_GUIDED_IG"].append(variant_rank[3])
+
+                        rank_str = ""
+                        for variant_name, ranks in variant_ranks.items():
+                            mean_rank = sum(ranks) / len(ranks)
+                            rank_str += "|%s: %f|" % (variant_name, mean_rank)
+                        rank_str = '[' + rank_str + ']'
+
+                        logger.info("%f,%f,%f,%f,%s" % (
+                            attr_acc_std_ig, 
+                            attr_acc_dep_guided_ig, 
+                            attr_acc_dep_guided_ig_unaccumulated, 
+                            attr_acc_reverse_dep_guided_ig,
+                            rank_str,
+                        ))
+
             except Exception as err:
                 print("Error testing %s -- %s" % (graph_fname, str(err)))
                 continue
@@ -793,6 +891,7 @@ def Main():
                 run_ig=FLAGS.ig,
                 dep_guided_ig=False,
                 all_nodes_out=FLAGS.only_pred_y,
+                filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
             )
             graph_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,

@@ -401,6 +401,8 @@ class Ggnn(Model):
 
         assert dep_guided_ig == (interpolation_order is not None), "Invalid dep_guided_ig/interpolation_order combination!"
 
+        interpolation_order = deepcopy(interpolation_order)
+
         model_inputs = self.PrepareModelInputs(epoch_type, batch, node_out)
         unroll_steps = np.array(
             GetUnrollSteps(epoch_type, batch, FLAGS.unroll_strategy),
@@ -448,7 +450,8 @@ class Ggnn(Model):
             else:
                 print("Using stock IG.")
                 method = 'gausslegendre'
-                n_steps = 50
+                n_steps = raw_in.shape[0]  # for fair comparison
+            
             if node_out is not None:
                 node_outs = [node_out] * n_steps
             
@@ -465,6 +468,7 @@ class Ggnn(Model):
             summerized_attributions = torch.mean(attributions, dim=1)
             summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().numpy())
 
+            print("Mean error: %f" % approximation_error.mean())
             print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
             print("Summerized attributions indices: %s" % str(summerized_attributions_indices))
             print("IG steps finished.")

@@ -131,10 +131,10 @@ class GGNNModel(nn.Module):
         # metrics_tuple = self.metrics(logits, labels)
         targets = labels.argmax(dim=1)
         
-        if node_out is not None and not isinstance(node_out, list):
-            targets = torch.unsqueeze(targets[node_out], 0)
-            logits = torch.unsqueeze(logits[node_out], 0)
-
+        if node_out is not None: # and not isinstance(node_out, list):
+            targets = torch.reshape(targets[node_out], (-1,))
+            logits = torch.reshape(logits[node_out], (-1, logits.shape[1]))
+        
         outputs = (
             targets,
             logits,
