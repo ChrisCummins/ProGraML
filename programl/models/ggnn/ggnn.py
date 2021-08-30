@@ -466,7 +466,7 @@ class Ggnn(Model):
                 accumulate_gradients=accumulate_gradients,
             )
             summerized_attributions = torch.mean(attributions, dim=1)
-            summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().numpy())
+            summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().cpu().numpy())
 
             print("Mean error: %f" % approximation_error.mean())
             print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))

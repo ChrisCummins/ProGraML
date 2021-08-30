@@ -119,6 +119,16 @@ app.DEFINE_string(
     "Path of the input graph features list and index into it, "
     "e.g., /path/to/foo:1 to select the second graph from file /path/to/foo.",
 )
+app.DEFINE_integer(
+    "instance_id",
+    None,
+    "ID for this instance (for concurrency)."
+)
+app.DEFINE_integer(
+    "num_instances",
+    None,
+    "Total number of instances to run (for concurrency)."
+)
 FLAGS = app.FLAGS
 
 
@@ -707,12 +717,14 @@ def Main():
     """Main entry point."""
     dataflow.PatchWarnings()
 
+    instance_id = FLAGS.instance_id - 1  # due to Shell for loop convention
+
     # Handle all logging stuff
     now = datetime.now()
     ts_string = now.strftime("%d_%m_%Y_%H_%M_%S")
     fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 
-    log_filepath = FLAGS.ds_path + "/exp_log/batch_%s.log" % ts_string
+    log_filepath = FLAGS.ds_path + "/exp_log/batch_exp_res_%d_%s.log" % (instance_id, ts_string)
     logger = logging.getLogger("logger")
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(log_filepath, mode="w")
@@ -722,7 +734,7 @@ def Main():
 
     if FLAGS.batch:
         graphs_dir = FLAGS.ds_path + '/labels/datadep/'
-        graph_fnames = listdir(graphs_dir)
+        graph_fnames = sorted(listdir(graphs_dir))  # sort the list to ensure the stability of concurrency
         variant_ranks = {
             "STANDARD_IG": [],
             "ASCENDING_DEPENDENCY_GUIDED_IG": [],
@@ -730,7 +742,10 @@ def Main():
             "DESCENDING_DEPENDENCY_GUIDED_IG": [],
         }
         logger.info("STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG,RUNNING_RANKING")
-        for graph_fname in graph_fnames:
+        for i in range(len(graph_fnames)):
+            graph_fname = graph_fnames[i]
+            if i % FLAGS.num_instances != instance_id:
+                continue
             try:
                 original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
                 print("Processing graph file: %s..." % graph_fname)

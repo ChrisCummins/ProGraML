@@ -26,13 +26,10 @@ from programl.models.ggnn.loss import Loss
 from programl.models.ggnn.metrics import Metrics
 from programl.models.ggnn.node_embeddings import NodeEmbeddings
 
-from captum.attr import IntegratedGradients
-from copy import deepcopy
-
 FLAGS = app.FLAGS
 
 app.DEFINE_boolean(
-    "block_gpu", True, "Prevent model from hitchhiking on an occupied gpu."
+    "block_gpu", False, "Prevent model from hitchhiking on an occupied gpu."
 )
 
 
@@ -59,15 +56,17 @@ class GGNNModel(nn.Module):
         self.metrics = Metrics()
 
         # Move the model to device before making the optimizer.
+        import random
+        gpu_num = random.randint(0, 1)
         if FLAGS.block_gpu:
             self.dev = (
-                #torch.device("cuda")
-                #if gpu_scheduler.LockExclusiveProcessGpuAccess()
-                #else 
+                torch.device("cuda:%d") % gpu_num
+                if gpu_scheduler.LockExclusiveProcessGpuAccess()
+                else 
                 torch.device("cpu")
             )
         else:
-            self.dev = torch.device("cuda")
+            self.dev = torch.device("cuda:%d") % gpu_num
 
         self.to(self.dev)
 
@@ -131,7 +130,9 @@ class GGNNModel(nn.Module):
         # metrics_tuple = self.metrics(logits, labels)
         targets = labels.argmax(dim=1)
         
-        if node_out is not None: # and not isinstance(node_out, list):
+        if node_out is not None:
+            # We now need to select the output target/logit for the node
+            # we are interested (instead of all)
             targets = torch.reshape(targets[node_out], (-1,))
             logits = torch.reshape(logits[node_out], (-1, logits.shape[1]))
         
