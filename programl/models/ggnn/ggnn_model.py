@@ -60,13 +60,13 @@ class GGNNModel(nn.Module):
         gpu_num = random.randint(0, 1)
         if FLAGS.block_gpu:
             self.dev = (
-                torch.device("cuda:%d") % gpu_num
+                torch.device("cuda:%d" % gpu_num)
                 if gpu_scheduler.LockExclusiveProcessGpuAccess()
                 else 
                 torch.device("cpu")
             )
         else:
-            self.dev = torch.device("cuda:%d") % gpu_num
+            self.dev = torch.device("cuda:%d" % gpu_num)
 
         self.to(self.dev)
 

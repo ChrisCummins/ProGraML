@@ -6,4 +6,4 @@
 __pycache__/
 
 /dataset/dataflow/*/*
-!/dataset/dataflow/vis_res/*
+/evaluation/log/*
