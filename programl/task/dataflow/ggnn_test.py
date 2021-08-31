@@ -129,7 +129,21 @@ app.DEFINE_integer(
     None,
     "Total number of instances to run (for concurrency)."
 )
+app.DEFINE_string(
+    "task",
+    "datadep",
+    "Specify what task to test against."
+)
 FLAGS = app.FLAGS
+
+ATTR_ACC_ASC_ORDER_TASKS = {
+    "datadep",
+}
+ATTR_ACC_DES_ORDER_TASKS = {
+    "reachability", 
+    "domtree", 
+    "liveness",
+}
 
 
 class SingleGraphLoader(BaseGraphLoader):
@@ -523,7 +537,10 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
             if run_ig:
                 node.features.feature["attribution_order"].int64_list.value.append(results.attributions[j])
                 if features.node_features.feature_list["data_flow_root_node"].feature[j].int64_list.value == [1]:
-                    target_node_id = j
+                    if FLAGS.task in ATTR_ACC_ASC_ORDER_TASKS:
+                        target_node_id = j
+                    elif FLAGS.task in ATTR_ACC_DES_ORDER_TASKS:
+                        source_node_id = j
         
         graph.features.feature["loss"].float_list.value.append(results.loss)
         graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
@@ -535,7 +552,10 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
         )
         
         if run_ig:
-            source_node_id = nodes_out[i]
+            if FLAGS.task in ATTR_ACC_ASC_ORDER_TASKS:
+                source_node_id = nodes_out[i]
+            elif FLAGS.task in ATTR_ACC_DES_ORDER_TASKS:
+                target_node_id = nodes_out[i]
             attribution_acc_score = CalculateAttributionAccuracyScore(
                 acyclic_networkx_graph,
                 results.attributions,
@@ -724,7 +744,7 @@ def Main():
     ts_string = now.strftime("%d_%m_%Y_%H_%M_%S")
     fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 
-    log_filepath = FLAGS.ds_path + "/exp_log/batch_exp_res_%d_%s.log" % (instance_id, ts_string)
+    log_filepath = FLAGS.ds_path + "/exp_log/batch_exp_%s_res_%d_%s.log" % (FLAGS.task, instance_id, ts_string)
     logger = logging.getLogger("logger")
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(log_filepath, mode="w")
@@ -733,7 +753,7 @@ def Main():
     logger.debug("Log file being written into at %s" % log_filepath)
 
     if FLAGS.batch:
-        graphs_dir = FLAGS.ds_path + '/labels/datadep/'
+        graphs_dir = FLAGS.ds_path + '/labels/%s/' % FLAGS.task
         graph_fnames = sorted(listdir(graphs_dir))  # sort the list to ensure the stability of concurrency
         variant_ranks = {
             "STANDARD_IG": [],
