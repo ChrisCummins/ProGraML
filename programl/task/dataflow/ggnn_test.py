@@ -15,6 +15,13 @@
 # limitations under the License.
 """Run inference of a trained GGNN model on a single graph input.
 """
+import numpy as np
+from labm8.py import app, pbutil
+import networkx as nx
+import matplotlib
+matplotlib.use('Agg')  # to avoid using Xserver
+import matplotlib.pyplot as plt
+
 from programl import serialize_ops
 from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
 from programl.task.dataflow import dataflow, vocabulary
@@ -33,18 +40,11 @@ from datetime import datetime
 import logging
 from copy import deepcopy
 from networkx.drawing.nx_agraph import graphviz_layout
-import matplotlib.pyplot as plt
 import pathlib
 from typing import Any, Iterable, List, Tuple
 from os import listdir
 import random
 random.seed(888)
-
-import numpy as np
-from labm8.py import app, pbutil
-import networkx as nx
-import matplotlib
-matplotlib.use('Agg')  # to avoid using Xserver
 
 
 app.DEFINE_boolean(
@@ -300,6 +300,12 @@ def GenerateInterpolationOrderFromGraph(
         program_graph_pb2.ProgramGraph(),
     )
 
+    if FLAGS.max_vis_graph_complexity != 0:
+        if len(graph.node) > FLAGS.max_vis_graph_complexity:
+            raise TooComplexGraphError
+        if len(graph.edge) > FLAGS.max_vis_graph_complexity * 2:
+            raise TooComplexGraphError
+
     # First, we need to fix empty node features
     graph = FixEmptyNodeFeatures(graph, features)
 
@@ -316,10 +322,8 @@ def TestOne(
     checkpoint_path: pathlib.Path,
     ds_path: str,
     run_ig: bool,
-    max_vis_graph_complexity: int,
     dep_guided_ig: bool,
     all_nodes_out: bool,
-    max_removed_edges_ratio: float,
     reverse: bool,
     filter_adjacant_nodes: bool,
     accumulate_gradients: bool,
@@ -359,12 +363,6 @@ def TestOne(
         interpolation_order = None
 
     acyclic_networkx_graph = deepcopy(acyclic_networkx_graph)
-
-    if max_vis_graph_complexity != 0:
-        if len(graph.node) > max_vis_graph_complexity:
-            raise TooComplexGraphError
-        if len(graph.edge) > max_vis_graph_complexity * 2:
-            raise TooComplexGraphError
 
     root_nodes = []
     if all_nodes_out:
@@ -644,11 +642,9 @@ def TestOneGraph(
     model_path,
     graph_path,
     graph_idx,
-    max_vis_graph_complexity,
     run_ig=False,
     dep_guided_ig=False,
     all_nodes_out=False,
-    max_removed_edges_ratio=-1,
     reverse=False,
     filter_adjacant_nodes=False,
     accumulate_gradients=True,
@@ -662,10 +658,8 @@ def TestOneGraph(
             checkpoint_path=pathlib.Path(ds_path + model_path),
             ds_path=ds_path,
             run_ig=run_ig,
-            max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
-            max_removed_edges_ratio=max_removed_edges_ratio,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
             accumulate_gradients=accumulate_gradients,
@@ -680,10 +674,8 @@ def TestOneGraph(
             checkpoint_path=pathlib.Path(ds_path + model_path),
             ds_path=ds_path,
             run_ig=run_ig,
-            max_vis_graph_complexity=max_vis_graph_complexity,
             dep_guided_ig=dep_guided_ig,
             all_nodes_out=all_nodes_out,
-            max_removed_edges_ratio=max_removed_edges_ratio,
             reverse=reverse,
             filter_adjacant_nodes=filter_adjacant_nodes,
             accumulate_gradients=accumulate_gradients,
@@ -787,7 +779,8 @@ def Main():
         graph_fnames = sorted(listdir(graphs_dir))
         if FLAGS.random_test_size != 0:
             random.shuffle(graph_fnames)
-            graph_fnames = graph_fnames[:FLAGS.random_test_size]
+            success_count = 0
+
         variant_ranks = {
             "STANDARD_IG": [],
             "ASCENDING_DEPENDENCY_GUIDED_IG": [],
@@ -816,11 +809,9 @@ def Main():
                         FLAGS.model,
                         graph_path,
                         '-1',
-                        FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=False,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         interpolation_order=interpolation_order,
                         acyclic_networkx_graph=acyclic_networkx_graph,
@@ -830,11 +821,9 @@ def Main():
                         FLAGS.model,
                         graph_path,
                         '-1',
-                        FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=False,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         accumulate_gradients=True,
@@ -846,11 +835,9 @@ def Main():
                         FLAGS.model,
                         graph_path,
                         '-1',
-                        FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=False,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         accumulate_gradients=False,
@@ -862,11 +849,9 @@ def Main():
                         FLAGS.model,
                         graph_path,
                         '-1',
-                        FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
                         all_nodes_out=FLAGS.only_pred_y,
-                        max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                         reverse=True,
                         filter_adjacant_nodes=FLAGS.filter_adjacant_nodes,
                         accumulate_gradients=True,
@@ -951,6 +936,11 @@ def Main():
                             attr_acc_reverse_dep_guided_ig,
                             rank_str,
                         ))
+                if FLAGS.random_test_size != 0:
+                    success_count += 1
+                    if success_count > FLAGS.random_test_size:
+                        print("Finished all graphs.")
+                        exit()
 
             except Exception as err:
                 print("Error testing %s -- %s" % (graph_fname, str(err)))

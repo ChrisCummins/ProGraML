@@ -29,7 +29,10 @@ from programl.models.ggnn.node_embeddings import NodeEmbeddings
 FLAGS = app.FLAGS
 
 app.DEFINE_boolean(
-    "block_gpu", False, "Prevent model from hitchhiking on an occupied gpu."
+    "block_gpu", True, "Prevent model from hitchhiking on an occupied gpu."
+)
+app.DEFINE_boolean(
+    "cpu_only", True, "Prevent model from using any gpu."
 )
 
 
@@ -56,17 +59,20 @@ class GGNNModel(nn.Module):
         self.metrics = Metrics()
 
         # Move the model to device before making the optimizer.
-        import random
-        gpu_num = random.randint(0, 1)
-        if FLAGS.block_gpu:
-            self.dev = (
-                torch.device("cuda:%d" % gpu_num)
-                if gpu_scheduler.LockExclusiveProcessGpuAccess()
-                else 
-                torch.device("cpu")
-            )
+        if FLAGS.cpu_only:
+            self.dev = torch.device("cpu")
         else:
-            self.dev = torch.device("cuda:%d" % gpu_num)
+            import random
+            gpu_num = random.randint(0, 1)
+            if FLAGS.block_gpu:
+                self.dev = (
+                    torch.device("cuda:%d" % gpu_num)
+                    if gpu_scheduler.LockExclusiveProcessGpuAccess()
+                    else 
+                    torch.device("cpu")
+                )
+            else:
+                self.dev = torch.device("cuda:%d" % gpu_num)
 
         self.to(self.dev)
 
