@@ -15,35 +15,37 @@
 # limitations under the License.
 """Run inference of a trained GGNN model on a single graph input.
 """
-import pathlib
-from typing import Any, Iterable, List, Tuple
-from os import listdir
-
-import numpy as np
-from labm8.py import app, pbutil
-import networkx as nx
-import matplotlib
-matplotlib.use('Agg')  # to avoid using Xserver
-import matplotlib.pyplot as plt
-from networkx.drawing.nx_agraph import graphviz_layout
-from copy import deepcopy
-import logging
-from datetime import datetime
-import igraph as ig
-
-from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.models.batch_results import BatchResults
-from programl.models.ggnn.ggnn import Ggnn
+from programl import serialize_ops
+from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from programl.task.dataflow import dataflow, vocabulary
 from programl.proto import (
     checkpoint_pb2,
     epoch_pb2,
     program_graph_features_pb2,
     program_graph_pb2,
 )
-from programl.task.dataflow import dataflow, vocabulary
-from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
-from programl import serialize_ops
+from programl.models.ggnn.ggnn import Ggnn
+from programl.models.batch_results import BatchResults
+from programl.models.base_graph_loader import BaseGraphLoader
+from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
+import igraph as ig
+from datetime import datetime
+import logging
+from copy import deepcopy
+from networkx.drawing.nx_agraph import graphviz_layout
+import matplotlib.pyplot as plt
+import pathlib
+from typing import Any, Iterable, List, Tuple
+from os import listdir
+import random
+random.seed(888)
+
+import numpy as np
+from labm8.py import app, pbutil
+import networkx as nx
+import matplotlib
+matplotlib.use('Agg')  # to avoid using Xserver
+
 
 app.DEFINE_boolean(
     "cdfg",
@@ -96,6 +98,11 @@ app.DEFINE_integer(
     0,
     "If > 0, limit the max complexity of visualized graphs.",
 )
+app.DEFINE_integer(
+    "random_test_size",
+    0,
+    "If > 0, randomly select this many graph evaluations.",
+)
 app.DEFINE_float(
     "max_removed_edges_ratio",
     -1,
@@ -106,7 +113,8 @@ app.DEFINE_boolean(
     False,
     "If set, filter out nodes that are too far from source.",
 )
-app.DEFINE_float("target_vocab_cumfreq", 1.0, "The target cumulative frequency that.")
+app.DEFINE_float("target_vocab_cumfreq", 1.0,
+                 "The target cumulative frequency that.")
 app.DEFINE_string(
     "ds_path",
     str(pathlib.Path("~/code-model-interpretation/ProGraML/dataset/dataflow").expanduser()),
@@ -140,8 +148,8 @@ ATTR_ACC_ASC_ORDER_TASKS = {
     "datadep",
 }
 ATTR_ACC_DES_ORDER_TASKS = {
-    "reachability", 
-    "domtree", 
+    "reachability",
+    "domtree",
     "liveness",
 }
 
@@ -196,7 +204,7 @@ def RemoveCyclesFromGraph(
 ) -> nx.DiGraph:
     # This is a sufficint solution, with optimality guarantee if "ip" method
     # is seleted (but it will be very slow on large graph). A heuristic-based
-    # method "eades" is also provided, with fast speed but only upper bound of 
+    # method "eades" is also provided, with fast speed but only upper bound of
     # the number of removed edges of "|E|/2 - |V|/6".
     print("Removing cycles...")
     igraph_graph = ig.Graph.from_networkx(networkx_graph)
@@ -251,12 +259,14 @@ def CalculateInterpolationOrderFromGraph(
         if max_removed_edges_ratio != -1:
             trimmed_num_edges = len(acyclic_networkx_graph.edges)
             num_removed_edges = original_num_edges - trimmed_num_edges
-            print("Total edges: %d | Removed %d edges." % (original_num_edges, num_removed_edges))
+            print("Total edges: %d | Removed %d edges." %
+                  (original_num_edges, num_removed_edges))
             if (num_removed_edges / original_num_edges) > max_removed_edges_ratio:
                 raise TooManyEdgesRemovedError
 
         # Sanity check, only return the graph if it is acyclic
-        is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(acyclic_networkx_graph)
+        is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(
+            acyclic_networkx_graph)
         if not is_acyclic:
             raise CycleInGraphError
         else:
@@ -276,14 +286,15 @@ def GenerateInterpolationOrderFromGraph(
     max_removed_edges_ratio: float,
 ) -> Tuple[List[int], nx.DiGraph]:
     path = pathlib.Path(ds_path)
-    
+
     features_list = pbutil.FromFile(
         features_list_path,
         program_graph_features_pb2.ProgramGraphFeaturesList(),
     )
     features = features_list.graph[features_list_index]
 
-    graph_name = features_list_path.name[: -len(".ProgramGraphFeaturesList.pb")]
+    graph_name = features_list_path.name[: -
+                                         len(".ProgramGraphFeaturesList.pb")]
     graph = pbutil.FromFile(
         path / "graphs" / f"{graph_name}.ProgramGraph.pb",
         program_graph_pb2.ProgramGraph(),
@@ -291,10 +302,10 @@ def GenerateInterpolationOrderFromGraph(
 
     # First, we need to fix empty node features
     graph = FixEmptyNodeFeatures(graph, features)
-    
+
     interpolation_order, acyclic_networkx_graph = CalculateInterpolationOrderFromGraph(
-        graph, 
-        max_removed_edges_ratio=max_removed_edges_ratio, 
+        graph,
+        max_removed_edges_ratio=max_removed_edges_ratio,
     )
     return interpolation_order, acyclic_networkx_graph
 
@@ -320,14 +331,15 @@ def TestOne(
         raise RuntimeError
 
     path = pathlib.Path(ds_path)
-    
+
     features_list = pbutil.FromFile(
         features_list_path,
         program_graph_features_pb2.ProgramGraphFeaturesList(),
     )
     features = features_list.graph[features_list_index]
 
-    graph_name = features_list_path.name[: -len(".ProgramGraphFeaturesList.pb")]
+    graph_name = features_list_path.name[: -
+                                         len(".ProgramGraphFeaturesList.pb")]
     graph = pbutil.FromFile(
         path / "graphs" / f"{graph_name}.ProgramGraph.pb",
         program_graph_pb2.ProgramGraph(),
@@ -335,7 +347,7 @@ def TestOne(
 
     # First, we need to fix empty node features
     graph = FixEmptyNodeFeatures(graph, features)
-    
+
     interpolation_order = deepcopy(interpolation_order)
 
     if run_ig:  # we can also compute accuracies for standard IG
@@ -349,9 +361,9 @@ def TestOne(
     acyclic_networkx_graph = deepcopy(acyclic_networkx_graph)
 
     if max_vis_graph_complexity != 0:
-        if (len(graph.node)) > max_vis_graph_complexity:
+        if len(graph.node) > max_vis_graph_complexity:
             raise TooComplexGraphError
-        if (len(graph.edge)) > max_vis_graph_complexity:
+        if len(graph.edge) > max_vis_graph_complexity * 2:
             raise TooComplexGraphError
 
     root_nodes = []
@@ -362,7 +374,7 @@ def TestOne(
                 root_nodes.append(i)
             if features.node_features.feature_list["data_flow_value"].feature[i].int64_list.value == [1]:
                 nodes_out.append(i)
-        
+
         # Filter nodes that are not suitable for evaluations (too far).
         if filter_adjacant_nodes:
             nodes_out = FilterDistantNodes(nodes_out, root_nodes[0], graph)
@@ -406,38 +418,37 @@ def TestOne(
             max_batch_count=1,
         )
     )[0]
-    
+
     if all_nodes_out:
         results_predicted_nodes = []
         for node_out in nodes_out:
             results = model.RunBatch(
-                epoch_pb2.TEST, 
-                batch, 
-                run_ig=run_ig, 
-                dep_guided_ig=dep_guided_ig, 
+                epoch_pb2.TEST,
+                batch,
+                run_ig=run_ig,
+                dep_guided_ig=dep_guided_ig,
                 interpolation_order=interpolation_order,
                 node_out=node_out,
                 accumulate_gradients=accumulate_gradients,
             )
             results_predicted_nodes.append(results)
         return AnnotateGraphWithBatchResultsForPredictedNodes(
-            graph, 
-            features, 
-            results_predicted_nodes, 
-            nodes_out, 
+            graph,
+            features,
+            results_predicted_nodes,
+            nodes_out,
             run_ig,
             acyclic_networkx_graph,
         )
     else:
         results = model.RunBatch(
-            epoch_pb2.TEST, 
-            batch, 
-            run_ig=run_ig, 
-            dep_guided_ig=dep_guided_ig, 
+            epoch_pb2.TEST,
+            batch,
+            run_ig=run_ig,
+            dep_guided_ig=dep_guided_ig,
             interpolation_order=interpolation_order,
         )
         return AnnotateGraphWithBatchResults(graph, features, results, run_ig)
-
 
 
 def FixEmptyNodeFeatures(
@@ -467,21 +478,22 @@ def CalculateAttributionAccuracyScore(
 ) -> float:
     all_paths = list(
         nx.algorithms.simple_paths.all_simple_paths(
-            graph, 
-            source=source_node_id, 
+            graph,
+            source=source_node_id,
             target=target_node_id
         )
     )
     all_shortest_paths = list(
         nx.algorithms.shortest_paths.generic.all_shortest_paths(
-            graph, 
-            source=source_node_id, 
+            graph,
+            source=source_node_id,
             target=target_node_id
         )
     )
-    
+
     path_nodes_set = set([node for path in all_paths for node in path])
-    shortest_path_nodes_set = set([node for path in all_shortest_paths for node in path])
+    shortest_path_nodes_set = set(
+        [node for path in all_shortest_paths for node in path])
 
     path_score = 0.0
     shortest_path_score = 0.0
@@ -491,7 +503,7 @@ def CalculateAttributionAccuracyScore(
             path_score += 1 / (attr_order + 1)
         if i in shortest_path_nodes_set:
             shortest_path_score += 1 / (attr_order + 1)
-    
+
     final_score = 0.5 * path_score + 0.5 * shortest_path_score
     return final_score
 
@@ -513,7 +525,7 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
     )
 
     graphs = []
-    
+
     for i in range(len(results_predicted_nodes)):
         results = results_predicted_nodes[i]
         graph = deepcopy(base_graph)
@@ -529,28 +541,34 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
                 features.node_features.feature_list["data_flow_root_node"].feature[j]
             )
             if j == nodes_out[i]:
-                node.features.feature["true_y"].int64_list.value.append(true_y[0])
-                node.features.feature["pred_y"].int64_list.value.append(pred_y[0])
+                node.features.feature["true_y"].int64_list.value.append(
+                    true_y[0])
+                node.features.feature["pred_y"].int64_list.value.append(
+                    pred_y[0])
             else:
                 node.features.feature["true_y"].int64_list.value.append(0)
                 node.features.feature["pred_y"].int64_list.value.append(0)
             if run_ig:
-                node.features.feature["attribution_order"].int64_list.value.append(results.attributions[j])
+                node.features.feature["attribution_order"].int64_list.value.append(
+                    results.attributions[j])
                 if features.node_features.feature_list["data_flow_root_node"].feature[j].int64_list.value == [1]:
                     if FLAGS.task in ATTR_ACC_ASC_ORDER_TASKS:
                         target_node_id = j
                     elif FLAGS.task in ATTR_ACC_DES_ORDER_TASKS:
                         source_node_id = j
-        
+
         graph.features.feature["loss"].float_list.value.append(results.loss)
-        graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
-        graph.features.feature["precision"].float_list.value.append(results.precision)
-        graph.features.feature["recall"].float_list.value.append(results.recall)
+        graph.features.feature["accuracy"].float_list.value.append(
+            results.accuracy)
+        graph.features.feature["precision"].float_list.value.append(
+            results.precision)
+        graph.features.feature["recall"].float_list.value.append(
+            results.recall)
         graph.features.feature["f1"].float_list.value.append(results.f1)
         graph.features.feature["confusion_matrix"].int64_list.value[:] = np.hstack(
             results.confusion_matrix
         )
-        
+
         if run_ig:
             if FLAGS.task in ATTR_ACC_ASC_ORDER_TASKS:
                 source_node_id = nodes_out[i]
@@ -559,10 +577,11 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
             attribution_acc_score = CalculateAttributionAccuracyScore(
                 acyclic_networkx_graph,
                 results.attributions,
-                source_node_id, 
+                source_node_id,
                 target_node_id,
             )
-            graph.features.feature["attribution_accuracy"].float_list.value.append(attribution_acc_score)
+            graph.features.feature["attribution_accuracy"].float_list.value.append(
+                attribution_acc_score)
 
         graphs.append(graph)
 
@@ -600,13 +619,17 @@ def AnnotateGraphWithBatchResults(
         node.features.feature["prediction"].float_list.value[:] = results.predictions[i]
         node.features.feature["true_y"].int64_list.value.append(true_y[i])
         node.features.feature["pred_y"].int64_list.value.append(pred_y[i])
-        node.features.feature["correct"].int64_list.value.append(true_y[i] == pred_y[i])
+        node.features.feature["correct"].int64_list.value.append(
+            true_y[i] == pred_y[i])
         if run_ig:
-            node.features.feature["attribution_order"].int64_list.value.append(results.attributions[i])
+            node.features.feature["attribution_order"].int64_list.value.append(
+                results.attributions[i])
 
     graph.features.feature["loss"].float_list.value.append(results.loss)
-    graph.features.feature["accuracy"].float_list.value.append(results.accuracy)
-    graph.features.feature["precision"].float_list.value.append(results.precision)
+    graph.features.feature["accuracy"].float_list.value.append(
+        results.accuracy)
+    graph.features.feature["precision"].float_list.value.append(
+        results.precision)
     graph.features.feature["recall"].float_list.value.append(results.recall)
     graph.features.feature["f1"].float_list.value.append(results.f1)
     graph.features.feature["confusion_matrix"].int64_list.value[:] = np.hstack(
@@ -617,10 +640,10 @@ def AnnotateGraphWithBatchResults(
 
 
 def TestOneGraph(
-    ds_path, 
-    model_path, 
-    graph_path, 
-    graph_idx, 
+    ds_path,
+    model_path,
+    graph_path,
+    graph_idx,
     max_vis_graph_complexity,
     run_ig=False,
     dep_guided_ig=False,
@@ -671,9 +694,9 @@ def TestOneGraph(
 
 
 def DrawAndSaveGraph(
-    graph, 
-    ds_path, 
-    graph_fname, 
+    graph,
+    ds_path,
+    graph_fname,
     save_graph=False,
     save_vis=False,
     suffix=''
@@ -688,13 +711,14 @@ def DrawAndSaveGraph(
 
     for i in range(len(graphs)):
         graph = graphs[i]
-        save_graph_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraphFeaturesList.%s.%d.pb" % (suffix, i)
+        save_graph_path = ds_path + '/vis_res/' + graph_fname + \
+            ".AttributedProgramGraphFeaturesList.%s.%d.pb" % (suffix, i)
         if save_graph:
             print("Saving annotated graph to %s..." % save_graph_path)
-            serialize_ops.save_graphs(save_path, [graph])
-        
+            serialize_ops.save_graphs(save_graph_path, [graph])
+
         networkx_graph = ProgramGraphToNetworkX(graph)
-        
+
         original_labels = nx.get_node_attributes(networkx_graph, "features")
 
         labels = {}
@@ -717,11 +741,14 @@ def DrawAndSaveGraph(
                 color.append('grey')
 
         pos = graphviz_layout(networkx_graph, prog='neato')
-        nx.draw(networkx_graph, pos=pos, labels=labels, node_size=500, node_color=color)
-        
+        nx.draw(networkx_graph, pos=pos, labels=labels,
+                node_size=500, node_color=color)
+
         if save_vis:
-            save_img_path = ds_path + '/vis_res/' + graph_fname + ".AttributedProgramGraph.%s.%d.png" % (suffix, i)
-            print("Saving visualization of annotated graph to %s..." % save_img_path)
+            save_img_path = ds_path + '/vis_res/' + graph_fname + \
+                ".AttributedProgramGraph.%s.%d.png" % (suffix, i)
+            print("Saving visualization of annotated graph to %s..." %
+                  save_img_path)
             attr_acc_score = graph.features.feature["attribution_accuracy"].float_list.value[0]
             plt.text(x=20, y=20, s="Attr acc: %f" % attr_acc_score)
             plt.show()
@@ -744,7 +771,9 @@ def Main():
     ts_string = now.strftime("%d_%m_%Y_%H_%M_%S")
     fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 
-    log_filepath = FLAGS.ds_path + "/exp_log/batch_exp_%s_res_%d_%s.log" % (FLAGS.task, instance_id, ts_string)
+    log_filepath = FLAGS.ds_path + \
+        "/exp_log/batch_exp_%s_res_%d_%s.log" % (
+            FLAGS.task, instance_id, ts_string)
     logger = logging.getLogger("logger")
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(log_filepath, mode="w")
@@ -754,7 +783,11 @@ def Main():
 
     if FLAGS.batch:
         graphs_dir = FLAGS.ds_path + '/labels/%s/' % FLAGS.task
-        graph_fnames = sorted(listdir(graphs_dir))  # sort the list to ensure the stability of concurrency
+        # sort the list to ensure the stability of concurrency
+        graph_fnames = sorted(listdir(graphs_dir))
+        if FLAGS.random_test_size != 0:
+            random.shuffle(graph_fnames)
+            graph_fnames = graph_fnames[:FLAGS.random_test_size]
         variant_ranks = {
             "STANDARD_IG": [],
             "ASCENDING_DEPENDENCY_GUIDED_IG": [],
@@ -767,7 +800,8 @@ def Main():
             if i % FLAGS.num_instances != instance_id:
                 continue
             try:
-                original_graph_fname = graph_fname[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+                original_graph_fname = graph_fname[: -
+                                                   len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
                 print("Processing graph file: %s..." % graph_fname)
                 graph_path = graphs_dir + graph_fname
                 try:
@@ -778,10 +812,10 @@ def Main():
                         max_removed_edges_ratio=FLAGS.max_removed_edges_ratio,
                     )
                     graph_std_ig = TestOneGraph(
-                        FLAGS.ds_path, 
-                        FLAGS.model, 
-                        graph_path, 
-                        '-1', 
+                        FLAGS.ds_path,
+                        FLAGS.model,
+                        graph_path,
+                        '-1',
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=False,
@@ -794,8 +828,8 @@ def Main():
                     graph_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
                         FLAGS.model,
-                        graph_path, 
-                        '-1', 
+                        graph_path,
+                        '-1',
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
@@ -810,8 +844,8 @@ def Main():
                     graph_dep_guided_ig_unaccumulated = TestOneGraph(
                         FLAGS.ds_path,
                         FLAGS.model,
-                        graph_path, 
-                        '-1', 
+                        graph_path,
+                        '-1',
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
@@ -826,8 +860,8 @@ def Main():
                     graph_reverse_dep_guided_ig = TestOneGraph(
                         FLAGS.ds_path,
                         FLAGS.model,
-                        graph_path, 
-                        '-1', 
+                        graph_path,
+                        '-1',
                         FLAGS.max_vis_graph_complexity,
                         run_ig=FLAGS.ig,
                         dep_guided_ig=True,
@@ -841,40 +875,45 @@ def Main():
                     )
                     print("Acyclic graph found and loaded.")
                 except TooComplexGraphError:
-                    print("Skipping graph %s due to exceeding number of nodes..." % original_graph_fname)
+                    print("Skipping graph %s due to exceeding number of nodes..." %
+                          original_graph_fname)
                     continue
                 except CycleInGraphError:
-                    print("Skipping graph %s due to presence of graph cycle(s)..." % original_graph_fname)
+                    print("Skipping graph %s due to presence of graph cycle(s)..." %
+                          original_graph_fname)
                     continue
                 except TooManyEdgesRemovedError:
-                    print("Skipping graph %s due to exceeding number of removed edges..." % original_graph_fname)
+                    print("Skipping graph %s due to exceeding number of removed edges..." %
+                          original_graph_fname)
                     continue
                 except TooManyRootNodesError:
-                    print("Skipping graph %s due to exceeding number of root nodes..." % original_graph_fname)
+                    print("Skipping graph %s due to exceeding number of root nodes..." %
+                          original_graph_fname)
                     continue
                 except NoQualifiedOutNodeError:
-                    print("Skipping graph %s due to no out node found..." % original_graph_fname)
+                    print("Skipping graph %s due to no out node found..." %
+                          original_graph_fname)
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
                     attr_acc_std_ig = DrawAndSaveGraph(
                         graph_std_ig, FLAGS.ds_path,
-                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='std_ig'
                     )
                     attr_acc_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
-                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
                     )
                     attr_acc_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
                         graph_dep_guided_ig_unaccumulated, FLAGS.ds_path,
-                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
                     )
                     attr_acc_reverse_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
-                        original_graph_fname, save_graph=FLAGS.save_graph, 
+                        original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
                     )
 
@@ -918,13 +957,14 @@ def Main():
                 continue
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
-        graph_fname = features_list_path[: -len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
+        graph_fname = features_list_path[: -
+                                         len(".ProgramGraphFeaturesList.pb")].split('/')[-1]
         try:
             graph_std_ig = TestOneGraph(
-                FLAGS.ds_path, 
-                FLAGS.model, 
-                FLAGS.ds_path + features_list_path, 
-                features_list_index, 
+                FLAGS.ds_path,
+                FLAGS.model,
+                FLAGS.ds_path + features_list_path,
+                features_list_index,
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=False,
@@ -934,8 +974,8 @@ def Main():
             graph_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,
                 FLAGS.model,
-                FLAGS.ds_path + features_list_path, 
-                features_list_index, 
+                FLAGS.ds_path + features_list_path,
+                features_list_index,
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=True,
@@ -947,8 +987,8 @@ def Main():
             graph_dep_guided_ig_unaccumulated = TestOneGraph(
                 FLAGS.ds_path,
                 FLAGS.model,
-                FLAGS.ds_path + features_list_path, 
-                features_list_index, 
+                FLAGS.ds_path + features_list_path,
+                features_list_index,
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=True,
@@ -960,8 +1000,8 @@ def Main():
             graph_reverse_dep_guided_ig = TestOneGraph(
                 FLAGS.ds_path,
                 FLAGS.model,
-                FLAGS.ds_path + features_list_path, 
-                features_list_index, 
+                FLAGS.ds_path + features_list_path,
+                features_list_index,
                 FLAGS.max_vis_graph_complexity,
                 run_ig=FLAGS.ig,
                 dep_guided_ig=True,
@@ -971,16 +1011,20 @@ def Main():
                 accumulate_gradients=True,
             )
         except TooComplexGraphError:
-            print("Skipping graph %s due to exceeding number of nodes..." % graph_fname)
+            print("Skipping graph %s due to exceeding number of nodes..." %
+                  graph_fname)
             exit()
         except CycleInGraphError:
-            print("Skipping graph %s due to presence of graph cycle(s)..." % graph_fname)
+            print("Skipping graph %s due to presence of graph cycle(s)..." %
+                  graph_fname)
             exit()
         except TooManyEdgesRemovedError:
-            print("Skipping graph %s due to exceeding number of removed edges..." % graph_fname)
+            print(
+                "Skipping graph %s due to exceeding number of removed edges..." % graph_fname)
             exit()
         except TooManyRootNodesError:
-            print("Skipping graph %s due to exceeding number of root nodes..." % graph_fname)
+            print(
+                "Skipping graph %s due to exceeding number of root nodes..." % graph_fname)
             exit()
         except NoQualifiedOutNodeError:
             print("Skipping graph %s due to no out node found..." % graph_fname)
@@ -988,23 +1032,23 @@ def Main():
 
         if FLAGS.ig and FLAGS.dep_guided_ig:
             DrawAndSaveGraph(
-                graph_std_ig, FLAGS.ds_path, 
-                graph_fname, save_graph=FLAGS.save_graph, 
+                graph_std_ig, FLAGS.ds_path,
+                graph_fname, save_graph=FLAGS.save_graph,
                 save_vis=FLAGS.save_vis, suffix='std_ig'
             )
             DrawAndSaveGraph(
-                graph_dep_guided_ig, FLAGS.ds_path, 
-                graph_fname, save_graph=FLAGS.save_graph, 
+                graph_dep_guided_ig, FLAGS.ds_path,
+                graph_fname, save_graph=FLAGS.save_graph,
                 save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
             )
             DrawAndSaveGraph(
-                graph_dep_guided_ig, FLAGS.ds_path, 
-                graph_fname, save_graph=FLAGS.save_graph, 
+                graph_dep_guided_ig, FLAGS.ds_path,
+                graph_fname, save_graph=FLAGS.save_graph,
                 save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
             )
             DrawAndSaveGraph(
-                graph_reverse_dep_guided_ig, FLAGS.ds_path, 
-                graph_fname, save_graph=FLAGS.save_graph, 
+                graph_reverse_dep_guided_ig, FLAGS.ds_path,
+                graph_fname, save_graph=FLAGS.save_graph,
                 save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
             )
 
