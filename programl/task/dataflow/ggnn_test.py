@@ -21,6 +21,7 @@ import networkx as nx
 import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
+import torch
 
 from programl import serialize_ops
 from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
@@ -473,14 +474,16 @@ def CalculateAttributionAccuracyScore(
     attribution_order: List[int],
     source_node_id: int,
     target_node_id: int,
+    use_all_paths: bool = False,
 ) -> float:
-    all_paths = list(
-        nx.algorithms.simple_paths.all_simple_paths(
-            graph,
-            source=source_node_id,
-            target=target_node_id
+    if use_all_paths:
+        all_paths = list(
+            nx.algorithms.simple_paths.all_simple_paths(
+                graph,
+                source=source_node_id,
+                target=target_node_id
+            )
         )
-    )
     all_shortest_paths = list(
         nx.algorithms.shortest_paths.generic.all_shortest_paths(
             graph,
@@ -489,20 +492,26 @@ def CalculateAttributionAccuracyScore(
         )
     )
 
-    path_nodes_set = set([node for path in all_paths for node in path])
+    if use_all_paths:
+        path_nodes_set = set([node for path in all_paths for node in path])
     shortest_path_nodes_set = set(
         [node for path in all_shortest_paths for node in path])
 
-    path_score = 0.0
+    if use_all_paths:
+        path_score = 0.0
     shortest_path_score = 0.0
     for i in range(len(attribution_order)):
         attr_order = attribution_order[i]
-        if i in path_nodes_set:
-            path_score += 1 / (attr_order + 1)
+        if use_all_paths:
+            if i in path_nodes_set:
+                path_score += 1 / (attr_order + 1)
         if i in shortest_path_nodes_set:
             shortest_path_score += 1 / (attr_order + 1)
 
-    final_score = 0.5 * path_score + 0.5 * shortest_path_score
+    if use_all_paths:
+        final_score = 0.5 * path_score + 0.5 * shortest_path_score
+    else:
+        final_score = shortest_path_score
     return final_score
 
 
@@ -666,6 +675,7 @@ def TestOneGraph(
             interpolation_order=interpolation_order,
             acyclic_networkx_graph=acyclic_networkx_graph,
         )
+        torch.cuda.empty_cache()
         return graphs
     else:
         graph = TestOne(
@@ -682,6 +692,7 @@ def TestOneGraph(
             interpolation_order=interpolation_order,
             acyclic_networkx_graph=acyclic_networkx_graph,
         )
+        torch.cuda.empty_cache()
         return graph
 
 
