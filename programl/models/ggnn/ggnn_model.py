@@ -29,10 +29,10 @@ from programl.models.ggnn.node_embeddings import NodeEmbeddings
 FLAGS = app.FLAGS
 
 app.DEFINE_boolean(
-    "block_gpu", True, "Prevent model from hitchhiking on an occupied gpu."
+    "block_gpu", False, "Prevent model from hitchhiking on an occupied gpu."
 )
 app.DEFINE_boolean(
-    "cpu_only", True, "Prevent model from using any gpu."
+    "cpu_only", False, "Prevent model from using any gpu."
 )
 
 

@@ -938,13 +938,15 @@ def Main():
                         ))
                 if FLAGS.random_test_size != 0:
                     success_count += 1
+                    print("Successfully finished %d graphs." % success_count)
                     if success_count > FLAGS.random_test_size:
                         print("Finished all graphs.")
                         exit()
 
             except Exception as err:
-                print("Error testing %s -- %s" % (graph_fname, str(err)))
-                continue
+                raise err
+                # print("Error testing %s -- %s" % (graph_fname, str(err)))
+                # continue
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
         graph_fname = features_list_path[: -
