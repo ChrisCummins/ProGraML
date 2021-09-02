@@ -944,9 +944,8 @@ def Main():
                         exit()
 
             except Exception as err:
-                raise err
-                # print("Error testing %s -- %s" % (graph_fname, str(err)))
-                # continue
+                print("Error testing %s -- %s" % (graph_fname, str(err)))
+                continue
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
         graph_fname = features_list_path[: -
