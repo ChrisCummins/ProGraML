@@ -8,7 +8,7 @@ def parse_log_file(fpath):
     with open(fpath, 'r') as fin:
         data = fin.readlines()
 
-    header_str = ','.join(data[1].split(' | ')[2].split(',')[:4])
+    header_str = ','.join(data[1].strip().split(' | ')[1].split(',')[1:])
     variants = header_str.split(',')
     for variant in variants:
         if variant not in log_info:
@@ -17,7 +17,7 @@ def parse_log_file(fpath):
     del data[:2]
     for row in data:
         row = row.strip()
-        score_str = ','.join(row.split(' | ')[2].split(',')[:4])
+        score_str = ','.join(row.split(' | ')[1].split(',')[1:])
         scores = list(map(lambda x: float(x), score_str.split(',')))
         log_info["STANDARD_IG"].append(scores[0])
         log_info["ASCENDING_DEPENDENCY_GUIDED_IG"].append(scores[1])

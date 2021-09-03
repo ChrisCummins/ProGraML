@@ -143,6 +143,11 @@ app.DEFINE_string(
     "datadep",
     "Specify what task to test against."
 )
+app.DEFINE_boolean(
+    "debug",
+    True,
+    "Whether to stop encountering exceptions."
+)
 FLAGS = app.FLAGS
 
 ATTR_ACC_ASC_ORDER_TASKS = {
@@ -581,12 +586,21 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
                 source_node_id = nodes_out[i]
             elif FLAGS.task in ATTR_ACC_DES_ORDER_TASKS:
                 target_node_id = nodes_out[i]
-            attribution_acc_score = CalculateAttributionAccuracyScore(
-                acyclic_networkx_graph,
-                results.attributions,
-                source_node_id,
-                target_node_id,
-            )
+            try:
+                attribution_acc_score = CalculateAttributionAccuracyScore(
+                    acyclic_networkx_graph,
+                    results.attributions,
+                    source_node_id,
+                    target_node_id,
+                )
+            except nx.exception.NetworkXNoPath:
+                print("No feasible from source %d to target %d was found!" %
+                      (source_node_id, target_node_id))
+                graph.features.feature["attribution_accuracy"].float_list.value.append(
+                    -1.0)
+                continue
+            print("Feasible from source %d to target %d was found." %
+                  (source_node_id, target_node_id))
             graph.features.feature["attribution_accuracy"].float_list.value.append(
                 attribution_acc_score)
 
@@ -714,6 +728,9 @@ def DrawAndSaveGraph(
 
     for i in range(len(graphs)):
         graph = graphs[i]
+        if graph.features.feature["attribution_accuracy"].float_list.value[0] == -1.0:
+            continue
+
         save_graph_path = ds_path + '/vis_res/' + graph_fname + \
             ".AttributedProgramGraphFeaturesList.%s.%d.pb" % (suffix, i)
         if save_graph:
@@ -772,7 +789,7 @@ def Main():
     # Handle all logging stuff
     now = datetime.now()
     ts_string = now.strftime("%d_%m_%Y_%H_%M_%S")
-    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+    fmt = logging.Formatter("%(asctime)s | %(message)s")
 
     log_filepath = FLAGS.ds_path + \
         "/exp_log/batch_exp_%s_res_%d_%s.log" % (
@@ -798,7 +815,7 @@ def Main():
             "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG": [],
             "DESCENDING_DEPENDENCY_GUIDED_IG": [],
         }
-        logger.info("STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG,RUNNING_RANKING")
+        logger.info("GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG")
         for i in range(len(graph_fnames)):
             graph_fname = graph_fnames[i]
             if i % FLAGS.num_instances != instance_id:
@@ -914,38 +931,38 @@ def Main():
                     )
 
                     for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig in zip(attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig):
-                        sorted_acc_scores = sorted([
+                        # sorted_acc_scores = sorted([
+                        #     attr_acc_std_ig,
+                        #     attr_acc_dep_guided_ig,
+                        #     attr_acc_dep_guided_ig_unaccumulated,
+                        #     attr_acc_reverse_dep_guided_ig,
+                        # ])
+                        # variant_rank = list(map(lambda x: sorted_acc_scores.index(x), [
+                        #     attr_acc_std_ig,
+                        #     attr_acc_dep_guided_ig,
+                        #     attr_acc_dep_guided_ig_unaccumulated,
+                        #     attr_acc_reverse_dep_guided_ig
+                        # ]))
+                        # variant_ranks["STANDARD_IG"].append(variant_rank[0])
+                        # variant_ranks["ASCENDING_DEPENDENCY_GUIDED_IG"].append(
+                        #     variant_rank[1])
+                        # variant_ranks["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(
+                        #     variant_rank[2])
+                        # variant_ranks["DESCENDING_DEPENDENCY_GUIDED_IG"].append(
+                        #     variant_rank[3])
+
+                        # rank_str = ""
+                        # for variant_name, ranks in variant_ranks.items():
+                        #     mean_rank = sum(ranks) / len(ranks)
+                        #     rank_str += "|%s: %f|" % (variant_name, mean_rank)
+                        # rank_str = '[' + rank_str + ']'
+
+                        logger.info("%s,%f,%f,%f,%f" % (
+                            graph_fname,
                             attr_acc_std_ig,
                             attr_acc_dep_guided_ig,
                             attr_acc_dep_guided_ig_unaccumulated,
                             attr_acc_reverse_dep_guided_ig,
-                        ])
-                        variant_rank = list(map(lambda x: sorted_acc_scores.index(x), [
-                            attr_acc_std_ig,
-                            attr_acc_dep_guided_ig,
-                            attr_acc_dep_guided_ig_unaccumulated,
-                            attr_acc_reverse_dep_guided_ig
-                        ]))
-                        variant_ranks["STANDARD_IG"].append(variant_rank[0])
-                        variant_ranks["ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-                            variant_rank[1])
-                        variant_ranks["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-                            variant_rank[2])
-                        variant_ranks["DESCENDING_DEPENDENCY_GUIDED_IG"].append(
-                            variant_rank[3])
-
-                        rank_str = ""
-                        for variant_name, ranks in variant_ranks.items():
-                            mean_rank = sum(ranks) / len(ranks)
-                            rank_str += "|%s: %f|" % (variant_name, mean_rank)
-                        rank_str = '[' + rank_str + ']'
-
-                        logger.info("%f,%f,%f,%f,%s" % (
-                            attr_acc_std_ig,
-                            attr_acc_dep_guided_ig,
-                            attr_acc_dep_guided_ig_unaccumulated,
-                            attr_acc_reverse_dep_guided_ig,
-                            rank_str,
                         ))
                 if FLAGS.random_test_size != 0:
                     success_count += 1
@@ -955,8 +972,11 @@ def Main():
                         exit()
 
             except Exception as err:
-                print("Error testing %s -- %s" % (graph_fname, str(err)))
-                continue
+                if FLAGS.debug:
+                    raise err
+                else:
+                    print("Error testing %s -- %s" % (graph_fname, str(err)))
+                    continue
     else:
         features_list_path, features_list_index = FLAGS.input.split(":")
         graph_fname = features_list_path[: -
