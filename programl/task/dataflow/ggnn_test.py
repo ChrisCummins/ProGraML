@@ -145,7 +145,7 @@ app.DEFINE_string(
 )
 app.DEFINE_boolean(
     "debug",
-    True,
+    False,
     "Whether to stop encountering exceptions."
 )
 FLAGS = app.FLAGS
