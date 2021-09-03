@@ -479,7 +479,7 @@ def CalculateAttributionAccuracyScore(
     attribution_order: List[int],
     source_node_id: int,
     target_node_id: int,
-    use_all_paths: bool = False,
+    use_all_paths: bool = True,
 ) -> float:
     if use_all_paths:
         all_paths = list(

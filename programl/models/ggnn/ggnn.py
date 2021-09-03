@@ -483,7 +483,7 @@ class Ggnn(Model):
 
             if return_delta:
                 print("Mean error: %f" % approximation_error.mean())
-            print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
+            # print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
             print("Summerized attributions indices: %s" % str(summerized_attributions_indices))
             print("IG steps finished.")
 
