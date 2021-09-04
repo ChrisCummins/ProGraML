@@ -43,17 +43,24 @@ for fname in log_filenames:
 print("Analyzing task name: %s..." % args.task)
 print("In directory: %s" % args.dir)
 
-print("====== Mean Attribution Score ======")
-for variant, scores in log_info.items():
-    mean_score = sum(scores) / len(scores)
-    print("Variant: %s | # Samples: %d | Mean score: %f" %
-          (variant, len(scores), mean_score))
-
 assert len(log_info["STANDARD_IG"]) == \
     len(log_info["ASCENDING_DEPENDENCY_GUIDED_IG"]) == \
     len(log_info["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"]) == \
     len(log_info["DESCENDING_DEPENDENCY_GUIDED_IG"]
         ), "[ERROR] Uneven lengths of lists."
+
+print("====== Mean Attribution Score ======")
+for variant, scores in log_info.items():
+    mean_score = sum(scores) / len(scores)
+    if variant != "STANDARD_IG":
+        std_mean_score = sum(log_info["STANDARD_IG"]) / \
+            len(log_info["STANDARD_IG"])
+        margin = (mean_score - std_mean_score) / std_mean_score
+        print("Variant: %s | # Samples: %d | Mean score: %f (%s)" %
+              (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
+    else:
+        print("Variant: %s | # Samples: %d | Mean score: %f" %
+              (variant, len(scores), mean_score))
 
 running_ranks = {}
 for variant, _ in log_info.items():
@@ -82,5 +89,12 @@ for i in range(len(log_info["STANDARD_IG"])):
 print("====== Ranking For Variants ======")
 for variant, ranks in running_ranks.items():
     mean_rank = sum(ranks) / len(ranks)
-    print("Variant: %s | # Samples: %d | Mean rank: %f" %
-          (variant, len(ranks), mean_rank))
+    if variant != "STANDARD_IG":
+        std_mean_rank = sum(log_info["STANDARD_IG"]) / \
+            len(log_info["STANDARD_IG"])
+        margin = (mean_rank - std_mean_rank) / std_mean_rank
+        print("Variant: %s | # Samples: %d | Mean rank: %f (%s)" %
+              (variant, len(ranks), mean_rank, "{:.2f}".format(margin * 100) + "%"))
+    else:
+        print("Variant: %s | # Samples: %d | Mean rank: %f" %
+              (variant, len(ranks), mean_rank))
