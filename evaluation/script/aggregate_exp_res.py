@@ -90,9 +90,10 @@ print("====== Ranking For Variants ======")
 for variant, ranks in running_ranks.items():
     mean_rank = sum(ranks) / len(ranks)
     if variant != "STANDARD_IG":
-        std_mean_rank = sum(log_info["STANDARD_IG"]) / \
-            len(log_info["STANDARD_IG"])
+        std_mean_rank = sum(running_ranks["STANDARD_IG"]) / \
+            len(running_ranks["STANDARD_IG"])
         margin = (mean_rank - std_mean_rank) / std_mean_rank
+        print(mean_rank, std_mean_rank, margin)
         print("Variant: %s | # Samples: %d | Mean rank: %f (%s)" %
               (variant, len(ranks), mean_rank, "{:.2f}".format(margin * 100) + "%"))
     else:
