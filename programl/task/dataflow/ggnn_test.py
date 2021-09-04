@@ -931,32 +931,6 @@ def Main():
                     )
 
                     for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig in zip(attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig):
-                        # sorted_acc_scores = sorted([
-                        #     attr_acc_std_ig,
-                        #     attr_acc_dep_guided_ig,
-                        #     attr_acc_dep_guided_ig_unaccumulated,
-                        #     attr_acc_reverse_dep_guided_ig,
-                        # ])
-                        # variant_rank = list(map(lambda x: sorted_acc_scores.index(x), [
-                        #     attr_acc_std_ig,
-                        #     attr_acc_dep_guided_ig,
-                        #     attr_acc_dep_guided_ig_unaccumulated,
-                        #     attr_acc_reverse_dep_guided_ig
-                        # ]))
-                        # variant_ranks["STANDARD_IG"].append(variant_rank[0])
-                        # variant_ranks["ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-                        #     variant_rank[1])
-                        # variant_ranks["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-                        #     variant_rank[2])
-                        # variant_ranks["DESCENDING_DEPENDENCY_GUIDED_IG"].append(
-                        #     variant_rank[3])
-
-                        # rank_str = ""
-                        # for variant_name, ranks in variant_ranks.items():
-                        #     mean_rank = sum(ranks) / len(ranks)
-                        #     rank_str += "|%s: %f|" % (variant_name, mean_rank)
-                        # rank_str = '[' + rank_str + ']'
-
                         logger.info("%s,%f,%f,%f,%f" % (
                             graph_fname,
                             attr_acc_std_ig,
