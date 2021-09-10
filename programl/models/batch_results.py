@@ -57,6 +57,8 @@ class BatchResults(NamedTuple):
     confusion_matrix: np.array
     # Attributions.
     attributions: np.array
+    # Faithfulness score.
+    faithfulness_score: float
 
     @property
     def has_learning_rate(self) -> bool:
@@ -102,6 +104,7 @@ class BatchResults(NamedTuple):
         learning_rate: Optional[float] = None,
         loss: Optional[float] = None,
         attributions: List[int] = None,
+        faithfulness_score: float = None,
     ):
         """Construct a results instance from 1-hot targets and predictions.
 
@@ -173,6 +176,7 @@ class BatchResults(NamedTuple):
                 targets=true_y, predictions=pred_y, num_classes=y_dimensionality
             ),
             attributions=attributions,
+            faithfulness_score=faithfulness_score,
         )
 
 

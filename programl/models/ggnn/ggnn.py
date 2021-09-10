@@ -372,6 +372,57 @@ class Ggnn(Model):
 
         return model_inputs
 
+    def DoFaithfulnessTest(
+        self,
+        model_inputs, 
+        attr_orders,
+        predictions,
+        verbal=True,
+    ):
+        # This function calculates the faithfulness score by doing the following:
+        # -- (1) find the node with the highest attribution score, remove it and 
+        # test if the model prediction changes; if not, go to (2); if so, return 1
+        # -- (2) find the node with the 2nd highest attribution score, remove it and 
+        # test if the model prediction changes; if not, go to (3); if so, return 2
+        # ......
+        # -- (n) find the node with the nth highest attribution score, remove it and 
+        # test if the model prediction changes; if not, go to (n+1); if so, return n
+        if self.model.training:
+            self.model.eval()
+            self.model.opt.zero_grad()
+
+        if verbal:
+            print("Number of attributions: %d" % len(attr_orders))
+
+        for i in range(len(attr_orders)):
+            curr_raw_in = torch.clone(model_inputs["raw_in"])
+            labels = deepcopy(model_inputs["labels"])
+            edge_lists = deepcopy(model_inputs["edge_lists"])
+            node_out = deepcopy(model_inputs["node_out"])
+            pos_lists = deepcopy(model_inputs["pos_lists"])
+
+            for j in range(i):
+                curr_attr_idx = attr_orders.index(j)
+                curr_raw_in[curr_attr_idx] = 0.0
+            logits = self.model(
+                raw_in=curr_raw_in,
+                labels=labels,
+                edge_lists=edge_lists,
+                node_out=node_out,
+                pos_lists=pos_lists,
+            )[1]
+            curr_predictions = torch.argmax(logits)
+
+            if predictions.detach().cpu() != curr_predictions.detach().cpu():
+                break
+
+            if verbal:
+                print("Processed nodes with highest %d attributions (logits: %s)..." % (i + 1, str(logits)))
+            
+            del curr_raw_in
+        
+        return float(1 - i / (len(attr_orders) + 1))
+
     def RunBatch(
         self,
         epoch_type: epoch_pb2.EpochType,
@@ -385,6 +436,7 @@ class Ggnn(Model):
         return_delta=False,
         reverse=False,
         average_attrs=True,
+        do_faithfulness_test=True,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -425,11 +477,11 @@ class Ggnn(Model):
             with torch.no_grad():
                 if run_ig:
                     # Let's make a copy in case any parameter is altered in place
-                    raw_in = model_inputs["raw_in"]
-                    labels = model_inputs["labels"]
-                    edge_lists = model_inputs["edge_lists"]
-                    node_out = model_inputs["node_out"]
-                    pos_lists = model_inputs["pos_lists"]
+                    raw_in = torch.clone(model_inputs["raw_in"])
+                    labels = deepcopy(model_inputs["labels"])
+                    edge_lists = deepcopy(model_inputs["edge_lists"])
+                    node_out = deepcopy(model_inputs["node_out"])
+                    pos_lists = deepcopy(model_inputs["pos_lists"])
 
                 outputs = self.model(**model_inputs)
 
@@ -439,6 +491,8 @@ class Ggnn(Model):
             graph_features,
             *unroll_stats,
         ) = outputs
+
+        predictions = torch.argmax(logits)
 
         if run_ig:
             print("Starting IG explanation...")
@@ -469,7 +523,7 @@ class Ggnn(Model):
                             labels, edge_lists, node_outs, pos_lists),
                         method=method,
                         return_convergence_delta=True,
-                        target=targets,
+                        target=predictions,
                         interpolation_order=interpolation_order,
                         n_steps=n_steps,
                         accumulate_gradients=accumulate_gradients,
@@ -482,7 +536,7 @@ class Ggnn(Model):
                                 labels, edge_lists, node_outs, pos_lists),
                             method=method,
                             return_convergence_delta=True,
-                            target=targets,
+                            target=predictions,
                             interpolation_order=order,
                             n_steps=n_steps,
                             accumulate_gradients=accumulate_gradients,
@@ -501,7 +555,7 @@ class Ggnn(Model):
                             labels, edge_lists, node_outs, pos_lists),
                         method=method,
                         return_convergence_delta=False,
-                        target=targets,
+                        target=predictions,
                         interpolation_order=interpolation_order,
                         n_steps=n_steps,
                         accumulate_gradients=accumulate_gradients,
@@ -514,7 +568,7 @@ class Ggnn(Model):
                                 labels, edge_lists, node_outs, pos_lists),
                             method=method,
                             return_convergence_delta=False,
-                            target=targets,
+                            target=predictions,
                             interpolation_order=order,
                             n_steps=n_steps,
                             accumulate_gradients=accumulate_gradients,
@@ -529,6 +583,15 @@ class Ggnn(Model):
                 print("Mean error: %f" % approximation_error.mean())
             # print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
             print("Summerized attributions indices: %s" % str(summerized_attributions_indices))
+            
+            if do_faithfulness_test:
+                faithfulness_score = self.DoFaithfulnessTest(
+                    model_inputs=model_inputs,
+                    attr_orders=summerized_attributions_indices.tolist(),
+                    predictions=predictions,
+                )
+                print("Faithfulness score: %f" % faithfulness_score)
+            
             print("IG steps finished.")
 
         loss = self.model.loss((logits, graph_features), targets)
@@ -572,6 +635,7 @@ class Ggnn(Model):
                     iteration_count=iteration_count,
                     loss=loss.item(),
                     attributions=summerized_attributions_indices,
+                    faithfulness_score=faithfulness_score,
                 )
             else:
                 return BatchResults.Create(
@@ -582,6 +646,7 @@ class Ggnn(Model):
                     iteration_count=iteration_count,
                     loss=loss.item(),
                     attributions=summerized_attributions_indices,
+                    faithfulness_score=faithfulness_score,
                 )
         else:
             return BatchResults.Create(

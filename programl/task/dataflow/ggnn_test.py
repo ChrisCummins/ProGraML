@@ -17,33 +17,33 @@
 """
 import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
-import random
-from os import listdir
-from typing import Any, Iterable, List, Tuple
-import pathlib
-from networkx.drawing.nx_agraph import graphviz_layout
-from copy import deepcopy
-import logging
-from datetime import datetime
-import igraph as ig
-from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.models.batch_results import BatchResults
-from programl.models.ggnn.ggnn import Ggnn
+import networkx as nx
+from labm8.py import app, pbutil
+import numpy as np
+import matplotlib.pyplot as plt
+import torch
+from programl import serialize_ops
+from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from programl.task.dataflow import dataflow, vocabulary
 from programl.proto import (
     checkpoint_pb2,
     epoch_pb2,
     program_graph_features_pb2,
     program_graph_pb2,
 )
-from programl.task.dataflow import dataflow, vocabulary
-from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
-from programl import serialize_ops
-import torch
-import matplotlib.pyplot as plt
-import numpy as np
-from labm8.py import app, pbutil
-import networkx as nx
+from programl.models.ggnn.ggnn import Ggnn
+from programl.models.batch_results import BatchResults
+from programl.models.base_graph_loader import BaseGraphLoader
+from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
+import igraph as ig
+from datetime import datetime
+import logging
+from copy import deepcopy
+from networkx.drawing.nx_agraph import graphviz_layout
+import pathlib
+from typing import Any, Iterable, List, Tuple
+from os import listdir
+import random
 
 random.seed(888)
 
@@ -627,6 +627,8 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
                   (source_node_id, target_node_id))
             graph.features.feature["attribution_accuracy"].float_list.value.append(
                 attribution_acc_score)
+            graph.features.feature["faithfulness_score"].float_list.value.append(
+                results.faithfulness_score)
 
         graphs.append(graph)
 
@@ -794,14 +796,17 @@ def DrawAndSaveGraph(
             print("Saving visualization of annotated graph to %s..." %
                   save_img_path)
             attr_acc_score = graph.features.feature["attribution_accuracy"].float_list.value[0]
+            faithfulness_score = graph.features.feature["faithfulness_score"].float_list.value[0]
             plt.text(x=20, y=20, s="Attr acc: %f" % attr_acc_score)
+            plt.text(x=20, y=40, s="Faith score: %f" % faithfulness_score)
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
 
-            scores.append(attr_acc_score)
+            attr_scores.append(attr_acc_score)
+            faithfulness_scores.append(faithfulness_score)
 
-    return scores
+    return attr_scores, faithfulness_scores
 
 
 def Main():
@@ -840,7 +845,7 @@ def Main():
             "DESCENDING_DEPENDENCY_GUIDED_IG": [],
         }
         logger.info(
-            "GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG")
+            "GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG,FAITH_STANDARD_IG,FAITH_ASCENDING_DEPENDENCY_GUIDED_IG,FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,FAITH_DESCENDING_DEPENDENCY_GUIDED_IG")
         for i in range(len(graph_fnames)):
             graph_fname = graph_fnames[i]
             if i % FLAGS.num_instances != instance_id:
@@ -934,34 +939,47 @@ def Main():
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
-                    attr_acc_std_ig = DrawAndSaveGraph(
+                    attr_acc_std_ig, faith_score_std_ig = DrawAndSaveGraph(
                         graph_std_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='std_ig'
                     )
-                    attr_acc_dep_guided_ig = DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig, faith_score_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
                     )
-                    attr_acc_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig_unaccumulated, faith_score_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
                         graph_dep_guided_ig_unaccumulated, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
                     )
-                    attr_acc_reverse_dep_guided_ig = DrawAndSaveGraph(
+                    attr_acc_reverse_dep_guided_ig, faith_score_reverse_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
                     )
 
-                    for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig in zip(attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig):
-                        logger.info("%s,%f,%f,%f,%f" % (
+                    for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig, faith_score_std_ig, faith_score_dep_guided_ig, faith_score_dep_guided_ig_unaccumulated, faith_score_reverse_dep_guided_ig, in zip(
+                        attr_acc_std_ig,
+                        attr_acc_dep_guided_ig,
+                        attr_acc_dep_guided_ig_unaccumulated,
+                        attr_acc_reverse_dep_guided_ig,
+                        faith_score_std_ig,
+                        faith_score_dep_guided_ig,
+                        faith_score_dep_guided_ig_unaccumulated,
+                        faith_score_reverse_dep_guided_ig,
+                    ):
+                        logger.info("%s,%f,%f,%f,%f,%f,%f,%f,%f" % (
                             graph_fname,
                             attr_acc_std_ig,
                             attr_acc_dep_guided_ig,
                             attr_acc_dep_guided_ig_unaccumulated,
                             attr_acc_reverse_dep_guided_ig,
+                            faith_score_std_ig,
+                            faith_score_dep_guided_ig,
+                            faith_score_dep_guided_ig_unaccumulated,
+                            faith_score_reverse_dep_guided_ig,
                         ))
                 if FLAGS.random_test_size != 0:
                     success_count += 1
