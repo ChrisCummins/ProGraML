@@ -15,36 +15,36 @@
 # limitations under the License.
 """Run inference of a trained GGNN model on a single graph input.
 """
-import numpy as np
-from labm8.py import app, pbutil
-import networkx as nx
 import matplotlib
 matplotlib.use('Agg')  # to avoid using Xserver
-import matplotlib.pyplot as plt
-import torch
-
-from programl import serialize_ops
-from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
-from programl.task.dataflow import dataflow, vocabulary
+import random
+from os import listdir
+from typing import Any, Iterable, List, Tuple
+import pathlib
+from networkx.drawing.nx_agraph import graphviz_layout
+from copy import deepcopy
+import logging
+from datetime import datetime
+import igraph as ig
+from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
+from programl.models.base_graph_loader import BaseGraphLoader
+from programl.models.batch_results import BatchResults
+from programl.models.ggnn.ggnn import Ggnn
 from programl.proto import (
     checkpoint_pb2,
     epoch_pb2,
     program_graph_features_pb2,
     program_graph_pb2,
 )
-from programl.models.ggnn.ggnn import Ggnn
-from programl.models.batch_results import BatchResults
-from programl.models.base_graph_loader import BaseGraphLoader
-from programl.graph.format.py.nx_format import ProgramGraphToNetworkX
-import igraph as ig
-from datetime import datetime
-import logging
-from copy import deepcopy
-from networkx.drawing.nx_agraph import graphviz_layout
-import pathlib
-from typing import Any, Iterable, List, Tuple
-from os import listdir
-import random
+from programl.task.dataflow import dataflow, vocabulary
+from programl.task.dataflow.ggnn_batch_builder import DataflowGgnnBatchBuilder
+from programl import serialize_ops
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+from labm8.py import app, pbutil
+import networkx as nx
+
 random.seed(888)
 
 
@@ -145,7 +145,7 @@ app.DEFINE_string(
 )
 app.DEFINE_boolean(
     "debug",
-    False,
+    True,
     "Whether to stop encountering exceptions."
 )
 FLAGS = app.FLAGS
@@ -242,21 +242,30 @@ def FilterDistantNodes(
 
 def CalculateInterpolationOrderFromGraph(
     graph: program_graph_pb2.ProgramGraph,
-    reverse: bool = False,
     max_removed_edges_ratio: float = -1,
+    sample_multi_topo_orders: bool = True,
+    max_num_topo_orders: int = 20,
 ) -> List[int]:
     # This function returns the (topological) order of nodes to evaluate
     # for interpolations in IG
     networkx_graph = ProgramGraphToNetworkX(graph)
     is_acyclic = nx.algorithms.dag.is_directed_acyclic_graph(networkx_graph)
     if is_acyclic:
-        ordered_nodes = nx.topological_sort(networkx_graph)
-        if reverse:
-            ordered_nodes = list(ordered_nodes)
-            ordered_nodes.reverse()
-            return ordered_nodes, networkx_graph
+        if sample_multi_topo_orders:
+            sampled_ordered_nodes = []
+            sampled_ordered_nodes_gen = nx.algorithms.dag.all_topological_sorts(
+                networkx_graph)
+            topo_orders_cnt = 0
+            for order_nodes in sampled_ordered_nodes_gen:
+                topo_orders_cnt += 1
+                if topo_orders_cnt > max_num_topo_orders:
+                    break
+                sampled_ordered_nodes.append(order_nodes)
+            ordered_nodes = sampled_ordered_nodes
         else:
-            return list(ordered_nodes), networkx_graph
+            ordered_nodes = [list(nx.topological_sort(networkx_graph))]
+
+        return ordered_nodes, networkx_graph
     else:
         # Cycle(s) detected and we need to remove them now
         if max_removed_edges_ratio != -1:
@@ -276,13 +285,22 @@ def CalculateInterpolationOrderFromGraph(
         if not is_acyclic:
             raise CycleInGraphError
         else:
-            ordered_nodes = nx.topological_sort(acyclic_networkx_graph)
-            if reverse:
-                ordered_nodes = list(ordered_nodes)
-                ordered_nodes.reverse()
-                return ordered_nodes, acyclic_networkx_graph
+            if sample_multi_topo_orders:
+                sampled_ordered_nodes = []
+                sampled_ordered_nodes_gen = nx.algorithms.dag.all_topological_sorts(
+                    acyclic_networkx_graph)
+                topo_orders_cnt = 0
+                for order_nodes in sampled_ordered_nodes_gen:
+                    topo_orders_cnt += 1
+                    if topo_orders_cnt > max_num_topo_orders:
+                        break
+                    sampled_ordered_nodes.append(order_nodes)
+                ordered_nodes = sampled_ordered_nodes
             else:
-                return list(ordered_nodes), acyclic_networkx_graph
+                ordered_nodes = [
+                    list(nx.topological_sort(acyclic_networkx_graph))]
+
+            return ordered_nodes, acyclic_networkx_graph
 
 
 def GenerateInterpolationOrderFromGraph(
@@ -362,7 +380,11 @@ def TestOne(
 
     if run_ig:  # we can also compute accuracies for standard IG
         if reverse:
-            interpolation_order.reverse()
+            reversed_interpolation_order = []
+            for order in interpolation_order:
+                order.reverse()
+                reversed_interpolation_order.append(order)
+            interpolation_order = reversed_interpolation_order
         if not dep_guided_ig:
             interpolation_order = None
     else:
@@ -434,6 +456,8 @@ def TestOne(
                 interpolation_order=interpolation_order,
                 node_out=node_out,
                 accumulate_gradients=accumulate_gradients,
+                reverse=reverse,
+                average_attrs=True,
             )
             results_predicted_nodes.append(results)
         return AnnotateGraphWithBatchResultsForPredictedNodes(
@@ -815,7 +839,8 @@ def Main():
             "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG": [],
             "DESCENDING_DEPENDENCY_GUIDED_IG": [],
         }
-        logger.info("GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG")
+        logger.info(
+            "GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG")
         for i in range(len(graph_fnames)):
             graph_fname = graph_fnames[i]
             if i % FLAGS.num_instances != instance_id:

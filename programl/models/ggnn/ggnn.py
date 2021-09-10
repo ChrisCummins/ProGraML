@@ -383,6 +383,8 @@ class Ggnn(Model):
         node_out=None,
         accumulate_gradients=True,
         return_delta=False,
+        reverse=False,
+        average_attrs=True,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -445,41 +447,83 @@ class Ggnn(Model):
             ig = IntegratedGradients(self.model)
             
             if dep_guided_ig:
-                print("Using dependency-guided IG.")
                 method = "dependency_guided_ig_nonuniform"
-                n_steps = len(interpolation_order)
+                n_steps = len(interpolation_order[0])
+                print("Using dependency-guided IG (method: %s | n_steps: %d) | accumulate gradients: %s | reversed: %s | average Attrs: %s" %
+                      (method, n_steps, str(accumulate_gradients), str(reverse), str(average_attrs)))
             else:
-                print("Using stock IG.")
-                method = 'gausslegendre'
+                method = "gausslegendre"
                 n_steps = raw_in.shape[0]  # for fair comparison
-            
+                print("Using stock IG (method: %s | n_steps: %d) | accumulate gradients: %s | reversed: %s | average attrs: %s" % (
+                    method, n_steps, str(accumulate_gradients), str(reverse), str(average_attrs)))
+
             if node_out is not None:
                 node_outs = [node_out] * n_steps
             
             if return_delta:
-                attributions, approximation_error = ig.attribute(
-                    raw_in,
-                    additional_forward_args=(labels, edge_lists, node_outs, pos_lists),
-                    method=method,
-                    return_convergence_delta=True,
-                    target=targets,
-                    interpolation_order=interpolation_order,
-                    n_steps=n_steps,
-                    accumulate_gradients=accumulate_gradients,
-                )
+                attributions_list, approximation_error_list = [], []
+                if interpolation_order is None:
+                    attributions, approximation_error = ig.attribute(
+                        raw_in,
+                        additional_forward_args=(
+                            labels, edge_lists, node_outs, pos_lists),
+                        method=method,
+                        return_convergence_delta=True,
+                        target=targets,
+                        interpolation_order=interpolation_order,
+                        n_steps=n_steps,
+                        accumulate_gradients=accumulate_gradients,
+                    )
+                else:
+                    for order in interpolation_order:
+                        attributions, approximation_error = ig.attribute(
+                            raw_in,
+                            additional_forward_args=(
+                                labels, edge_lists, node_outs, pos_lists),
+                            method=method,
+                            return_convergence_delta=True,
+                            target=targets,
+                            interpolation_order=order,
+                            n_steps=n_steps,
+                            accumulate_gradients=accumulate_gradients,
+                        )
+                        attributions_list.append(attributions)
+                        approximation_error_list.append(approximation_error)
+                    attributions = torch.mean(torch.stack(attributions_list))
+                    approximation_error = torch.mean(
+                        torch.stack(approximation_error_list))
             else:
-                attributions = ig.attribute(
-                    raw_in,
-                    additional_forward_args=(labels, edge_lists, node_outs, pos_lists),
-                    method=method,
-                    return_convergence_delta=False,
-                    target=targets,
-                    interpolation_order=interpolation_order,
-                    n_steps=n_steps,
-                    accumulate_gradients=accumulate_gradients,
-                )
+                attributions_list, approximation_error_list = [], []
+                if interpolation_order is None:
+                    attributions = ig.attribute(
+                        raw_in,
+                        additional_forward_args=(
+                            labels, edge_lists, node_outs, pos_lists),
+                        method=method,
+                        return_convergence_delta=False,
+                        target=targets,
+                        interpolation_order=interpolation_order,
+                        n_steps=n_steps,
+                        accumulate_gradients=accumulate_gradients,
+                    )
+                else:
+                    for order in interpolation_order:
+                        attributions = ig.attribute(
+                            raw_in,
+                            additional_forward_args=(
+                                labels, edge_lists, node_outs, pos_lists),
+                            method=method,
+                            return_convergence_delta=False,
+                            target=targets,
+                            interpolation_order=order,
+                            n_steps=n_steps,
+                            accumulate_gradients=accumulate_gradients,
+                        )
+                        attributions_list.append(attributions)
+                    attributions = torch.mean(torch.stack(attributions_list), dim=0)
             summerized_attributions = torch.mean(attributions, dim=1)
-            summerized_attributions_indices = get_sorted_indices(summerized_attributions.detach().cpu().numpy())
+            summerized_attributions_indices = get_sorted_indices(
+                summerized_attributions.detach().cpu().numpy())
 
             if return_delta:
                 print("Mean error: %f" % approximation_error.mean())
