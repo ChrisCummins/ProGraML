@@ -421,7 +421,7 @@ class Ggnn(Model):
             
             del curr_raw_in
         
-        return float(1 - i / (len(attr_orders) + 1))
+        return float(1 - (i + 1) / (len(attr_orders)))
 
     def RunBatch(
         self,

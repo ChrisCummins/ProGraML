@@ -750,7 +750,7 @@ def DrawAndSaveGraph(
     else:
         graphs = graph
 
-    scores = []
+    attr_scores, faithfulness_scores = [], []
 
     for i in range(len(graphs)):
         graph = graphs[i]
