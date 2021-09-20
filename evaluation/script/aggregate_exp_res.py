@@ -5,6 +5,9 @@ matplotlib.use('Agg')  # to avoid using Xserver
 import matplotlib.pyplot as plt
 
 
+COLOR_LIST = ["blue", "red", "yellow", "orange"]
+
+
 def parse_log_file(fpath):
     global log_info
 
@@ -52,19 +55,45 @@ print("Analyzing task name: %s..." % args.task)
 print("In directory: %s" % args.dir)
 
 print("====== Mean Attribution Score ======")
+color_choice_deletion = 0
+color_choice_retention = 0
 for variant, scores in log_info.items():
-    if "DELETION" in variant or "RETENTION" in variant:
+    if "DELETION" in variant:
+        if color_choice_deletion == 0:
+            save_img_path = args.dir + "/viz/DELETION_comparison.png"
         x_list, y_list = [], []
         for i in range(len(scores)):
             print("[%s] Step #%d (mean) --> %f" %
                   (variant, i, sum(scores[i]) / len(scores[i])))
             x_list.append(i)
             y_list.append(sum(scores[i]) / len(scores[i]))
-        save_img_path = args.dir + "/viz/%s.png" % variant
-        plt.plot(x_list, y_list)
-        plt.show()
-        plt.savefig(save_img_path, format="PNG")
-        plt.clf()
+        plt.plot(x_list, y_list, color=COLOR_LIST[color_choice_deletion], label=variant.replace("DELETION_RES_", ''))
+        plt.legend()
+        color_choice_deletion += 1
+        if color_choice_deletion == 4:
+            plt.xlabel("number of steps")
+            plt.ylabel("predicted class probability")
+            plt.show()
+            plt.savefig(save_img_path, format="PNG")
+            plt.clf()
+    elif "RETENTION" in variant:
+        if color_choice_retention == 0:
+            save_img_path = args.dir + "/viz/RETENTION_comparison.png"
+        x_list, y_list = [], []
+        for i in range(len(scores)):
+            print("[%s] Step #%d (mean) --> %f" %
+                  (variant, i, sum(scores[i]) / len(scores[i])))
+            x_list.append(i)
+            y_list.append(sum(scores[i]) / len(scores[i]))
+        plt.plot(x_list, y_list, color=COLOR_LIST[color_choice_retention], label=variant.replace("RETENTION_RES_", ''))
+        plt.legend()
+        color_choice_retention += 1
+        if color_choice_retention == 4:
+            plt.xlabel("number of steps")
+            plt.ylabel("predicted class probability")
+            plt.show()
+            plt.savefig(save_img_path, format="PNG")
+            plt.clf()
     else:
         mean_score = sum(scores) / len(scores)
         if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
