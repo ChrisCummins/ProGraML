@@ -1,5 +1,8 @@
 import os
 import argparse
+import matplotlib
+matplotlib.use('Agg')  # to avoid using Xserver
+import matplotlib.pyplot as plt
 
 
 def parse_log_file(fpath):
@@ -8,28 +11,28 @@ def parse_log_file(fpath):
     with open(fpath, 'r') as fin:
         data = fin.readlines()
 
-    header_str = ','.join(data[1].strip().split(' | ')[1].split(',')[1:])
-    variants = header_str.split(',')
+    header_str = '\t'.join(data[1].strip().split(' | ')[1].split('\t')[1:])
+    variants = header_str.split('\t')
     for variant in variants:
         if variant not in log_info:
-            log_info[variant] = []
+            if "DELETION" in variant or "RETENTION" in variant:
+                log_info[variant] = [[] for _ in range(10)]
+            else:
+                log_info[variant] = []
 
     del data[:2]
     for row in data:
         row = row.strip()
-        score_str = ','.join(row.split(' | ')[1].split(',')[1:])
-        scores = list(map(lambda x: float(x), score_str.split(',')))
+        result_str = '\t'.join(row.split(' | ')[1].split('\t')[1:])
 
-        log_info["STANDARD_IG"].append(scores[0])
-        log_info["ASCENDING_DEPENDENCY_GUIDED_IG"].append(scores[1])
-        log_info["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-            scores[2])
-        log_info["DESCENDING_DEPENDENCY_GUIDED_IG"].append(scores[3])
-        log_info["FAITH_STANDARD_IG"].append(scores[4])
-        log_info["FAITH_ASCENDING_DEPENDENCY_GUIDED_IG"].append(scores[5])
-        log_info["FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"].append(
-            scores[6])
-        log_info["FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"].append(scores[7])
+        scores = list(map(lambda x: float(x), result_str.split('\t')[:8]))
+        for i in range(8):
+            log_info[variants[i]].append(scores[i])
+
+        prob_delta = list(map(lambda x: eval(x), result_str.split('\t')[8:]))
+        for i in range(8, 16):
+            for j in range(len(prob_delta[i - 8])):
+                log_info[variants[i]][j].append(prob_delta[i - 8][j])
 
 
 parser = argparse.ArgumentParser(description='Aggregate attr accu logs.')
@@ -48,34 +51,41 @@ for fname in log_filenames:
 print("Analyzing task name: %s..." % args.task)
 print("In directory: %s" % args.dir)
 
-assert len(log_info["STANDARD_IG"]) == \
-    len(log_info["ASCENDING_DEPENDENCY_GUIDED_IG"]) == \
-    len(log_info["UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG"]) == \
-    len(log_info["DESCENDING_DEPENDENCY_GUIDED_IG"]
-        ), "[ERROR] Uneven lengths of lists."
-
 print("====== Mean Attribution Score ======")
 for variant, scores in log_info.items():
-    mean_score = sum(scores) / len(scores)
-    if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
-        std_mean_score = sum(log_info["STANDARD_IG"]) / \
-            len(log_info["STANDARD_IG"])
-        margin = (mean_score - std_mean_score) / std_mean_score
-        print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
-              (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
-    elif variant == "STANDARD_IG":
-        print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
-              (variant, len(scores), mean_score))
+    if "DELETION" in variant or "RETENTION" in variant:
+        x_list, y_list = [], []
+        for i in range(len(scores)):
+            print("[%s] Step #%d (mean) --> %f" %
+                  (variant, i, sum(scores[i]) / len(scores[i])))
+            x_list.append(i)
+            y_list.append(sum(scores[i]) / len(scores[i]))
+        save_img_path = args.dir + "/viz/%s.png" % variant
+        plt.plot(x_list, y_list)
+        plt.show()
+        plt.savefig(save_img_path, format="PNG")
+        plt.clf()
+    else:
+        mean_score = sum(scores) / len(scores)
+        if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
+            std_mean_score = sum(log_info["STANDARD_IG"]) / \
+                len(log_info["STANDARD_IG"])
+            margin = (mean_score - std_mean_score) / std_mean_score
+            print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
+                  (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
+        elif variant == "STANDARD_IG":
+            print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
+                  (variant, len(scores), mean_score))
 
-    if variant in {"FAITH_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"}:
-        std_mean_score = sum(log_info["FAITH_STANDARD_IG"]) / \
-            len(log_info["FAITH_STANDARD_IG"])
-        margin = (mean_score - std_mean_score) / std_mean_score
-        print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
-              (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
-    elif variant == "FAITH_STANDARD_IG":
-        print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
-              (variant, len(scores), mean_score))
+        if variant in {"FAITH_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"}:
+            std_mean_score = sum(log_info["FAITH_STANDARD_IG"]) / \
+                len(log_info["FAITH_STANDARD_IG"])
+            margin = (mean_score - std_mean_score) / std_mean_score
+            print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
+                  (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
+        elif variant == "FAITH_STANDARD_IG":
+            print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
+                  (variant, len(scores), mean_score))
 
 running_ranks = {}
 for variant, _ in log_info.items():
@@ -93,9 +103,9 @@ for i in range(len(log_info["STANDARD_IG"])):
     faith_score_reverse_dep_guided_ig = log_info["FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"][i]
 
     sorted_acc_scores = sorted([
-        attr_acc_std_ig, 
+        attr_acc_std_ig,
         attr_acc_dep_guided_ig,
-        attr_acc_dep_guided_ig_unaccumulated, 
+        attr_acc_dep_guided_ig_unaccumulated,
         attr_acc_reverse_dep_guided_ig
     ])
     variant_rank = list(map(lambda x: sorted_acc_scores.index(x), [
@@ -106,10 +116,10 @@ for i in range(len(log_info["STANDARD_IG"])):
     ]))
 
     sorted_faith_scores = sorted([faith_score_std_ig,
-        faith_score_dep_guided_ig,
-        faith_score_dep_guided_ig_unaccumulated,
-        faith_score_reverse_dep_guided_ig
-    ])
+                                  faith_score_dep_guided_ig,
+                                  faith_score_dep_guided_ig_unaccumulated,
+                                  faith_score_reverse_dep_guided_ig
+                                  ])
     variant_rank_faith = list(map(lambda x: sorted_faith_scores.index(x), [
         faith_score_std_ig,
         faith_score_dep_guided_ig,
@@ -132,6 +142,8 @@ for i in range(len(log_info["STANDARD_IG"])):
 
 print("====== Ranking For Variants ======")
 for variant, ranks in running_ranks.items():
+    if "DELETION" in variant or "RETENTION" in variant:
+        continue
     mean_rank = sum(ranks) / len(ranks)
     if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
         std_mean_rank = sum(running_ranks["STANDARD_IG"]) / \

@@ -378,7 +378,7 @@ class Ggnn(Model):
         attr_orders,
         predictions,
         verbal=True,
-    ):
+    ) -> float:
         # This function calculates the faithfulness score by doing the following:
         # -- (1) find the node with the highest attribution score, remove it and 
         # test if the model prediction changes; if not, go to (2); if so, return 1
@@ -394,7 +394,7 @@ class Ggnn(Model):
         if verbal:
             print("Number of attributions: %d" % len(attr_orders))
 
-        for i in range(len(attr_orders)):
+        for i in range(1, len(attr_orders)):
             curr_raw_in = torch.clone(model_inputs["raw_in"])
             labels = deepcopy(model_inputs["labels"])
             edge_lists = deepcopy(model_inputs["edge_lists"])
@@ -423,6 +423,88 @@ class Ggnn(Model):
         
         return float(1 - (i + 1) / (len(attr_orders)))
 
+    def DoDeletionAndRetentionGameTests(
+        self,
+        model_inputs,
+        attr_orders,
+        predictions,
+        logits,
+        verbal=True,
+    ) -> float:
+        # This function calculates the faithfulness score by playing two games (deletion and retention):
+        # -- (1) For deletion: incrementally find the node with highest attribution scores, 
+        # remove it and measure the drop in prediction accuracy (logit probs)
+        # -- (2) For retention: incrementally find the node with lowest attribution scores, 
+        # remove it and measure the increase in prediction accuracy (logit probs)
+        if self.model.training:
+            self.model.eval()
+            self.model.opt.zero_grad()
+
+        if verbal:
+            print("Number of attributions: %d" % len(attr_orders))
+
+        # First pass for Deletion Game
+        deletion_res = [logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]]
+        for i in range(1, len(attr_orders)):
+            curr_raw_in = torch.clone(model_inputs["raw_in"])
+            labels = deepcopy(model_inputs["labels"])
+            edge_lists = deepcopy(model_inputs["edge_lists"])
+            node_out = deepcopy(model_inputs["node_out"])
+            pos_lists = deepcopy(model_inputs["pos_lists"])
+
+            for j in range(i):
+                curr_attr_idx = attr_orders.index(j)
+                curr_raw_in[curr_attr_idx] = 0.0
+            curr_logits = self.model(
+                raw_in=curr_raw_in,
+                labels=labels,
+                edge_lists=edge_lists,
+                node_out=node_out,
+                pos_lists=pos_lists,
+            )[1]
+
+            curr_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
+            class_prob_drop = logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()] - curr_class_prob
+            deletion_res.append(curr_class_prob)
+
+            if verbal:
+                print("Processed nodes with highest %d attributions (prob drop: %f -- from %f to %f)..." % (i, class_prob_drop, logits.detach(
+                ).cpu().tolist()[0][predictions.detach().cpu().item()], curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
+            
+            del curr_raw_in
+
+        # Second pass for Retention Game
+        retention_res = [logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]]
+        for i in range(1, len(attr_orders)):
+            curr_raw_in = torch.clone(model_inputs["raw_in"])
+            labels = deepcopy(model_inputs["labels"])
+            edge_lists = deepcopy(model_inputs["edge_lists"])
+            node_out = deepcopy(model_inputs["node_out"])
+            pos_lists = deepcopy(model_inputs["pos_lists"])
+
+            for j in list(reversed(range(len(attr_orders))))[i:]:
+                curr_attr_idx = attr_orders.index(j)
+                curr_raw_in[curr_attr_idx] = 0.0
+            curr_logits = self.model(
+                raw_in=curr_raw_in,
+                labels=labels,
+                edge_lists=edge_lists,
+                node_out=node_out,
+                pos_lists=pos_lists,
+            )[1]
+
+            curr_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
+            class_prob_increase = curr_class_prob - logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
+            retention_res.append(curr_class_prob)
+
+            if verbal:
+                print("Processed nodes with lowest %d attributions (prob increase: %s -- from %f to %f)..." % (i, class_prob_increase, logits.detach(
+                ).cpu().tolist()[0][predictions.detach().cpu().item()], curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
+            
+            del curr_raw_in
+
+        return deletion_res, retention_res
+
     def RunBatch(
         self,
         epoch_type: epoch_pb2.EpochType,
@@ -437,6 +519,7 @@ class Ggnn(Model):
         reverse=False,
         average_attrs=True,
         do_faithfulness_test=True,
+        do_deletion_retention_games=True,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -503,7 +586,7 @@ class Ggnn(Model):
             if dep_guided_ig:
                 method = "dependency_guided_ig_nonuniform"
                 n_steps = len(interpolation_order[0])
-                print("Using dependency-guided IG (method: %s | n_steps: %d) | accumulate gradients: %s | reversed: %s | average Attrs: %s" %
+                print("Using dependency-guided IG (method: %s | n_steps: %d) | accumulate gradients: %s | reversed: %s | average attrs: %s" %
                       (method, n_steps, str(accumulate_gradients), str(reverse), str(average_attrs)))
             else:
                 method = "gausslegendre"
@@ -591,6 +674,16 @@ class Ggnn(Model):
                     predictions=predictions,
                 )
                 print("Faithfulness score: %f" % faithfulness_score)
+
+            if do_deletion_retention_games:
+                deletion_res, retention_res = self.DoDeletionAndRetentionGameTests(
+                    model_inputs=model_inputs,
+                    attr_orders=summerized_attributions_indices.tolist(),
+                    logits=logits,
+                    predictions=predictions,
+                )
+                print("Deletion game results: %s" % str(deletion_res))
+                print("Retention game results: %s" % str(retention_res))
             
             print("IG steps finished.")
 
@@ -636,6 +729,8 @@ class Ggnn(Model):
                     loss=loss.item(),
                     attributions=summerized_attributions_indices,
                     faithfulness_score=faithfulness_score,
+                    deletion_res=deletion_res,
+                    retention_res=retention_res,
                 )
             else:
                 return BatchResults.Create(
@@ -647,6 +742,8 @@ class Ggnn(Model):
                     loss=loss.item(),
                     attributions=summerized_attributions_indices,
                     faithfulness_score=faithfulness_score,
+                    deletion_res=deletion_res,
+                    retention_res=retention_res,
                 )
         else:
             return BatchResults.Create(

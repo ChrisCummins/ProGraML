@@ -59,6 +59,9 @@ class BatchResults(NamedTuple):
     attributions: np.array
     # Faithfulness score.
     faithfulness_score: float
+    # Deletion/Retention game results.
+    deletion_res: List[float]
+    retention_res: List[float]
 
     @property
     def has_learning_rate(self) -> bool:
@@ -105,6 +108,8 @@ class BatchResults(NamedTuple):
         loss: Optional[float] = None,
         attributions: List[int] = None,
         faithfulness_score: float = None,
+        deletion_res: List[float] = None,
+        retention_res: List[float] = None,
     ):
         """Construct a results instance from 1-hot targets and predictions.
 
@@ -177,6 +182,8 @@ class BatchResults(NamedTuple):
             ),
             attributions=attributions,
             faithfulness_score=faithfulness_score,
+            deletion_res=deletion_res,
+            retention_res=retention_res,
         )
 
 

@@ -551,6 +551,7 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
     nodes_out: List[int],
     run_ig: bool,
     acyclic_networkx_graph: nx.DiGraph,
+    num_deletion_retention_nodes: int = 10,
 ) -> program_graph_pb2.ProgramGraph:
     """Annotate graph with features describing the target labels and predicted outcomes."""
     assert len(base_graph.node) == len(
@@ -629,6 +630,20 @@ def AnnotateGraphWithBatchResultsForPredictedNodes(
                 attribution_acc_score)
             graph.features.feature["faithfulness_score"].float_list.value.append(
                 results.faithfulness_score)
+
+            if len(results.deletion_res) >= num_deletion_retention_nodes:
+                deletion_res = results.deletion_res[:num_deletion_retention_nodes]
+            elif len(results.deletion_res) < num_deletion_retention_nodes:
+                deletion_res = results.deletion_res[:num_deletion_retention_nodes] + [0.0] * (num_deletion_retention_nodes - len(results.deletion_res))
+            for deletion_delta in deletion_res:
+                graph.features.feature["deletion_res"].float_list.value.append(deletion_delta)
+
+            if len(results.retention_res) >= num_deletion_retention_nodes:
+                retention_res = results.retention_res[:num_deletion_retention_nodes]
+            elif len(results.retention_res) < num_deletion_retention_nodes:
+                retention_res = results.retention_res[:num_deletion_retention_nodes] + [0.0] * (num_deletion_retention_nodes - len(results.retention_res))
+            for retention_delta in retention_res:
+                graph.features.feature["retention_res"].float_list.value.append(retention_delta)
 
         graphs.append(graph)
 
@@ -751,6 +766,7 @@ def DrawAndSaveGraph(
         graphs = graph
 
     attr_scores, faithfulness_scores = [], []
+    all_deletion_res, all_retention_res = [], []
 
     for i in range(len(graphs)):
         graph = graphs[i]
@@ -802,11 +818,15 @@ def DrawAndSaveGraph(
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
+            deletion_res = graph.features.feature["deletion_res"].float_list.value
+            retention_res = graph.features.feature["retention_res"].float_list.value
 
             attr_scores.append(attr_acc_score)
             faithfulness_scores.append(faithfulness_score)
+            all_deletion_res.append(deletion_res)
+            all_retention_res.append(retention_res)
 
-    return attr_scores, faithfulness_scores
+    return attr_scores, faithfulness_scores, all_deletion_res, all_retention_res
 
 
 def Main():
@@ -844,8 +864,15 @@ def Main():
             "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG": [],
             "DESCENDING_DEPENDENCY_GUIDED_IG": [],
         }
-        logger.info(
-            "GRAPH_NAME,STANDARD_IG,ASCENDING_DEPENDENCY_GUIDED_IG,UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,DESCENDING_DEPENDENCY_GUIDED_IG,FAITH_STANDARD_IG,FAITH_ASCENDING_DEPENDENCY_GUIDED_IG,FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG,FAITH_DESCENDING_DEPENDENCY_GUIDED_IG")
+        logger.info('\t'.join([
+            "GRAPH_NAME", "STANDARD_IG", "ASCENDING_DEPENDENCY_GUIDED_IG", \
+            "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG", \
+            "FAITH_STANDARD_IG", "FAITH_ASCENDING_DEPENDENCY_GUIDED_IG", \
+            "FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_DESCENDING_DEPENDENCY_GUIDED_IG", \
+            "DELETION_RES_STANDARD_IG", "DELETION_RES_ASCENDING_DEPENDENCY_GUIDED_IG", "DELETION_RES_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", \
+            "DELETION_RES_DESCENDING_DEPENDENCY_GUIDED_IG", "RETENTION_RES_STANDARD_IG", "RETENTION_RES_ASCENDING_DEPENDENCY_GUIDED_IG", \
+            "RETENTION_RES_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "RETENTION_RES_DESCENDING_DEPENDENCY_GUIDED_IG"
+        ]))
         for i in range(len(graph_fnames)):
             graph_fname = graph_fnames[i]
             if i % FLAGS.num_instances != instance_id:
@@ -939,39 +966,32 @@ def Main():
                     continue
 
                 if FLAGS.ig and FLAGS.dep_guided_ig:
-                    attr_acc_std_ig, faith_score_std_ig = DrawAndSaveGraph(
+                    attr_acc_std_ig, faith_score_std_ig, deletion_res_std_ig, retention_res_std_ig = DrawAndSaveGraph(
                         graph_std_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='std_ig'
                     )
-                    attr_acc_dep_guided_ig, faith_score_dep_guided_ig = DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig, faith_score_dep_guided_ig, deletion_res_dep_guided_ig, retention_res_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig'
                     )
-                    attr_acc_dep_guided_ig_unaccumulated, faith_score_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
+                    attr_acc_dep_guided_ig_unaccumulated, faith_score_dep_guided_ig_unaccumulated, deletion_res_dep_guided_ig_unaccumulated, retention_res_dep_guided_ig_unaccumulated = DrawAndSaveGraph(
                         graph_dep_guided_ig_unaccumulated, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='dep_guided_ig_unaccumulated'
                     )
-                    attr_acc_reverse_dep_guided_ig, faith_score_reverse_dep_guided_ig = DrawAndSaveGraph(
+                    attr_acc_reverse_dep_guided_ig, faith_score_reverse_dep_guided_ig, deletion_res_reverse_dep_guided_ig, retention_res_reverse_dep_guided_ig = DrawAndSaveGraph(
                         graph_dep_guided_ig, FLAGS.ds_path,
                         original_graph_fname, save_graph=FLAGS.save_graph,
                         save_vis=FLAGS.save_vis, suffix='reverse_dep_guided_ig'
                     )
-
-                    for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, attr_acc_reverse_dep_guided_ig, faith_score_std_ig, faith_score_dep_guided_ig, faith_score_dep_guided_ig_unaccumulated, faith_score_reverse_dep_guided_ig, in zip(
-                        attr_acc_std_ig,
-                        attr_acc_dep_guided_ig,
-                        attr_acc_dep_guided_ig_unaccumulated,
-                        attr_acc_reverse_dep_guided_ig,
-                        faith_score_std_ig,
-                        faith_score_dep_guided_ig,
-                        faith_score_dep_guided_ig_unaccumulated,
-                        faith_score_reverse_dep_guided_ig,
-                    ):
-                        logger.info("%s,%f,%f,%f,%f,%f,%f,%f,%f" % (
-                            graph_fname,
+                    for attr_acc_std_ig, attr_acc_dep_guided_ig, attr_acc_dep_guided_ig_unaccumulated, \
+                        attr_acc_reverse_dep_guided_ig, faith_score_std_ig, faith_score_dep_guided_ig, \
+                        faith_score_dep_guided_ig_unaccumulated, faith_score_reverse_dep_guided_ig, \
+                        deletion_res_std_ig, deletion_res_dep_guided_ig, deletion_res_dep_guided_ig_unaccumulated, \
+                        deletion_res_reverse_dep_guided_ig, retention_res_std_ig, retention_res_dep_guided_ig, \
+                        retention_res_dep_guided_ig_unaccumulated, retention_res_reverse_dep_guided_ig in zip(
                             attr_acc_std_ig,
                             attr_acc_dep_guided_ig,
                             attr_acc_dep_guided_ig_unaccumulated,
@@ -980,7 +1000,34 @@ def Main():
                             faith_score_dep_guided_ig,
                             faith_score_dep_guided_ig_unaccumulated,
                             faith_score_reverse_dep_guided_ig,
-                        ))
+                            deletion_res_std_ig,
+                            deletion_res_dep_guided_ig,
+                            deletion_res_dep_guided_ig_unaccumulated,
+                            deletion_res_reverse_dep_guided_ig,
+                            retention_res_std_ig,
+                            retention_res_dep_guided_ig,
+                            retention_res_dep_guided_ig_unaccumulated,
+                            retention_res_reverse_dep_guided_ig,
+                    ):
+                        logger.info('\t'.join([
+                            graph_fname,
+                            str(attr_acc_std_ig),
+                            str(attr_acc_dep_guided_ig),
+                            str(attr_acc_dep_guided_ig_unaccumulated),
+                            str(attr_acc_reverse_dep_guided_ig),
+                            str(faith_score_std_ig),
+                            str(faith_score_dep_guided_ig),
+                            str(faith_score_dep_guided_ig_unaccumulated),
+                            str(faith_score_reverse_dep_guided_ig),
+                            str(deletion_res_std_ig),
+                            str(deletion_res_dep_guided_ig),
+                            str(deletion_res_dep_guided_ig_unaccumulated),
+                            str(deletion_res_reverse_dep_guided_ig),
+                            str(retention_res_std_ig),
+                            str(retention_res_dep_guided_ig),
+                            str(retention_res_dep_guided_ig_unaccumulated),
+                            str(retention_res_reverse_dep_guided_ig),
+                        ]))
                 if FLAGS.random_test_size != 0:
                     success_count += 1
                     print("Successfully finished %d graphs." % success_count)
