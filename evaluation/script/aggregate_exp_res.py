@@ -73,6 +73,7 @@ for variant, scores in log_info.items():
         if color_choice_deletion == 4:
             plt.xlabel("number of steps")
             plt.ylabel("predicted class probability")
+            plt.title("Deletion Game Results")
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
@@ -91,6 +92,7 @@ for variant, scores in log_info.items():
         if color_choice_retention == 4:
             plt.xlabel("number of steps")
             plt.ylabel("predicted class probability")
+            plt.title("Retention Game Results")
             plt.show()
             plt.savefig(save_img_path, format="PNG")
             plt.clf()
