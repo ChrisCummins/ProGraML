@@ -22,6 +22,7 @@ import torch
 from labm8.py import app
 from labm8.py.progress import NullContext, ProgressContext
 from torch import nn
+import torch.nn.functional as F
 
 from programl.graph.format.py.graph_tuple import GraphTuple
 from programl.models.batch_data import BatchData
@@ -411,6 +412,7 @@ class Ggnn(Model):
                 node_out=node_out,
                 pos_lists=pos_lists,
             )[1]
+            logits = F.softmax(logits, dim=1)
             curr_predictions = torch.argmax(logits)
 
             if predictions.detach().cpu() != curr_predictions.detach().cpu():
@@ -462,6 +464,7 @@ class Ggnn(Model):
                 node_out=node_out,
                 pos_lists=pos_lists,
             )[1]
+            curr_logits = F.softmax(curr_logits, dim=1)
 
             curr_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
             class_prob_drop = logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()] - curr_class_prob
@@ -575,11 +578,13 @@ class Ggnn(Model):
             *unroll_stats,
         ) = outputs
 
+        logits = F.softmax(logits, dim=1)
         predictions = torch.argmax(logits)
 
         if run_ig:
             print("Starting IG explanation...")
             print("Dim of input: %s" % str(raw_in.shape))
+            print("Original logits (no manipulation): %s" % str(logits))
 
             ig = IntegratedGradients(self.model)
             
