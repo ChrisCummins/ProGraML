@@ -443,7 +443,9 @@ def TestOne(
             use_cdfg=FLAGS.cdfg,
             max_batch_count=1,
         )
-    )[0]
+    )
+    assert len(batch) == 1, "[ERROR] More than one graph exist in this batch (which should not happen in testing)!"
+    batch = batch[0]
 
     if all_nodes_out:
         results_predicted_nodes = []

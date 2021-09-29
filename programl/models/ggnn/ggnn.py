@@ -15,7 +15,7 @@
 # limitations under the License.
 """A gated graph neural network classifier."""
 import typing
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 import numpy as np
 import torch
@@ -419,11 +419,42 @@ class Ggnn(Model):
                 break
 
             if verbal:
-                print("Processed nodes with highest %d attributions (logits: %s)..." % (i + 1, str(logits)))
+                print("Removed nodes with highest %d attributions (logits: %s)..." % (i + 1, str(logits)))
             
             del curr_raw_in
         
         return float(1 - (i + 1) / (len(attr_orders)))
+
+    def RemoveEdges(
+        self,
+        edge_lists,
+        pos_lists,
+        removed_nodes,
+    ) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
+        new_edge_lists = []
+        new_pos_lists = []
+
+        for i in range(len(edge_lists)):
+            edge_list = edge_lists[i]
+            new_edge_list = []
+            new_pos_list = []
+
+            for j in range(len(edge_list)):
+                tail, head = edge_list[j]
+                if tail.item() in set(removed_nodes) or head.item() in set(removed_nodes):
+                    continue
+                else:
+                    new_edge_list.append(edge_lists[i][j])
+                    new_pos_list.append(pos_lists[i][j])
+            
+            if new_edge_list == [] and new_pos_list == []:
+                new_edge_lists.append(torch.empty((0, edge_lists[i].shape[1]), device=edge_lists[i].device, dtype=edge_lists[i].dtype))
+                new_pos_lists.append(torch.empty(0, device=pos_lists[i].device, dtype=pos_lists[i].dtype))
+            else:
+                new_edge_lists.append(torch.stack(new_edge_list))
+                new_pos_lists.append(torch.stack(new_pos_list))
+
+        return new_edge_lists, new_pos_lists
 
     def DoDeletionAndRetentionGameTests(
         self,
@@ -432,6 +463,7 @@ class Ggnn(Model):
         predictions,
         logits,
         verbal=True,
+        remove_edges=True,
     ) -> float:
         # This function calculates the faithfulness score by playing two games (deletion and retention):
         # -- (1) For deletion: incrementally find the node with highest attribution scores, 
@@ -454,9 +486,13 @@ class Ggnn(Model):
             node_out = deepcopy(model_inputs["node_out"])
             pos_lists = deepcopy(model_inputs["pos_lists"])
 
+            removed_nodes = []
             for j in range(i):
                 curr_attr_idx = attr_orders.index(j)
                 curr_raw_in[curr_attr_idx] = 0.0
+                removed_nodes.append(curr_attr_idx)
+            if remove_edges:
+                edge_lists, pos_lists = self.RemoveEdges(edge_lists, pos_lists, removed_nodes)
             curr_logits = self.model(
                 raw_in=curr_raw_in,
                 labels=labels,
@@ -471,23 +507,28 @@ class Ggnn(Model):
             deletion_res.append(curr_class_prob)
 
             if verbal:
-                print("Processed nodes with highest %d attributions (prob drop: %f -- from %f to %f)..." % (i, class_prob_drop, logits.detach(
+                print("Deleted nodes with highest %d attributions (prob drop: %f -- from %f to %f)..." % (i, class_prob_drop, logits.detach(
                 ).cpu().tolist()[0][predictions.detach().cpu().item()], curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
             
             del curr_raw_in
 
         # Second pass for Retention Game
-        retention_res = [logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]]
-        for i in range(1, len(attr_orders)):
+        retention_res = []
+        baseline_class_prob = 0.0
+        for i in range(len(attr_orders)):
             curr_raw_in = torch.clone(model_inputs["raw_in"])
             labels = deepcopy(model_inputs["labels"])
             edge_lists = deepcopy(model_inputs["edge_lists"])
             node_out = deepcopy(model_inputs["node_out"])
             pos_lists = deepcopy(model_inputs["pos_lists"])
 
+            removed_nodes = []
             for j in list(reversed(range(len(attr_orders))))[i:]:
                 curr_attr_idx = attr_orders.index(j)
                 curr_raw_in[curr_attr_idx] = 0.0
+                removed_nodes.append(curr_attr_idx)
+            if remove_edges:
+                edge_lists, pos_lists = self.RemoveEdges(edge_lists, pos_lists, removed_nodes)
             curr_logits = self.model(
                 raw_in=curr_raw_in,
                 labels=labels,
@@ -495,14 +536,19 @@ class Ggnn(Model):
                 node_out=node_out,
                 pos_lists=pos_lists,
             )[1]
+            curr_logits = F.softmax(curr_logits, dim=1)
 
-            curr_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
-            class_prob_increase = curr_class_prob - logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
-            retention_res.append(curr_class_prob)
+            if i == 0:
+                baseline_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
+                retention_res.append(baseline_class_prob)
+            else:
+                curr_class_prob = curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]
+                class_prob_increase = curr_class_prob - baseline_class_prob
+                retention_res.append(curr_class_prob)
 
-            if verbal:
-                print("Processed nodes with lowest %d attributions (prob increase: %s -- from %f to %f)..." % (i, class_prob_increase, logits.detach(
-                ).cpu().tolist()[0][predictions.detach().cpu().item()], curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
+                if verbal:
+                    print("Retained nodes with lowest %d attributions (prob increase: %s -- from %f to %f)..." % (i, class_prob_increase, baseline_class_prob,
+                                                                                                                  curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
             
             del curr_raw_in
 
