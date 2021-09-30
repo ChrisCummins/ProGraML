@@ -101,9 +101,11 @@ for variant, scores in log_info.items():
         if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
             std_mean_score = sum(log_info["STANDARD_IG"]) / \
                 len(log_info["STANDARD_IG"])
+            if std_mean_score == 0.0:
+                continue
             margin = (mean_score - std_mean_score) / std_mean_score
             print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
-                  (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
+                (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
         elif variant == "STANDARD_IG":
             print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
                   (variant, len(scores), mean_score))
@@ -111,9 +113,11 @@ for variant, scores in log_info.items():
         if variant in {"FAITH_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"}:
             std_mean_score = sum(log_info["FAITH_STANDARD_IG"]) / \
                 len(log_info["FAITH_STANDARD_IG"])
+            if std_mean_score == 0.0:
+                continue
             margin = (mean_score - std_mean_score) / std_mean_score
             print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f (%s)" %
-                  (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
+                (variant, len(scores), mean_score, "{:.2f}".format(margin * 100) + "%"))
         elif variant == "FAITH_STANDARD_IG":
             print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean score: %f" %
                   (variant, len(scores), mean_score))
@@ -179,6 +183,8 @@ for variant, ranks in running_ranks.items():
     if variant in {"ASCENDING_DEPENDENCY_GUIDED_IG", "UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "DESCENDING_DEPENDENCY_GUIDED_IG"}:
         std_mean_rank = sum(running_ranks["STANDARD_IG"]) / \
             len(running_ranks["STANDARD_IG"])
+        if std_mean_rank == 0.0:
+            continue
         margin = (mean_rank - std_mean_rank) / std_mean_rank
         print("[ATTR_ACC_SCORE] Variant: %s | # Samples: %d | Mean rank: %f (%s)" %
               (variant, len(ranks), mean_rank, "{:.2f}".format(margin * 100) + "%"))
@@ -189,6 +195,8 @@ for variant, ranks in running_ranks.items():
     if variant in {"FAITH_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_UNACCUMULATED_ASCENDING_DEPENDENCY_GUIDED_IG", "FAITH_DESCENDING_DEPENDENCY_GUIDED_IG"}:
         std_mean_rank = sum(running_ranks["STANDARD_IG"]) / \
             len(running_ranks["STANDARD_IG"])
+        if std_mean_rank == 0.0:
+            continue
         margin = (mean_rank - std_mean_rank) / std_mean_rank
         print("[FAITH_SCORE] Variant: %s | # Samples: %d | Mean rank: %f (%s)" %
               (variant, len(ranks), mean_rank, "{:.2f}".format(margin * 100) + "%"))

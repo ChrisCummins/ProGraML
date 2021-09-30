@@ -463,7 +463,7 @@ class Ggnn(Model):
         predictions,
         logits,
         verbal=True,
-        remove_edges=True,
+        remove_edges=False,
     ) -> float:
         # This function calculates the faithfulness score by playing two games (deletion and retention):
         # -- (1) For deletion: incrementally find the node with highest attribution scores, 
@@ -567,8 +567,9 @@ class Ggnn(Model):
         return_delta=False,
         reverse=False,
         average_attrs=True,
-        do_faithfulness_test=True,
+        do_faithfulness_test=False,
         do_deletion_retention_games=True,
+        remove_edges=False,
     ) -> BatchResults:
         """Process a mini-batch of data through the GGNN.
 
@@ -715,7 +716,6 @@ class Ggnn(Model):
 
             if return_delta:
                 print("Mean error: %f" % approximation_error.mean())
-            # print("Summerized attributions (w.r.t. input): %s" % str(summerized_attributions))
             print("Summerized attributions indices: %s" % str(summerized_attributions_indices))
             
             if do_faithfulness_test:
@@ -725,6 +725,8 @@ class Ggnn(Model):
                     predictions=predictions,
                 )
                 print("Faithfulness score: %f" % faithfulness_score)
+            else:
+                faithfulness_score = 0.0
 
             if do_deletion_retention_games:
                 deletion_res, retention_res = self.DoDeletionAndRetentionGameTests(
@@ -732,6 +734,7 @@ class Ggnn(Model):
                     attr_orders=summerized_attributions_indices.tolist(),
                     logits=logits,
                     predictions=predictions,
+                    remove_edges=remove_edges,
                 )
                 print("Deletion game results: %s" % str(deletion_res))
                 print("Retention game results: %s" % str(retention_res))

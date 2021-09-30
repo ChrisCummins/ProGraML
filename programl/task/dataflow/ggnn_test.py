@@ -148,6 +148,11 @@ app.DEFINE_boolean(
     False,
     "Whether to stop encountering exceptions."
 )
+app.DEFINE_boolean(
+    "remove_edges",
+    False,
+    "Whether to remove edges in deletion/retention games."
+)
 FLAGS = app.FLAGS
 
 ATTR_ACC_ASC_ORDER_TASKS = {
@@ -460,6 +465,7 @@ def TestOne(
                 accumulate_gradients=accumulate_gradients,
                 reverse=reverse,
                 average_attrs=True,
+                remove_edges=FLAGS.remove_edges,
             )
             results_predicted_nodes.append(results)
         return AnnotateGraphWithBatchResultsForPredictedNodes(
@@ -506,7 +512,11 @@ def CalculateAttributionAccuracyScore(
     source_node_id: int,
     target_node_id: int,
     use_all_paths: bool = True,
+    dummy_score: bool = True,
 ) -> float:
+    if dummy_score:
+        return 0.0
+        
     if use_all_paths:
         all_paths = list(
             nx.algorithms.simple_paths.all_simple_paths(
