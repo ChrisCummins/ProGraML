@@ -116,22 +116,23 @@ class GGNNProper(nn.Module):
         old_node_states = node_states.clone()
         # edge_lists will also be manipulated in forward pass 
         # so we need to first make a copy
-        print("edge_list: %s" % str(edge_lists))
         old_edge_lists = deepcopy(edge_lists)
+        old_pos_lists = deepcopy(pos_lists)
+        old_node_types = deepcopy(node_types)
         
         if self.use_backward_edges:
             back_edge_lists = [x.flip([1]) for x in old_edge_lists]
             old_edge_lists.extend(back_edge_lists)
             # For backward edges we keep the positions of the forward edge.
             if self.position_embeddings:
-                pos_lists.extend(pos_lists)
+                old_pos_lists.extend(old_pos_lists)
 
         if self.unroll_strategy == "label_convergence":
             node_states, unroll_steps, converged = self.label_convergence_forward(
                 old_edge_lists,
                 node_states,
-                pos_lists,
-                node_types,
+                old_pos_lists,
+                old_node_types,
                 initial_node_states=old_node_states,
             )
             return node_states, old_node_states, unroll_steps, converged
@@ -153,8 +154,8 @@ class GGNNProper(nn.Module):
 
         # Clamp the position lists in the range [0,edge_position_max) to match
         # the pre-computed position embeddings table.
-        if pos_lists:
-            for pos_list in pos_lists:
+        if old_pos_lists:
+            for pos_list in old_pos_lists:
                 pos_list.clamp_(0, self.edge_position_max - 1)
 
         for (layer_idx, num_timesteps) in enumerate(self.layer_timesteps):
@@ -163,9 +164,9 @@ class GGNNProper(nn.Module):
                     old_edge_lists,
                     node_states,
                     msg_mean_divisor=msg_mean_divisor,
-                    pos_lists=pos_lists,
+                    pos_lists=old_pos_lists,
                 )
-                node_states = self.update[layer_idx](messages, node_states, node_types)
+                node_states = self.update[layer_idx](messages, node_states, old_node_types)
 
         return node_states, old_node_states
 
