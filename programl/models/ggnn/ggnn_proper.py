@@ -116,6 +116,7 @@ class GGNNProper(nn.Module):
         old_node_states = node_states.clone()
         # edge_lists will also be manipulated in forward pass 
         # so we need to first make a copy
+        print("edge_list: %s" % str(edge_lists))
         old_edge_lists = deepcopy(edge_lists)
         
         if self.use_backward_edges:

@@ -523,7 +523,7 @@ class Ggnn(Model):
             pos_lists = deepcopy(model_inputs["pos_lists"])
 
             removed_nodes = []
-            for j in list(reversed(range(len(attr_orders))))[i:]:
+            for j in list(range(len(attr_orders)))[i:]:
                 curr_attr_idx = attr_orders.index(j)
                 curr_raw_in[curr_attr_idx] = 0.0
                 removed_nodes.append(curr_attr_idx)
@@ -547,7 +547,7 @@ class Ggnn(Model):
                 retention_res.append(curr_class_prob)
 
                 if verbal:
-                    print("Retained nodes with lowest %d attributions (prob increase: %s -- from %f to %f)..." % (i, class_prob_increase, baseline_class_prob,
+                    print("Retained nodes with highest %d attributions (prob increase: %s -- from %f to %f)..." % (i, class_prob_increase, baseline_class_prob,
                                                                                                                   curr_logits.detach().cpu().tolist()[0][predictions.detach().cpu().item()]))
             
             del curr_raw_in

@@ -24,6 +24,6 @@ do
         -- --model=/logs/programl/$4/ddf_30/checkpoints/0$model_id.Checkpoint.pb \
         --ig -dep_guided_ig --save_vis --only_pred_y --batch --random_test_size $per_instance_size \
         --max_vis_graph_complexity $2 --max_removed_edges_ratio $3 --task $4 \
-        --filter_adjacant_nodes --instance_id $instance_id --num_instances $1 --$6\
+        --filter_adjacant_nodes --instance_id $instance_id --num_instances $1 $6\
         > ../log/nohup_$4_exp_$2_$3_$1_$instance_id.log 2>&1 &
 done
