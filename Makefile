@@ -177,12 +177,14 @@ bdist_wheel: bazel-build
 bdist_wheel-linux-rename:
 	mv dist/programl-$(VERSION)-py3-none-linux_x86_64.whl dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl
 
+# The docker image to use for building the bdist_wheel-linux target. See
+# packaging/Dockerfile.
+MANYLINUX_DOCKER_IMAGE ?= chriscummins/compiler_gym-manylinux-build:2021-09-21
+
 bdist_wheel-linux:
 	rm -rf build
-	docker build -t chriscummins/compiler_gym-linux-build packaging
-	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g chriscummins/compiler_gym-linux-build:latest /bin/sh -c './packaging/container_init.sh && make bdist_wheel'
-	mv dist/programl-$(VERSION)-py3-none-linux_x86_64.whl dist/programl-$(VERSION)-py3-none-manylinux2014_x86_64.whl
-	rm -rf build
+	docker pull $(MANYLINUX_DOCKER_IMAGE)
+	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g "$(MANYLINUX_DOCKER_IMAGE)" /bin/sh -c './packaging/container_init.sh && make bdist_wheel bdist_wheel-linux-rename BAZEL_OPTS="$(BAZEL_OPTS)" BAZEL_BUILD_OPTS="$(BAZEL_BUILD_OPTS)" BAZEL_FETCH_OPTS="$(BAZEL_FETCH_OPTS)" && rm -rf build'
 
 bdist_wheel-linux-shell:
 	docker run -v $(ROOT):/ProGraML --workdir /ProGraML --rm --shm-size=8g -it --entrypoint "/bin/bash" chriscummins/compiler_gym-linux-build:latest
