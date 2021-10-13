@@ -171,7 +171,8 @@ def create_devmap_dataset(path: Path):
         checksum="095c1ccef333e0a65e0e70b3ebde0aef851b61528ec46496a5d1687905abd099",
     )
     opencl_ir_zip = download(
-        url="http://polybox.ethz.ch/index.php/s/U08Z3xLhvbLk8io/download",
+        # Upstream URL: https://github.com/spcl/ncc/tree/master/task
+        url="https://www.dropbox.com/s/j5ck80fsbuebf5g/devmap_data.zip?dl=1",
         checksum="3c840f84936a83e329c7a94d011c45ddfcfce8bdbb1a9b1904123e83851913d5",
     )
 
