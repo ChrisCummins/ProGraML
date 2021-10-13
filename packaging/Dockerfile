@@ -17,7 +17,7 @@ RUN apt-get update \
         'patchelf=0.9-1' \
         'python3-dev=3.6.7-1~18.04' \
         'python3-distutils=3.6.9-1~18.04' \
-        'python3-pip=9.0.1-2.3~ubuntu1.18.04.4' \
+        'python3-pip=9.0.1-2.3~ubuntu1.18.04.5' \
         'python3=3.6.7-1~18.04' \
         'rsync=3.1.2-2.1ubuntu1.1' \
         'zlib1g-dev=1:1.2.11.dfsg-0ubuntu2' \
