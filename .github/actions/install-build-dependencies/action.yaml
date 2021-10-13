@@ -31,13 +31,6 @@ runs:
               echo /home/runner/.local/bin >> $GITHUB_PATH
           shell: bash
 
-        # DGL creates ~/.dgl on first run and I have found that this will fail
-        # if run from pytest / bazel.
-        - name: Initialize DGL
-          run: |
-              python -c 'import dgl; print(dgl.__version__)'
-          shell: bash
-
         - name: whoami
           run: ./tools/whoami.sh
           shell: bash
