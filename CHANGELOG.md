@@ -1,3 +1,8 @@
+## v0.3.1 (2021-10-15)
+
+This micro release relaxes the version requirements of the protobuf and grpcio
+Python dependencies, and adds torch to the core dependencies.
+
 ## v0.3.0 (2021-06-24)
 
 This release adds a much simpler, flat Python API. The API comprises three
