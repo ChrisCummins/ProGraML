@@ -122,9 +122,12 @@ def programl_deps():
 
   http_archive(
     name="com_google_absl",
-    sha256="d10f684f170eb36f3ce752d2819a0be8cc703b429247d7d662ba5b4b48dd7f65",
-    strip_prefix="abseil-cpp-3088e76c597e068479e82508b1770a7ad0c806b6",
-    url="https://github.com/abseil/abseil-cpp/archive/3088e76c597e068479e82508b1770a7ad0c806b6.tar.gz",
+    sha256="35f22ef5cb286f09954b7cc4c85b5a3f6221c9d4df6b8c4a1e9d399555b366ee",
+    strip_prefix="abseil-cpp-997aaf3a28308eba1b9156aa35ab7bca9688e9f6",
+    urls=[
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/abseil/abseil-cpp/archive/997aaf3a28308eba1b9156aa35ab7bca9688e9f6.tar.gz",
+        "https://github.com/abseil/abseil-cpp/archive/997aaf3a28308eba1b9156aa35ab7bca9688e9f6.tar.gz",
+    ],
   )
 
   http_archive(
