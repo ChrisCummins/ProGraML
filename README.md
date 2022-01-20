@@ -69,45 +69,6 @@ Or if papers are more your ☕, have a read of ours:
 </a>
 
 
-## Getting Started
-
-Install the latest release of the Python package using:
-
-```
-pip install -U programl
-```
-
-The API is very simple, comprising graph *creation* ops, graph *transform* ops,
-and graph *serialization* ops. Here is a quick demo of each:
-
-```py
->>> import programl as pg
-
-# Construct a program graph from C++:
->>> G = pg.from_cpp("""
-... #include <iostream>
-...
-... int main(int argc, char** argv) {
-...   std::cout << "Hello, world!" << std::endl;
-...   return 0;
-... }
-... """)
-
-# A program graph is a protocol buffer:
->>> type(G).__name__
-'ProgramGraph'
-
-# Convert the graph to NetworkX:
->>> pg.to_networkx(G)
-<networkx.classes.multidigraph.MultiDiGraph at 0x7fbcf40a2fa0>
-
-# Save the graph for later:
->>> pg.save_graphs('file.data', [G])
-```
-
-For further details check out the [API
-reference](https://chriscummins.cc/ProGraML/api/python.html).
-
 ## Supported Programming Languages
 
 The following programming languages and compiler IRs are supported
@@ -153,6 +114,46 @@ out-of-the-box:
 
 Is your favorite language not supported here? Submit a [feature
 request](https://github.com/ChrisCummins/ProGraML/issues/new/choose)!
+
+
+## Getting Started
+
+Install the latest release of the Python package using:
+
+```
+pip install -U programl
+```
+
+The API is very simple, comprising graph *creation* ops, graph *transform* ops,
+and graph *serialization* ops. Here is a quick demo of each:
+
+```py
+>>> import programl as pg
+
+# Construct a program graph from C++:
+>>> G = pg.from_cpp("""
+... #include <iostream>
+...
+... int main(int argc, char** argv) {
+...   std::cout << "Hello, world!" << std::endl;
+...   return 0;
+... }
+... """)
+
+# A program graph is a protocol buffer:
+>>> type(G).__name__
+'ProgramGraph'
+
+# Convert the graph to NetworkX:
+>>> pg.to_networkx(G)
+<networkx.classes.multidigraph.MultiDiGraph at 0x7fbcf40a2fa0>
+
+# Save the graph for later:
+>>> pg.save_graphs('file.data', [G])
+```
+
+For further details check out the [API
+reference](https://chriscummins.cc/ProGraML/api/python.html).
 
 
 ## Contributing
