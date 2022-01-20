@@ -281,13 +281,6 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     if (successorNumber == 0) {
       functionEntryExits.second.push_back(currentExit);
     }
-
-    // TODO: Debug
-    //    if (visited.size() != function.getBasicBlockList().size()) {
-    //      return Status(labm8::error::Code::FAILED_PRECONDITION,
-    //                    "Visited {} blocks in a function with {} blocks",
-    //                    visited.size(), function.getBasicBlockList().size());
-    //    }
   }
 
   return functionEntryExits;
