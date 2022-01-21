@@ -257,7 +257,8 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     Node* currentExit = it->second.second;
 
     // For each current -> successor pair, construct a control edge from the
-    // last instruction in current to the first instruction in successor.
+    // last instruction in the current basic block to the first instruction in
+    // the successor block.
     int32_t successorNumber = 0;
     for (const ::llvm::BasicBlock* successor : ::llvm::successors(current)) {
       auto it = blocks.find(successor);
@@ -266,8 +267,8 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
       }
       Node* successorEntry = it->second.first;
 
-      // TODO: Figure out position.
-      RETURN_IF_ERROR(AddControlEdge(/*position=*/0, currentExit, successorEntry).status());
+      RETURN_IF_ERROR(
+          AddControlEdge(/*position=*/successorNumber, currentExit, successorEntry).status());
 
       if (visited.find(successor) == visited.end()) {
         q.push_back(successor);
@@ -280,13 +281,6 @@ labm8::StatusOr<FunctionEntryExits> ProgramGraphBuilder::VisitFunction(
     if (successorNumber == 0) {
       functionEntryExits.second.push_back(currentExit);
     }
-
-    // TODO: Debug
-    //    if (visited.size() != function.getBasicBlockList().size()) {
-    //      return Status(labm8::error::Code::FAILED_PRECONDITION,
-    //                    "Visited {} blocks in a function with {} blocks",
-    //                    visited.size(), function.getBasicBlockList().size());
-    //    }
   }
 
   return functionEntryExits;
