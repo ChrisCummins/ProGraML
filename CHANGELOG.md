@@ -1,3 +1,8 @@
+## v0.3.2 (2022-01-21)
+
+This release fixes a bug in which, for some LLVM IRs, the control edge position
+values for instruction nodes with outdegree > 1 would be incorrectly set to 0.
+
 ## v0.3.1 (2021-10-15)
 
 This micro release relaxes the version requirements of the protobuf and grpcio
