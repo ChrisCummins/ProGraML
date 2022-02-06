@@ -1,0 +1,1 @@
+linux: sudo apt install -y --no-install-recommends libmysqlclient-dev

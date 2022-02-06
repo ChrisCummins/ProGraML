@@ -1,0 +1,13 @@
+// Simple protos or testing.
+
+syntax = "proto2";
+
+message AddXandY {
+  optional int32 x = 1;
+  optional int32 y = 2;
+  optional int32 result = 3;
+}
+
+message UnexpectedOutputProto {
+  optional string unexpected_message = 1;
+}

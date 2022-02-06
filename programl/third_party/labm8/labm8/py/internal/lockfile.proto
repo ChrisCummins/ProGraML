@@ -1,0 +1,30 @@
+// The proto specification for lockfile locks.
+//
+// Copyright 2014-2020 Chris Cummins <chrisc.101@gmail.com>.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto2";
+
+message LockFile {
+  optional int32 owner_process_id = 1;
+  optional string owner_process_argv = 2;
+  optional int64 date_acquired_unix_epoch_ms = 3;
+  // The hostname of the owning process. Stale locks cannot be detected if the
+  // lock is owned by a different hostname, since we can't determine if the
+  // owning process is alive or not.
+  optional string owner_hostname = 4;
+  // The user of the process which owns the lock. This has no effect on lock
+  // acquisition, it is purely for documentation.
+  optional string owner_user = 5;
+}

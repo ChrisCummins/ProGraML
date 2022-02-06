@@ -1,0 +1,72 @@
+# See: https://bazel.build/versions/master/docs/bazel-user-manual.html#flag--compilation_mode
+
+# This flag is set by the bazel IntelliJ plugin. Set it here so that alternating
+# between command line and IntelliJ invocations does not reset the analysis cache.
+build --runs_per_test=1
+test --runs_per_test=1
+
+build --workspace_status_command=tools/workspace_status.sh
+test --workspace_status_command=tools/workspace_status.sh
+
+# This project uses C++14.
+build --cxxopt='-std=c++14'
+test --cxxopt='-std=c++14'
+
+# Promote unused variable warnings to errors.
+build --cxxopt='-Werror=unused-variable'
+test --cxxopt='-Werror=unused-variable'
+
+# Promote unused result warnings to errors.
+build --cxxopt='-Werror=unused-result'
+test --cxxopt='-Werror=unused-result'
+
+# Promote warnings about missing braces on if/else blocks to errors.
+build --cxxopt='-Werror=dangling-else'
+test --cxxopt='-Werror=dangling-else'
+
+# Default to continuing on build error. Override using --keep_going=false.
+build --keep_going
+test --keep_going
+
+# Show test error output. Override using --test_output={summary,full}.
+test --test_output=errors
+
+# Address sanitizer
+# To use it: bazel build --config asan
+build:asan --strip=never
+build:asan --copt -fsanitize=address
+build:asan --copt -DADDRESS_SANITIZER
+build:asan --copt -O1
+build:asan --copt -g
+build:asan --copt -fno-omit-frame-pointer
+build:asan --linkopt -fsanitize=address
+
+# Thread sanitizer
+# bazel build --config tsan
+build:tsan --strip=never
+build:tsan --copt -fsanitize=thread
+build:tsan --copt -DTHREAD_SANITIZER
+build:tsan --copt -DDYNAMIC_ANNOTATIONS_ENABLED=1
+build:tsan --copt -DDYNAMIC_ANNOTATIONS_EXTERNAL_IMPL=1
+build:tsan --copt -O1
+build:tsan --copt -fno-omit-frame-pointer
+build:tsan --linkopt -fsanitize=thread
+
+# --config msan: Memory sanitizer
+build:msan --strip=never
+build:msan --copt -fsanitize=memory
+build:msan --copt -DADDRESS_SANITIZER
+build:msan --copt -O1
+build:msan --copt -fno-omit-frame-pointer
+build:msan --linkopt -fsanitize=memory
+
+# --config ubsan: Undefined Behavior Sanitizer
+build:ubsan --strip=never
+build:ubsan --copt -fsanitize=undefined
+build:ubsan --copt -O1
+build:ubsan --copt -fno-omit-frame-pointer
+build:ubsan --linkopt -fsanitize=undefined
+build:ubsan --linkopt -lubsan
+
+# Control progress output when invoked by Travis
+build:travis --show_task_finish --action_env=PATH

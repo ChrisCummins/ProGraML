@@ -1,0 +1,3 @@
+# download_file.py must be PY2-compatible and the formatter strips the PY-2
+# __future__ imports that are required.
+download_file.py

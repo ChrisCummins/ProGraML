@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# Wrapper script which runs bazel under a minimal environment.  This script is
+# invoked automatically by bazel's own wrapper script, which checks for a
+# //tools:bazel script, and, if one is found, execs it with ${BAZEL_REAL}
+# pointing to the true bazel binary path.
+#
+# Bazel is *very* sensitive to environment variables when determining which
+# targets must be rebuilt.  This causes a lot of churn when switching between
+# environments such as terminals, IDEs, editors, etc.  This is especially
+# frustrating as it invalidates the results of (possibly expensive) test runs.
+#
+# Instead, the goal of this script is to create consistent environment which
+# can be run from anywhere and always makes sure that bazel gets the same
+# variables to work with. The way of achieving that is to start from a blank
+# slate empty environment and call a script which sets up the necessary
+# variables.
+set -e
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+env -i TERM="$TERM" HOME="$HOME" "$DIR/bazel_env.sh" "$BAZEL_REAL" "$@"

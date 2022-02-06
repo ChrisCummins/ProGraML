@@ -1,0 +1,82 @@
+---
+os:
+    - linux
+    - osx
+
+language: python
+
+python:
+    - '3.6'
+    - '3.7'
+
+# Sudo is required to swap out GCC for GCC-5 on linux.
+sudo: required
+
+# macOS: 10.15.
+osx_image: xcode11.5
+# Linux: Ubuntu Linux 18.04 and clang 7.
+dist: bionic
+compiler: clang
+
+env:
+    matrix:
+        - BAZEL_VERSION=3.1.0
+        - TO_TEST=pypi
+        - TO_TEST=bazel
+    global:
+    # MacOS image needs GNU tools in PATH, rather than BSD versions.
+        - PATH="$HOME/.local/bin:/usr/local/opt/coreutils/libexec/gnubin/stat:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+    # Environment variables needed for zlib.
+    # See: https://github.com/pyenv/pyenv/issues/530
+        - PKG_CONFIG_PATH="$PKG_CONFIG_PATH /usr/local/opt/zlib/lib/pkgconfig"
+        - LDFLAGS="$LDFLAGS -L/usr/local/opt/zlib/lib"
+        - CPPFLAGS="$CPPFLAGS -I/usr/local/opt/zlib/include"
+
+addons:
+    homebrew:
+        brewfile: tools/Brewfile.travis
+    apt:
+        packages:
+            - openjdk-8-jdk
+            - gcc-5
+            - g++-5
+
+services:
+    - mysql
+
+before_install:
+    - OS=linux
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then OS=darwin; fi
+  # Install Bazel.
+    - GH_BASE="https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION"
+    - GH_ARTIFACT="bazel-$BAZEL_VERSION-installer-$OS-x86_64.sh"
+    - CI_BASE="http://ci.bazel.io/job/Bazel/JAVA_VERSION=1.8,PLATFORM_NAME=$OS-x86_64/lastSuccessfulBuild/artifact/output/ci"
+    - CI_ARTIFACT="bazel--installer.sh"
+    - URL="$GH_BASE/$GH_ARTIFACT"
+    - if [[ "$BAZEL_VERSION" == "HEAD" ]]; then CI_ARTIFACT="`wget -qO- $CI_BASE | grep -o 'bazel-[-_a-zA-Z0-9\.]*-installer.sh' | uniq`"; fi
+    - if [[ "$BAZEL_VERSION" == "HEAD" ]]; then URL="$CI_BASE/$CI_ARTIFACT"; fi
+    - echo $URL
+    - wget -O install.sh $URL
+    - chmod +x install.sh
+    - ./install.sh --user
+    - rm -f install.sh
+
+install:
+  # Remove pyenv, since we use the system package managers to install python.
+    - rm -rf $(pyenv root)
+  # Swap out GCC for GCC-5 on linux to enable support for --std=c++14.
+  # See: https://gist.github.com/cotsog/3ce84675af0d74438d91
+    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc; fi
+  # Symlink the system python2 in place so that we bypass the pyenv shim.
+    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then ln -s /usr/bin/python2 $HOME/.local/bin; fi
+
+before_script:
+  # Print version numbers for debugging.
+    - python2 --version
+    - python3 --version
+    - bazel version
+    - gcc --version
+
+script:
+    - if [ "$TO_TEST" = "pypi" ]; then pip install labm8 && python ./labm8/py/examples/basic_app.py; fi
+    - if [ "$TO_TEST" = "bazel" ]; then ./tools/flaky_bazel.sh test --config=travis //labm8/...; fi
