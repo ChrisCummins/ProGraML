@@ -63,7 +63,7 @@ def test_module(simple_ir_graph):
 
 
 def test_num_nodes(simple_ir_graph):
-    assert len(simple_ir_graph.node) == 19
+    assert len(simple_ir_graph.node) == 21
 
 
 def test_node_types(simple_ir_graph):
@@ -74,6 +74,8 @@ def test_node_types(simple_ir_graph):
         pg.proto.Node.INSTRUCTION,
         pg.proto.Node.INSTRUCTION,
         pg.proto.Node.VARIABLE,
+        pg.proto.Node.TYPE,
+        pg.proto.Node.TYPE,
         pg.proto.Node.INSTRUCTION,
         pg.proto.Node.VARIABLE,
         pg.proto.Node.INSTRUCTION,
@@ -98,21 +100,23 @@ def test_node_texts(simple_ir_graph):
         "alloca",
         "alloca",
         "store",
-        "i32*",
+        "var",
+        "*",
+        "i32",
         "store",
-        "i32*",
+        "var",
         "load",
-        "i32*",
+        "var",
         "load",
-        "i32*",
+        "var",
         "add",
-        "i32",
-        "i32",
+        "var",
+        "var",
         "ret",
-        "i32",
-        "i32",
-        "i32",
-        "i32",
+        "var",
+        "var",
+        "var",
+        "val",
     ]
 
 
@@ -122,11 +126,14 @@ def test_node_full_texts(simple_ir_graph):
         for n in simple_ir_graph.node[1:]
     ]
     # The order of the last two variables may differ.
+    print("\n".join(full_texts))
     assert full_texts == [
         "%3 = alloca i32, align 4",
         "%4 = alloca i32, align 4",
         "store i32 %0, i32* %3, align 4",
         "i32* %3",
+        "i32*",
+        "i32",
         "store i32 %1, i32* %4, align 4",
         "i32* %4",
         "%5 = load i32, i32* %3, align 4",
@@ -146,6 +153,8 @@ def test_node_full_texts(simple_ir_graph):
         "%4 = alloca i32, align 4",
         "store i32 %0, i32* %3, align 4",
         "i32* %3",
+        "i32*",
+        "i32",
         "store i32 %1, i32* %4, align 4",
         "i32* %4",
         "%5 = load i32, i32* %3, align 4",

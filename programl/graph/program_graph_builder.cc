@@ -64,6 +64,8 @@ Node* ProgramGraphBuilder::AddVariable(const string& text, const Function* funct
 
 Node* ProgramGraphBuilder::AddConstant(const string& text) { return AddNode(Node::CONSTANT, text); }
 
+Node* ProgramGraphBuilder::AddType(const string& text) { return AddNode(Node::TYPE, text); }
+
 labm8::StatusOr<Edge*> ProgramGraphBuilder::AddControlEdge(int32_t position, const Node* source,
                                                            const Node* target) {
   DCHECK(source) << "nullptr argument";
@@ -129,6 +131,25 @@ labm8::StatusOr<Edge*> ProgramGraphBuilder::AddCallEdge(const Node* source, cons
   }
 
   return AddEdge(Edge::CALL, /*position=*/0, source, target);
+}
+
+labm8::StatusOr<Edge*> ProgramGraphBuilder::AddTypeEdge(int32_t position, const Node* source,
+                                                        const Node* target) {
+  DCHECK(source) << "nullptr argument";
+  DCHECK(target) << "nullptr argument";
+
+  if (source->type() != Node::TYPE) {
+    return Status(labm8::error::Code::INVALID_ARGUMENT,
+                  "Invalid source type ({}) for type edge. Expected type",
+                  Node::Type_Name(source->type()));
+  }
+  if (target->type() == Node::INSTRUCTION) {
+    return Status(labm8::error::Code::INVALID_ARGUMENT,
+                  "Invalid destination type (instruction) for type edge. "
+                  "Expected {variable,constant,type}");
+  }
+
+  return AddEdge(Edge::TYPE, position, source, target);
 }
 
 labm8::StatusOr<ProgramGraph> ProgramGraphBuilder::Build() {

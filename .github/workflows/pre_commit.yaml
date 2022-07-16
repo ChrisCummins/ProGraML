@@ -27,11 +27,11 @@ jobs:
                   go-version: ^1.13.1
             - name: Install buildifier
               run: |
-                  go get github.com/bazelbuild/buildtools/buildifier
+                  go install github.com/bazelbuild/buildtools/buildifier@latest
                   buildifier --version
             - name: Install prototool
               run: |
-                  GO111MODULE=on go get github.com/uber/prototool/cmd/prototool@dev
+                  GO111MODULE=on go install github.com/uber/prototool/cmd/prototool@dev
                   prototool version
             - name: Install Python 3.8
               uses: actions/setup-python@v2
@@ -43,7 +43,6 @@ jobs:
                   python3 -m pip install --upgrade wheel
                   python3 -m pip install -r tools/requirements.pre_commit.txt
                   python3 -m isort --version
-                  python3 -m black --version
                   python3 -m pre_commit --version
             - name: Run pre-commit checks
               # TODO(github.com/facebookresearch/CompilerGym/issues/1): Disable

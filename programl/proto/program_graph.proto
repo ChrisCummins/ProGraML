@@ -55,6 +55,8 @@ message Node {
     VARIABLE = 1;
     // A constant.
     CONSTANT = 2;
+    // A type.
+    TYPE = 3;
   }
   // The type of the node.
   Type type = 1;
@@ -92,6 +94,8 @@ message Edge {
     DATA = 1;
     // A call relation.
     CALL = 2;
+    // A type relation.
+    TYPE = 3;
   }
   // The type of relation of this edge.
   Flow flow = 1;
