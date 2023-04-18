@@ -1,5 +1,5 @@
 absl-py>=0.11.0
-dgl>=0.6.1
+dgl>=0.6.1,<=0.9.1
 grpcio>=1.33.2
 networkx>=2.4
 numpy>=1.19.3
