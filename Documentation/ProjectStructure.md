@@ -2,10 +2,10 @@
 
 The key directories of this project are:
 
-* [`/bin`](/bin): Command line tools. All executable binaries are stored here.
 * [`/Documentation`](/Documentation): Additional (possibly out-of-date 😢)
   documentation.
-* [`/models`](/model): Model implementations and helper code.
+* [`/programl/bin`](/programl/bin): Command line tools. All executable binaries
+  are stored here.
 * [`/programl/graph`](/programl/graph): Libraries for creating and manipulating
   the ProGraML graph representation.
 * [`/programl/ir`](/programl/ir): Support for specific compiler IRs, e.g. LLVM.
