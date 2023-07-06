@@ -201,7 +201,7 @@ def to_dgl(
     """
 
     def _run_one(nx_graph):
-        return dgl.DGLGraph(nx_graph)
+        return dgl.from_networkx(nx_graph)
 
     if isinstance(graphs, ProgramGraph):
         return _run_one(to_networkx(graphs))
