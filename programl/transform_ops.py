@@ -22,7 +22,7 @@ from typing import Any, Dict, Iterable, Optional, Union
 
 import dgl
 import networkx as nx
-from dgl.heterograph import DGLHeteroGraph
+from dgl import DGLGraph
 from networkx.readwrite import json_graph as nx_json
 
 from programl.exceptions import GraphTransformError
@@ -168,7 +168,7 @@ def to_dgl(
     timeout: int = 300,
     executor: Optional[ExecutorLike] = None,
     chunksize: Optional[int] = None,
-) -> Union[DGLHeteroGraph, Iterable[DGLHeteroGraph]]:
+) -> Union[DGLGraph, Iterable[DGLGraph]]:
     """Convert one or more Program Graphs to `DGLGraphs
     <https://docs.dgl.ai/en/latest/api/python/dgl.DGLGraph.html#dgl.DGLGraph>`_.
 
