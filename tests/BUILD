@@ -134,3 +134,13 @@ py_test(
         "//tests/plugins",
     ],
 )
+
+py_test(
+    name = "to_dgl_test",
+    srcs = ["to_dgl_test.py"],
+    deps = [
+        "//programl",
+        "//tests:test_main",
+        "//tests/plugins",
+    ],
+)
