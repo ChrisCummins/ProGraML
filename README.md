@@ -64,7 +64,7 @@ To get stuck in and play around with our graph representation, visit:
 
 Or if papers are more your ☕, have a read of ours:
 
-<a href="Documentation/icml-2021/paper.pdf">
+<a href="https://raw.githubusercontent.com/ChrisCummins/ProGraML/development/Documentation/icml-2021/paper.pdf">
   <img height="325" src="Documentation/icml-2021/paper.png">
 </a>
 
@@ -167,7 +167,7 @@ read [this document](CONTRIBUTING.md).
 ## Citation
 
 If you use ProGraML in any of your work, please cite [this
-paper](Documentation/icml-2021/paper.pdf):
+paper](https://raw.githubusercontent.com/ChrisCummins/ProGraML/development/Documentation/icml-2021/paper.pdf):
 
 ```
 @inproceedings{cummins2021a,
