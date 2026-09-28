@@ -32,7 +32,7 @@
 </p>
 <p align="center">
   <i>
-    Check <a href="https://chriscummins.cc/ProGraML">the website</a>
+    Check <a href="https://chriscummins.github.io/ProGraML/">the website</a>
     for more information.
   </i>
 </p>
@@ -59,13 +59,13 @@ The key features are:
 To get stuck in and play around with our graph representation, visit:
 
 <a href="https://chriscummins.cc/s/program_explorer">
-  <img height="400" src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/assets/program_explorer.png">
+  <img height="400" src="Documentation/assets/program_explorer.png">
 </a>
 
 Or if papers are more your ☕, have a read of ours:
 
-<a href="https://chriscummins.cc/pub/2021-icml.pdf">
-  <img height="325" src="https://github.com/ChrisCummins/ProGraML/raw/development/Documentation/icml-2021/paper.png">
+<a href="Documentation/icml-2021/paper.pdf">
+  <img height="325" src="Documentation/icml-2021/paper.png">
 </a>
 
 
@@ -83,30 +83,30 @@ out-of-the-box:
   <tr>
     <td>C</td>
     <td>
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
     </td>
     <td>Up to ISO C 2017</td>
   </tr>
   <tr>
     <td>C++</td>
     <td>
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_cpp"><code>programl.from_cpp()</code></a>,
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_clang"><code>programl.from_clang()</code></a>
     </td>
     <td>Up to ISO C++ 2020 DIS</td>
   </tr>
   <tr>
     <td>LLVM-IR</td>
     <td>
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_llvm_ir"><code>programl.from_llvm_ir()</code></a>
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_llvm_ir"><code>programl.from_llvm_ir()</code></a>
     </td>
     <td>3.8.0, 6.0.0, 10.0.0</td>
   </tr>
   <tr>
     <td>XLA</td>
     <td>
-      <a href="https://chriscummins.cc/ProGraML/api/python.html#programl.from_xla_hlo_proto"><code>programl.from_xla_hlo_proto()</code></a>
+      <a href="https://chriscummins.github.io/ProGraML/api/python.html#programl.from_xla_hlo_proto"><code>programl.from_xla_hlo_proto()</code></a>
     </td>
     <td>2.0.0</td>
   </tr>
@@ -153,7 +153,7 @@ and graph *serialization* ops. Here is a quick demo of each:
 ```
 
 For further details check out the [API
-reference](https://chriscummins.cc/ProGraML/api/python.html).
+reference](https://chriscummins.github.io/ProGraML/api/python.html).
 
 
 ## Contributing
@@ -167,7 +167,7 @@ read [this document](CONTRIBUTING.md).
 ## Citation
 
 If you use ProGraML in any of your work, please cite [this
-paper](https://chriscummins.cc/pub/2021-icml.pdf):
+paper](Documentation/icml-2021/paper.pdf):
 
 ```
 @inproceedings{cummins2021a,
