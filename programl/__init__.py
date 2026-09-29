@@ -21,7 +21,7 @@ The API is divided into three types of operations: graph *creation*, graph
 :code:`programl` namespace.
 
 ProGraML was first described in this `this paper
-<https://chriscummins.cc/pub/2021-icml.pdf>`_:
+<https://raw.githubusercontent.com/ChrisCummins/ProGraML/development/Documentation/icml-2021/paper.pdf>`_:
 
     Cummins, C., Fisches, Z., Ben-Nun, T., Hoefler, T., O'Boyle, M., and
     Leather, H. "ProGraML: A Graph-based Program Representation for Data Flow
